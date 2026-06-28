@@ -2,7 +2,7 @@
 
 Five views are produced:
 
-* ``plot_histogram``               -- distribution of daily mean temperatures
+* ``plot_decade_ridgeline``        -- daily-temp distribution per decade
 * ``plot_yearly_trend``            -- annual mean per year + least-squares trend
 * ``plot_anomalies``               -- annual anomaly vs. a 1961-1990 baseline
 * ``plot_monthly_heatmap``         -- year x month grid of monthly means
@@ -76,21 +76,55 @@ def monthly_pivot(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # --- individual plots ------------------------------------------------------
-def plot_histogram(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
-    """Distribution of daily mean temperatures with the mean marked."""
-    temps = df["temperature_2m_mean"]
-    ax.hist(temps, bins=40, color="#4c8bf5", edgecolor="white", alpha=0.9)
-    ax.axvline(
-        temps.mean(),
-        color="#d62728",
-        linestyle="--",
-        linewidth=2,
-        label=f"mean {temps.mean():.1f} °C",
-    )
-    ax.set_title(f"Distribution of daily mean temperature — {location.name}")
+def _gaussian_kde(values: np.ndarray, grid: np.ndarray) -> np.ndarray:
+    """Evaluate a Gaussian KDE of ``values`` on ``grid`` (Silverman bandwidth).
+
+    A dependency-free KDE: the density is the mean of unit Gaussians centred on
+    each sample, vectorised over the grid with broadcasting.
+    """
+    n = values.size
+    spread = values.std() or 1.0
+    bandwidth = max(1.06 * spread * n ** (-1 / 5), 0.5)
+    z = (grid[:, None] - values[None, :]) / bandwidth
+    return np.exp(-0.5 * z * z).sum(axis=1) / (n * bandwidth * np.sqrt(2 * np.pi))
+
+
+def plot_decade_ridgeline(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
+    """Daily-temperature distribution per decade, stacked as a ridgeline.
+
+    Each decade is one smoothed density curve, coloured cool→warm. The whole
+    distribution marching rightward over the decades is the warming signal —
+    unlike a single pooled histogram, which hides change entirely.
+    """
+    temps = df["temperature_2m_mean"].to_numpy()
+    years = df.index.year.to_numpy()
+    decades = (years // 10) * 10
+    groups = [(int(d), temps[decades == d]) for d in sorted(set(decades.tolist()))]
+
+    grid = np.linspace(temps.min() - 3, temps.max() + 3, 256)
+    densities = [_gaussian_kde(values, grid) for _, values in groups]
+    peak = max(d.max() for d in densities)
+    overlap = 1.8  # rows overlap slightly for the classic ridgeline look
+
+    cmap = plt.get_cmap("coolwarm")
+    n = len(groups)
+    for i, ((_, _), density) in enumerate(zip(groups, densities)):
+        baseline = float(i)
+        curve = baseline + density / peak * overlap
+        color = cmap(i / max(n - 1, 1))
+        # Lower (older) rows drawn last/on top so each ridge occludes the one
+        # behind it.
+        ax.fill_between(grid, baseline, curve, color=color, alpha=0.85,
+                        zorder=n - i, linewidth=0)
+        ax.plot(grid, curve, color="white", linewidth=0.8, zorder=n - i)
+
+    ax.axvline(0, color="#475569", linewidth=0.8, linestyle=":", zorder=n + 1)
+    ax.set_yticks(range(n))
+    ax.set_yticklabels([f"{decade}s" for decade, _ in groups])
+    ax.set_ylim(-0.3, n - 1 + overlap + 0.3)
+    ax.margins(x=0)
+    ax.set_title(f"Daily temperature distribution by decade — {location.name}")
     ax.set_xlabel("Daily mean temperature (°C)")
-    ax.set_ylabel("Number of days")
-    ax.legend()
 
 
 def plot_yearly_trend(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
@@ -225,7 +259,7 @@ def plot_monthly_anomaly_heatmap(
 def build_dashboard(df: pd.DataFrame, location: Location) -> Figure:
     """Arrange all four views in a single 2x2 figure."""
     fig, axes = plt.subplots(3, 2, figsize=(16, 16))
-    plot_histogram(df, location, axes[0, 0])
+    plot_decade_ridgeline(df, location, axes[0, 0])
     plot_yearly_trend(df, location, axes[0, 1])
     plot_anomalies(df, location, axes[1, 0])
     plot_monthly_heatmap(df, location, axes[1, 1])
@@ -255,7 +289,7 @@ def save_all(df: pd.DataFrame, location: Location, output_dir: Path) -> list[Pat
     written.append(dash_path)
 
     panels = {
-        "histogram": plot_histogram,
+        "decade-ridgeline": plot_decade_ridgeline,
         "yearly-trend": plot_yearly_trend,
         "anomalies": plot_anomalies,
         "monthly-heatmap": plot_monthly_heatmap,
