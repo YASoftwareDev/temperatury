@@ -36,9 +36,13 @@ uv pip install --python .venv -r requirements.txt
 ```bash
 .venv/bin/python main.py                       # Warszawa, 1940..last full year
 .venv/bin/python main.py --location krakow     # preset: krakow/gdansk/wroclaw/poznan
+.venv/bin/python main.py --all                 # every preset city, linked by a nav bar
 .venv/bin/python main.py --lat 48.85 --lon 2.35 --name Paris
 .venv/bin/python main.py --start 1980 --end 2024 --refresh
 ```
+
+The published site (`--all`) builds one page per city with a switcher in the
+header; the root `index.html` shows Warszawa.
 
 Downloaded data is cached under `data/`; pass `--refresh` to re-download.
 
@@ -47,6 +51,7 @@ Downloaded data is cached under `data/`; pass `--refresh` to re-download.
 - `config.py` — locations, paths, API constants
 - `data.py` — download + cache daily temperatures
 - `plots.py` — the four plotting functions + dashboard composition
+- `report.py` — generates the static HTML page (with the city switcher)
 - `main.py` — CLI entry point and summary printout
 
 ## Example (Warszawa, 1940–2025)

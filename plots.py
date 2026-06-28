@@ -176,7 +176,7 @@ def build_dashboard(df: pd.DataFrame, location: Location) -> Figure:
 def save_all(df: pd.DataFrame, location: Location, output_dir: Path) -> list[Path]:
     """Render the dashboard plus each standalone panel; return written paths."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    slug = location.name.lower().replace(" ", "-")
+    slug = location.slug
     written: list[Path] = []
 
     dashboard = build_dashboard(df, location)

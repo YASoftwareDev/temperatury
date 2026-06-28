@@ -24,8 +24,7 @@ _REQUEST_TIMEOUT = 60
 
 def _cache_path(location: Location, start_year: int, end_year: int) -> Path:
     """Return the on-disk CSV path for a given location and span."""
-    slug = location.name.lower().replace(" ", "-")
-    return DATA_DIR / f"{slug}_{start_year}-{end_year}.csv"
+    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}.csv"
 
 
 def _download(location: Location, start_year: int, end_year: int) -> pd.DataFrame:

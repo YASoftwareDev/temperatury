@@ -1,7 +1,8 @@
 """Generate a self-contained static web page for GitHub Pages.
 
-``build_site`` writes ``index.html`` into the output directory next to the
-PNGs produced by :mod:`plots`, so the whole folder can be published as-is.
+``build_site`` writes ``<slug>.html`` into the output directory next to the
+PNGs produced by :mod:`plots`, with a nav bar linking sibling city pages, so
+the whole folder can be published as-is.
 The page has no external CSS/JS/CDN dependencies — everything is inline, so
 it renders identically offline and on Pages.
 """
@@ -40,6 +41,15 @@ _PAGE = Template(
   }
   header h1 { margin: 0 0 .35rem; font-size: clamp(1.6rem, 4vw, 2.4rem); }
   header p { margin: 0; color: #94a3b8; font-size: .95rem; }
+  nav { margin-top: 1.1rem; display: flex; flex-wrap: wrap;
+        gap: .5rem; justify-content: center; }
+  nav a {
+    color: #cbd5e1; text-decoration: none; font-size: .9rem;
+    padding: .35rem .85rem; border-radius: 999px;
+    border: 1px solid #334155; background: #1e293b;
+  }
+  nav a:hover { border-color: #64748b; }
+  nav a.active { background: #2563eb; border-color: #2563eb; color: #fff; }
   main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
   .stats {
     display: grid;
@@ -82,6 +92,7 @@ _PAGE = Template(
 <header>
   <h1>${title}</h1>
   <p>${subtitle}</p>
+  <nav>${nav}</nav>
 </header>
 <main>
   <section class="stats">
@@ -133,10 +144,28 @@ _PAGE = Template(
 )
 
 
-def build_site(df, location: Location, output_dir: Path) -> Path:
-    """Write ``index.html`` into ``output_dir`` and return its path."""
+def _nav_html(current: Location, nav_locations: list[Location]) -> str:
+    """Pill links to every city page, highlighting the current one."""
+    links = []
+    for loc in nav_locations:
+        cls = ' class="active"' if loc.slug == current.slug else ""
+        links.append(f'<a href="{loc.slug}.html"{cls}>{loc.name}</a>')
+    return "".join(links)
+
+
+def build_site(
+    df,
+    location: Location,
+    output_dir: Path,
+    nav_locations: list[Location] | None = None,
+) -> Path:
+    """Write ``<slug>.html`` into ``output_dir`` and return its path.
+
+    ``nav_locations`` populates the city switcher; it defaults to just the
+    current location (a single-city page with no other links).
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
-    slug = location.name.lower().replace(" ", "-")
+    slug = location.slug
     stats = summary_stats(df)
 
     html = _PAGE.substitute(
@@ -148,6 +177,7 @@ def build_site(df, location: Location, output_dir: Path) -> Path:
             f"coldest {stats['coldest_year']} "
             f"({stats['coldest_value']:.1f} °C)"
         ),
+        nav=_nav_html(location, nav_locations or [location]),
         trend=f"{stats['trend_per_decade']:+.2f}",
         mean=f"{stats['mean']:.1f}",
         warmest_year=stats["warmest_year"],
@@ -156,6 +186,6 @@ def build_site(df, location: Location, output_dir: Path) -> Path:
         generated=dt.date.today().isoformat(),
     )
 
-    path = output_dir / "index.html"
+    path = output_dir / f"{slug}.html"
     path.write_text(html, encoding="utf-8")
     return path

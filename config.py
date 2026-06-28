@@ -7,8 +7,17 @@ location defaults to Warsaw (the capital of Poland — the project name
 
 from __future__ import annotations
 
+import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
+
+
+def slugify(name: str) -> str:
+    """ASCII, URL-safe slug. Handles Polish ``ł`` (no NFKD decomposition)."""
+    text = name.replace("ł", "l").replace("Ł", "L")
+    text = unicodedata.normalize("NFKD", text)
+    text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    return text.lower().replace(" ", "-")
 
 # Project paths -------------------------------------------------------------
 ROOT = Path(__file__).resolve().parent
@@ -29,6 +38,11 @@ class Location:
     latitude: float
     longitude: float
     timezone: str = "Europe/Warsaw"
+
+    @property
+    def slug(self) -> str:
+        """ASCII, URL- and filename-safe identifier derived from the name."""
+        return slugify(self.name)
 
 
 # A few convenient presets. Add your own or pass --lat/--lon on the CLI.
