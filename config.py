@@ -52,6 +52,7 @@ LOCATIONS: dict[str, Location] = {
     "gdansk": Location("Gdańsk", 54.3520, 18.6466),
     "wroclaw": Location("Wrocław", 51.1079, 17.0385),
     "poznan": Location("Poznań", 52.4064, 16.9252),
+    "rabka": Location("Rabka-Zdrój", 49.6089, 19.9686),
 }
 
 DEFAULT_LOCATION = "warszawa"
