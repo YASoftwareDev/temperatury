@@ -60,6 +60,7 @@ def _download(location: Location, start_year: int, end_year: int) -> pd.DataFram
             # Exponential backoff: 2s, 4s, 8s …
             time.sleep(2 * attempt)
 
+    assert response is not None  # loop either breaks with a response or raises
     payload = response.json()
     daily = payload.get("daily")
     if not daily or "time" not in daily or "temperature_2m_mean" not in daily:
