@@ -16,14 +16,14 @@ A dashboard plus five standalone PNGs in `output/`:
 
 | View | Question it answers |
 |------|---------------------|
-| **Decade ridgeline** | How has the *distribution* of daily temperatures shifted, decade by decade? |
+| **Hot & freezing days** | How many days a year exceed 18 °C or stay below 0 °C, and how is that changing? |
 | **Annual trend** | How does the yearly mean change over time? (with °C/decade trend) |
 | **Anomaly bars** | How does each year compare to the 1961–1990 norm? (blue = cooler, red = warmer) |
 | **Month × year heatmap** | *Which months/seasons* are warming? (discrete 2 °C bands) |
 | **Monthly anomaly heatmap** | How much has *each month* shifted vs. its 1961–1990 norm? (seasonal cycle removed, robust scale) |
 
-Every view is time-aware: the ridgeline shows the daily-temperature
-distribution shifting warmer decade by decade, and the monthly-anomaly view
+Every view is time-aware: the hot/freezing-day counts track the distribution's
+tails year by year, and the monthly-anomaly view
 normalises each month to its own baseline so the warming signal stands out
 even where the absolute heatmap is dominated by the seasonal cycle.
 

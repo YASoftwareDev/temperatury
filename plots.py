@@ -2,7 +2,7 @@
 
 Five views are produced:
 
-* ``plot_decade_ridgeline``        -- daily-temp distribution per decade
+* ``plot_threshold_days``          -- hot (>18°C) & freezing (<0°C) days per year
 * ``plot_yearly_trend``            -- annual mean per year + least-squares trend
 * ``plot_anomalies``               -- annual anomaly vs. a 1961-1990 baseline
 * ``plot_monthly_heatmap``         -- year x month grid of monthly means
@@ -22,14 +22,17 @@ import matplotlib
 
 matplotlib.use("Agg")  # headless: render straight to files, no display needed
 import matplotlib.pyplot as plt
-from matplotlib.colors import BoundaryNorm, TwoSlopeNorm
+from matplotlib.colors import BoundaryNorm
 from matplotlib.figure import Figure
-from matplotlib.patches import Polygon
 
 from config import Location
 
 # Standard WMO climatological reference period for anomalies.
 BASELINE = (1961, 1990)
+
+# Daily-mean thresholds for the "hot" and "freezing" day counts.
+HOT_DAY_C = 18.0
+FREEZE_DAY_C = 0.0
 
 
 # --- statistics helpers ----------------------------------------------------
@@ -77,91 +80,37 @@ def monthly_pivot(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # --- individual plots ------------------------------------------------------
-def _gaussian_kde(values: np.ndarray, grid: np.ndarray) -> np.ndarray:
-    """Evaluate a Gaussian KDE of ``values`` on ``grid`` (Silverman bandwidth).
+def plot_threshold_days(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
+    """Count of hot (>18 °C) and freezing (<0 °C) days per year, with trends.
 
-    A dependency-free KDE: the density is the mean of unit Gaussians centred on
-    each sample, vectorised over the grid with broadcasting.
+    A concrete, fully measurable view of the distribution's tails: as the
+    climate warms, hot days climb and freezing days fall — both read straight
+    off the day-count axis, each with its own per-decade rate.
     """
-    n = values.size
-    spread = values.std() or 1.0
-    bandwidth = max(1.06 * spread * n ** (-1 / 5), 0.5)
-    z = (grid[:, None] - values[None, :]) / bandwidth
-    return np.exp(-0.5 * z * z).sum(axis=1) / (n * bandwidth * np.sqrt(2 * np.pi))
+    temps = df["temperature_2m_mean"]
+    grouped = temps.groupby(df.index.year)
+    hot = grouped.agg(lambda s: int((s > HOT_DAY_C).sum()))
+    freeze = grouped.agg(lambda s: int((s < FREEZE_DAY_C).sum()))
+    years = hot.index.to_numpy(dtype=float)
 
+    series = [
+        (hot, "#d62728", f"hot days (>{HOT_DAY_C:.0f} °C)"),
+        (freeze, "#2c7fb8", f"freezing days (<{FREEZE_DAY_C:.0f} °C)"),
+    ]
+    for data, color, label in series:
+        values = data.to_numpy(dtype=float)
+        slope, fitted = linear_trend(years, values)
+        ax.plot(years, values, color=color, linewidth=1.0, marker="o",
+                markersize=2.5, alpha=0.4)
+        ax.plot(years, fitted, color=color, linewidth=2.6,
+                label=f"{label}: {slope * 10:+.1f} days / decade")
 
-def plot_decade_ridgeline(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
-    """Daily-temperature distribution per decade, stacked as a ridgeline.
-
-    The fill colour encodes the temperature *value* (same blue→red scale for
-    every decade, white = 0 °C), so colour never implies a decade is "higher".
-    Each decade's mean is marked and labelled, and the means are joined into a
-    line — the measurable quantity whose rightward drift is the warming signal.
-    """
-    temps = df["temperature_2m_mean"].to_numpy()
-    years = df.index.year.to_numpy()
-    decades = (years // 10) * 10
-    groups = [(int(d), temps[decades == d]) for d in sorted(set(decades.tolist()))]
-
-    grid = np.linspace(temps.min() - 3, temps.max() + 3, 256)
-    densities = [_gaussian_kde(values, grid) for _, values in groups]
-    peak = max(d.max() for d in densities)
-    overlap = 1.4  # modest overlap so each decade stays distinguishable
-    n = len(groups)
-
-    # Colour maps to temperature value (not decade), centred on freezing.
-    vmin, vmax = float(grid[0]), float(grid[-1])
-    center = 0.0 if vmin < 0.0 < vmax else (vmin + vmax) / 2
-    norm = TwoSlopeNorm(vmin=vmin, vcenter=center, vmax=vmax)
-    cmap = plt.get_cmap("coolwarm")
-    gradient = grid[None, :]  # horizontal gradient: colour follows the x value
-
-    means = []
-    for i, (_, values) in enumerate(groups):
-        baseline = float(i)
-        curve = baseline + densities[i] / peak * overlap
-        z = n - i  # front (older) rows drawn on top
-
-        image = ax.imshow(
-            gradient, extent=(vmin, vmax, baseline, float(curve.max())),
-            aspect="auto", cmap=cmap, norm=norm, origin="lower", zorder=z,
-        )
-        under_curve = Polygon(
-            np.column_stack([
-                np.concatenate([grid, grid[::-1]]),
-                np.concatenate([curve, np.full_like(grid, baseline)]),
-            ]),
-            closed=True, transform=ax.transData,
-        )
-        image.set_clip_path(under_curve)
-        ax.plot(grid, curve, color="white", linewidth=0.9, zorder=z)
-        ax.hlines(baseline, vmin, vmax, color="#cbd5e1", linewidth=0.6, zorder=z)
-
-        mean = float(values.mean())
-        means.append(mean)
-        ax.text(vmax, baseline + 0.12, f"{mean:.1f} °C", ha="right", va="bottom",
-                fontsize=8, color="#0f172a", zorder=n + 3)
-
-    # The measurable line: decade means, drifting right as the climate warms.
-    ax.plot(means, range(n), color="#0f172a", linewidth=1.4, marker="o",
-            markersize=4, zorder=n + 2, label="decade mean")
-
-    ax.set_yticks(range(n))
-    ax.set_yticklabels([f"{decade}s" for decade, _ in groups])
-    ax.set_ylim(-0.3, n - 1 + overlap + 0.3)
-    ax.set_xlim(vmin, vmax)
-    ax.set_xticks(np.arange(-30, 31, 10))
-    ax.set_axisbelow(True)
-    ax.grid(axis="x", color="#94a3b8", alpha=0.3)
-    ax.legend(loc="upper left", fontsize=8)
-    ax.set_title(f"Daily temperature distribution by decade — {location.name}")
-    ax.set_xlabel("Daily mean temperature (°C)")
-
-    colorbar = ax.figure.colorbar(
-        plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax,
-        fraction=0.046, pad=0.04,
-    )
-    colorbar.set_label("Daily mean temperature (°C)")
+    ax.set_title(f"Hot & freezing days per year — {location.name}")
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Days per year")
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best")
+    ax.margins(x=0.01)
 
 
 def plot_yearly_trend(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
@@ -296,7 +245,7 @@ def plot_monthly_anomaly_heatmap(
 def build_dashboard(df: pd.DataFrame, location: Location) -> Figure:
     """Arrange all four views in a single 2x2 figure."""
     fig, axes = plt.subplots(3, 2, figsize=(16, 16))
-    plot_decade_ridgeline(df, location, axes[0, 0])
+    plot_threshold_days(df, location, axes[0, 0])
     plot_yearly_trend(df, location, axes[0, 1])
     plot_anomalies(df, location, axes[1, 0])
     plot_monthly_heatmap(df, location, axes[1, 1])
@@ -326,7 +275,7 @@ def save_all(df: pd.DataFrame, location: Location, output_dir: Path) -> list[Pat
     written.append(dash_path)
 
     panels = {
-        "decade-ridgeline": plot_decade_ridgeline,
+        "threshold-days": plot_threshold_days,
         "yearly-trend": plot_yearly_trend,
         "anomalies": plot_anomalies,
         "monthly-heatmap": plot_monthly_heatmap,

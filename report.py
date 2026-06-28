@@ -152,8 +152,8 @@ _PAGE = Template(
       <figcaption>Monthly anomaly vs. 1961–1990 — warming isolated per month</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_decade-ridgeline.png" alt="Daily temperature distribution by decade">
-      <figcaption>Daily temperature distribution by decade — the shape shifts warmer</figcaption>
+      <img src="${slug}_threshold-days.png" alt="Hot and freezing days per year">
+      <figcaption>Hot (&gt;18 °C) &amp; freezing (&lt;0 °C) days per year — the distribution's tails</figcaption>
     </figure>
   </section>
 </main>
