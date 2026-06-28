@@ -5,6 +5,9 @@ using free [Open-Meteo](https://open-meteo.com/) reanalysis data (daily, from
 1940). Produces both the **distribution** of temperatures and how they **change
 through the years**.
 
+**🌍 Live site:** https://yasoftwaredev.github.io/temperatury/ (auto-rebuilt from
+fresh data on each push and yearly).
+
 ![Warszawa temperature dashboard](assets/dashboard.png)
 
 ## What it makes

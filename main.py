@@ -21,7 +21,8 @@ from config import (
     Location,
 )
 from data import load_temperatures
-from plots import annual_means, linear_trend, save_all
+from plots import save_all, summary_stats
+from report import build_site
 
 
 def _last_full_year() -> int:
@@ -55,16 +56,12 @@ def _parse_args() -> argparse.Namespace:
 
 def _print_summary(df, location: Location) -> None:
     """Print the headline numbers to the terminal."""
-    means = annual_means(df)
-    slope, _ = linear_trend(means.index.to_numpy(float), means.to_numpy())
-    warmest = means.idxmax()
-    coldest = means.idxmin()
-    print(f"\n{location.name}: {df.index.year.min()}–{df.index.year.max()} "
-          f"({len(df):,} days)")
-    print(f"  overall mean daily temp : {df['temperature_2m_mean'].mean():.2f} °C")
-    print(f"  warming trend           : {slope * 10:+.2f} °C / decade")
-    print(f"  warmest year            : {warmest} ({means[warmest]:.2f} °C)")
-    print(f"  coldest year            : {coldest} ({means[coldest]:.2f} °C)")
+    s = summary_stats(df)
+    print(f"\n{location.name}: {s['start']}–{s['end']} ({s['days']:,} days)")
+    print(f"  overall mean daily temp : {s['mean']:.2f} °C")
+    print(f"  warming trend           : {s['trend_per_decade']:+.2f} °C / decade")
+    print(f"  warmest year            : {s['warmest_year']} ({s['warmest_value']:.2f} °C)")
+    print(f"  coldest year            : {s['coldest_year']} ({s['coldest_value']:.2f} °C)")
 
 
 def main() -> None:
@@ -79,6 +76,7 @@ def main() -> None:
     _print_summary(df, location)
 
     paths = save_all(df, location, OUTPUT_DIR)
+    paths.append(build_site(df, location, OUTPUT_DIR))
     print("\nWrote:")
     for path in paths:
         print(f"  {path}")

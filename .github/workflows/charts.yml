@@ -1,25 +1,29 @@
-name: Generate temperature charts
+name: Build and deploy site
 
-# Validates the analysis on every push (uploading the PNGs as artifacts) and
-# refreshes the committed dashboard image on a yearly schedule or on demand.
+# Regenerates the charts + page from live Open-Meteo data and publishes the
+# result to GitHub Pages. Runs on every push to main, on demand, and yearly
+# once the previous calendar year is complete.
 
 on:
   push:
     branches: [main]
-    paths:
-      - "**.py"
-      - "requirements.txt"
-      - ".github/workflows/charts.yml"
   workflow_dispatch:
   schedule:
     # 06:00 UTC on 5 January — once the previous calendar year is complete.
     - cron: "0 6 5 1 *"
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment; let an in-progress run finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  charts:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,29 +36,26 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Generate charts
+      - name: Generate charts and page
         run: python main.py
 
-      - name: Upload chart artifacts
-        uses: actions/upload-artifact@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
         with:
-          name: temperature-charts
-          path: output/*.png
-          if-no-files-found: error
+          enablement: true
 
-      # Only refresh the committed image outside of push events, so the
-      # commit below never re-triggers this workflow.
-      - name: Refresh README dashboard image
-        if: github.event_name != 'push'
-        run: |
-          mkdir -p assets
-          cp output/warszawa_dashboard.png assets/dashboard.png
-          if git diff --quiet -- assets/dashboard.png; then
-            echo "Dashboard image unchanged — nothing to commit."
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add assets/dashboard.png
-            git commit -m "Refresh dashboard chart [skip ci]"
-            git push
-          fi
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: output
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -43,6 +43,25 @@ def linear_trend(years: np.ndarray, values: np.ndarray) -> tuple[float, np.ndarr
     return slope, slope * years + intercept
 
 
+def summary_stats(df: pd.DataFrame) -> dict:
+    """Headline figures used by both the CLI printout and the web page."""
+    means = annual_means(df)
+    slope, _ = linear_trend(means.index.to_numpy(float), means.to_numpy())
+    warmest = int(means.idxmax())
+    coldest = int(means.idxmin())
+    return {
+        "start": int(df.index.year.min()),
+        "end": int(df.index.year.max()),
+        "days": int(len(df)),
+        "mean": float(df["temperature_2m_mean"].mean()),
+        "trend_per_decade": float(slope * 10),
+        "warmest_year": warmest,
+        "warmest_value": float(means[warmest]),
+        "coldest_year": coldest,
+        "coldest_value": float(means[coldest]),
+    }
+
+
 def monthly_pivot(df: pd.DataFrame) -> pd.DataFrame:
     """Year (rows) x month (cols) table of monthly mean temperatures."""
     monthly = df["temperature_2m_mean"].groupby(
