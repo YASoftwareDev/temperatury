@@ -36,6 +36,9 @@ BASELINE = (1961, 1990)
 HOT_DAY_C = 18.0
 FREEZE_DAY_C = 0.0
 
+# A "big jump" is a day-to-day change in daily mean of at least this many °C.
+SWING_C = 6.0
+
 
 # --- statistics helpers ----------------------------------------------------
 def annual_means(df: pd.DataFrame) -> pd.Series:
@@ -322,6 +325,55 @@ def plot_record_range(
     ax.margins(x=0.01)
 
 
+def plot_temp_volatility(
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
+    """How often big day-to-day temperature jumps happen, per year.
+
+    Counts days whose daily mean differs from the previous day by at least
+    ``SWING_C`` °C — a concrete measure of temperature variability ("how jumpy
+    is the weather?") — with a trend line.
+    """
+    diff = df["temperature_2m_mean"].diff().abs()
+    swings = (diff >= SWING_C).groupby(df.index.year).sum()
+    years = swings.index.to_numpy(dtype=float)
+    values = swings.to_numpy(dtype=float)
+    slope, fitted = linear_trend(years, values)
+
+    ax.plot(years, values, color="#7c3aed", linewidth=1.0, marker="o",
+            markersize=2.5, alpha=0.45)
+    ax.plot(years, fitted, color="#7c3aed", linewidth=2.6,
+            label=(f"≥{SWING_C:.0f} °C {tr['volatility_jump']}: "
+                   f"{slope * 10:+.1f} {tr['per_decade_days']}"))
+    ax.set_title(tr["volatility_title"].format(name=location.name))
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(tr["volatility_ylabel"])
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best")
+    ax.margins(x=0.01)
+
+
+def plot_precip(
+    df_precip: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
+    """Total annual precipitation per year, with a trend line."""
+    annual = df_precip["precipitation_sum"].groupby(df_precip.index.year).sum()
+    years = annual.index.to_numpy(dtype=float)
+    values = annual.to_numpy(dtype=float)
+    slope, fitted = linear_trend(years, values)
+
+    ax.bar(years, values, color="#2c7fb8", alpha=0.6, width=0.9,
+           label=tr["precip_annual"])
+    ax.plot(years, fitted, color="#d62728", linewidth=2.6,
+            label=f"{tr['trend']} {slope * 10:+.0f} {tr['per_decade_mm']}")
+    ax.set_title(tr["precip_title"].format(name=location.name))
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(tr["precip_ylabel"])
+    ax.grid(True, axis="y", alpha=0.3)
+    ax.legend(loc="best")
+    ax.margins(x=0.01)
+
+
 # --- composition -----------------------------------------------------------
 def build_dashboard(df: pd.DataFrame, location: Location, tr: dict) -> Figure:
     """Arrange all five views in a single 3x2 figure (one slot left blank)."""
@@ -348,10 +400,12 @@ def save_all(
     output_dir: Path,
     tr: dict,
     df_ext: pd.DataFrame | None = None,
+    df_precip: pd.DataFrame | None = None,
 ) -> list[Path]:
     """Render the dashboard plus each standalone panel; return written paths.
 
-    When ``df_ext`` (daily max/min) is given, also render the record-range panel.
+    ``df_ext`` (daily max/min) adds the record-range panel; ``df_precip`` adds
+    the annual precipitation panel — each rendered only when its data is given.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
@@ -370,6 +424,7 @@ def save_all(
         "monthly-heatmap": plot_monthly_heatmap,
         "monthly-anomaly": plot_monthly_anomaly_heatmap,
         "monthly-range": plot_monthly_range,
+        "volatility": plot_temp_volatility,
     }
     for name, draw in panels.items():
         fig, ax = plt.subplots(figsize=(9, 5.5))
@@ -381,11 +436,16 @@ def save_all(
         plt.close(fig)
         written.append(path)
 
+    extras = []
     if df_ext is not None:
+        extras.append(("monthly-records", plot_record_range, df_ext))
+    if df_precip is not None:
+        extras.append(("precipitation", plot_precip, df_precip))
+    for name, draw, data in extras:
         fig, ax = plt.subplots(figsize=(9, 5.5))
-        plot_record_range(df_ext, location, ax, tr)
+        draw(data, location, ax, tr)
         fig.tight_layout()
-        path = output_dir / f"{slug}_monthly-records.png"
+        path = output_dir / f"{slug}_{name}.png"
         fig.savefig(path, dpi=160)
         plt.close(fig)
         written.append(path)

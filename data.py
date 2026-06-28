@@ -267,3 +267,76 @@ def load_extremes_bulk(
             result[location.slug] = frame.dropna(subset=list(_EXTREME_COLS))
 
     return result
+
+
+# --- precipitation ---------------------------------------------------------
+def _precip_cache_path(location: Location, start_year: int, end_year: int) -> Path:
+    """Cache path for the daily precipitation dataset."""
+    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}_precip.csv.gz"
+
+
+def _parse_precip(daily: dict | None, name: str) -> pd.DataFrame:
+    """Turn an Open-Meteo ``daily`` block of precipitation into a DataFrame."""
+    if not daily or "time" not in daily or "precipitation_sum" not in daily:
+        raise RuntimeError(
+            f"Unexpected response from Open-Meteo for {name}: "
+            f"missing 'daily' precipitation field."
+        )
+    frame = pd.DataFrame(
+        {
+            "date": pd.to_datetime(daily["time"]),
+            "precipitation_sum": daily["precipitation_sum"],
+        }
+    )
+    return frame.set_index("date").sort_index()
+
+
+def load_precip_bulk(
+    locations: list[Location],
+    start_year: int,
+    end_year: int,
+    *,
+    refresh: bool = False,
+) -> dict[str, pd.DataFrame]:
+    """Load daily precipitation for many locations (cache-aware, chunked)."""
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    result: dict[str, pd.DataFrame] = {}
+    to_fetch: list[Location] = []
+
+    for location in locations:
+        path = _precip_cache_path(location, start_year, end_year)
+        if path.exists() and not refresh:
+            frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+            result[location.slug] = frame.dropna(subset=["precipitation_sum"])
+        else:
+            to_fetch.append(location)
+
+    if _OFFLINE and to_fetch:
+        print(f"  (offline) {len(to_fetch)} location(s) without precip cache, skipped")
+        to_fetch = []
+
+    for start in range(0, len(to_fetch), _CHUNK):
+        if start:
+            time.sleep(_CHUNK_PAUSE)
+        chunk = to_fetch[start:start + _CHUNK]
+        params = {
+            "latitude": ",".join(str(loc.latitude) for loc in chunk),
+            "longitude": ",".join(str(loc.longitude) for loc in chunk),
+            "start_date": f"{start_year}-01-01",
+            "end_date": f"{end_year}-12-31",
+            "daily": "precipitation_sum",
+            "timezone": "auto",
+        }
+        label = f"{len(chunk)} locations ({chunk[0].name}…) precip"
+        try:
+            payload = _request(params, label)
+        except RuntimeError as error:
+            print(f"  ! skipping {label}: {error}")
+            continue
+        items = payload if isinstance(payload, list) else [payload]
+        for location, item in zip(chunk, items):
+            frame = _parse_precip(item.get("daily"), location.name)
+            frame.to_csv(_precip_cache_path(location, start_year, end_year))
+            result[location.slug] = frame.dropna(subset=["precipitation_sum"])
+
+    return result

@@ -78,6 +78,16 @@ TRANSLATIONS: dict[str, dict] = {
         "record_ylabel": "Daily temperature (°C)",
         "cap_records": "Each month's all-time record daily high and low, with the "
                        "latest year's extremes",
+        "volatility_title": "Day-to-day temperature swings per year — {name}",
+        "volatility_jump": "day-to-day jump",
+        "volatility_ylabel": "Days with a big jump",
+        "cap_volatility": "How often big day-to-day temperature jumps happen "
+                          "each year (≥6 °C) — temperature variability",
+        "per_decade_mm": "mm / decade",
+        "precip_title": "Annual precipitation — {name}",
+        "precip_ylabel": "Precipitation (mm / year)",
+        "precip_annual": "annual total",
+        "cap_precip": "Total yearly precipitation (rain and snow water) with a trend",
         "footer": 'Generated {date} · data from '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   'historical reanalysis (ERA5) · '
@@ -145,6 +155,16 @@ TRANSLATIONS: dict[str, dict] = {
         "record_ylabel": "Temperatura dobowa (°C)",
         "cap_records": "Rekordowe dobowe maksimum i minimum każdego miesiąca, "
                        "z ekstremami ostatniego roku",
+        "volatility_title": "Skoki temperatury z dnia na dzień w roku — {name}",
+        "volatility_jump": "skok z dnia na dzień",
+        "volatility_ylabel": "Dni z dużym skokiem",
+        "cap_volatility": "Jak często zdarzają się duże skoki temperatury z dnia "
+                          "na dzień (≥6 °C) — zmienność temperatury",
+        "per_decade_mm": "mm / dekadę",
+        "precip_title": "Roczne opady — {name}",
+        "precip_ylabel": "Opady (mm / rok)",
+        "precip_annual": "suma roczna",
+        "cap_precip": "Roczna suma opadów (deszcz i woda ze śniegu) z linią trendu",
         "footer": 'Wygenerowano {date} · dane z '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanaliza historyczna ERA5) · '
@@ -211,6 +231,16 @@ TRANSLATIONS: dict[str, dict] = {
         "record_ylabel": "Tagestemperatur (°C)",
         "cap_records": "Rekord-Tageshöchst- und -tiefstwerte je Monat, mit den "
                        "Extremen des aktuellen Jahres",
+        "volatility_title": "Tag-zu-Tag-Temperatursprünge pro Jahr — {name}",
+        "volatility_jump": "Tagessprung",
+        "volatility_ylabel": "Tage mit großem Sprung",
+        "cap_volatility": "Wie oft große Tag-zu-Tag-Temperatursprünge pro Jahr "
+                          "auftreten (≥6 °C) — Temperaturschwankung",
+        "per_decade_mm": "mm / Dekade",
+        "precip_title": "Jährlicher Niederschlag — {name}",
+        "precip_ylabel": "Niederschlag (mm / Jahr)",
+        "precip_annual": "Jahressumme",
+        "cap_precip": "Jährliche Niederschlagssumme (Regen und Schmelzwasser) mit Trend",
         "footer": 'Erstellt {date} · Daten von '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(historische Reanalyse ERA5) · '

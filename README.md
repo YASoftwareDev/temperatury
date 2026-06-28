@@ -26,6 +26,8 @@ A dashboard plus six standalone PNGs in `output/`:
 | **Monthly anomaly heatmap** | How much has *each month* shifted vs. its 1961–1990 norm? (seasonal cycle removed, robust scale) |
 | **Monthly min–max range** | For each month, where does the latest year fall within the full historical envelope? |
 | **Monthly record high/low** | Each month's all-time record daily high/low (from daily max/min), with the latest year's extremes — "hottest day ever in July?" |
+| **Day-to-day swings** | How often big day-to-day temperature jumps (≥6 °C) happen each year — temperature variability/volatility, with a trend |
+| **Annual precipitation** | Total yearly rainfall (mm) over the years, with a trend (where precipitation data is cached) |
 
 Every view is time-aware: the hot/freezing-day counts track the distribution's
 tails year by year, and the monthly-anomaly view

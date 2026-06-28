@@ -26,7 +26,7 @@ from config import (
     OUTPUT_DIR,
     Location,
 )
-from data import load_extremes_bulk, load_temperatures_bulk
+from data import load_extremes_bulk, load_precip_bulk, load_temperatures_bulk
 from plots import save_all, summary_stats
 from report import build_map_page, build_site, write_redirect
 
@@ -102,6 +102,9 @@ def main() -> None:
     # without it simply skips the record chart.
     extremes = load_extremes_bulk(locations, args.start, args.end,
                                   refresh=args.refresh)
+    # Daily precipitation — optional add-on dataset (same backfill model).
+    precip = load_precip_bulk(locations, args.start, args.end,
+                              refresh=args.refresh)
 
     written = 0
     for location in locations:
@@ -113,12 +116,15 @@ def main() -> None:
             print(f"  {location.name:18s} mean {s['mean']:5.1f} °C  "
                   f"trend {s['trend_per_decade']:+.2f}/dec")
         df_ext = extremes.get(location.slug)
+        df_precip = precip.get(location.slug)
         for lang in i18n.LANGUAGES:
             tr = i18n.get(lang)
             lang_dir = OUTPUT_DIR / lang
-            written += len(save_all(df, location, lang_dir, tr, df_ext=df_ext))
+            written += len(save_all(df, location, lang_dir, tr,
+                                    df_ext=df_ext, df_precip=df_precip))
             build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr,
-                       has_records=df_ext is not None)
+                       has_records=df_ext is not None,
+                       has_precip=df_precip is not None)
             written += 1
 
     # Each language's index.html is the Leaflet map chooser; root redirects.

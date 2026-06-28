@@ -180,6 +180,11 @@ _PAGE = Template(
       <img src="${slug}_threshold-days.png" alt="">
       <figcaption>${cap_threshold}</figcaption>
     </figure>
+    <figure>
+      <img src="${slug}_volatility.png" alt="">
+      <figcaption>${cap_volatility}</figcaption>
+    </figure>
+    ${precip_figure}
   </section>
 </main>
 <footer>${footer}</footer>
@@ -269,6 +274,7 @@ def build_site(
     languages: list[str],
     tr: dict,
     has_records: bool = False,
+    has_precip: bool = False,
 ) -> Path:
     """Write ``<slug>.html`` (localised) into ``output_dir``; return its path."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -278,6 +284,11 @@ def build_site(
         f'<figure>\n      <img src="{slug}_monthly-records.png" alt="">\n'
         f'      <figcaption>{tr["cap_records"]}</figcaption>\n    </figure>'
         if has_records else ""
+    )
+    precip_figure = (
+        f'<figure>\n      <img src="{slug}_precipitation.png" alt="">\n'
+        f'      <figcaption>{tr["cap_precip"]}</figcaption>\n    </figure>'
+        if has_precip else ""
     )
 
     html = _PAGE.substitute(
@@ -306,6 +317,8 @@ def build_site(
         cap_range=tr["cap_range"],
         record_figure=record_figure,
         cap_threshold=tr["cap_threshold"],
+        cap_volatility=tr["cap_volatility"],
+        precip_figure=precip_figure,
         hint=tr["hint"],
         footer=tr["footer"].format(date=dt.date.today().isoformat()),
         slug=slug,
