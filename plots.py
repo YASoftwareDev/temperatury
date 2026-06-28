@@ -22,8 +22,9 @@ import matplotlib
 
 matplotlib.use("Agg")  # headless: render straight to files, no display needed
 import matplotlib.pyplot as plt
-from matplotlib.colors import BoundaryNorm
+from matplotlib.colors import BoundaryNorm, TwoSlopeNorm
 from matplotlib.figure import Figure
+from matplotlib.patches import Polygon
 
 from config import Location
 
@@ -92,9 +93,10 @@ def _gaussian_kde(values: np.ndarray, grid: np.ndarray) -> np.ndarray:
 def plot_decade_ridgeline(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
     """Daily-temperature distribution per decade, stacked as a ridgeline.
 
-    Each decade is one smoothed density curve, coloured cool→warm. The whole
-    distribution marching rightward over the decades is the warming signal —
-    unlike a single pooled histogram, which hides change entirely.
+    The fill colour encodes the temperature *value* (same blue→red scale for
+    every decade, white = 0 °C), so colour never implies a decade is "higher".
+    Each decade's mean is marked and labelled, and the means are joined into a
+    line — the measurable quantity whose rightward drift is the warming signal.
     """
     temps = df["temperature_2m_mean"].to_numpy()
     years = df.index.year.to_numpy()
@@ -104,27 +106,62 @@ def plot_decade_ridgeline(df: pd.DataFrame, location: Location, ax: plt.Axes) ->
     grid = np.linspace(temps.min() - 3, temps.max() + 3, 256)
     densities = [_gaussian_kde(values, grid) for _, values in groups]
     peak = max(d.max() for d in densities)
-    overlap = 1.8  # rows overlap slightly for the classic ridgeline look
-
-    cmap = plt.get_cmap("coolwarm")
+    overlap = 1.4  # modest overlap so each decade stays distinguishable
     n = len(groups)
-    for i, ((_, _), density) in enumerate(zip(groups, densities)):
-        baseline = float(i)
-        curve = baseline + density / peak * overlap
-        color = cmap(i / max(n - 1, 1))
-        # Lower (older) rows drawn last/on top so each ridge occludes the one
-        # behind it.
-        ax.fill_between(grid, baseline, curve, color=color, alpha=0.85,
-                        zorder=n - i, linewidth=0)
-        ax.plot(grid, curve, color="white", linewidth=0.8, zorder=n - i)
 
-    ax.axvline(0, color="#475569", linewidth=0.8, linestyle=":", zorder=n + 1)
+    # Colour maps to temperature value (not decade), centred on freezing.
+    vmin, vmax = float(grid[0]), float(grid[-1])
+    center = 0.0 if vmin < 0.0 < vmax else (vmin + vmax) / 2
+    norm = TwoSlopeNorm(vmin=vmin, vcenter=center, vmax=vmax)
+    cmap = plt.get_cmap("coolwarm")
+    gradient = grid[None, :]  # horizontal gradient: colour follows the x value
+
+    means = []
+    for i, (_, values) in enumerate(groups):
+        baseline = float(i)
+        curve = baseline + densities[i] / peak * overlap
+        z = n - i  # front (older) rows drawn on top
+
+        image = ax.imshow(
+            gradient, extent=(vmin, vmax, baseline, float(curve.max())),
+            aspect="auto", cmap=cmap, norm=norm, origin="lower", zorder=z,
+        )
+        under_curve = Polygon(
+            np.column_stack([
+                np.concatenate([grid, grid[::-1]]),
+                np.concatenate([curve, np.full_like(grid, baseline)]),
+            ]),
+            closed=True, transform=ax.transData,
+        )
+        image.set_clip_path(under_curve)
+        ax.plot(grid, curve, color="white", linewidth=0.9, zorder=z)
+        ax.hlines(baseline, vmin, vmax, color="#cbd5e1", linewidth=0.6, zorder=z)
+
+        mean = float(values.mean())
+        means.append(mean)
+        ax.text(vmax, baseline + 0.12, f"{mean:.1f} °C", ha="right", va="bottom",
+                fontsize=8, color="#0f172a", zorder=n + 3)
+
+    # The measurable line: decade means, drifting right as the climate warms.
+    ax.plot(means, range(n), color="#0f172a", linewidth=1.4, marker="o",
+            markersize=4, zorder=n + 2, label="decade mean")
+
     ax.set_yticks(range(n))
     ax.set_yticklabels([f"{decade}s" for decade, _ in groups])
     ax.set_ylim(-0.3, n - 1 + overlap + 0.3)
-    ax.margins(x=0)
+    ax.set_xlim(vmin, vmax)
+    ax.set_xticks(np.arange(-30, 31, 10))
+    ax.set_axisbelow(True)
+    ax.grid(axis="x", color="#94a3b8", alpha=0.3)
+    ax.legend(loc="upper left", fontsize=8)
     ax.set_title(f"Daily temperature distribution by decade — {location.name}")
     ax.set_xlabel("Daily mean temperature (°C)")
+
+    colorbar = ax.figure.colorbar(
+        plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax,
+        fraction=0.046, pad=0.04,
+    )
+    colorbar.set_label("Daily mean temperature (°C)")
 
 
 def plot_yearly_trend(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
