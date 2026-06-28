@@ -21,6 +21,7 @@ import matplotlib
 
 matplotlib.use("Agg")  # headless: render straight to files, no display needed
 import matplotlib.pyplot as plt
+from matplotlib.colors import BoundaryNorm
 from matplotlib.figure import Figure
 
 from config import Location
@@ -135,11 +136,24 @@ def plot_monthly_heatmap(df: pd.DataFrame, location: Location, ax: plt.Axes) -> 
     """Year x month heatmap showing how each month evolves over the years."""
     pivot = monthly_pivot(df)
     data = pivot.to_numpy()
+
+    # Discrete 2 °C bands in a high-contrast diverging palette: each band is a
+    # distinct, temperature-intuitive colour (blue cold → yellow → red hot),
+    # so individual months and their drift across years are easy to tell apart.
+    step = 2
+    vmin = np.floor(np.nanmin(data) / step) * step
+    vmax = np.ceil(np.nanmax(data) / step) * step
+    levels = np.arange(vmin, vmax + step, step)
+    cmap = plt.get_cmap("RdYlBu_r", len(levels) - 1)
+    norm = BoundaryNorm(levels, ncolors=cmap.N)
+
     image = ax.imshow(
         data,
         aspect="auto",
-        cmap="RdBu_r",
+        cmap=cmap,
+        norm=norm,
         origin="lower",
+        interpolation="nearest",
         extent=(0.5, 12.5, pivot.index.min() - 0.5, pivot.index.max() + 0.5),
     )
     ax.set_title(f"Monthly mean temperature by year — {location.name}")
@@ -150,7 +164,9 @@ def plot_monthly_heatmap(df: pd.DataFrame, location: Location, ax: plt.Axes) -> 
         ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     )
-    colorbar = ax.figure.colorbar(image, ax=ax, fraction=0.046, pad=0.04)
+    colorbar = ax.figure.colorbar(
+        image, ax=ax, fraction=0.046, pad=0.04, ticks=levels[::2]
+    )
     colorbar.set_label("Monthly mean (°C)")
 
 
