@@ -196,7 +196,8 @@ def save_all(df: pd.DataFrame, location: Location, output_dir: Path) -> list[Pat
         draw(df, location, ax)
         fig.tight_layout()
         path = output_dir / f"{slug}_{name}.png"
-        fig.savefig(path, dpi=120)
+        # Higher DPI than the dashboard so panels stay crisp when opened full-page.
+        fig.savefig(path, dpi=160)
         plt.close(fig)
         written.append(path)
 

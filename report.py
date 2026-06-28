@@ -83,6 +83,26 @@ _PAGE = Template(
   figure img { width: 100%; height: auto; display: block; border-radius: 8px; }
   figcaption { color: #475569; font-size: .85rem; padding: .5rem .25rem 0;
                text-align: center; }
+  .charts figure { cursor: zoom-in; transition: transform .12s ease,
+                   border-color .12s ease, box-shadow .12s ease; }
+  .charts figure:hover { border-color: #64748b; transform: translateY(-2px);
+                         box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+  .lightbox {
+    position: fixed; inset: 0; z-index: 50;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2rem; cursor: zoom-out;
+    background: rgba(2, 6, 23, .93);
+  }
+  .lightbox[hidden] { display: none; }
+  .lightbox img {
+    max-width: 96vw; max-height: 88vh;
+    background: #fff; border-radius: 10px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, .6);
+  }
+  .lightbox p { color: #cbd5e1; margin: .9rem 0 0; font-size: .95rem;
+                text-align: center; }
+  .lightbox .hint { color: #64748b; font-size: .8rem; margin-top: .4rem; }
   footer { text-align: center; color: #64748b; font-size: .82rem;
            padding: 2rem 1.5rem 3rem; }
   footer a { color: #93c5fd; }
@@ -138,6 +158,42 @@ _PAGE = Template(
   <a href="https://open-meteo.com/">Open-Meteo</a> historical reanalysis (ERA5) ·
   <a href="https://github.com/YASoftwareDev/temperatury">source on GitHub</a>
 </footer>
+
+<div id="lightbox" class="lightbox" hidden>
+  <img id="lightbox-img" src="" alt="">
+  <p id="lightbox-cap"></p>
+  <p class="hint">Click anywhere or press Esc to close</p>
+</div>
+<script>
+(function () {
+  var box = document.getElementById('lightbox');
+  var img = document.getElementById('lightbox-img');
+  var cap = document.getElementById('lightbox-cap');
+
+  function open(figure) {
+    var thumb = figure.querySelector('img');
+    var caption = figure.querySelector('figcaption');
+    img.src = thumb.src;
+    img.alt = thumb.alt;
+    cap.textContent = caption ? caption.textContent : '';
+    box.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    box.hidden = true;
+    img.src = '';
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.charts figure').forEach(function (figure) {
+    figure.addEventListener('click', function () { open(figure); });
+  });
+  box.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') close();
+  });
+})();
+</script>
 </body>
 </html>
 """
