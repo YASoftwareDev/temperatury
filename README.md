@@ -15,7 +15,7 @@ localised too). Add a city in `config.py`, a language in `i18n.py`.
 
 ## What it makes
 
-A dashboard plus five standalone PNGs in `output/`:
+A dashboard plus six standalone PNGs in `output/`:
 
 | View | Question it answers |
 |------|---------------------|
@@ -24,6 +24,7 @@ A dashboard plus five standalone PNGs in `output/`:
 | **Anomaly bars** | How does each year compare to the 1961–1990 norm? (blue = cooler, red = warmer) |
 | **Month × year heatmap** | *Which months/seasons* are warming? (discrete 2 °C bands) |
 | **Monthly anomaly heatmap** | How much has *each month* shifted vs. its 1961–1990 norm? (seasonal cycle removed, robust scale) |
+| **Monthly min–max range** | For each month, where does the latest year fall within the full historical envelope? |
 
 Every view is time-aware: the hot/freezing-day counts track the distribution's
 tails year by year, and the monthly-anomaly view

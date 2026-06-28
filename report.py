@@ -172,6 +172,10 @@ _PAGE = Template(
       <figcaption>${cap_anom_heatmap}</figcaption>
     </figure>
     <figure>
+      <img src="${slug}_monthly-range.png" alt="">
+      <figcaption>${cap_range}</figcaption>
+    </figure>
+    <figure>
       <img src="${slug}_threshold-days.png" alt="">
       <figcaption>${cap_threshold}</figcaption>
     </figure>
@@ -292,6 +296,7 @@ def build_site(
         cap_anomalies=tr["cap_anomalies"],
         cap_heatmap=tr["cap_heatmap"],
         cap_anom_heatmap=tr["cap_anom_heatmap"],
+        cap_range=tr["cap_range"],
         cap_threshold=tr["cap_threshold"],
         hint=tr["hint"],
         footer=tr["footer"].format(date=dt.date.today().isoformat()),

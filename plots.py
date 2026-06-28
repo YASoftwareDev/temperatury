@@ -1,12 +1,13 @@
 """Plotting of temperature distribution and long-term change.
 
-Five views are produced:
+Six views are produced:
 
 * ``plot_threshold_days``          -- hot (>18°C) & freezing (<0°C) days per year
 * ``plot_yearly_trend``            -- annual mean per year + least-squares trend
 * ``plot_anomalies``               -- annual anomaly vs. a 1961-1990 baseline
 * ``plot_monthly_heatmap``         -- year x month grid of monthly means
 * ``plot_monthly_anomaly_heatmap`` -- per-month anomaly vs. 1961-1990
+* ``plot_monthly_range``           -- per-month min-max envelope + latest year
 
 Every plotting helper takes a translation table ``tr`` (see :mod:`i18n`) so all
 labels are localised. ``build_dashboard`` arranges the views in one figure; each
@@ -244,6 +245,41 @@ def plot_monthly_anomaly_heatmap(
     colorbar.set_label(tr["anom_heatmap_cbar"].format(base=base_label))
 
 
+def plot_monthly_range(
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
+    """Each month's min–max envelope across all years, with the latest year.
+
+    The shaded band is the full historical range of monthly means; the bold
+    line is the most recent year — at a glance you see whether 'now' sits near
+    the warm (top) edge of everything on record.
+    """
+    pivot = monthly_pivot(df)
+    months = list(range(1, 13))
+    mn = pivot.min(axis=0).to_numpy()
+    mx = pivot.max(axis=0).to_numpy()
+    avg = pivot.mean(axis=0).to_numpy()
+    start, latest_year = int(pivot.index.min()), int(pivot.index.max())
+    latest = pivot.loc[latest_year].to_numpy()
+
+    ax.fill_between(months, mn, mx, color="#94a3b8", alpha=0.35,
+                    label=tr["range_min_max"].format(start=start, end=latest_year))
+    ax.plot(months, mx, color="#94a3b8", linewidth=0.8)
+    ax.plot(months, mn, color="#94a3b8", linewidth=0.8)
+    ax.plot(months, avg, color="#334155", linewidth=1.5, linestyle="--",
+            label=tr["range_average"])
+    ax.plot(months, latest, color="#d62728", linewidth=2.4, marker="o",
+            markersize=4, label=tr["range_latest"].format(year=latest_year))
+    ax.set_title(tr["range_title"].format(name=location.name))
+    ax.set_xlabel(tr["month"])
+    ax.set_ylabel(tr["range_ylabel"])
+    ax.set_xticks(months)
+    ax.set_xticklabels(tr["months"])
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best", fontsize=8)
+    ax.margins(x=0.01)
+
+
 # --- composition -----------------------------------------------------------
 def build_dashboard(df: pd.DataFrame, location: Location, tr: dict) -> Figure:
     """Arrange all five views in a single 3x2 figure (one slot left blank)."""
@@ -253,7 +289,7 @@ def build_dashboard(df: pd.DataFrame, location: Location, tr: dict) -> Figure:
     plot_anomalies(df, location, axes[1, 0], tr)
     plot_monthly_heatmap(df, location, axes[1, 1], tr)
     plot_monthly_anomaly_heatmap(df, location, axes[2, 0], tr)
-    axes[2, 1].axis("off")  # no sixth chart for this slot
+    plot_monthly_range(df, location, axes[2, 1], tr)
     start, end = df.index.year.min(), df.index.year.max()
     fig.suptitle(
         tr["dashboard_suptitle"].format(name=location.name, start=start, end=end),
@@ -284,6 +320,7 @@ def save_all(
         "anomalies": plot_anomalies,
         "monthly-heatmap": plot_monthly_heatmap,
         "monthly-anomaly": plot_monthly_anomaly_heatmap,
+        "monthly-range": plot_monthly_range,
     }
     for name, draw in panels.items():
         fig, ax = plt.subplots(figsize=(9, 5.5))

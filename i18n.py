@@ -64,6 +64,13 @@ TRANSLATIONS: dict[str, dict] = {
         "map_sub": "Pick a capital on the map — or from the list",
         "choose_city": "Choose a city…",
         "back_to_map": "🗺 Map",
+        "range_title": "Monthly temperature range across the years — {name}",
+        "range_min_max": "min–max {start}–{end}",
+        "range_average": "average",
+        "range_latest": "latest ({year})",
+        "range_ylabel": "Monthly mean temperature (°C)",
+        "cap_range": "Each month's min–max range over the years, with the latest "
+                     "year — is it hugging the warm edge?",
         "footer": 'Generated {date} · data from '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   'historical reanalysis (ERA5) · '
@@ -117,6 +124,13 @@ TRANSLATIONS: dict[str, dict] = {
         "map_sub": "Wybierz stolicę na mapie — lub z listy",
         "choose_city": "Wybierz miasto…",
         "back_to_map": "🗺 Mapa",
+        "range_title": "Zakres miesięcznych temperatur na przestrzeni lat — {name}",
+        "range_min_max": "min–maks {start}–{end}",
+        "range_average": "średnia",
+        "range_latest": "ostatni ({year})",
+        "range_ylabel": "Średnia miesięczna temperatura (°C)",
+        "cap_range": "Zakres min–maks każdego miesiąca w kolejnych latach, "
+                     "z ostatnim rokiem — czy zbliża się do maksimum?",
         "footer": 'Wygenerowano {date} · dane z '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanaliza historyczna ERA5) · '
@@ -169,6 +183,13 @@ TRANSLATIONS: dict[str, dict] = {
         "map_sub": "Wählen Sie eine Hauptstadt auf der Karte — oder aus der Liste",
         "choose_city": "Stadt wählen…",
         "back_to_map": "🗺 Karte",
+        "range_title": "Monatliche Temperaturspanne über die Jahre — {name}",
+        "range_min_max": "Min–Max {start}–{end}",
+        "range_average": "Durchschnitt",
+        "range_latest": "aktuell ({year})",
+        "range_ylabel": "Monatliche Mitteltemperatur (°C)",
+        "cap_range": "Min–Max-Spanne jedes Monats über die Jahre, mit dem "
+                     "aktuellen Jahr — liegt es am oberen Rand?",
         "footer": 'Erstellt {date} · Daten von '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(historische Reanalyse ERA5) · '
