@@ -1,10 +1,13 @@
 """Command-line entry point for the temperature analysis.
 
+Generates a localised static site (one folder per language) under ``output/``:
+each city's data is downloaded once and rendered into every language.
+
 Examples
 --------
-    python main.py                          # Warszawa, 1940..last full year
+    python main.py                          # Warszawa, all languages
     python main.py --location krakow
-    python main.py --all                    # every preset city + linked index
+    python main.py --all                    # every preset city, all languages
     python main.py --lat 48.85 --lon 2.35 --name Paris
     python main.py --start 1980 --end 2024 --refresh
 """
@@ -15,6 +18,7 @@ import argparse
 import datetime as dt
 import shutil
 
+import i18n
 from config import (
     DEFAULT_LOCATION,
     EARLIEST_YEAR,
@@ -24,7 +28,7 @@ from config import (
 )
 from data import load_temperatures
 from plots import save_all, summary_stats
-from report import build_site
+from report import build_site, write_redirect
 
 
 def _last_full_year() -> int:
@@ -68,16 +72,6 @@ def _print_summary(df, location: Location) -> None:
     print(f"  coldest year            : {s['coldest_year']} ({s['coldest_value']:.2f} °C)")
 
 
-def _generate(location: Location, nav: list[Location], args: argparse.Namespace) -> list:
-    """Fetch one city, render its charts + page, and print its summary."""
-    print(f"Loading {location.name} temperatures {args.start}–{args.end} …")
-    df = load_temperatures(location, args.start, args.end, refresh=args.refresh)
-    _print_summary(df, location)
-    paths = save_all(df, location, OUTPUT_DIR)
-    paths.append(build_site(df, location, OUTPUT_DIR, nav))
-    return paths
-
-
 def main() -> None:
     args = _parse_args()
     if args.start > args.end:
@@ -90,20 +84,35 @@ def main() -> None:
         locations = [_resolve_location(args)]
         landing = locations[0]
 
-    paths: list = []
+    written = 0
     for location in locations:
-        paths.extend(_generate(location, locations, args))
+        print(f"Loading {location.name} temperatures {args.start}–{args.end} …")
+        # Data is language-neutral: download once, render into every language.
+        df = load_temperatures(location, args.start, args.end, refresh=args.refresh)
+        _print_summary(df, location)
+        for lang in i18n.LANGUAGES:
+            tr = i18n.get(lang)
+            lang_dir = OUTPUT_DIR / lang
+            written += len(save_all(df, location, lang_dir, tr))
+            build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr)
+            written += 1
 
-    # The root index.html shows the landing city (its page is self-contained,
-    # so a straight copy keeps every relative link and image valid).
-    landing_slug = landing.slug
-    index_path = OUTPUT_DIR / "index.html"
-    shutil.copyfile(OUTPUT_DIR / f"{landing_slug}.html", index_path)
-    paths.append(index_path)
+    # Per-language landing page (copy of the default city's self-contained page).
+    for lang in i18n.LANGUAGES:
+        src = OUTPUT_DIR / lang / f"{landing.slug}.html"
+        shutil.copyfile(src, OUTPUT_DIR / lang / "index.html")
+        written += 1
 
-    print("\nWrote:")
-    for path in paths:
-        print(f"  {path}")
+    # Root index.html redirects to the default language.
+    write_redirect(
+        OUTPUT_DIR / "index.html",
+        f"{i18n.DEFAULT_LANG}/index.html",
+        i18n.DEFAULT_LANG,
+    )
+    written += 1
+
+    print(f"\nWrote {written} files to {OUTPUT_DIR} "
+          f"({len(locations)} cities × {len(i18n.LANGUAGES)} languages).")
 
 
 if __name__ == "__main__":

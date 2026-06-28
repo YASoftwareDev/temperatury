@@ -6,7 +6,9 @@ using free [Open-Meteo](https://open-meteo.com/) reanalysis data (daily, from
 through the years**.
 
 **🌍 Live site:** https://yasoftwaredev.github.io/temperatury/ (auto-rebuilt from
-fresh data on each push and yearly).
+fresh data on each push and yearly). Available in **Polish, English and German**
+(switcher in the header; charts are localised too). Add a language by adding one
+entry to `TRANSLATIONS` in `i18n.py`.
 
 ![Warszawa temperature dashboard](assets/dashboard.png)
 

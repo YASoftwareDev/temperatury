@@ -1,10 +1,9 @@
 """Generate a self-contained static web page for GitHub Pages.
 
-``build_site`` writes ``<slug>.html`` into the output directory next to the
-PNGs produced by :mod:`plots`, with a nav bar linking sibling city pages, so
-the whole folder can be published as-is.
-The page has no external CSS/JS/CDN dependencies — everything is inline, so
-it renders identically offline and on Pages.
+``build_site`` writes ``<slug>.html`` into a per-language output directory next
+to the localised PNGs produced by :mod:`plots`. Each page carries a city
+switcher (same language) and a language switcher (same city, sibling language
+folder). No external CSS/JS/CDN — everything is inline.
 """
 
 from __future__ import annotations
@@ -14,11 +13,12 @@ from pathlib import Path
 from string import Template
 
 from config import Location
+from i18n import LANG_NAMES
 from plots import summary_stats
 
 _PAGE = Template(
     """<!DOCTYPE html>
-<html lang="en">
+<html lang="${html_lang}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,6 +50,9 @@ _PAGE = Template(
   }
   nav a:hover { border-color: #64748b; }
   nav a.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+  nav.langs { margin-top: .6rem; }
+  nav.langs a { font-size: .8rem; padding: .25rem .7rem; }
+  nav.langs a.active { background: #0f766e; border-color: #0f766e; }
   main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
   .stats {
     display: grid;
@@ -113,60 +116,57 @@ _PAGE = Template(
   <h1>${title}</h1>
   <p>${subtitle}</p>
   <nav>${nav}</nav>
+  <nav class="langs">${lang_nav}</nav>
 </header>
 <main>
   <section class="stats">
     <div class="card trend">
-      <div class="label">Warming trend</div>
-      <div class="value">${trend} °C / decade</div>
+      <div class="label">${card_trend}</div>
+      <div class="value">${trend} ${trend_unit}</div>
     </div>
     <div class="card">
-      <div class="label">Mean daily temp</div>
+      <div class="label">${card_mean}</div>
       <div class="value">${mean} °C</div>
     </div>
     <div class="card">
-      <div class="label">Warmest year</div>
+      <div class="label">${card_warmest}</div>
       <div class="value">${warmest_year}</div>
     </div>
     <div class="card">
-      <div class="label">Coldest year</div>
+      <div class="label">${card_coldest}</div>
       <div class="value">${coldest_year}</div>
     </div>
   </section>
 
   <section class="charts">
     <figure>
-      <img src="${slug}_yearly-trend.png" alt="Annual mean temperature trend">
-      <figcaption>Annual mean temperature with least-squares trend</figcaption>
+      <img src="${slug}_yearly-trend.png" alt="">
+      <figcaption>${cap_yearly}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_anomalies.png" alt="Annual temperature anomalies">
-      <figcaption>Yearly anomaly vs. 1961–1990 (blue cooler, red warmer)</figcaption>
+      <img src="${slug}_anomalies.png" alt="">
+      <figcaption>${cap_anomalies}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_monthly-heatmap.png" alt="Monthly mean temperature by year">
-      <figcaption>Monthly mean by year — which seasons warm</figcaption>
+      <img src="${slug}_monthly-heatmap.png" alt="">
+      <figcaption>${cap_heatmap}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_monthly-anomaly.png" alt="Monthly anomaly vs. 1961–1990">
-      <figcaption>Monthly anomaly vs. 1961–1990 — warming isolated per month</figcaption>
+      <img src="${slug}_monthly-anomaly.png" alt="">
+      <figcaption>${cap_anom_heatmap}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_threshold-days.png" alt="Hot and freezing days per year">
-      <figcaption>Hot (&gt;18 °C) &amp; freezing (&lt;0 °C) days per year — the distribution's tails</figcaption>
+      <img src="${slug}_threshold-days.png" alt="">
+      <figcaption>${cap_threshold}</figcaption>
     </figure>
   </section>
 </main>
-<footer>
-  Generated ${generated} · data from
-  <a href="https://open-meteo.com/">Open-Meteo</a> historical reanalysis (ERA5) ·
-  <a href="https://github.com/YASoftwareDev/temperatury">source on GitHub</a>
-</footer>
+<footer>${footer}</footer>
 
 <div id="lightbox" class="lightbox" hidden>
   <img id="lightbox-img" src="" alt="">
   <p id="lightbox-cap"></p>
-  <p class="hint">Click anywhere or press Esc to close</p>
+  <p class="hint">${hint}</p>
 </div>
 <script>
 (function () {
@@ -178,7 +178,6 @@ _PAGE = Template(
     var thumb = figure.querySelector('img');
     var caption = figure.querySelector('figcaption');
     img.src = thumb.src;
-    img.alt = thumb.alt;
     cap.textContent = caption ? caption.textContent : '';
     box.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -203,9 +202,23 @@ _PAGE = Template(
 """
 )
 
+_REDIRECT = Template(
+    """<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=${target}">
+<link rel="canonical" href="${target}">
+<title>temperatury</title>
+</head>
+<body><a href="${target}">temperatury →</a></body>
+</html>
+"""
+)
 
-def _nav_html(current: Location, nav_locations: list[Location]) -> str:
-    """Pill links to every city page, highlighting the current one."""
+
+def _city_nav(current: Location, nav_locations: list[Location]) -> str:
+    """Pill links to every city page in the current language."""
     links = []
     for loc in nav_locations:
         cls = ' class="active"' if loc.slug == current.slug else ""
@@ -213,39 +226,65 @@ def _nav_html(current: Location, nav_locations: list[Location]) -> str:
     return "".join(links)
 
 
+def _lang_nav(current_lang: str, languages: list[str], slug: str) -> str:
+    """Pill links to the same city in each sibling-language folder."""
+    links = []
+    for code in languages:
+        cls = ' class="active"' if code == current_lang else ""
+        links.append(f'<a href="../{code}/{slug}.html"{cls}>{LANG_NAMES[code]}</a>')
+    return "".join(links)
+
+
 def build_site(
     df,
     location: Location,
     output_dir: Path,
-    nav_locations: list[Location] | None = None,
+    nav_locations: list[Location],
+    lang: str,
+    languages: list[str],
+    tr: dict,
 ) -> Path:
-    """Write ``<slug>.html`` into ``output_dir`` and return its path.
-
-    ``nav_locations`` populates the city switcher; it defaults to just the
-    current location (a single-city page with no other links).
-    """
+    """Write ``<slug>.html`` (localised) into ``output_dir``; return its path."""
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
     stats = summary_stats(df)
 
     html = _PAGE.substitute(
-        title=f"{location.name} temperatures",
-        subtitle=(
-            f"{stats['start']}–{stats['end']} · {stats['days']:,} days · "
-            f"warmest {stats['warmest_year']} "
-            f"({stats['warmest_value']:.1f} °C), "
-            f"coldest {stats['coldest_year']} "
-            f"({stats['coldest_value']:.1f} °C)"
+        html_lang=tr["html_lang"],
+        title=tr["page_title"].format(name=location.name),
+        subtitle=tr["subtitle"].format(
+            start=stats["start"], end=stats["end"], days=f"{stats['days']:,}",
+            wy=stats["warmest_year"], wv=stats["warmest_value"],
+            cy=stats["coldest_year"], cv=stats["coldest_value"],
         ),
-        nav=_nav_html(location, nav_locations or [location]),
+        nav=_city_nav(location, nav_locations),
+        lang_nav=_lang_nav(lang, languages, slug),
         trend=f"{stats['trend_per_decade']:+.2f}",
+        trend_unit=tr["per_decade_c"],
         mean=f"{stats['mean']:.1f}",
         warmest_year=stats["warmest_year"],
         coldest_year=stats["coldest_year"],
+        card_trend=tr["card_trend"],
+        card_mean=tr["card_mean"],
+        card_warmest=tr["card_warmest"],
+        card_coldest=tr["card_coldest"],
+        cap_yearly=tr["cap_yearly"],
+        cap_anomalies=tr["cap_anomalies"],
+        cap_heatmap=tr["cap_heatmap"],
+        cap_anom_heatmap=tr["cap_anom_heatmap"],
+        cap_threshold=tr["cap_threshold"],
+        hint=tr["hint"],
+        footer=tr["footer"].format(date=dt.date.today().isoformat()),
         slug=slug,
-        generated=dt.date.today().isoformat(),
     )
 
     path = output_dir / f"{slug}.html"
     path.write_text(html, encoding="utf-8")
+    return path
+
+
+def write_redirect(path: Path, target: str, lang: str) -> Path:
+    """Write a tiny meta-refresh page at ``path`` pointing to ``target``."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_REDIRECT.substitute(target=target, lang=lang), encoding="utf-8")
     return path

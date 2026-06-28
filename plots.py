@@ -8,8 +8,9 @@ Five views are produced:
 * ``plot_monthly_heatmap``         -- year x month grid of monthly means
 * ``plot_monthly_anomaly_heatmap`` -- per-month anomaly vs. 1961-1990
 
-``build_dashboard`` arranges them in one figure; each helper can also draw
-onto a caller-supplied Axes for standalone PNGs.
+Every plotting helper takes a translation table ``tr`` (see :mod:`i18n`) so all
+labels are localised. ``build_dashboard`` arranges the views in one figure; each
+helper can also draw onto a caller-supplied Axes for standalone PNGs.
 """
 
 from __future__ import annotations
@@ -80,7 +81,9 @@ def monthly_pivot(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # --- individual plots ------------------------------------------------------
-def plot_threshold_days(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
+def plot_threshold_days(
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
     """Count of hot (>18 °C) and freezing (<0 °C) days per year, with trends.
 
     A concrete, fully measurable view of the distribution's tails: as the
@@ -94,8 +97,8 @@ def plot_threshold_days(df: pd.DataFrame, location: Location, ax: plt.Axes) -> N
     years = hot.index.to_numpy(dtype=float)
 
     series = [
-        (hot, "#d62728", f"hot days (>{HOT_DAY_C:.0f} °C)"),
-        (freeze, "#2c7fb8", f"freezing days (<{FREEZE_DAY_C:.0f} °C)"),
+        (hot, "#d62728", tr["threshold_hot"].format(t=HOT_DAY_C)),
+        (freeze, "#2c7fb8", tr["threshold_freeze"].format(t=FREEZE_DAY_C)),
     ]
     for data, color, label in series:
         values = data.to_numpy(dtype=float)
@@ -103,17 +106,19 @@ def plot_threshold_days(df: pd.DataFrame, location: Location, ax: plt.Axes) -> N
         ax.plot(years, values, color=color, linewidth=1.0, marker="o",
                 markersize=2.5, alpha=0.4)
         ax.plot(years, fitted, color=color, linewidth=2.6,
-                label=f"{label}: {slope * 10:+.1f} days / decade")
+                label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']}")
 
-    ax.set_title(f"Hot & freezing days per year — {location.name}")
-    ax.set_xlabel("Year")
-    ax.set_ylabel("Days per year")
+    ax.set_title(tr["threshold_title"].format(name=location.name))
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(tr["days_per_year"])
     ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
     ax.margins(x=0.01)
 
 
-def plot_yearly_trend(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
+def plot_yearly_trend(
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
     """Annual mean temperature per year with a least-squares trend line."""
     means = annual_means(df)
     years = means.index.to_numpy(dtype=float)
@@ -121,17 +126,19 @@ def plot_yearly_trend(df: pd.DataFrame, location: Location, ax: plt.Axes) -> Non
     slope, fitted = linear_trend(years, values)
 
     ax.plot(years, values, marker="o", markersize=3, color="#2c7fb8",
-            linewidth=1, label="annual mean")
+            linewidth=1, label=tr["annual_mean"])
     ax.plot(years, fitted, color="#d62728", linewidth=2.5,
-            label=f"trend {slope * 10:+.2f} °C / decade")
-    ax.set_title(f"Annual mean temperature through the years — {location.name}")
-    ax.set_xlabel("Year")
-    ax.set_ylabel("Annual mean temperature (°C)")
+            label=f"{tr['trend']} {slope * 10:+.2f} {tr['per_decade_c']}")
+    ax.set_title(tr["yearly_title"].format(name=location.name))
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(tr["yearly_ylabel"])
     ax.legend()
     ax.grid(True, alpha=0.3)
 
 
-def plot_anomalies(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
+def plot_anomalies(
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
     """Annual anomaly relative to the 1961-1990 mean (blue cooler, red warmer)."""
     means = annual_means(df)
     lo, hi = BASELINE
@@ -143,17 +150,19 @@ def plot_anomalies(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
     ax.bar(means.index, anomaly.to_numpy(), color=colors, width=0.9)
     ax.axhline(0, color="black", linewidth=0.8)
     label = (
-        f"vs. {lo}-{hi} mean ({baseline:.1f} °C)"
+        tr["vs_baseline"].format(lo=lo, hi=hi, base=baseline)
         if not baseline_years.empty
-        else f"vs. full-period mean ({baseline:.1f} °C)"
+        else tr["vs_full"].format(base=baseline)
     )
-    ax.set_title(f"Annual temperature anomaly — {location.name}")
-    ax.set_xlabel("Year")
-    ax.set_ylabel(f"Anomaly (°C)\n{label}")
+    ax.set_title(tr["anomaly_title"].format(name=location.name))
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(f"{tr['anomaly_ylabel']}\n{label}")
     ax.grid(True, axis="y", alpha=0.3)
 
 
-def plot_monthly_heatmap(df: pd.DataFrame, location: Location, ax: plt.Axes) -> None:
+def plot_monthly_heatmap(
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
     """Year x month heatmap showing how each month evolves over the years."""
     pivot = monthly_pivot(df)
     data = pivot.to_numpy()
@@ -177,22 +186,19 @@ def plot_monthly_heatmap(df: pd.DataFrame, location: Location, ax: plt.Axes) -> 
         interpolation="nearest",
         extent=(0.5, 12.5, pivot.index.min() - 0.5, pivot.index.max() + 0.5),
     )
-    ax.set_title(f"Monthly mean temperature by year — {location.name}")
-    ax.set_xlabel("Month")
-    ax.set_ylabel("Year")
+    ax.set_title(tr["heatmap_title"].format(name=location.name))
+    ax.set_xlabel(tr["month"])
+    ax.set_ylabel(tr["year"])
     ax.set_xticks(range(1, 13))
-    ax.set_xticklabels(
-        ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    )
+    ax.set_xticklabels(tr["months"])
     colorbar = ax.figure.colorbar(
         image, ax=ax, fraction=0.046, pad=0.04, ticks=levels[::2]
     )
-    colorbar.set_label("Monthly mean (°C)")
+    colorbar.set_label(tr["heatmap_cbar"])
 
 
 def plot_monthly_anomaly_heatmap(
-    df: pd.DataFrame, location: Location, ax: plt.Axes
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
 ) -> None:
     """Per-month anomaly heatmap: each month normalised to its 1961-1990 mean.
 
@@ -226,35 +232,31 @@ def plot_monthly_anomaly_heatmap(
         interpolation="nearest",
         extent=(0.5, 12.5, pivot.index.min() - 0.5, pivot.index.max() + 0.5),
     )
-    base_label = f"{lo}–{hi}" if not base_rows.empty else "full-period"
-    ax.set_title(f"Monthly anomaly vs. {base_label} — {location.name}")
-    ax.set_xlabel("Month")
-    ax.set_ylabel("Year")
+    base_label = f"{lo}–{hi}" if not base_rows.empty else tr["full_period"]
+    ax.set_title(tr["anom_heatmap_title"].format(base=base_label, name=location.name))
+    ax.set_xlabel(tr["month"])
+    ax.set_ylabel(tr["year"])
     ax.set_xticks(range(1, 13))
-    ax.set_xticklabels(
-        ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    )
+    ax.set_xticklabels(tr["months"])
     colorbar = ax.figure.colorbar(
         image, ax=ax, fraction=0.046, pad=0.04, ticks=levels[::2]
     )
-    colorbar.set_label(f"Anomaly vs. {base_label} (°C)")
+    colorbar.set_label(tr["anom_heatmap_cbar"].format(base=base_label))
 
 
 # --- composition -----------------------------------------------------------
-def build_dashboard(df: pd.DataFrame, location: Location) -> Figure:
-    """Arrange all four views in a single 2x2 figure."""
+def build_dashboard(df: pd.DataFrame, location: Location, tr: dict) -> Figure:
+    """Arrange all five views in a single 3x2 figure (one slot left blank)."""
     fig, axes = plt.subplots(3, 2, figsize=(16, 16))
-    plot_threshold_days(df, location, axes[0, 0])
-    plot_yearly_trend(df, location, axes[0, 1])
-    plot_anomalies(df, location, axes[1, 0])
-    plot_monthly_heatmap(df, location, axes[1, 1])
-    plot_monthly_anomaly_heatmap(df, location, axes[2, 0])
-    axes[2, 1].axis("off")  # no fifth chart for this slot
+    plot_threshold_days(df, location, axes[0, 0], tr)
+    plot_yearly_trend(df, location, axes[0, 1], tr)
+    plot_anomalies(df, location, axes[1, 0], tr)
+    plot_monthly_heatmap(df, location, axes[1, 1], tr)
+    plot_monthly_anomaly_heatmap(df, location, axes[2, 0], tr)
+    axes[2, 1].axis("off")  # no sixth chart for this slot
     start, end = df.index.year.min(), df.index.year.max()
     fig.suptitle(
-        f"{location.name} temperatures {start}-{end} "
-        f"(source: Open-Meteo reanalysis)",
+        tr["dashboard_suptitle"].format(name=location.name, start=start, end=end),
         fontsize=15,
         fontweight="bold",
     )
@@ -262,13 +264,15 @@ def build_dashboard(df: pd.DataFrame, location: Location) -> Figure:
     return fig
 
 
-def save_all(df: pd.DataFrame, location: Location, output_dir: Path) -> list[Path]:
+def save_all(
+    df: pd.DataFrame, location: Location, output_dir: Path, tr: dict
+) -> list[Path]:
     """Render the dashboard plus each standalone panel; return written paths."""
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
     written: list[Path] = []
 
-    dashboard = build_dashboard(df, location)
+    dashboard = build_dashboard(df, location, tr)
     dash_path = output_dir / f"{slug}_dashboard.png"
     dashboard.savefig(dash_path, dpi=120)
     plt.close(dashboard)
@@ -283,7 +287,7 @@ def save_all(df: pd.DataFrame, location: Location, output_dir: Path) -> list[Pat
     }
     for name, draw in panels.items():
         fig, ax = plt.subplots(figsize=(9, 5.5))
-        draw(df, location, ax)
+        draw(df, location, ax, tr)
         fig.tight_layout()
         path = output_dir / f"{slug}_{name}.png"
         # Higher DPI than the dashboard so panels stay crisp when opened full-page.
