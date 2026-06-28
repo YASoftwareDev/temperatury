@@ -1,6 +1,6 @@
 .venv/
 output/
-data/
+# data/ is committed (Open-Meteo rate-limits CI's shared IP) — refresh locally.
 __pycache__/
 *.pyc
 .ruff_cache/

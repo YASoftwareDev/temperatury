@@ -88,6 +88,16 @@ def main() -> None:
     frames = load_temperatures_bulk(locations, args.start, args.end,
                                     refresh=args.refresh)
 
+    # Build only the cities we actually have data for (a rate-limited or
+    # unreachable city is skipped rather than failing the whole site).
+    missing = [loc.name for loc in locations if loc.slug not in frames]
+    if missing:
+        print(f"Note: {len(missing)} location(s) without data, skipped: "
+              f"{', '.join(missing)}")
+    locations = [loc for loc in locations if loc.slug in frames]
+    if not locations:
+        raise SystemExit("No location data available — nothing to build.")
+
     written = 0
     for location in locations:
         df = frames[location.slug]

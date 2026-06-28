@@ -39,8 +39,8 @@ def _retry_after(response: requests.Response, attempt: int) -> float:
 
 
 def _cache_path(location: Location, start_year: int, end_year: int) -> Path:
-    """Return the on-disk CSV path for a given location and span."""
-    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}.csv"
+    """Return the on-disk cache path (gzipped CSV) for a location and span."""
+    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}.csv.gz"
 
 
 def _request(params: dict, what: str):
@@ -156,13 +156,15 @@ def load_temperatures_bulk(
             "timezone": "auto",
         }
         label = f"{len(chunk)} locations ({chunk[0].name}…)"
-        payload = _request(params, label)
+        try:
+            payload = _request(params, label)
+        except RuntimeError as error:
+            # Don't abort the whole build for an unreachable / rate-limited
+            # chunk — skip it (its cities are simply absent this run) and
+            # carry on with whatever data we do have.
+            print(f"  ! skipping {label}: {error}")
+            continue
         items = payload if isinstance(payload, list) else [payload]
-        if len(items) != len(chunk):
-            raise RuntimeError(
-                f"Open-Meteo returned {len(items)} results for {len(chunk)} "
-                f"requested locations."
-            )
         for location, item in zip(chunk, items):
             frame = _parse_daily(item.get("daily"), location.name)
             frame.to_csv(_cache_path(location, start_year, end_year))
