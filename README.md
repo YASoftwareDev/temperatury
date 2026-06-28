@@ -12,17 +12,20 @@ fresh data on each push and yearly).
 
 ## What it makes
 
-A 2×2 dashboard plus four standalone PNGs in `output/`:
+A dashboard plus five standalone PNGs in `output/`:
 
 | View | Question it answers |
 |------|---------------------|
 | **Histogram** | What is the *distribution* of daily temperatures? |
 | **Annual trend** | How does the yearly mean change over time? (with °C/decade trend) |
 | **Anomaly bars** | How does each year compare to the 1961–1990 norm? (blue = cooler, red = warmer) |
-| **Month × year heatmap** | *Which months/seasons* are warming? |
+| **Month × year heatmap** | *Which months/seasons* are warming? (discrete 2 °C bands) |
+| **Monthly anomaly heatmap** | How much has *each month* shifted vs. its 1961–1990 norm? (seasonal cycle removed, robust scale) |
 
 The histogram intentionally discards the time axis, so it cannot show warming;
-the other three views add that missing time dimension.
+the other four views add that missing time dimension. The monthly-anomaly view
+normalises each month to its own baseline, so the warming signal stands out
+even where the absolute heatmap is dominated by the seasonal cycle.
 
 ## Setup
 

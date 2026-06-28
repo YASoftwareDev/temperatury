@@ -1,14 +1,15 @@
 """Plotting of temperature distribution and long-term change.
 
-Four views are produced:
+Five views are produced:
 
-* ``plot_histogram``        -- distribution of daily mean temperatures
-* ``plot_yearly_trend``     -- annual mean per year + least-squares trend
-* ``plot_anomalies``        -- annual anomaly vs. a 1961-1990 baseline
-* ``plot_monthly_heatmap``  -- year x month grid of monthly means
+* ``plot_histogram``               -- distribution of daily mean temperatures
+* ``plot_yearly_trend``            -- annual mean per year + least-squares trend
+* ``plot_anomalies``               -- annual anomaly vs. a 1961-1990 baseline
+* ``plot_monthly_heatmap``         -- year x month grid of monthly means
+* ``plot_monthly_anomaly_heatmap`` -- per-month anomaly vs. 1961-1990
 
-``build_dashboard`` arranges all four in one figure; each helper can also
-draw onto a caller-supplied Axes for standalone PNGs.
+``build_dashboard`` arranges them in one figure; each helper can also draw
+onto a caller-supplied Axes for standalone PNGs.
 """
 
 from __future__ import annotations
@@ -170,14 +171,66 @@ def plot_monthly_heatmap(df: pd.DataFrame, location: Location, ax: plt.Axes) -> 
     colorbar.set_label("Monthly mean (°C)")
 
 
+def plot_monthly_anomaly_heatmap(
+    df: pd.DataFrame, location: Location, ax: plt.Axes
+) -> None:
+    """Per-month anomaly heatmap: each month normalised to its 1961-1990 mean.
+
+    Removing each month's own seasonal mean isolates the warming signal, so a
+    centred diverging palette (white = no change) reveals how much every month
+    has shifted — even small drifts the absolute heatmap hides.
+    """
+    pivot = monthly_pivot(df)
+    lo, hi = BASELINE
+    base_rows = pivot.loc[(pivot.index >= lo) & (pivot.index <= hi)]
+    baseline = base_rows.mean(axis=0) if not base_rows.empty else pivot.mean(axis=0)
+    data = pivot.sub(baseline, axis=1).to_numpy()
+
+    # Symmetric 0.5 °C bands around zero so warming/cooling read at a glance.
+    # A few extreme winter anomalies would otherwise stretch the scale and wash
+    # out the smaller summer signal, so cap the range at the 96th percentile and
+    # let outliers saturate (arrows on the colour bar).
+    step = 0.5
+    robust = np.nanpercentile(np.abs(data), 96)
+    vmax = max(np.ceil(robust / step) * step, 2 * step)
+    levels = np.arange(-vmax, vmax + step, step)
+    cmap = plt.get_cmap("RdBu_r")
+    norm = BoundaryNorm(levels, ncolors=cmap.N, extend="both")
+
+    image = ax.imshow(
+        data,
+        aspect="auto",
+        cmap=cmap,
+        norm=norm,
+        origin="lower",
+        interpolation="nearest",
+        extent=(0.5, 12.5, pivot.index.min() - 0.5, pivot.index.max() + 0.5),
+    )
+    base_label = f"{lo}–{hi}" if not base_rows.empty else "full-period"
+    ax.set_title(f"Monthly anomaly vs. {base_label} — {location.name}")
+    ax.set_xlabel("Month")
+    ax.set_ylabel("Year")
+    ax.set_xticks(range(1, 13))
+    ax.set_xticklabels(
+        ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    )
+    colorbar = ax.figure.colorbar(
+        image, ax=ax, fraction=0.046, pad=0.04, ticks=levels[::2]
+    )
+    colorbar.set_label(f"Anomaly vs. {base_label} (°C)")
+
+
 # --- composition -----------------------------------------------------------
 def build_dashboard(df: pd.DataFrame, location: Location) -> Figure:
     """Arrange all four views in a single 2x2 figure."""
-    fig, axes = plt.subplots(2, 2, figsize=(16, 11))
+    fig, axes = plt.subplots(3, 2, figsize=(16, 16))
     plot_histogram(df, location, axes[0, 0])
     plot_yearly_trend(df, location, axes[0, 1])
     plot_anomalies(df, location, axes[1, 0])
     plot_monthly_heatmap(df, location, axes[1, 1])
+    plot_monthly_anomaly_heatmap(df, location, axes[2, 0])
+    axes[2, 1].axis("off")  # no fifth chart for this slot
     start, end = df.index.year.min(), df.index.year.max()
     fig.suptitle(
         f"{location.name} temperatures {start}-{end} "
@@ -206,6 +259,7 @@ def save_all(df: pd.DataFrame, location: Location, output_dir: Path) -> list[Pat
         "yearly-trend": plot_yearly_trend,
         "anomalies": plot_anomalies,
         "monthly-heatmap": plot_monthly_heatmap,
+        "monthly-anomaly": plot_monthly_anomaly_heatmap,
     }
     for name, draw in panels.items():
         fig, ax = plt.subplots(figsize=(9, 5.5))

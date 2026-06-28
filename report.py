@@ -148,6 +148,10 @@ _PAGE = Template(
       <figcaption>Monthly mean by year — which seasons warm</figcaption>
     </figure>
     <figure>
+      <img src="${slug}_monthly-anomaly.png" alt="Monthly anomaly vs. 1961–1990">
+      <figcaption>Monthly anomaly vs. 1961–1990 — warming isolated per month</figcaption>
+    </figure>
+    <figure>
       <img src="${slug}_histogram.png" alt="Distribution of daily temperatures">
       <figcaption>Distribution of daily mean temperatures</figcaption>
     </figure>
