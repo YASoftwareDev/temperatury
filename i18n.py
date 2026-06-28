@@ -59,6 +59,11 @@ TRANSLATIONS: dict[str, dict] = {
         "cap_anom_heatmap": "Monthly anomaly vs. 1961–1990 — warming per month",
         "cap_threshold": "Hot (&gt;18 °C) &amp; freezing (&lt;0 °C) days per year",
         "hint": "Click anywhere or press Esc to close",
+        "site_title": "European capital temperatures",
+        "map_heading": "Temperatures across Europe",
+        "map_sub": "Pick a capital on the map — or from the list",
+        "choose_city": "Choose a city…",
+        "back_to_map": "🗺 Map",
         "footer": 'Generated {date} · data from '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   'historical reanalysis (ERA5) · '
@@ -107,6 +112,11 @@ TRANSLATIONS: dict[str, dict] = {
                             "ocieplenie w każdym miesiącu",
         "cap_threshold": "Dni gorące (&gt;18 °C) i mroźne (&lt;0 °C) w roku",
         "hint": "Kliknij gdziekolwiek lub naciśnij Esc, aby zamknąć",
+        "site_title": "Temperatury stolic Europy",
+        "map_heading": "Temperatury w Europie",
+        "map_sub": "Wybierz stolicę na mapie — lub z listy",
+        "choose_city": "Wybierz miasto…",
+        "back_to_map": "🗺 Mapa",
         "footer": 'Wygenerowano {date} · dane z '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanaliza historyczna ERA5) · '
@@ -154,6 +164,11 @@ TRANSLATIONS: dict[str, dict] = {
         "cap_anom_heatmap": "Monatsanomalie ggü. 1961–1990 — Erwärmung je Monat",
         "cap_threshold": "Heiße (&gt;18 °C) &amp; Frosttage (&lt;0 °C) pro Jahr",
         "hint": "Klicken Sie irgendwo oder drücken Sie Esc zum Schließen",
+        "site_title": "Temperaturen europäischer Hauptstädte",
+        "map_heading": "Temperaturen in Europa",
+        "map_sub": "Wählen Sie eine Hauptstadt auf der Karte — oder aus der Liste",
+        "choose_city": "Stadt wählen…",
+        "back_to_map": "🗺 Karte",
         "footer": 'Erstellt {date} · Daten von '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(historische Reanalyse ERA5) · '

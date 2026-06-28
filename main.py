@@ -1,12 +1,13 @@
 """Command-line entry point for the temperature analysis.
 
 Generates a localised static site (one folder per language) under ``output/``:
-each city's data is downloaded once and rendered into every language.
+each city's data is downloaded once (concurrently) and rendered into every
+language, with a Leaflet map chooser as each language's landing page.
 
 Examples
 --------
     python main.py                          # Warszawa, all languages
-    python main.py --location krakow
+    python main.py --location paris
     python main.py --all                    # every preset city, all languages
     python main.py --lat 48.85 --lon 2.35 --name Paris
     python main.py --start 1980 --end 2024 --refresh
@@ -16,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
-import shutil
 
 import i18n
 from config import (
@@ -26,9 +26,9 @@ from config import (
     OUTPUT_DIR,
     Location,
 )
-from data import load_temperatures
+from data import load_temperatures_bulk
 from plots import save_all, summary_stats
-from report import build_site, write_redirect
+from report import build_map_page, build_site, write_redirect
 
 
 def _last_full_year() -> int:
@@ -79,17 +79,24 @@ def main() -> None:
 
     if args.all:
         locations = [LOCATIONS[key] for key in sorted(LOCATIONS)]
-        landing = LOCATIONS[DEFAULT_LOCATION]
     else:
         locations = [_resolve_location(args)]
-        landing = locations[0]
+
+    # Fetch all locations in a few bulk requests (cache-aware). Data is
+    # language-neutral, so it is downloaded once and rendered in every language.
+    print(f"Fetching {len(locations)} location(s) {args.start}–{args.end} …")
+    frames = load_temperatures_bulk(locations, args.start, args.end,
+                                    refresh=args.refresh)
 
     written = 0
     for location in locations:
-        print(f"Loading {location.name} temperatures {args.start}–{args.end} …")
-        # Data is language-neutral: download once, render into every language.
-        df = load_temperatures(location, args.start, args.end, refresh=args.refresh)
-        _print_summary(df, location)
+        df = frames[location.slug]
+        if len(locations) == 1:
+            _print_summary(df, location)
+        else:
+            s = summary_stats(df)
+            print(f"  {location.name:18s} mean {s['mean']:5.1f} °C  "
+                  f"trend {s['trend_per_decade']:+.2f}/dec")
         for lang in i18n.LANGUAGES:
             tr = i18n.get(lang)
             lang_dir = OUTPUT_DIR / lang
@@ -97,13 +104,10 @@ def main() -> None:
             build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr)
             written += 1
 
-    # Per-language landing page (copy of the default city's self-contained page).
+    # Each language's index.html is the Leaflet map chooser; root redirects.
     for lang in i18n.LANGUAGES:
-        src = OUTPUT_DIR / lang / f"{landing.slug}.html"
-        shutil.copyfile(src, OUTPUT_DIR / lang / "index.html")
+        build_map_page(OUTPUT_DIR / lang, locations, lang, i18n.LANGUAGES, i18n.get(lang))
         written += 1
-
-    # Root index.html redirects to the default language.
     write_redirect(
         OUTPUT_DIR / "index.html",
         f"{i18n.DEFAULT_LANG}/index.html",

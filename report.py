@@ -9,6 +9,7 @@ folder). No external CSS/JS/CDN — everything is inline.
 from __future__ import annotations
 
 import datetime as dt
+import json
 from pathlib import Path
 from string import Template
 
@@ -53,6 +54,21 @@ _PAGE = Template(
   nav.langs { margin-top: .6rem; }
   nav.langs a { font-size: .8rem; padding: .25rem .7rem; }
   nav.langs a.active { background: #0f766e; border-color: #0f766e; }
+  .chooser { margin-top: 1.1rem; display: flex; flex-wrap: wrap;
+             gap: .5rem; justify-content: center; align-items: center; }
+  .chooser a {
+    color: #cbd5e1; text-decoration: none; font-size: .9rem;
+    padding: .35rem .85rem; border-radius: 999px;
+    border: 1px solid #334155; background: #1e293b;
+  }
+  .chooser a:hover { border-color: #64748b; }
+  .chooser select {
+    background: #1e293b; color: #e2e8f0; border: 1px solid #334155;
+    border-radius: 999px; padding: .35rem .85rem; font-size: .9rem;
+  }
+  #map { height: 70vh; min-height: 460px; border-radius: 12px;
+         border: 1px solid #334155; margin: 1.5rem 0; }
+  .leaflet-popup-content a { color: #1d4ed8; font-weight: 600; }
   main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
   .stats {
     display: grid;
@@ -115,7 +131,7 @@ _PAGE = Template(
 <header>
   <h1>${title}</h1>
   <p>${subtitle}</p>
-  <nav>${nav}</nav>
+  <div class="chooser">${chooser}</div>
   <nav class="langs">${lang_nav}</nav>
 </header>
 <main>
@@ -217,13 +233,17 @@ _REDIRECT = Template(
 )
 
 
-def _city_nav(current: Location, nav_locations: list[Location]) -> str:
-    """Pill links to every city page in the current language."""
-    links = []
-    for loc in nav_locations:
-        cls = ' class="active"' if loc.slug == current.slug else ""
-        links.append(f'<a href="{loc.slug}.html"{cls}>{loc.name}</a>')
-    return "".join(links)
+def _city_chooser(current: Location, nav_locations: list[Location], tr: dict) -> str:
+    """A 'back to map' link plus a dropdown of every city (scales to many)."""
+    options = [f'<option value="index.html">{tr["choose_city"]}</option>']
+    for loc in sorted(nav_locations, key=lambda location: location.name):
+        selected = " selected" if loc.slug == current.slug else ""
+        options.append(f'<option value="{loc.slug}.html"{selected}>{loc.name}</option>')
+    select = (
+        '<select onchange="if(this.value)location.href=this.value" '
+        f'aria-label="{tr["choose_city"]}">{"".join(options)}</select>'
+    )
+    return f'<a href="index.html">{tr["back_to_map"]}</a>{select}'
 
 
 def _lang_nav(current_lang: str, languages: list[str], slug: str) -> str:
@@ -257,7 +277,7 @@ def build_site(
             wy=stats["warmest_year"], wv=stats["warmest_value"],
             cy=stats["coldest_year"], cv=stats["coldest_value"],
         ),
-        nav=_city_nav(location, nav_locations),
+        chooser=_city_chooser(location, nav_locations, tr),
         lang_nav=_lang_nav(lang, languages, slug),
         trend=f"{stats['trend_per_decade']:+.2f}",
         trend_unit=tr["per_decade_c"],
@@ -279,6 +299,109 @@ def build_site(
     )
 
     path = output_dir / f"{slug}.html"
+    path.write_text(html, encoding="utf-8")
+    return path
+
+
+_MAP_PAGE = Template(
+    """<!DOCTYPE html>
+<html lang="${html_lang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${title}</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+         background:#0f172a; color:#e2e8f0; line-height:1.55; }
+  header { padding:2.5rem 1.5rem 1.25rem; text-align:center;
+           background:linear-gradient(135deg,#1e293b,#0f172a);
+           border-bottom:1px solid #1e293b; }
+  header h1 { margin:0 0 .35rem; font-size:clamp(1.6rem,4vw,2.4rem); }
+  header p { margin:0; color:#94a3b8; font-size:.95rem; }
+  nav.langs { margin-top:1rem; display:flex; flex-wrap:wrap; gap:.5rem;
+              justify-content:center; }
+  nav.langs a { color:#cbd5e1; text-decoration:none; font-size:.82rem;
+                padding:.25rem .7rem; border-radius:999px;
+                border:1px solid #334155; background:#1e293b; }
+  nav.langs a.active { background:#0f766e; border-color:#0f766e; color:#fff; }
+  main { max-width:1100px; margin:0 auto; padding:1.5rem; }
+  .chooser { display:flex; justify-content:center; margin-bottom:.25rem; }
+  .chooser select { background:#1e293b; color:#e2e8f0; border:1px solid #334155;
+                    border-radius:999px; padding:.4rem 1rem; font-size:.95rem; }
+  #map { height:70vh; min-height:480px; border-radius:12px;
+         border:1px solid #334155; margin:1rem 0; }
+  .leaflet-popup-content a { color:#1d4ed8; font-weight:600; text-decoration:none; }
+  footer { text-align:center; color:#64748b; font-size:.82rem;
+           padding:2rem 1.5rem 3rem; }
+  footer a { color:#93c5fd; }
+</style>
+</head>
+<body>
+<header>
+  <h1>${heading}</h1>
+  <p>${sub}</p>
+  <nav class="langs">${lang_nav}</nav>
+</header>
+<main>
+  <div class="chooser">
+    <select onchange="if(this.value)location.href=this.value" aria-label="${choose}">
+      ${options}
+    </select>
+  </div>
+  <div id="map"></div>
+</main>
+<footer>${footer}</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  var cities = ${markers};
+  var map = L.map('map', { scrollWheelZoom: false }).setView([54, 15], 4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 12, attribution: '© OpenStreetMap'
+  }).addTo(map);
+  cities.forEach(function (c) {
+    L.marker([c.lat, c.lon]).addTo(map)
+      .bindPopup('<a href="' + c.s + '">' + c.n + '</a>');
+  });
+</script>
+</body>
+</html>
+"""
+)
+
+
+def build_map_page(
+    output_dir: Path,
+    locations: list[Location],
+    lang: str,
+    languages: list[str],
+    tr: dict,
+) -> Path:
+    """Write the localised chooser page (Leaflet map + dropdown) as index.html."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    markers = [
+        {"n": loc.name, "s": f"{loc.slug}.html",
+         "lat": loc.latitude, "lon": loc.longitude}
+        for loc in locations
+    ]
+    options = [f'<option value="">{tr["choose_city"]}</option>']
+    for loc in sorted(locations, key=lambda location: location.name):
+        options.append(f'<option value="{loc.slug}.html">{loc.name}</option>')
+
+    html = _MAP_PAGE.substitute(
+        html_lang=tr["html_lang"],
+        title=tr["site_title"],
+        heading=tr["map_heading"],
+        sub=tr["map_sub"],
+        choose=tr["choose_city"],
+        lang_nav=_lang_nav(lang, languages, "index"),
+        options="".join(options),
+        markers=json.dumps(markers, ensure_ascii=False),
+        footer=tr["footer"].format(date=dt.date.today().isoformat()),
+    )
+    path = output_dir / "index.html"
     path.write_text(html, encoding="utf-8")
     return path
 
