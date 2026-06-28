@@ -5,6 +5,8 @@ using free [Open-Meteo](https://open-meteo.com/) reanalysis data (daily, from
 1940). Produces both the **distribution** of temperatures and how they **change
 through the years**.
 
+![Warszawa temperature dashboard](assets/dashboard.png)
+
 ## What it makes
 
 A 2×2 dashboard plus four standalone PNGs in `output/`:
