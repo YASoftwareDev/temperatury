@@ -280,6 +280,48 @@ def plot_monthly_range(
     ax.margins(x=0.01)
 
 
+def plot_record_range(
+    df_ext: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
+    """Per-month all-time record daily high/low, with the latest year's extremes.
+
+    Uses daily max/min (not means): the band is the hottest day and coldest day
+    ever recorded in each month; the bold lines are the latest year's monthly
+    extremes — so you see how close 'now' came to the records.
+    """
+    months = list(range(1, 13))
+    by_month = df_ext.index.month
+    rec_high = df_ext["temperature_2m_max"].groupby(by_month).max().reindex(months)
+    rec_low = df_ext["temperature_2m_min"].groupby(by_month).min().reindex(months)
+
+    latest_year = int(df_ext.index.year.max())
+    recent = df_ext[df_ext.index.year == latest_year]
+    rm = recent.index.month
+    lat_high = recent["temperature_2m_max"].groupby(rm).max().reindex(months)
+    lat_low = recent["temperature_2m_min"].groupby(rm).min().reindex(months)
+    start = int(df_ext.index.year.min())
+
+    ax.fill_between(months, rec_low.to_numpy(), rec_high.to_numpy(),
+                    color="#cbd5e1", alpha=0.55,
+                    label=tr["record_band"].format(start=start, end=latest_year))
+    ax.plot(months, rec_high.to_numpy(), color="#b91c1c", linewidth=1.0)
+    ax.plot(months, rec_low.to_numpy(), color="#1d4ed8", linewidth=1.0)
+    ax.plot(months, lat_high.to_numpy(), color="#d62728", linewidth=2.2,
+            marker="o", markersize=4,
+            label=tr["record_latest_high"].format(year=latest_year))
+    ax.plot(months, lat_low.to_numpy(), color="#2c7fb8", linewidth=2.2,
+            marker="o", markersize=4,
+            label=tr["record_latest_low"].format(year=latest_year))
+    ax.set_title(tr["record_title"].format(name=location.name))
+    ax.set_xlabel(tr["month"])
+    ax.set_ylabel(tr["record_ylabel"])
+    ax.set_xticks(months)
+    ax.set_xticklabels(tr["months"])
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best", fontsize=8)
+    ax.margins(x=0.01)
+
+
 # --- composition -----------------------------------------------------------
 def build_dashboard(df: pd.DataFrame, location: Location, tr: dict) -> Figure:
     """Arrange all five views in a single 3x2 figure (one slot left blank)."""
@@ -301,9 +343,16 @@ def build_dashboard(df: pd.DataFrame, location: Location, tr: dict) -> Figure:
 
 
 def save_all(
-    df: pd.DataFrame, location: Location, output_dir: Path, tr: dict
+    df: pd.DataFrame,
+    location: Location,
+    output_dir: Path,
+    tr: dict,
+    df_ext: pd.DataFrame | None = None,
 ) -> list[Path]:
-    """Render the dashboard plus each standalone panel; return written paths."""
+    """Render the dashboard plus each standalone panel; return written paths.
+
+    When ``df_ext`` (daily max/min) is given, also render the record-range panel.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
     written: list[Path] = []
@@ -328,6 +377,15 @@ def save_all(
         fig.tight_layout()
         path = output_dir / f"{slug}_{name}.png"
         # Higher DPI than the dashboard so panels stay crisp when opened full-page.
+        fig.savefig(path, dpi=160)
+        plt.close(fig)
+        written.append(path)
+
+    if df_ext is not None:
+        fig, ax = plt.subplots(figsize=(9, 5.5))
+        plot_record_range(df_ext, location, ax, tr)
+        fig.tight_layout()
+        path = output_dir / f"{slug}_monthly-records.png"
         fig.savefig(path, dpi=160)
         plt.close(fig)
         written.append(path)

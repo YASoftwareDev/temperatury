@@ -26,7 +26,7 @@ from config import (
     OUTPUT_DIR,
     Location,
 )
-from data import load_temperatures_bulk
+from data import load_extremes_bulk, load_temperatures_bulk
 from plots import save_all, summary_stats
 from report import build_map_page, build_site, write_redirect
 
@@ -98,6 +98,11 @@ def main() -> None:
     if not locations:
         raise SystemExit("No location data available — nothing to build.")
 
+    # Daily max/min (record highs/lows) — optional add-on dataset; a city
+    # without it simply skips the record chart.
+    extremes = load_extremes_bulk(locations, args.start, args.end,
+                                  refresh=args.refresh)
+
     written = 0
     for location in locations:
         df = frames[location.slug]
@@ -107,11 +112,13 @@ def main() -> None:
             s = summary_stats(df)
             print(f"  {location.name:18s} mean {s['mean']:5.1f} °C  "
                   f"trend {s['trend_per_decade']:+.2f}/dec")
+        df_ext = extremes.get(location.slug)
         for lang in i18n.LANGUAGES:
             tr = i18n.get(lang)
             lang_dir = OUTPUT_DIR / lang
-            written += len(save_all(df, location, lang_dir, tr))
-            build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr)
+            written += len(save_all(df, location, lang_dir, tr, df_ext=df_ext))
+            build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr,
+                       has_records=df_ext is not None)
             written += 1
 
     # Each language's index.html is the Leaflet map chooser; root redirects.

@@ -175,6 +175,7 @@ _PAGE = Template(
       <img src="${slug}_monthly-range.png" alt="">
       <figcaption>${cap_range}</figcaption>
     </figure>
+    ${record_figure}
     <figure>
       <img src="${slug}_threshold-days.png" alt="">
       <figcaption>${cap_threshold}</figcaption>
@@ -267,11 +268,17 @@ def build_site(
     lang: str,
     languages: list[str],
     tr: dict,
+    has_records: bool = False,
 ) -> Path:
     """Write ``<slug>.html`` (localised) into ``output_dir``; return its path."""
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
     stats = summary_stats(df)
+    record_figure = (
+        f'<figure>\n      <img src="{slug}_monthly-records.png" alt="">\n'
+        f'      <figcaption>{tr["cap_records"]}</figcaption>\n    </figure>'
+        if has_records else ""
+    )
 
     html = _PAGE.substitute(
         html_lang=tr["html_lang"],
@@ -297,6 +304,7 @@ def build_site(
         cap_heatmap=tr["cap_heatmap"],
         cap_anom_heatmap=tr["cap_anom_heatmap"],
         cap_range=tr["cap_range"],
+        record_figure=record_figure,
         cap_threshold=tr["cap_threshold"],
         hint=tr["hint"],
         footer=tr["footer"].format(date=dt.date.today().isoformat()),

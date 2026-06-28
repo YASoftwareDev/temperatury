@@ -71,6 +71,13 @@ TRANSLATIONS: dict[str, dict] = {
         "range_ylabel": "Monthly mean temperature (°C)",
         "cap_range": "Each month's min–max range over the years, with the latest "
                      "year — is it hugging the warm edge?",
+        "record_title": "Monthly record high/low daily temperature — {name}",
+        "record_band": "record range {start}–{end}",
+        "record_latest_high": "{year} highs",
+        "record_latest_low": "{year} lows",
+        "record_ylabel": "Daily temperature (°C)",
+        "cap_records": "Each month's all-time record daily high and low, with the "
+                       "latest year's extremes",
         "footer": 'Generated {date} · data from '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   'historical reanalysis (ERA5) · '
@@ -131,6 +138,13 @@ TRANSLATIONS: dict[str, dict] = {
         "range_ylabel": "Średnia miesięczna temperatura (°C)",
         "cap_range": "Zakres min–maks każdego miesiąca w kolejnych latach, "
                      "z ostatnim rokiem — czy zbliża się do maksimum?",
+        "record_title": "Miesięczne rekordy dobowe — maksimum i minimum — {name}",
+        "record_band": "zakres rekordów {start}–{end}",
+        "record_latest_high": "maksima {year}",
+        "record_latest_low": "minima {year}",
+        "record_ylabel": "Temperatura dobowa (°C)",
+        "cap_records": "Rekordowe dobowe maksimum i minimum każdego miesiąca, "
+                       "z ekstremami ostatniego roku",
         "footer": 'Wygenerowano {date} · dane z '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanaliza historyczna ERA5) · '
@@ -190,6 +204,13 @@ TRANSLATIONS: dict[str, dict] = {
         "range_ylabel": "Monatliche Mitteltemperatur (°C)",
         "cap_range": "Min–Max-Spanne jedes Monats über die Jahre, mit dem "
                      "aktuellen Jahr — liegt es am oberen Rand?",
+        "record_title": "Monatliche Rekord-Höchst-/Tiefstwerte (Tageswerte) — {name}",
+        "record_band": "Rekordspanne {start}–{end}",
+        "record_latest_high": "Höchstwerte {year}",
+        "record_latest_low": "Tiefstwerte {year}",
+        "record_ylabel": "Tagestemperatur (°C)",
+        "cap_records": "Rekord-Tageshöchst- und -tiefstwerte je Monat, mit den "
+                       "Extremen des aktuellen Jahres",
         "footer": 'Erstellt {date} · Daten von '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(historische Reanalyse ERA5) · '

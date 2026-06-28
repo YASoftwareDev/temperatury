@@ -38,6 +38,10 @@ jobs:
 
       - name: Generate charts and pages
         run: python main.py --all
+        env:
+          # Render from the committed cache only; CI's shared IP is
+          # rate-limited by Open-Meteo. Refresh the cache locally.
+          TEMPERATURY_OFFLINE: "1"
 
       - name: Configure Pages
         uses: actions/configure-pages@v6

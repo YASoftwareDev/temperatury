@@ -12,6 +12,7 @@ CSV schema (one row per day):
 
 from __future__ import annotations
 
+import os
 import time
 from pathlib import Path
 
@@ -19,6 +20,10 @@ import requests
 import pandas as pd
 
 from config import ARCHIVE_URL, DATA_DIR, Location
+
+# Offline mode (set in CI): render only from the committed cache, never fetch.
+# Fetching is a local task — CI's shared IP is rate-limited by Open-Meteo.
+_OFFLINE = os.environ.get("TEMPERATURY_OFFLINE") == "1"
 
 # Network timeout for the (potentially large) archive request, in seconds.
 _REQUEST_TIMEOUT = 120
@@ -55,10 +60,14 @@ def _request(params: dict, what: str):
             response.raise_for_status()
             break
         except requests.RequestException as error:
-            if attempt == _MAX_ATTEMPTS:
+            status = getattr(error.response, "status_code", None)
+            # 4xx other than 429 (e.g. 400 request-too-large) won't fix on
+            # retry — fail immediately instead of burning the backoff budget.
+            fatal = status is not None and 400 <= status < 500 and status != 429
+            if fatal or attempt == _MAX_ATTEMPTS:
                 raise RuntimeError(
                     f"Failed to download temperature data for {what} "
-                    f"after {_MAX_ATTEMPTS} attempts: {error}"
+                    f"after {attempt} attempt(s): {error}"
                 ) from error
             time.sleep(2 * attempt)
 
@@ -143,6 +152,10 @@ def load_temperatures_bulk(
         else:
             to_fetch.append(location)
 
+    if _OFFLINE and to_fetch:
+        print(f"  (offline) {len(to_fetch)} location(s) not in cache, skipped")
+        to_fetch = []
+
     for start in range(0, len(to_fetch), _CHUNK):
         if start:
             time.sleep(_CHUNK_PAUSE)  # space chunk requests apart
@@ -169,5 +182,88 @@ def load_temperatures_bulk(
             frame = _parse_daily(item.get("daily"), location.name)
             frame.to_csv(_cache_path(location, start_year, end_year))
             result[location.slug] = _clean(frame, location.name)
+
+    return result
+
+
+# --- daily extremes (record high/low) --------------------------------------
+_EXTREME_COLS = ("temperature_2m_max", "temperature_2m_min")
+# Two variables double the per-request cost, so fewer locations per call.
+_EXTREME_CHUNK = 7
+
+
+def _extremes_cache_path(location: Location, start_year: int, end_year: int) -> Path:
+    """Cache path for the daily max/min dataset (separate from the means)."""
+    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}_extremes.csv.gz"
+
+
+def _parse_extremes(daily: dict | None, name: str) -> pd.DataFrame:
+    """Turn an Open-Meteo ``daily`` block of max/min into a DataFrame."""
+    if not daily or "time" not in daily or any(c not in daily for c in _EXTREME_COLS):
+        raise RuntimeError(
+            f"Unexpected response from Open-Meteo for {name}: "
+            f"missing 'daily' max/min fields."
+        )
+    frame = pd.DataFrame(
+        {
+            "date": pd.to_datetime(daily["time"]),
+            "temperature_2m_max": daily["temperature_2m_max"],
+            "temperature_2m_min": daily["temperature_2m_min"],
+        }
+    )
+    return frame.set_index("date").sort_index()
+
+
+def load_extremes_bulk(
+    locations: list[Location],
+    start_year: int,
+    end_year: int,
+    *,
+    refresh: bool = False,
+) -> dict[str, pd.DataFrame]:
+    """Load daily max/min for many locations (cache-aware, chunked, resilient).
+
+    Returns ``{slug: DataFrame[max, min]}``; locations that can't be fetched
+    are simply absent (their record chart is skipped).
+    """
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    result: dict[str, pd.DataFrame] = {}
+    to_fetch: list[Location] = []
+
+    for location in locations:
+        path = _extremes_cache_path(location, start_year, end_year)
+        if path.exists() and not refresh:
+            frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+            result[location.slug] = frame.dropna(subset=list(_EXTREME_COLS))
+        else:
+            to_fetch.append(location)
+
+    if _OFFLINE and to_fetch:
+        print(f"  (offline) {len(to_fetch)} location(s) without max/min cache, skipped")
+        to_fetch = []
+
+    for start in range(0, len(to_fetch), _EXTREME_CHUNK):
+        if start:
+            time.sleep(_CHUNK_PAUSE)
+        chunk = to_fetch[start:start + _EXTREME_CHUNK]
+        params = {
+            "latitude": ",".join(str(loc.latitude) for loc in chunk),
+            "longitude": ",".join(str(loc.longitude) for loc in chunk),
+            "start_date": f"{start_year}-01-01",
+            "end_date": f"{end_year}-12-31",
+            "daily": ",".join(_EXTREME_COLS),
+            "timezone": "auto",
+        }
+        label = f"{len(chunk)} locations ({chunk[0].name}…) max/min"
+        try:
+            payload = _request(params, label)
+        except RuntimeError as error:
+            print(f"  ! skipping {label}: {error}")
+            continue
+        items = payload if isinstance(payload, list) else [payload]
+        for location, item in zip(chunk, items):
+            frame = _parse_extremes(item.get("daily"), location.name)
+            frame.to_csv(_extremes_cache_path(location, start_year, end_year))
+            result[location.slug] = frame.dropna(subset=list(_EXTREME_COLS))
 
     return result
