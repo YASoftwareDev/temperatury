@@ -11,6 +11,7 @@ CSV schema (one row per day):
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 
 import requests
@@ -19,7 +20,9 @@ import pandas as pd
 from config import ARCHIVE_URL, DATA_DIR, Location
 
 # Network timeout for the (potentially large) archive request, in seconds.
-_REQUEST_TIMEOUT = 60
+_REQUEST_TIMEOUT = 90
+# Retries guard against transient TLS/read timeouts on shared CI runners.
+_MAX_ATTEMPTS = 4
 
 
 def _cache_path(location: Location, start_year: int, end_year: int) -> Path:
@@ -42,13 +45,20 @@ def _download(location: Location, start_year: int, end_year: int) -> pd.DataFram
         "daily": "temperature_2m_mean",
         "timezone": location.timezone,
     }
-    try:
-        response = requests.get(ARCHIVE_URL, params=params, timeout=_REQUEST_TIMEOUT)
-        response.raise_for_status()
-    except requests.RequestException as error:
-        raise RuntimeError(
-            f"Failed to download temperature data for {location.name}: {error}"
-        ) from error
+    response = None
+    for attempt in range(1, _MAX_ATTEMPTS + 1):
+        try:
+            response = requests.get(ARCHIVE_URL, params=params, timeout=_REQUEST_TIMEOUT)
+            response.raise_for_status()
+            break
+        except requests.RequestException as error:
+            if attempt == _MAX_ATTEMPTS:
+                raise RuntimeError(
+                    f"Failed to download temperature data for {location.name} "
+                    f"after {_MAX_ATTEMPTS} attempts: {error}"
+                ) from error
+            # Exponential backoff: 2s, 4s, 8s …
+            time.sleep(2 * attempt)
 
     payload = response.json()
     daily = payload.get("daily")
