@@ -27,7 +27,13 @@ from config import (
     OUTPUT_DIR,
     Location,
 )
-from data import load_extremes_bulk, load_precip_bulk, load_temperatures_bulk
+from data import (
+    load_current_bulk,
+    load_current_extremes_bulk,
+    load_extremes_bulk,
+    load_precip_bulk,
+    load_temperatures_bulk,
+)
 from plots import save_all, summary_stats
 from report import build_map_page, build_site, write_redirect
 
@@ -106,6 +112,11 @@ def main() -> None:
     # Daily precipitation — optional add-on dataset (same backfill model).
     precip = load_precip_bulk(locations, args.start, args.end,
                               refresh=args.refresh)
+    # The year in progress (partial) — fed only to the interactive widgets so
+    # readers can pick it, kept out of the static trend charts. Cached under a
+    # distinct key; in offline mode only committed current-year data is used.
+    current = load_current_bulk(locations, refresh=args.refresh)
+    current_ext = load_current_extremes_bulk(locations, refresh=args.refresh)
 
     written = 0
     for location in locations:
@@ -118,9 +129,10 @@ def main() -> None:
                   f"trend {s['trend_per_decade']:+.2f}/dec")
         df_ext = extremes.get(location.slug)
         df_precip = precip.get(location.slug)
-        range_data = interactive.range_payload(df)
-        records_data = (interactive.records_payload(df_ext)
-                        if df_ext is not None else None)
+        range_data = interactive.range_payload(df, extra=current.get(location.slug))
+        records_data = (
+            interactive.records_payload(df_ext, extra=current_ext.get(location.slug))
+            if df_ext is not None else None)
         for lang in i18n.LANGUAGES:
             tr = i18n.get(lang)
             lang_dir = OUTPUT_DIR / lang

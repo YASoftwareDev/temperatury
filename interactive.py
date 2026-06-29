@@ -91,8 +91,15 @@ def _row(values) -> list:
     return [None if pd.isna(v) else round(float(v), 1) for v in values]
 
 
-def range_payload(df: pd.DataFrame) -> dict:
-    """Per-month min/max/avg envelope and every year's 12 monthly means."""
+def range_payload(df: pd.DataFrame, extra: pd.DataFrame | None = None) -> dict:
+    """Per-month min/max/avg envelope and every year's 12 monthly means.
+
+    ``extra`` (the partial current year) is appended so it becomes a selectable
+    year in the widget, without affecting the static trend charts that use the
+    full-year frame only.
+    """
+    if extra is not None and not extra.empty:
+        df = pd.concat([df, extra])
     pivot = monthly_pivot(df).reindex(columns=_MONTHS)
     years = {str(int(y)): _row(pivot.loc[y].to_numpy()) for y in pivot.index}
     return {
@@ -103,8 +110,14 @@ def range_payload(df: pd.DataFrame) -> dict:
     }
 
 
-def records_payload(df_ext: pd.DataFrame) -> dict:
-    """All-time record high/low per month and every year's monthly extremes."""
+def records_payload(df_ext: pd.DataFrame, extra: pd.DataFrame | None = None) -> dict:
+    """All-time record high/low per month and every year's monthly extremes.
+
+    ``extra`` (the partial current year's max/min) is appended so the current
+    year is selectable in the records widget.
+    """
+    if extra is not None and not extra.empty:
+        df_ext = pd.concat([df_ext, extra])
     ym = [df_ext.index.year, df_ext.index.month]
     monthly_max = (df_ext["temperature_2m_max"].groupby(ym).max()
                    .unstack().reindex(columns=_MONTHS))

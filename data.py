@@ -12,6 +12,7 @@ CSV schema (one row per day):
 
 from __future__ import annotations
 
+import datetime as dt
 import os
 import time
 from pathlib import Path
@@ -340,3 +341,110 @@ def load_precip_bulk(
             result[location.slug] = frame.dropna(subset=["precipitation_sum"])
 
     return result
+
+
+# --- current (partial) year ------------------------------------------------
+# The ongoing calendar year is fetched separately so the interactive widgets
+# can offer it as a selectable year *without* it polluting the static trend
+# charts (a half-finished year would skew an annual mean). It is cached under a
+# distinct ``_<year>_current`` key; in offline mode only the committed cache is
+# used, so CI still renders whatever was last fetched locally.
+
+
+def _current_span() -> tuple[int, str, str]:
+    """Return ``(year, start_date, end_date)`` for the year in progress.
+
+    ``end_date`` is today: the ERA5 archive has no future days (and a few
+    days' lag), so requesting to today and dropping the trailing NaNs gives
+    every day that is actually available.
+    """
+    today = dt.date.today()
+    return today.year, f"{today.year}-01-01", today.isoformat()
+
+
+def _current_cache_path(location: Location, year: int, suffix: str = "") -> Path:
+    """Cache path for the current-year partial dataset (mean or extremes)."""
+    tail = f"_current{suffix}"
+    return DATA_DIR / f"{location.slug}_{year}{tail}.csv.gz"
+
+
+def _load_current(
+    locations: list[Location],
+    columns: tuple[str, ...],
+    suffix: str,
+    parse,
+    *,
+    chunk: int,
+    refresh: bool,
+) -> dict[str, pd.DataFrame]:
+    """Shared loader for the current (partial) year — mean or max/min.
+
+    Mirrors the bulk loaders but targets ``year-01-01 … today`` and tolerates
+    a location whose archive has no rows yet (it is simply omitted).
+    """
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    year, start_date, end_date = _current_span()
+    result: dict[str, pd.DataFrame] = {}
+    to_fetch: list[Location] = []
+
+    for location in locations:
+        path = _current_cache_path(location, year, suffix)
+        if path.exists() and not refresh:
+            frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+            frame = frame.dropna(subset=list(columns))
+            if not frame.empty:
+                result[location.slug] = frame
+        else:
+            to_fetch.append(location)
+
+    if _OFFLINE and to_fetch:
+        print(f"  (offline) {len(to_fetch)} location(s) without {year} cache, skipped")
+        to_fetch = []
+
+    for start in range(0, len(to_fetch), chunk):
+        if start:
+            time.sleep(_CHUNK_PAUSE)
+        group = to_fetch[start:start + chunk]
+        params = {
+            "latitude": ",".join(str(loc.latitude) for loc in group),
+            "longitude": ",".join(str(loc.longitude) for loc in group),
+            "start_date": start_date,
+            "end_date": end_date,
+            "daily": ",".join(columns),
+            "timezone": "auto",
+        }
+        label = f"{len(group)} locations ({group[0].name}…) {year}"
+        try:
+            payload = _request(params, label)
+        except RuntimeError as error:
+            print(f"  ! skipping {label}: {error}")
+            continue
+        items = payload if isinstance(payload, list) else [payload]
+        for location, item in zip(group, items):
+            frame = parse(item.get("daily"), location.name)
+            frame.to_csv(_current_cache_path(location, year, suffix))
+            frame = frame.dropna(subset=list(columns))
+            if not frame.empty:
+                result[location.slug] = frame
+
+    return result
+
+
+def load_current_bulk(
+    locations: list[Location], *, refresh: bool = False
+) -> dict[str, pd.DataFrame]:
+    """Current-year daily means (partial), for the monthly-range widget."""
+    return _load_current(
+        locations, ("temperature_2m_mean",), "", _parse_daily,
+        chunk=_CHUNK, refresh=refresh,
+    )
+
+
+def load_current_extremes_bulk(
+    locations: list[Location], *, refresh: bool = False
+) -> dict[str, pd.DataFrame]:
+    """Current-year daily max/min (partial), for the monthly-records widget."""
+    return _load_current(
+        locations, _EXTREME_COLS, "_extremes", _parse_extremes,
+        chunk=_EXTREME_CHUNK, refresh=refresh,
+    )
