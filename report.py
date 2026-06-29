@@ -19,8 +19,11 @@ from i18n import LANG_NAMES
 from plots import summary_stats
 
 
-def _grouped_options(locations: list[Location], current_slug: str | None) -> str:
+def _grouped_options(
+    locations: list[Location], current_slug: str | None, tr: dict | None = None
+) -> str:
     """City <option>s grouped into <optgroup> by region (config order)."""
+    region_names = (tr or {}).get("regions", {})
     by_region: dict[str, list[Location]] = {}
     for loc in locations:
         by_region.setdefault(loc.region, []).append(loc)
@@ -29,7 +32,8 @@ def _grouped_options(locations: list[Location], current_slug: str | None) -> str
         cities = sorted(by_region.get(region, []), key=lambda location: location.name)
         if not cities:
             continue
-        out.append(f'<optgroup label="{region}">')
+        label = region_names.get(region, region)
+        out.append(f'<optgroup label="{label}">')
         for loc in cities:
             sel = " selected" if loc.slug == current_slug else ""
             out.append(f'<option value="{loc.slug}.html"{sel}>{loc.name}</option>')
@@ -286,7 +290,7 @@ _REDIRECT = Template(
 def _city_chooser(current: Location, nav_locations: list[Location], tr: dict) -> str:
     """A 'back to map' link plus a region-grouped dropdown of every city."""
     head = f'<option value="index.html">{tr["choose_city"]}</option>'
-    options = head + _grouped_options(nav_locations, current.slug)
+    options = head + _grouped_options(nav_locations, current.slug, tr)
     select = (
         '<select onchange="if(this.value)location.href=this.value" '
         f'aria-label="{tr["choose_city"]}">{options}</select>'
@@ -461,7 +465,7 @@ def build_map_page(
         for loc in locations
     ]
     options = [f'<option value="">{tr["choose_city"]}</option>',
-               _grouped_options(locations, None)]
+               _grouped_options(locations, None, tr)]
 
     html = _MAP_PAGE.substitute(
         html_lang=tr["html_lang"],
