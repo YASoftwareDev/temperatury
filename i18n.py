@@ -132,6 +132,18 @@ TRANSLATIONS: dict[str, dict] = {
         "cap_season": "Length of the thermal growing season each year (run of days "
                       "with a daily mean ≥ 5 °C) — the frost-free window farming "
                       "depends on, lengthening as the climate warms.",
+        "dtr_title": "Diurnal temperature range (day − night) — {name}",
+        "dtr_ylabel": "Mean daily max − min (°C)",
+        "dtr_annual": "annual mean range",
+        "cap_dtr": "The average gap between each day's high and low. A shrinking "
+                   "range is a greenhouse fingerprint — nights warming faster than "
+                   "days; a widening one can signal drying.",
+        "seasonshift_title": "How the seasonal cycle shifted — {name}",
+        "seasonshift_ylabel": "Monthly mean temperature (°C)",
+        "cap_seasonshift": "The average year for the first vs. the last decade of "
+                           "record. The gap between the curves at each month shows "
+                           "which parts of the year warmed most (often winters more "
+                           "than summers).",
         "footer": 'Generated {date} · data from '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   'historical reanalysis (ERA5) · '
@@ -249,6 +261,18 @@ TRANSLATIONS: dict[str, dict] = {
         "cap_season": "Długość termicznego sezonu wegetacyjnego w każdym roku (ciąg "
                       "dni ze średnią dobową ≥ 5 °C) — bezmroźne okno, od którego "
                       "zależy rolnictwo, wydłużające się wraz z ociepleniem.",
+        "dtr_title": "Dobowa amplituda temperatury (dzień − noc) — {name}",
+        "dtr_ylabel": "Średnie dobowe maks − min (°C)",
+        "dtr_annual": "średnia roczna amplituda",
+        "cap_dtr": "Średnia różnica między dziennym maksimum a minimum. Malejąca "
+                   "amplituda to ślad efektu cieplarnianego — noce ocieplają się "
+                   "szybciej niż dni; rosnąca może oznaczać osuszanie.",
+        "seasonshift_title": "Jak zmienił się cykl sezonowy — {name}",
+        "seasonshift_ylabel": "Średnia miesięczna temperatura (°C)",
+        "cap_seasonshift": "Przeciętny rok dla pierwszej i ostatniej dekady danych. "
+                           "Odstęp między krzywymi w każdym miesiącu pokazuje, które "
+                           "części roku ociepliły się najbardziej (często zimy "
+                           "bardziej niż lata).",
         "footer": 'Wygenerowano {date} · dane z '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanaliza historyczna ERA5) · '
@@ -368,6 +392,19 @@ TRANSLATIONS: dict[str, dict] = {
                       "Tagen mit Tagesmittel ≥ 5 °C) — das frostfreie Fenster, von "
                       "dem die Landwirtschaft abhängt, das sich mit der Erwärmung "
                       "verlängert.",
+        "dtr_title": "Tagesgang der Temperatur (Tag − Nacht) — {name}",
+        "dtr_ylabel": "Mittleres Tagesmax − -min (°C)",
+        "dtr_annual": "jährliche mittlere Spanne",
+        "cap_dtr": "Der mittlere Abstand zwischen Tageshoch und -tief. Eine "
+                   "schrumpfende Spanne ist ein Treibhaus-Fingerabdruck — Nächte "
+                   "erwärmen sich schneller als Tage; eine wachsende kann "
+                   "Austrocknung anzeigen.",
+        "seasonshift_title": "Wie sich der Jahreszyklus verschob — {name}",
+        "seasonshift_ylabel": "Monatliche Mitteltemperatur (°C)",
+        "cap_seasonshift": "Das durchschnittliche Jahr der ersten gegenüber der "
+                           "letzten Dekade. Der Abstand der Kurven je Monat zeigt, "
+                           "welche Teile des Jahres sich am stärksten erwärmten (oft "
+                           "Winter mehr als Sommer).",
         "footer": 'Erstellt {date} · Daten von '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(historische Reanalyse ERA5) · '
@@ -489,6 +526,19 @@ TRANSLATIONS: dict[str, dict] = {
                       "(suite de jours dont la moyenne ≥ 5 °C) — la fenêtre sans "
                       "gel dont dépend l'agriculture, qui s'allonge avec le "
                       "réchauffement.",
+        "dtr_title": "Amplitude thermique diurne (jour − nuit) — {name}",
+        "dtr_ylabel": "Moyenne max − min journalier (°C)",
+        "dtr_annual": "amplitude moyenne annuelle",
+        "cap_dtr": "L'écart moyen entre le maximum et le minimum du jour. Une "
+                   "amplitude qui rétrécit est une empreinte de l'effet de serre — "
+                   "les nuits se réchauffent plus vite que les jours ; une amplitude "
+                   "qui s'élargit peut signaler un assèchement.",
+        "seasonshift_title": "Comment le cycle saisonnier s'est déplacé — {name}",
+        "seasonshift_ylabel": "Température moyenne mensuelle (°C)",
+        "cap_seasonshift": "L'année moyenne de la première décennie face à la "
+                           "dernière. L'écart entre les courbes à chaque mois montre "
+                           "quelles parties de l'année se sont le plus réchauffées "
+                           "(souvent les hivers plus que les étés).",
         "footer": 'Généré le {date} · données de '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(réanalyse historique ERA5) · '
@@ -610,6 +660,19 @@ TRANSLATIONS: dict[str, dict] = {
                       "(racha de días con media diaria ≥ 5 °C) — la ventana sin "
                       "heladas de la que depende la agricultura, que se alarga con "
                       "el calentamiento.",
+        "dtr_title": "Amplitud térmica diurna (día − noche) — {name}",
+        "dtr_ylabel": "Media de máx − mín diario (°C)",
+        "dtr_annual": "amplitud media anual",
+        "cap_dtr": "La diferencia media entre el máximo y el mínimo del día. Una "
+                   "amplitud que se reduce es una huella del efecto invernadero — "
+                   "las noches se calientan más rápido que los días; una que se "
+                   "amplía puede indicar desecación.",
+        "seasonshift_title": "Cómo se desplazó el ciclo estacional — {name}",
+        "seasonshift_ylabel": "Temperatura media mensual (°C)",
+        "cap_seasonshift": "El año medio de la primera década frente a la última. La "
+                           "distancia entre las curvas en cada mes muestra qué partes "
+                           "del año se calentaron más (a menudo los inviernos más que "
+                           "los veranos).",
         "footer": 'Generado el {date} · datos de '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanálisis histórico ERA5) · '
@@ -728,6 +791,18 @@ TRANSLATIONS: dict[str, dict] = {
                       "днів із середньою добовою ≥ 5 °C) — безморозне вікно, від "
                       "якого залежить сільське господарство, що подовжується з "
                       "потеплінням.",
+        "dtr_title": "Добова амплітуда температури (день − ніч) — {name}",
+        "dtr_ylabel": "Середнє добове макс − мін (°C)",
+        "dtr_annual": "середня річна амплітуда",
+        "cap_dtr": "Середня різниця між денним максимумом і мінімумом. Амплітуда, "
+                   "що зменшується, — це слід парникового ефекту: ночі теплішають "
+                   "швидше за дні; зростання може свідчити про висихання.",
+        "seasonshift_title": "Як змістився сезонний цикл — {name}",
+        "seasonshift_ylabel": "Середня місячна температура (°C)",
+        "cap_seasonshift": "Усереднений рік першого десятиліття проти останнього. "
+                           "Відстань між кривими в кожному місяці показує, які "
+                           "частини року потеплішали найбільше (часто зими більше, "
+                           "ніж літо).",
         "footer": 'Згенеровано {date} · дані з '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(історичний реаналіз ERA5) · '

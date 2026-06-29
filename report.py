@@ -233,9 +233,14 @@ ${chart_js}
       <figcaption>${cap_season}</figcaption>
     </figure>
     <figure>
+      <img src="${slug}_seasonal-shift.png" alt="">
+      <figcaption>${cap_seasonshift}</figcaption>
+    </figure>
+    <figure>
       <img src="${slug}_volatility.png" alt="">
       <figcaption>${cap_volatility}</figcaption>
     </figure>
+    ${dtr_figure}
     ${precip_figure}
   </section>
 </main>
@@ -326,6 +331,7 @@ def build_site(
     range_data: dict,
     records_data: dict | None = None,
     has_precip: bool = False,
+    has_dtr: bool = False,
 ) -> Path:
     """Write ``<slug>.html`` (localised) into ``output_dir``; return its path."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -345,6 +351,11 @@ def build_site(
         f'<figure>\n      <img src="{slug}_precipitation.png" alt="">\n'
         f'      <figcaption>{tr["cap_precip"]}</figcaption>\n    </figure>'
         if has_precip else ""
+    )
+    dtr_figure = (
+        f'<figure>\n      <img src="{slug}_diurnal-range.png" alt="">\n'
+        f'      <figcaption>{tr["cap_dtr"]}</figcaption>\n    </figure>'
+        if has_dtr else ""
     )
 
     html = _PAGE.substitute(
@@ -377,6 +388,8 @@ def build_site(
         cap_volatility=tr["cap_volatility"],
         cap_stripes=tr["cap_stripes"],
         cap_season=tr["cap_season"],
+        cap_seasonshift=tr["cap_seasonshift"],
+        dtr_figure=dtr_figure,
         precip_figure=precip_figure,
         guide_title=tr["guide_title"],
         guide_body=tr["guide_body"],

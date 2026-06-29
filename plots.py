@@ -555,6 +555,75 @@ def plot_growing_season(
     ax.margins(x=0.01)
 
 
+def plot_diurnal_range(
+    df_ext: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
+    """Mean diurnal temperature range (daily max − min) per year, with trend.
+
+    The day-vs-night spread. A *shrinking* range is a fingerprint of greenhouse
+    warming (nights warm faster than days, as water vapour and cloud trap heat
+    overnight); a widening range often points to drying/aridification. Needs the
+    daily max/min dataset, so it renders only where extremes are cached.
+    """
+    dtr = df_ext["temperature_2m_max"] - df_ext["temperature_2m_min"]
+    annual = dtr.groupby(df_ext.index.year).mean()
+    years = annual.index.to_numpy(dtype=float)
+    values = annual.to_numpy(dtype=float)
+    slope, line = robust_trend_line(years, values)
+    sig = trend_significance(values, tr)
+
+    ax.plot(years, values, color="#7c3aed", linewidth=0.8, marker="o",
+            markersize=2.0, alpha=0.3, label=tr["dtr_annual"])
+    ax.plot(years, loess(years, values), color="#7c3aed", linewidth=2.6,
+            label=tr["smoothed"])
+    ax.plot(years, line, color="#b45309", linewidth=1.6, linestyle="--",
+            label=f"{tr['trend']} {slope * 10:+.2f} {tr['per_decade_c']} ({sig})")
+    ax.set_title(tr["dtr_title"].format(name=location.name))
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(tr["dtr_ylabel"])
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best")
+    ax.margins(x=0.01)
+
+
+def plot_seasonal_shift(
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
+    """First-decade vs last-decade average monthly curve — how the year reshaped.
+
+    Two 12-point seasonal curves: the record's first ten years against its last
+    ten. The vertical gap between them at each month shows which parts of the
+    year warmed most (often winters more than summers), and the shaded area
+    makes the seasonal redistribution of warming visible at a glance.
+    """
+    means = df["temperature_2m_mean"]
+    years = means.index.year
+    y0, y1 = int(years.min()), int(years.max())
+    early_lo, early_hi = y0, y0 + 9
+    late_lo, late_hi = y1 - 9, y1
+    early = means[(years >= early_lo) & (years <= early_hi)]
+    late = means[(years >= late_lo) & (years <= late_hi)]
+    months = np.arange(1, 13)
+    em = early.groupby(early.index.month).mean().reindex(months).to_numpy()
+    lm = late.groupby(late.index.month).mean().reindex(months).to_numpy()
+
+    ax.fill_between(months, em, lm, where=(lm >= em), interpolate=True,
+                    color="#d62728", alpha=0.12)
+    ax.fill_between(months, em, lm, where=(lm < em), interpolate=True,
+                    color="#2c7fb8", alpha=0.12)
+    ax.plot(months, em, color="#2c7fb8", marker="o", markersize=4,
+            linewidth=2.0, label=f"{early_lo}–{early_hi}")
+    ax.plot(months, lm, color="#d62728", marker="o", markersize=4,
+            linewidth=2.0, label=f"{late_lo}–{late_hi}")
+    ax.set_xticks(months)
+    ax.set_xticklabels(tr["months"])
+    ax.set_title(tr["seasonshift_title"].format(name=location.name))
+    ax.set_xlabel(tr["month"])
+    ax.set_ylabel(tr["seasonshift_ylabel"])
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best")
+
+
 # --- composition -----------------------------------------------------------
 def build_dashboard(df: pd.DataFrame, location: Location, tr: dict) -> Figure:
     """Arrange all five views in a single 3x2 figure (one slot left blank)."""
@@ -581,6 +650,7 @@ def save_all(
     output_dir: Path,
     tr: dict,
     df_precip: pd.DataFrame | None = None,
+    df_ext: pd.DataFrame | None = None,
 ) -> list[Path]:
     """Render the dashboard plus each standalone panel; return written paths.
 
@@ -606,6 +676,7 @@ def save_all(
         "monthly-heatmap": plot_monthly_heatmap,
         "monthly-anomaly": plot_monthly_anomaly_heatmap,
         "growing-season": plot_growing_season,
+        "seasonal-shift": plot_seasonal_shift,
         "volatility": plot_temp_volatility,
     }
     for name, draw in panels.items():
@@ -614,6 +685,16 @@ def save_all(
         fig.tight_layout()
         path = output_dir / f"{slug}_{name}.png"
         # Higher DPI than the dashboard so panels stay crisp when opened full-page.
+        fig.savefig(path, dpi=160)
+        plt.close(fig)
+        written.append(path)
+
+    # Diurnal range needs the daily max/min dataset — render only where cached.
+    if df_ext is not None:
+        fig, ax = plt.subplots(figsize=(9, 5.5))
+        plot_diurnal_range(df_ext, location, ax, tr)
+        fig.tight_layout()
+        path = output_dir / f"{slug}_diurnal-range.png"
         fig.savefig(path, dpi=160)
         plt.close(fig)
         written.append(path)

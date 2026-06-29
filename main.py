@@ -136,10 +136,12 @@ def main() -> None:
         for lang in i18n.LANGUAGES:
             tr = i18n.get(lang)
             lang_dir = OUTPUT_DIR / lang
-            written += len(save_all(df, location, lang_dir, tr, df_precip=df_precip))
+            written += len(save_all(df, location, lang_dir, tr,
+                                    df_precip=df_precip, df_ext=df_ext))
             build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr,
                        range_data=range_data, records_data=records_data,
-                       has_precip=df_precip is not None)
+                       has_precip=df_precip is not None,
+                       has_dtr=df_ext is not None)
             written += 1
 
     # Each language's index.html is the Leaflet map chooser; root redirects.
