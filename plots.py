@@ -176,10 +176,15 @@ def plot_threshold_days(
         values = data.to_numpy(dtype=float)
         slope, line = robust_trend_line(years, values)
         sig = trend_significance(values, tr)
-        ax.plot(years, values, color=color, linewidth=1.0, marker="o",
-                markersize=2.5, alpha=0.3)
-        ax.plot(years, line, color=color, linewidth=2.6,
+        # Faint raw counts, a bold LOESS smoother (reveals the non-linear
+        # shape of the change), and a thin dashed robust trend line that
+        # carries the single per-decade rate + significance in the legend.
+        ax.plot(years, values, color=color, linewidth=0.8, marker="o",
+                markersize=2.0, alpha=0.25)
+        ax.plot(years, loess(years, values), color=color, linewidth=2.6,
                 label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
+        ax.plot(years, line, color=color, linewidth=1.3, linestyle="--",
+                alpha=0.8)
 
     ax.set_title(tr["threshold_title"].format(name=location.name))
     ax.set_xlabel(tr["year"])
