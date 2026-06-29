@@ -481,13 +481,13 @@ def save_all(
     location: Location,
     output_dir: Path,
     tr: dict,
-    df_ext: pd.DataFrame | None = None,
     df_precip: pd.DataFrame | None = None,
 ) -> list[Path]:
     """Render the dashboard plus each standalone panel; return written paths.
 
-    ``df_ext`` (daily max/min) adds the record-range panel; ``df_precip`` adds
-    the annual precipitation panel — each rendered only when its data is given.
+    The monthly-range and record charts are interactive on the web (see
+    :mod:`interactive`), so only their dashboard versions are rendered here.
+    ``df_precip`` adds the annual precipitation panel when its data is given.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
@@ -505,7 +505,6 @@ def save_all(
         "anomalies": plot_anomalies,
         "monthly-heatmap": plot_monthly_heatmap,
         "monthly-anomaly": plot_monthly_anomaly_heatmap,
-        "monthly-range": plot_monthly_range,
         "volatility": plot_temp_volatility,
     }
     for name, draw in panels.items():
@@ -518,16 +517,11 @@ def save_all(
         plt.close(fig)
         written.append(path)
 
-    extras = []
-    if df_ext is not None:
-        extras.append(("monthly-records", plot_record_range, df_ext))
     if df_precip is not None:
-        extras.append(("precipitation", plot_precip, df_precip))
-    for name, draw, data in extras:
         fig, ax = plt.subplots(figsize=(9, 5.5))
-        draw(data, location, ax, tr)
+        plot_precip(df_precip, location, ax, tr)
         fig.tight_layout()
-        path = output_dir / f"{slug}_{name}.png"
+        path = output_dir / f"{slug}_precipitation.png"
         fig.savefig(path, dpi=160)
         plt.close(fig)
         written.append(path)

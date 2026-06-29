@@ -13,6 +13,7 @@ import json
 from pathlib import Path
 from string import Template
 
+import interactive
 from config import Location
 from i18n import LANG_NAMES
 from plots import summary_stats
@@ -94,6 +95,17 @@ _PAGE = Template(
                      color: #cbd5e1; font-size: .9rem; }
   details.guide li { margin: .35rem 0; }
   details.guide b { color: #f1f5f9; }
+  .iwidget { background: #f8fafc; border: 1px solid #334155; border-radius: 12px;
+             padding: .6rem .7rem; display: flex; flex-direction: column; margin: 0; }
+  .iwhead { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+            justify-content: space-between; color: #0f172a; padding: .2rem .25rem .4rem; }
+  .iwhead strong { font-size: .95rem; }
+  .ypick { color: #334155; font-size: .85rem; }
+  .ypick select { background: #fff; color: #0f172a; border: 1px solid #cbd5e1;
+                  border-radius: 8px; padding: .15rem .4rem; font-size: .85rem; }
+  .ican { position: relative; height: 300px; }
+  .iwidget figcaption { color: #475569; font-size: .85rem; padding: .5rem .25rem 0;
+                        text-align: center; }
   .charts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
@@ -135,6 +147,7 @@ _PAGE = Template(
 </style>
 </head>
 <body>
+${chart_js}
 <header>
   <h1>${title}</h1>
   <p>${subtitle}</p>
@@ -183,11 +196,8 @@ _PAGE = Template(
       <img src="${slug}_monthly-anomaly.png" alt="">
       <figcaption>${cap_anom_heatmap}</figcaption>
     </figure>
-    <figure>
-      <img src="${slug}_monthly-range.png" alt="">
-      <figcaption>${cap_range}</figcaption>
-    </figure>
-    ${record_figure}
+    ${range_widget}
+    ${records_widget}
     <figure>
       <img src="${slug}_threshold-days.png" alt="">
       <figcaption>${cap_threshold}</figcaption>
@@ -285,17 +295,23 @@ def build_site(
     lang: str,
     languages: list[str],
     tr: dict,
-    has_records: bool = False,
+    range_data: dict,
+    records_data: dict | None = None,
     has_precip: bool = False,
 ) -> Path:
     """Write ``<slug>.html`` (localised) into ``output_dir``; return its path."""
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
     stats = summary_stats(df)
-    record_figure = (
-        f'<figure>\n      <img src="{slug}_monthly-records.png" alt="">\n'
-        f'      <figcaption>{tr["cap_records"]}</figcaption>\n    </figure>'
-        if has_records else ""
+    chart_js = interactive.CHARTJS_INCLUDE + interactive.SHARED_JS
+    range_widget = interactive.range_widget_html(
+        slug, tr["range_title"].format(name=location.name), tr["cap_range"],
+        tr["year"], range_data, tr["months"])
+    records_widget = (
+        interactive.records_widget_html(
+            slug, tr["record_title"].format(name=location.name),
+            tr["cap_records"], tr["year"], records_data, tr["months"])
+        if records_data else ""
     )
     precip_figure = (
         f'<figure>\n      <img src="{slug}_precipitation.png" alt="">\n'
@@ -326,8 +342,9 @@ def build_site(
         cap_anomalies=tr["cap_anomalies"],
         cap_heatmap=tr["cap_heatmap"],
         cap_anom_heatmap=tr["cap_anom_heatmap"],
-        cap_range=tr["cap_range"],
-        record_figure=record_figure,
+        chart_js=chart_js,
+        range_widget=range_widget,
+        records_widget=records_widget,
         cap_threshold=tr["cap_threshold"],
         cap_volatility=tr["cap_volatility"],
         precip_figure=precip_figure,
@@ -403,7 +420,8 @@ _MAP_PAGE = Template(
   }).addTo(map);
   cities.forEach(function (c) {
     L.marker([c.lat, c.lon]).addTo(map)
-      .bindPopup('<a href="' + c.s + '">' + c.n + '</a>');
+      .bindTooltip(c.n)
+      .on('click', function () { location.href = c.s; });
   });
 </script>
 </body>

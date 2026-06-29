@@ -19,6 +19,7 @@ import argparse
 import datetime as dt
 
 import i18n
+import interactive
 from config import (
     DEFAULT_LOCATION,
     EARLIEST_YEAR,
@@ -117,13 +118,15 @@ def main() -> None:
                   f"trend {s['trend_per_decade']:+.2f}/dec")
         df_ext = extremes.get(location.slug)
         df_precip = precip.get(location.slug)
+        range_data = interactive.range_payload(df)
+        records_data = (interactive.records_payload(df_ext)
+                        if df_ext is not None else None)
         for lang in i18n.LANGUAGES:
             tr = i18n.get(lang)
             lang_dir = OUTPUT_DIR / lang
-            written += len(save_all(df, location, lang_dir, tr,
-                                    df_ext=df_ext, df_precip=df_precip))
+            written += len(save_all(df, location, lang_dir, tr, df_precip=df_precip))
             build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr,
-                       has_records=df_ext is not None,
+                       range_data=range_data, records_data=records_data,
                        has_precip=df_precip is not None)
             written += 1
 
