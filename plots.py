@@ -3,7 +3,7 @@
 Six views are produced:
 
 * ``plot_threshold_days``          -- hot (>18°C) & freezing (<0°C) days per year
-* ``plot_yearly_trend``            -- annual mean per year + least-squares trend
+* ``plot_yearly_trend``            -- annual mean + LOESS smoother & robust trend
 * ``plot_anomalies``               -- annual anomaly vs. a 1961-1990 baseline
 * ``plot_monthly_heatmap``         -- year x month grid of monthly means
 * ``plot_monthly_anomaly_heatmap`` -- per-month anomaly vs. 1961-1990
@@ -16,6 +16,7 @@ helper can also draw onto a caller-supplied Axes for standalone PNGs.
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 
 import numpy as np
@@ -48,16 +49,74 @@ def annual_means(df: pd.DataFrame) -> pd.Series:
     return series
 
 
-def linear_trend(years: np.ndarray, values: np.ndarray) -> tuple[float, np.ndarray]:
-    """Fit ``values ~ years`` and return (slope_per_year, fitted_line)."""
-    slope, intercept = np.polyfit(years, values, 1)
-    return slope, slope * years + intercept
+def theil_sen(years: np.ndarray, values: np.ndarray) -> float:
+    """Robust slope per year: the median of all pairwise slopes.
+
+    Unlike least squares it shrugs off a few extreme years — the right summary
+    for noisy series like precipitation or day-to-day swings.
+    """
+    i, j = np.triu_indices(len(years), k=1)
+    dx = years[j] - years[i]
+    ok = dx != 0
+    slopes = (values[j] - values[i])[ok] / dx[ok]
+    return float(np.median(slopes)) if slopes.size else 0.0
+
+
+def _mann_kendall_p(values: np.ndarray) -> float:
+    """Two-sided p-value for a monotone trend (Mann–Kendall, no SciPy)."""
+    n = len(values)
+    if n < 4:
+        return 1.0
+    i, j = np.triu_indices(n, k=1)
+    s = float(np.sum(np.sign(values[j] - values[i])))
+    var = n * (n - 1) * (2 * n + 5) / 18.0
+    if var <= 0:
+        return 1.0
+    z = (s - np.sign(s)) / math.sqrt(var)  # continuity-corrected
+    return math.erfc(abs(z) / math.sqrt(2))  # = 2·(1 − Φ(|z|))
+
+
+def trend_significance(values: np.ndarray, tr: dict) -> str:
+    """Compact significance marker from the Mann–Kendall p-value."""
+    p = _mann_kendall_p(np.asarray(values, dtype=float))
+    if p < 0.001:
+        return "p<0.001"
+    if p < 0.01:
+        return "p<0.01"
+    if p < 0.05:
+        return "p<0.05"
+    return tr["ns"]
+
+
+def loess(years: np.ndarray, values: np.ndarray,
+          bandwidth: float | None = None) -> np.ndarray:
+    """Local-linear (LOESS-style) smoother revealing the *shape* of the trend.
+
+    For each year, a Gaussian-weighted linear fit of nearby years — so the
+    curve bends with the data (e.g. mid-century pause then steep modern rise)
+    instead of forcing one straight line. Dependency-free.
+    """
+    years = np.asarray(years, dtype=float)
+    values = np.asarray(values, dtype=float)
+    if bandwidth is None:
+        span = float(years.max() - years.min())
+        bandwidth = max(span / 8.0, 4.0)
+    out = np.empty_like(values)
+    for k, x in enumerate(years):
+        w = np.exp(-0.5 * ((years - x) / bandwidth) ** 2)
+        sw = w.sum()
+        mx = (w * years).sum() / sw
+        my = (w * values).sum() / sw
+        var = (w * (years - mx) ** 2).sum()
+        slope = (w * (years - mx) * (values - my)).sum() / var if var > 0 else 0.0
+        out[k] = my + slope * (x - mx)
+    return out
 
 
 def summary_stats(df: pd.DataFrame) -> dict:
     """Headline figures used by both the CLI printout and the web page."""
     means = annual_means(df)
-    slope, _ = linear_trend(means.index.to_numpy(float), means.to_numpy())
+    slope = theil_sen(means.index.to_numpy(float), means.to_numpy())
     warmest = int(means.idxmax())
     coldest = int(means.idxmin())
     return {
@@ -106,11 +165,12 @@ def plot_threshold_days(
     ]
     for data, color, label in series:
         values = data.to_numpy(dtype=float)
-        slope, fitted = linear_trend(years, values)
+        slope = theil_sen(years, values)
+        sig = trend_significance(values, tr)
         ax.plot(years, values, color=color, linewidth=1.0, marker="o",
-                markersize=2.5, alpha=0.4)
-        ax.plot(years, fitted, color=color, linewidth=2.6,
-                label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']}")
+                markersize=2.5, alpha=0.35)
+        ax.plot(years, loess(years, values), color=color, linewidth=2.6,
+                label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
 
     ax.set_title(tr["threshold_title"].format(name=location.name))
     ax.set_xlabel(tr["year"])
@@ -123,16 +183,17 @@ def plot_threshold_days(
 def plot_yearly_trend(
     df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
 ) -> None:
-    """Annual mean temperature per year with a least-squares trend line."""
+    """Annual mean temperature with a LOESS smoother + robust trend figure."""
     means = annual_means(df)
     years = means.index.to_numpy(dtype=float)
     values = means.to_numpy()
-    slope, fitted = linear_trend(years, values)
+    slope = theil_sen(years, values)
+    sig = trend_significance(values, tr)
 
     ax.plot(years, values, marker="o", markersize=3, color="#2c7fb8",
-            linewidth=1, label=tr["annual_mean"])
-    ax.plot(years, fitted, color="#d62728", linewidth=2.5,
-            label=f"{tr['trend']} {slope * 10:+.2f} {tr['per_decade_c']}")
+            linewidth=1, alpha=0.5, label=tr["annual_mean"])
+    ax.plot(years, loess(years, values), color="#d62728", linewidth=2.6,
+            label=f"{tr['trend']} {slope * 10:+.2f} {tr['per_decade_c']} ({sig})")
     ax.set_title(tr["yearly_title"].format(name=location.name))
     ax.set_xlabel(tr["year"])
     ax.set_ylabel(tr["yearly_ylabel"])
@@ -153,6 +214,8 @@ def plot_anomalies(
     colors = np.where(anomaly.to_numpy() >= 0, "#d62728", "#2c7fb8")
     ax.bar(means.index, anomaly.to_numpy(), color=colors, width=0.9)
     ax.axhline(0, color="black", linewidth=0.8)
+    ax.plot(means.index, loess(means.index.to_numpy(float), anomaly.to_numpy()),
+            color="#0f172a", linewidth=2.0)
     label = (
         tr["vs_baseline"].format(lo=lo, hi=hi, base=baseline)
         if not baseline_years.empty
@@ -338,13 +401,14 @@ def plot_temp_volatility(
     swings = (diff >= SWING_C).groupby(df.index.year).sum()
     years = swings.index.to_numpy(dtype=float)
     values = swings.to_numpy(dtype=float)
-    slope, fitted = linear_trend(years, values)
+    slope = theil_sen(years, values)
+    sig = trend_significance(values, tr)
 
     ax.plot(years, values, color="#7c3aed", linewidth=1.0, marker="o",
-            markersize=2.5, alpha=0.45)
-    ax.plot(years, fitted, color="#7c3aed", linewidth=2.6,
+            markersize=2.5, alpha=0.4)
+    ax.plot(years, loess(years, values), color="#7c3aed", linewidth=2.6,
             label=(f"≥{SWING_C:.0f} °C {tr['volatility_jump']}: "
-                   f"{slope * 10:+.1f} {tr['per_decade_days']}"))
+                   f"{slope * 10:+.1f} {tr['per_decade_days']} ({sig})"))
     ax.set_title(tr["volatility_title"].format(name=location.name))
     ax.set_xlabel(tr["year"])
     ax.set_ylabel(tr["volatility_ylabel"])
@@ -360,12 +424,13 @@ def plot_precip(
     annual = df_precip["precipitation_sum"].groupby(df_precip.index.year).sum()
     years = annual.index.to_numpy(dtype=float)
     values = annual.to_numpy(dtype=float)
-    slope, fitted = linear_trend(years, values)
+    slope = theil_sen(years, values)
+    sig = trend_significance(values, tr)
 
-    ax.bar(years, values, color="#2c7fb8", alpha=0.6, width=0.9,
+    ax.bar(years, values, color="#2c7fb8", alpha=0.5, width=0.9,
            label=tr["precip_annual"])
-    ax.plot(years, fitted, color="#d62728", linewidth=2.6,
-            label=f"{tr['trend']} {slope * 10:+.0f} {tr['per_decade_mm']}")
+    ax.plot(years, loess(years, values), color="#d62728", linewidth=2.6,
+            label=f"{tr['trend']} {slope * 10:+.0f} {tr['per_decade_mm']} ({sig})")
     ax.set_title(tr["precip_title"].format(name=location.name))
     ax.set_xlabel(tr["year"])
     ax.set_ylabel(tr["precip_ylabel"])

@@ -21,6 +21,7 @@ TRANSLATIONS: dict[str, dict] = {
         "html_lang": "en",
         "per_decade_c": "°C / decade",
         "per_decade_days": "days / decade",
+        "ns": "n.s.",
         "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         # charts
@@ -53,7 +54,8 @@ TRANSLATIONS: dict[str, dict] = {
         "card_mean": "Mean daily temp",
         "card_warmest": "Warmest year",
         "card_coldest": "Coldest year",
-        "cap_yearly": "Annual mean temperature with least-squares trend",
+        "cap_yearly": "Annual mean with a LOESS smoother (shows acceleration) and "
+                      "a robust Theil–Sen trend + significance",
         "cap_anomalies": "Yearly anomaly vs. 1961–1990 (blue cooler, red warmer)",
         "cap_heatmap": "Monthly mean by year — which seasons warm",
         "cap_anom_heatmap": "Monthly anomaly vs. 1961–1990 — warming per month",
@@ -98,6 +100,7 @@ TRANSLATIONS: dict[str, dict] = {
         "html_lang": "pl",
         "per_decade_c": "°C / dekadę",
         "per_decade_days": "dni / dekadę",
+        "ns": "nieist.",
         "months": ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze",
                    "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"],
         "threshold_title": "Dni gorące i mroźne w roku — {name}",
@@ -128,7 +131,8 @@ TRANSLATIONS: dict[str, dict] = {
         "card_mean": "Średnia dobowa",
         "card_warmest": "Najcieplejszy rok",
         "card_coldest": "Najzimniejszy rok",
-        "cap_yearly": "Średnia roczna temperatura z linią trendu",
+        "cap_yearly": "Średnia roczna z wygładzeniem LOESS (pokazuje przyspieszenie) "
+                      "i odpornym trendem Theila–Sena + istotność",
         "cap_anomalies": "Roczna anomalia względem 1961–1990 "
                          "(niebieski chłodniej, czerwony cieplej)",
         "cap_heatmap": "Średnie miesięczne wg lat — które pory roku się ocieplają",
@@ -175,6 +179,7 @@ TRANSLATIONS: dict[str, dict] = {
         "html_lang": "de",
         "per_decade_c": "°C / Dekade",
         "per_decade_days": "Tage / Dekade",
+        "ns": "n. s.",
         "months": ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun",
                    "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
         "threshold_title": "Heiße und Frosttage pro Jahr — {name}",
@@ -205,7 +210,8 @@ TRANSLATIONS: dict[str, dict] = {
         "card_mean": "Mittlere Tagestemperatur",
         "card_warmest": "Wärmstes Jahr",
         "card_coldest": "Kältestes Jahr",
-        "cap_yearly": "Jährliche Mitteltemperatur mit Trendlinie",
+        "cap_yearly": "Jahresmittel mit LOESS-Glättung (zeigt Beschleunigung) und "
+                      "robustem Theil–Sen-Trend + Signifikanz",
         "cap_anomalies": "Jährliche Anomalie ggü. 1961–1990 "
                          "(blau kühler, rot wärmer)",
         "cap_heatmap": "Monatsmittel nach Jahr — welche Jahreszeiten sich erwärmen",
