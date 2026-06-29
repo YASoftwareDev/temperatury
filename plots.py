@@ -88,15 +88,13 @@ def _mann_kendall_p(values: np.ndarray) -> float:
 
 
 def trend_significance(values: np.ndarray, tr: dict) -> str:
-    """Compact significance marker from the Mann–Kendall p-value."""
+    """Exact Mann–Kendall p-value (so significance never reads as a flat default)."""
     p = _mann_kendall_p(np.asarray(values, dtype=float))
-    if p < 0.001:
-        return "p<0.001"
-    if p < 0.01:
-        return "p<0.01"
-    if p < 0.05:
-        return "p<0.05"
-    return tr["ns"]
+    if p >= 0.05:
+        return f"{tr['ns']}, p={p:.2f}"
+    if p < 1e-4:
+        return f"p={p:.0e}"   # e.g. p=4e-10
+    return f"p={p:.4f}".rstrip("0")
 
 
 def loess(years: np.ndarray, values: np.ndarray,

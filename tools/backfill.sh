@@ -24,16 +24,18 @@ for round in $(seq 1 96); do
   "$PY" -c "
 import config, data
 locs = list(config.LOCATIONS.values())
+mean = data.load_temperatures_bulk(locs, 1940, 2025)
 ext = data.load_extremes_bulk(locs, 1940, 2025)
 pre = data.load_precip_bulk(locs, 1940, 2025)
+mm = sum(1 for l in locs if l.slug not in mean)
 me = sum(1 for l in locs if l.slug not in ext)
 mp = sum(1 for l in locs if l.slug not in pre)
-print('EXTREMES missing', me, '| PRECIP missing', mp)
-open('/tmp/backfill_remaining.txt','w').write(str(me+mp))
+print('MEAN missing', mm, '| EXTREMES missing', me, '| PRECIP missing', mp)
+open('/tmp/backfill_remaining.txt','w').write(str(mm+me+mp))
 "
   remaining=$(cat /tmp/backfill_remaining.txt 2>/dev/null || echo 99)
 
-  for f in data/*_extremes.csv.gz data/*_precip.csv.gz; do
+  for f in data/*.csv.gz; do
     [ -e "$f" ] || continue
     case "$f" in *[!\ -~]*) : ;; *) git add "$f" ;; esac
   done

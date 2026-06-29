@@ -14,9 +14,27 @@ from pathlib import Path
 from string import Template
 
 import interactive
-from config import Location
+from config import REGIONS, Location
 from i18n import LANG_NAMES
 from plots import summary_stats
+
+
+def _grouped_options(locations: list[Location], current_slug: str | None) -> str:
+    """City <option>s grouped into <optgroup> by region (config order)."""
+    by_region: dict[str, list[Location]] = {}
+    for loc in locations:
+        by_region.setdefault(loc.region, []).append(loc)
+    out = []
+    for region in REGIONS:
+        cities = sorted(by_region.get(region, []), key=lambda location: location.name)
+        if not cities:
+            continue
+        out.append(f'<optgroup label="{region}">')
+        for loc in cities:
+            sel = " selected" if loc.slug == current_slug else ""
+            out.append(f'<option value="{loc.slug}.html"{sel}>{loc.name}</option>')
+        out.append("</optgroup>")
+    return "".join(out)
 
 _PAGE = Template(
     """<!DOCTYPE html>
@@ -266,14 +284,12 @@ _REDIRECT = Template(
 
 
 def _city_chooser(current: Location, nav_locations: list[Location], tr: dict) -> str:
-    """A 'back to map' link plus a dropdown of every city (scales to many)."""
-    options = [f'<option value="index.html">{tr["choose_city"]}</option>']
-    for loc in sorted(nav_locations, key=lambda location: location.name):
-        selected = " selected" if loc.slug == current.slug else ""
-        options.append(f'<option value="{loc.slug}.html"{selected}>{loc.name}</option>')
+    """A 'back to map' link plus a region-grouped dropdown of every city."""
+    head = f'<option value="index.html">{tr["choose_city"]}</option>'
+    options = head + _grouped_options(nav_locations, current.slug)
     select = (
         '<select onchange="if(this.value)location.href=this.value" '
-        f'aria-label="{tr["choose_city"]}">{"".join(options)}</select>'
+        f'aria-label="{tr["choose_city"]}">{options}</select>'
     )
     return f'<a href="index.html">{tr["back_to_map"]}</a>{select}'
 
@@ -444,9 +460,8 @@ def build_map_page(
          "lat": loc.latitude, "lon": loc.longitude}
         for loc in locations
     ]
-    options = [f'<option value="">{tr["choose_city"]}</option>']
-    for loc in sorted(locations, key=lambda location: location.name):
-        options.append(f'<option value="{loc.slug}.html">{loc.name}</option>')
+    options = [f'<option value="">{tr["choose_city"]}</option>',
+               _grouped_options(locations, None)]
 
     html = _MAP_PAGE.substitute(
         html_lang=tr["html_lang"],
