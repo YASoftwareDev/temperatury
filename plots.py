@@ -62,6 +62,17 @@ def theil_sen(years: np.ndarray, values: np.ndarray) -> float:
     return float(np.median(slopes)) if slopes.size else 0.0
 
 
+def robust_trend_line(years: np.ndarray, values: np.ndarray) -> tuple[float, np.ndarray]:
+    """Theil–Sen slope-per-year plus the fitted straight line (constant slope).
+
+    The straight line is what "X per decade" means visually; show it dashed
+    alongside the LOESS curve so the headline number has something to anchor to.
+    """
+    slope = theil_sen(years, values)
+    intercept = float(np.median(values - slope * years))
+    return slope, slope * years + intercept
+
+
 def _mann_kendall_p(values: np.ndarray) -> float:
     """Two-sided p-value for a monotone trend (Mann–Kendall, no SciPy)."""
     n = len(values)
@@ -165,11 +176,11 @@ def plot_threshold_days(
     ]
     for data, color, label in series:
         values = data.to_numpy(dtype=float)
-        slope = theil_sen(years, values)
+        slope, line = robust_trend_line(years, values)
         sig = trend_significance(values, tr)
         ax.plot(years, values, color=color, linewidth=1.0, marker="o",
-                markersize=2.5, alpha=0.35)
-        ax.plot(years, loess(years, values), color=color, linewidth=2.6,
+                markersize=2.5, alpha=0.3)
+        ax.plot(years, line, color=color, linewidth=2.6,
                 label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
 
     ax.set_title(tr["threshold_title"].format(name=location.name))
@@ -187,12 +198,14 @@ def plot_yearly_trend(
     means = annual_means(df)
     years = means.index.to_numpy(dtype=float)
     values = means.to_numpy()
-    slope = theil_sen(years, values)
+    slope, line = robust_trend_line(years, values)
     sig = trend_significance(values, tr)
 
     ax.plot(years, values, marker="o", markersize=3, color="#2c7fb8",
-            linewidth=1, alpha=0.5, label=tr["annual_mean"])
+            linewidth=1, alpha=0.45, label=tr["annual_mean"])
     ax.plot(years, loess(years, values), color="#d62728", linewidth=2.6,
+            label=tr["smoothed"])
+    ax.plot(years, line, color="#334155", linewidth=1.6, linestyle="--",
             label=f"{tr['trend']} {slope * 10:+.2f} {tr['per_decade_c']} ({sig})")
     ax.set_title(tr["yearly_title"].format(name=location.name))
     ax.set_xlabel(tr["year"])
@@ -401,12 +414,14 @@ def plot_temp_volatility(
     swings = (diff >= SWING_C).groupby(df.index.year).sum()
     years = swings.index.to_numpy(dtype=float)
     values = swings.to_numpy(dtype=float)
-    slope = theil_sen(years, values)
+    slope, line = robust_trend_line(years, values)
     sig = trend_significance(values, tr)
 
     ax.plot(years, values, color="#7c3aed", linewidth=1.0, marker="o",
-            markersize=2.5, alpha=0.4)
+            markersize=2.5, alpha=0.35)
     ax.plot(years, loess(years, values), color="#7c3aed", linewidth=2.6,
+            label=tr["smoothed"])
+    ax.plot(years, line, color="#334155", linewidth=1.6, linestyle="--",
             label=(f"≥{SWING_C:.0f} °C {tr['volatility_jump']}: "
                    f"{slope * 10:+.1f} {tr['per_decade_days']} ({sig})"))
     ax.set_title(tr["volatility_title"].format(name=location.name))
@@ -424,12 +439,14 @@ def plot_precip(
     annual = df_precip["precipitation_sum"].groupby(df_precip.index.year).sum()
     years = annual.index.to_numpy(dtype=float)
     values = annual.to_numpy(dtype=float)
-    slope = theil_sen(years, values)
+    slope, line = robust_trend_line(years, values)
     sig = trend_significance(values, tr)
 
-    ax.bar(years, values, color="#2c7fb8", alpha=0.5, width=0.9,
+    ax.bar(years, values, color="#2c7fb8", alpha=0.45, width=0.9,
            label=tr["precip_annual"])
-    ax.plot(years, loess(years, values), color="#d62728", linewidth=2.6,
+    ax.plot(years, loess(years, values), color="#0f766e", linewidth=2.6,
+            label=tr["smoothed"])
+    ax.plot(years, line, color="#d62728", linewidth=1.8, linestyle="--",
             label=f"{tr['trend']} {slope * 10:+.0f} {tr['per_decade_mm']} ({sig})")
     ax.set_title(tr["precip_title"].format(name=location.name))
     ax.set_xlabel(tr["year"])

@@ -87,6 +87,13 @@ _PAGE = Template(
   .card .value { font-size: 1.7rem; font-weight: 700; margin-top: .25rem; }
   .card.trend { border-color: #b91c1c; background: #2a1414; }
   .card.trend .value { color: #f87171; }
+  details.guide { background: #1e293b; border: 1px solid #334155;
+                  border-radius: 12px; padding: .6rem 1.1rem; margin: 0 0 1.75rem; }
+  details.guide summary { cursor: pointer; font-weight: 600; color: #e2e8f0; }
+  details.guide ul { margin: .7rem 0 .3rem 1.1rem; padding: 0;
+                     color: #cbd5e1; font-size: .9rem; }
+  details.guide li { margin: .35rem 0; }
+  details.guide b { color: #f1f5f9; }
   .charts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
@@ -153,6 +160,11 @@ _PAGE = Template(
       <div class="value">${coldest_year}</div>
     </div>
   </section>
+
+  <details class="guide">
+    <summary>${guide_title}</summary>
+    <ul>${guide_body}</ul>
+  </details>
 
   <section class="charts">
     <figure>
@@ -319,6 +331,8 @@ def build_site(
         cap_threshold=tr["cap_threshold"],
         cap_volatility=tr["cap_volatility"],
         precip_figure=precip_figure,
+        guide_title=tr["guide_title"],
+        guide_body=tr["guide_body"],
         hint=tr["hint"],
         footer=tr["footer"].format(date=dt.date.today().isoformat()),
         slug=slug,

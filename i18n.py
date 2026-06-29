@@ -22,6 +22,24 @@ TRANSLATIONS: dict[str, dict] = {
         "per_decade_c": "°C / decade",
         "per_decade_days": "days / decade",
         "ns": "n.s.",
+        "smoothed": "smoothed (LOESS)",
+        "guide_title": "ℹ️ How to read these charts",
+        "guide_body":
+            "<li><b>Dots / bars</b> — the value for each individual year.</li>"
+            "<li><b>Bold coloured curve</b> — a LOESS smoother: the local trend, "
+            "free to bend, so you can see the rate change over time (e.g. warming "
+            "accelerating after ~1985).</li>"
+            "<li><b>Dashed line</b> — the straight robust (Theil–Sen) trend; its "
+            "slope is the “per decade” figure in the legend.</li>"
+            "<li><b>p&lt;0.05 / n.s.</b> — Mann–Kendall significance: whether the "
+            "trend is statistically real or could just be noise (n.s. = not "
+            "significant). Temperature is usually highly significant; rainfall "
+            "often isn't.</li>"
+            "<li><b>Shaded band</b> — the full historical range across all years "
+            "for that month.</li>"
+            "<li><b>Heatmap colours</b> — temperature (blue cold → red warm); read "
+            "a column from bottom to top to watch that month change over the "
+            "years.</li>",
         "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         # charts
@@ -56,10 +74,18 @@ TRANSLATIONS: dict[str, dict] = {
         "card_coldest": "Coldest year",
         "cap_yearly": "Annual mean with a LOESS smoother (shows acceleration) and "
                       "a robust Theil–Sen trend + significance",
-        "cap_anomalies": "Yearly anomaly vs. 1961–1990 (blue cooler, red warmer)",
-        "cap_heatmap": "Monthly mean by year — which seasons warm",
-        "cap_anom_heatmap": "Monthly anomaly vs. 1961–1990 — warming per month",
-        "cap_threshold": "Hot (&gt;18 °C) &amp; freezing (&lt;0 °C) days per year",
+        "cap_anomalies": "Each year compared to the 1961–1990 average — red bars "
+                         "warmer, blue cooler. The shift from mostly blue to mostly "
+                         "red is the warming.",
+        "cap_heatmap": "Every month's average for every year as a colour grid "
+                       "(2 °C bands). Read a column upward to watch that month warm "
+                       "over the decades.",
+        "cap_anom_heatmap": "Same grid, but each month is measured against its own "
+                            "1961–1990 normal, so only the change shows (red warmer "
+                            "than usual, blue cooler) — the seasonal cycle removed.",
+        "cap_threshold": "Days each year above 18 °C (hot) and below 0 °C (freezing). "
+                         "The two robust trends crossing means hot days now outnumber "
+                         "freezing days.",
         "hint": "Click anywhere or press Esc to close",
         "site_title": "European capital temperatures",
         "map_heading": "Temperatures across Europe",
@@ -101,6 +127,23 @@ TRANSLATIONS: dict[str, dict] = {
         "per_decade_c": "°C / dekadę",
         "per_decade_days": "dni / dekadę",
         "ns": "nieist.",
+        "smoothed": "wygładzenie (LOESS)",
+        "guide_title": "ℹ️ Jak czytać te wykresy",
+        "guide_body":
+            "<li><b>Punkty / słupki</b> — wartość dla każdego roku.</li>"
+            "<li><b>Pogrubiona krzywa</b> — wygładzenie LOESS: lokalny trend, który "
+            "może się wyginać, więc widać zmianę tempa w czasie (np. przyspieszające "
+            "ocieplenie po ~1985).</li>"
+            "<li><b>Linia przerywana</b> — prosty, odporny trend (Theil–Sen); jego "
+            "nachylenie to wartość „na dekadę” w legendzie.</li>"
+            "<li><b>p&lt;0,05 / nieist.</b> — istotność Manna–Kendalla: czy trend "
+            "jest statystycznie realny, czy może być tylko szumem (nieist. = "
+            "nieistotny). Temperatura jest zwykle istotna; opady często nie.</li>"
+            "<li><b>Zacieniony obszar</b> — pełny historyczny zakres ze wszystkich "
+            "lat dla danego miesiąca.</li>"
+            "<li><b>Kolory mapy ciepła</b> — temperatura (niebieski zimno → czerwony "
+            "ciepło); czytaj kolumnę z dołu do góry, by zobaczyć zmianę miesiąca "
+            "przez lata.</li>",
         "months": ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze",
                    "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"],
         "threshold_title": "Dni gorące i mroźne w roku — {name}",
@@ -133,12 +176,18 @@ TRANSLATIONS: dict[str, dict] = {
         "card_coldest": "Najzimniejszy rok",
         "cap_yearly": "Średnia roczna z wygładzeniem LOESS (pokazuje przyspieszenie) "
                       "i odpornym trendem Theila–Sena + istotność",
-        "cap_anomalies": "Roczna anomalia względem 1961–1990 "
-                         "(niebieski chłodniej, czerwony cieplej)",
-        "cap_heatmap": "Średnie miesięczne wg lat — które pory roku się ocieplają",
-        "cap_anom_heatmap": "Anomalia miesięczna względem 1961–1990 — "
-                            "ocieplenie w każdym miesiącu",
-        "cap_threshold": "Dni gorące (&gt;18 °C) i mroźne (&lt;0 °C) w roku",
+        "cap_anomalies": "Każdy rok względem średniej 1961–1990 — czerwone słupki "
+                         "cieplej, niebieskie chłodniej. Przejście od niebieskich do "
+                         "czerwonych to ocieplenie.",
+        "cap_heatmap": "Średnia każdego miesiąca w każdym roku jako siatka kolorów "
+                       "(pasma 2 °C). Czytaj kolumnę w górę, by zobaczyć ocieplanie "
+                       "się miesiąca przez dekady.",
+        "cap_anom_heatmap": "Ta sama siatka, ale każdy miesiąc względem własnej normy "
+                            "1961–1990, więc widać tylko zmianę (czerwony cieplej, "
+                            "niebieski chłodniej) — cykl sezonowy usunięty.",
+        "cap_threshold": "Dni w roku powyżej 18 °C (gorące) i poniżej 0 °C (mroźne). "
+                         "Przecięcie odpornych trendów oznacza, że dni gorących jest "
+                         "już więcej niż mroźnych.",
         "hint": "Kliknij gdziekolwiek lub naciśnij Esc, aby zamknąć",
         "site_title": "Temperatury stolic Europy",
         "map_heading": "Temperatury w Europie",
@@ -180,6 +229,24 @@ TRANSLATIONS: dict[str, dict] = {
         "per_decade_c": "°C / Dekade",
         "per_decade_days": "Tage / Dekade",
         "ns": "n. s.",
+        "smoothed": "Glättung (LOESS)",
+        "guide_title": "ℹ️ So lesen Sie diese Diagramme",
+        "guide_body":
+            "<li><b>Punkte / Balken</b> — der Wert für jedes einzelne Jahr.</li>"
+            "<li><b>Fette farbige Kurve</b> — LOESS-Glättung: der lokale Trend, der "
+            "sich biegen darf, sodass die Änderung der Rate sichtbar wird (z. B. "
+            "beschleunigte Erwärmung nach ~1985).</li>"
+            "<li><b>Gestrichelte Linie</b> — der gerade robuste (Theil–Sen) Trend; "
+            "seine Steigung ist der Wert „pro Dekade“ in der Legende.</li>"
+            "<li><b>p&lt;0,05 / n. s.</b> — Mann–Kendall-Signifikanz: ob der Trend "
+            "statistisch real ist oder nur Rauschen sein könnte (n. s. = nicht "
+            "signifikant). Temperatur ist meist signifikant, Niederschlag oft "
+            "nicht.</li>"
+            "<li><b>Schattiertes Band</b> — die gesamte historische Spanne über "
+            "alle Jahre für diesen Monat.</li>"
+            "<li><b>Heatmap-Farben</b> — Temperatur (blau kalt → rot warm); lesen "
+            "Sie eine Spalte von unten nach oben, um die Veränderung des Monats "
+            "über die Jahre zu sehen.</li>",
         "months": ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun",
                    "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
         "threshold_title": "Heiße und Frosttage pro Jahr — {name}",
@@ -212,11 +279,18 @@ TRANSLATIONS: dict[str, dict] = {
         "card_coldest": "Kältestes Jahr",
         "cap_yearly": "Jahresmittel mit LOESS-Glättung (zeigt Beschleunigung) und "
                       "robustem Theil–Sen-Trend + Signifikanz",
-        "cap_anomalies": "Jährliche Anomalie ggü. 1961–1990 "
-                         "(blau kühler, rot wärmer)",
-        "cap_heatmap": "Monatsmittel nach Jahr — welche Jahreszeiten sich erwärmen",
-        "cap_anom_heatmap": "Monatsanomalie ggü. 1961–1990 — Erwärmung je Monat",
-        "cap_threshold": "Heiße (&gt;18 °C) &amp; Frosttage (&lt;0 °C) pro Jahr",
+        "cap_anomalies": "Jedes Jahr im Vergleich zum Mittel 1961–1990 — rote Balken "
+                         "wärmer, blaue kühler. Der Wechsel von Blau zu Rot ist die "
+                         "Erwärmung.",
+        "cap_heatmap": "Der Monatsdurchschnitt jedes Jahres als Farbraster "
+                       "(2-°C-Stufen). Lesen Sie eine Spalte nach oben, um die "
+                       "Erwärmung des Monats über die Jahrzehnte zu sehen.",
+        "cap_anom_heatmap": "Dasselbe Raster, aber jeder Monat an seiner eigenen Norm "
+                            "1961–1990 gemessen, sodass nur die Änderung sichtbar ist "
+                            "(rot wärmer, blau kühler) — Jahreszyklus entfernt.",
+        "cap_threshold": "Tage pro Jahr über 18 °C (heiß) und unter 0 °C (Frost). Wo "
+                         "sich die robusten Trends kreuzen, gibt es nun mehr heiße "
+                         "als Frosttage.",
         "hint": "Klicken Sie irgendwo oder drücken Sie Esc zum Schließen",
         "site_title": "Temperaturen europäischer Hauptstädte",
         "map_heading": "Temperaturen in Europa",
