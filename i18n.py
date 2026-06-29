@@ -121,6 +121,17 @@ TRANSLATIONS: dict[str, dict] = {
         "precip_ylabel": "Precipitation (mm / year)",
         "precip_annual": "annual total",
         "cap_precip": "Total yearly precipitation (rain and snow water) with a trend",
+        "stripes_title": "Warming stripes — {name}",
+        "stripes_cbar": "Anomaly vs. {lo}–{hi} (°C)",
+        "cap_stripes": "Each stripe is one year's temperature — blue cooler, red "
+                       "warmer than the 1961–1990 average. The drift from blue to "
+                       "red is the warming, with nothing to read but colour.",
+        "season_title": "Growing-season length — {name}",
+        "season_ylabel": "Growing-season length (days)",
+        "season_annual": "season length",
+        "cap_season": "Length of the thermal growing season each year (run of days "
+                      "with a daily mean ≥ 5 °C) — the frost-free window farming "
+                      "depends on, lengthening as the climate warms.",
         "footer": 'Generated {date} · data from '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   'historical reanalysis (ERA5) · '
@@ -227,6 +238,17 @@ TRANSLATIONS: dict[str, dict] = {
         "precip_ylabel": "Opady (mm / rok)",
         "precip_annual": "suma roczna",
         "cap_precip": "Roczna suma opadów (deszcz i woda ze śniegu) z linią trendu",
+        "stripes_title": "Pasy ocieplenia — {name}",
+        "stripes_cbar": "Anomalia względem {lo}–{hi} (°C)",
+        "cap_stripes": "Każdy pas to jeden rok — niebieski chłodniejszy, czerwony "
+                       "cieplejszy od średniej 1961–1990. Przejście od niebieskiego "
+                       "do czerwonego to ocieplenie, czytelne samym kolorem.",
+        "season_title": "Długość sezonu wegetacyjnego — {name}",
+        "season_ylabel": "Długość sezonu wegetacyjnego (dni)",
+        "season_annual": "długość sezonu",
+        "cap_season": "Długość termicznego sezonu wegetacyjnego w każdym roku (ciąg "
+                      "dni ze średnią dobową ≥ 5 °C) — bezmroźne okno, od którego "
+                      "zależy rolnictwo, wydłużające się wraz z ociepleniem.",
         "footer": 'Wygenerowano {date} · dane z '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanaliza historyczna ERA5) · '
@@ -334,6 +356,18 @@ TRANSLATIONS: dict[str, dict] = {
         "precip_ylabel": "Niederschlag (mm / Jahr)",
         "precip_annual": "Jahressumme",
         "cap_precip": "Jährliche Niederschlagssumme (Regen und Schmelzwasser) mit Trend",
+        "stripes_title": "Erwärmungsstreifen — {name}",
+        "stripes_cbar": "Anomalie ggü. {lo}–{hi} (°C)",
+        "cap_stripes": "Jeder Streifen ist ein Jahr — blau kühler, rot wärmer als "
+                       "das Mittel 1961–1990. Der Übergang von Blau zu Rot ist die "
+                       "Erwärmung, allein an der Farbe ablesbar.",
+        "season_title": "Länge der Vegetationsperiode — {name}",
+        "season_ylabel": "Länge der Vegetationsperiode (Tage)",
+        "season_annual": "Länge der Periode",
+        "cap_season": "Länge der thermischen Vegetationsperiode pro Jahr (Folge von "
+                      "Tagen mit Tagesmittel ≥ 5 °C) — das frostfreie Fenster, von "
+                      "dem die Landwirtschaft abhängt, das sich mit der Erwärmung "
+                      "verlängert.",
         "footer": 'Erstellt {date} · Daten von '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(historische Reanalyse ERA5) · '
@@ -443,6 +477,18 @@ TRANSLATIONS: dict[str, dict] = {
         "precip_annual": "total annuel",
         "cap_precip": "Précipitations annuelles totales (pluie et eau de neige) "
                       "avec une tendance",
+        "stripes_title": "Bandes du réchauffement — {name}",
+        "stripes_cbar": "Anomalie par rapport à {lo}–{hi} (°C)",
+        "cap_stripes": "Chaque bande est une année — bleu plus froid, rouge plus "
+                       "chaud que la moyenne 1961–1990. Le glissement du bleu au "
+                       "rouge est le réchauffement, lisible à la seule couleur.",
+        "season_title": "Durée de la saison de végétation — {name}",
+        "season_ylabel": "Durée de la saison de végétation (jours)",
+        "season_annual": "durée de la saison",
+        "cap_season": "Durée de la saison de végétation thermique chaque année "
+                      "(suite de jours dont la moyenne ≥ 5 °C) — la fenêtre sans "
+                      "gel dont dépend l'agriculture, qui s'allonge avec le "
+                      "réchauffement.",
         "footer": 'Généré le {date} · données de '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(réanalyse historique ERA5) · '
@@ -552,6 +598,18 @@ TRANSLATIONS: dict[str, dict] = {
         "precip_annual": "total anual",
         "cap_precip": "Precipitación anual total (lluvia y agua de nieve) "
                       "con una tendencia",
+        "stripes_title": "Franjas del calentamiento — {name}",
+        "stripes_cbar": "Anomalía respecto a {lo}–{hi} (°C)",
+        "cap_stripes": "Cada franja es un año — azul más frío, rojo más cálido que "
+                       "la media 1961–1990. El paso del azul al rojo es el "
+                       "calentamiento, legible solo por el color.",
+        "season_title": "Duración de la estación de crecimiento — {name}",
+        "season_ylabel": "Duración de la estación de crecimiento (días)",
+        "season_annual": "duración de la estación",
+        "cap_season": "Duración de la estación de crecimiento térmica cada año "
+                      "(racha de días con media diaria ≥ 5 °C) — la ventana sin "
+                      "heladas de la que depende la agricultura, que se alarga con "
+                      "el calentamiento.",
         "footer": 'Generado el {date} · datos de '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanálisis histórico ERA5) · '
@@ -658,6 +716,18 @@ TRANSLATIONS: dict[str, dict] = {
         "precip_ylabel": "Опади (мм / рік)",
         "precip_annual": "річна сума",
         "cap_precip": "Річна сума опадів (дощ і вода зі снігу) з лінією тренду",
+        "stripes_title": "Смуги потепління — {name}",
+        "stripes_cbar": "Аномалія відносно {lo}–{hi} (°C)",
+        "cap_stripes": "Кожна смуга — це один рік: синій холодніший, червоний "
+                       "тепліший за середню 1961–1990. Перехід від синього до "
+                       "червоного — це потепління, читається самим лише кольором.",
+        "season_title": "Тривалість вегетаційного періоду — {name}",
+        "season_ylabel": "Тривалість вегетаційного періоду (днів)",
+        "season_annual": "тривалість періоду",
+        "cap_season": "Тривалість термічного вегетаційного періоду щороку (низка "
+                      "днів із середньою добовою ≥ 5 °C) — безморозне вікно, від "
+                      "якого залежить сільське господарство, що подовжується з "
+                      "потеплінням.",
         "footer": 'Згенеровано {date} · дані з '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(історичний реаналіз ERA5) · '

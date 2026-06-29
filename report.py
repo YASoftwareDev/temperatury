@@ -211,6 +211,10 @@ ${chart_js}
       <figcaption>${cap_anomalies}</figcaption>
     </figure>
     <figure>
+      <img src="${slug}_warming-stripes.png" alt="">
+      <figcaption>${cap_stripes}</figcaption>
+    </figure>
+    <figure>
       <img src="${slug}_monthly-heatmap.png" alt="">
       <figcaption>${cap_heatmap}</figcaption>
     </figure>
@@ -223,6 +227,10 @@ ${chart_js}
     <figure>
       <img src="${slug}_threshold-days.png" alt="">
       <figcaption>${cap_threshold}</figcaption>
+    </figure>
+    <figure>
+      <img src="${slug}_growing-season.png" alt="">
+      <figcaption>${cap_season}</figcaption>
     </figure>
     <figure>
       <img src="${slug}_volatility.png" alt="">
@@ -367,6 +375,8 @@ def build_site(
         records_widget=records_widget,
         cap_threshold=tr["cap_threshold"],
         cap_volatility=tr["cap_volatility"],
+        cap_stripes=tr["cap_stripes"],
+        cap_season=tr["cap_season"],
         precip_figure=precip_figure,
         guide_title=tr["guide_title"],
         guide_body=tr["guide_body"],

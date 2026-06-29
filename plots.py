@@ -40,6 +40,11 @@ FREEZE_DAY_C = 0.0
 # A "big jump" is a day-to-day change in daily mean of at least this many °C.
 SWING_C = 6.0
 
+# Thermal growing season: days whose daily mean stays at/above this threshold.
+# Onset/end require this many consecutive days to ignore isolated warm/cold spells.
+GROW_C = 5.0
+GROW_RUN = 6
+
 
 # --- statistics helpers ----------------------------------------------------
 def annual_means(df: pd.DataFrame) -> pd.Series:
@@ -459,6 +464,97 @@ def plot_precip(
     ax.margins(x=0.01)
 
 
+def plot_warming_stripes(
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
+    """Ed-Hawkins 'warming stripes': one stripe per year, coloured by anomaly.
+
+    The most legible climate graphic there is — no axes to read, just a wall of
+    colour shifting from blue (cool years) to red (warm). Same anomaly data as
+    the bar chart, but stripped to pure colour so the long-run shift dominates.
+    """
+    means = annual_means(df)
+    lo, hi = BASELINE
+    baseline_years = means.loc[(means.index >= lo) & (means.index <= hi)]
+    baseline = baseline_years.mean() if not baseline_years.empty else means.mean()
+    anomaly = (means - baseline).to_numpy()
+    years = means.index.to_numpy()
+
+    # Symmetric colour scale around zero so blue/red are balanced.
+    limit = float(np.nanmax(np.abs(anomaly))) or 1.0
+    ax.imshow(anomaly[np.newaxis, :], cmap="RdBu_r", aspect="auto",
+              vmin=-limit, vmax=limit,
+              extent=(years[0] - 0.5, years[-1] + 0.5, 0, 1))
+    ax.set_yticks([])
+    ax.set_xlabel(tr["year"])
+    ax.set_title(tr["stripes_title"].format(name=location.name))
+    sm = plt.cm.ScalarMappable(cmap="RdBu_r",
+                               norm=plt.Normalize(vmin=-limit, vmax=limit))
+    cbar = ax.figure.colorbar(sm, ax=ax, fraction=0.05, pad=0.02)
+    cbar.set_label(tr["stripes_cbar"].format(lo=lo, hi=hi))
+
+
+def _season_length(daily_mean: np.ndarray) -> float:
+    """Thermal growing-season length (days) for one year's daily-mean series.
+
+    Onset = start of the first ``GROW_RUN``-day run at/above ``GROW_C``; end =
+    start of the first such run *below* it after midyear. Returns 0 if the
+    season never opens, or the full length if it never closes (warm climates).
+    """
+    n = len(daily_mean)
+    warm = daily_mean >= GROW_C
+
+    def first_run_start(mask: np.ndarray, start: int = 0) -> int | None:
+        run = 0
+        for i in range(start, len(mask)):
+            run = run + 1 if mask[i] else 0
+            if run >= GROW_RUN:
+                return i - GROW_RUN + 1
+        return None
+
+    onset = first_run_start(warm)
+    if onset is None:
+        return 0.0
+    end = first_run_start(~warm, start=n // 2)
+    if end is None:
+        end = n
+    return float(max(0, end - onset))
+
+
+def plot_growing_season(
+    df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict
+) -> None:
+    """Length of the thermal growing season (daily mean ≥ 5 °C) per year.
+
+    A concrete agricultural consequence of warming: the frost-free growing
+    window lengthening decade by decade. Bold LOESS curve + dashed robust trend.
+    """
+    temps = df["temperature_2m_mean"]
+    counts = temps.groupby(df.index.year).count()
+    lengths = temps.groupby(df.index.year).agg(
+        lambda s: _season_length(s.to_numpy(dtype=float)))
+    # Only whole years (drop a partial current year that would dip artificially).
+    full = counts >= 360
+    lengths = lengths[full]
+    years = lengths.index.to_numpy(dtype=float)
+    values = lengths.to_numpy(dtype=float)
+    slope, line = robust_trend_line(years, values)
+    sig = trend_significance(values, tr)
+
+    ax.plot(years, values, color="#15803d", linewidth=0.8, marker="o",
+            markersize=2.0, alpha=0.3, label=tr["season_annual"])
+    ax.plot(years, loess(years, values), color="#15803d", linewidth=2.6,
+            label=tr["smoothed"])
+    ax.plot(years, line, color="#b45309", linewidth=1.6, linestyle="--",
+            label=f"{tr['trend']} {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
+    ax.set_title(tr["season_title"].format(name=location.name))
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(tr["season_ylabel"])
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best")
+    ax.margins(x=0.01)
+
+
 # --- composition -----------------------------------------------------------
 def build_dashboard(df: pd.DataFrame, location: Location, tr: dict) -> Figure:
     """Arrange all five views in a single 3x2 figure (one slot left blank)."""
@@ -505,9 +601,11 @@ def save_all(
     panels = {
         "threshold-days": plot_threshold_days,
         "yearly-trend": plot_yearly_trend,
+        "warming-stripes": plot_warming_stripes,
         "anomalies": plot_anomalies,
         "monthly-heatmap": plot_monthly_heatmap,
         "monthly-anomaly": plot_monthly_anomaly_heatmap,
+        "growing-season": plot_growing_season,
         "volatility": plot_temp_volatility,
     }
     for name, draw in panels.items():
