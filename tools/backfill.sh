@@ -25,17 +25,24 @@ for round in $(seq 1 96); do
   # once its mean is cached), then the *cheap* precip (1 var, 15/call), then the
   # *expensive* extremes (2 vars, 7/call) last. Doing extremes before precip
   # starved precip — it drained the per-round quota first.
+  # Fetch order matters under the rate limit: mean first (a city only renders
+  # once its mean is cached), then the *cheap* precip (1 var, 15/call), then the
+  # *expensive* extremes (2 vars, 7/call). Apparent temperature (heat index) is
+  # the lowest-priority chart, so it is fetched last.
   "$PY" -c "
 import config, data
 locs = list(config.LOCATIONS.values())
 mean = data.load_temperatures_bulk(locs, 1940, 2025)
 pre = data.load_precip_bulk(locs, 1940, 2025)
 ext = data.load_extremes_bulk(locs, 1940, 2025)
+app = data.load_apparent_bulk(locs, 1940, 2025)
 mm = sum(1 for l in locs if l.slug not in mean)
 me = sum(1 for l in locs if l.slug not in ext)
 mp = sum(1 for l in locs if l.slug not in pre)
-print('MEAN missing', mm, '| PRECIP missing', mp, '| EXTREMES missing', me)
-open('/tmp/backfill_remaining.txt','w').write(str(mm+me+mp))
+ma = sum(1 for l in locs if l.slug not in app)
+print('MEAN missing', mm, '| PRECIP missing', mp,
+      '| EXTREMES missing', me, '| APPARENT missing', ma)
+open('/tmp/backfill_remaining.txt','w').write(str(mm+me+mp+ma))
 "
   remaining=$(cat /tmp/backfill_remaining.txt 2>/dev/null || echo 99)
 

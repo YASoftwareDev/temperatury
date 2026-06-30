@@ -343,6 +343,82 @@ def load_precip_bulk(
     return result
 
 
+# --- apparent temperature (heat index) -------------------------------------
+def _apparent_cache_path(location: Location, start_year: int, end_year: int) -> Path:
+    """Cache path for the daily apparent-temperature (heat-index) dataset."""
+    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}_apparent.csv.gz"
+
+
+def _parse_apparent(daily: dict | None, name: str) -> pd.DataFrame:
+    """Turn an Open-Meteo ``daily`` block of apparent-temp max into a DataFrame."""
+    if not daily or "time" not in daily or "apparent_temperature_max" not in daily:
+        raise RuntimeError(
+            f"Unexpected response from Open-Meteo for {name}: "
+            f"missing 'daily' apparent_temperature_max field."
+        )
+    frame = pd.DataFrame(
+        {
+            "date": pd.to_datetime(daily["time"]),
+            "apparent_temperature_max": daily["apparent_temperature_max"],
+        }
+    )
+    return frame.set_index("date").sort_index()
+
+
+def load_apparent_bulk(
+    locations: list[Location],
+    start_year: int,
+    end_year: int,
+    *,
+    refresh: bool = False,
+) -> dict[str, pd.DataFrame]:
+    """Load daily apparent-temperature max for many locations (humidity-aware).
+
+    Powers the heat-index chart; a location without it simply skips that chart.
+    """
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    result: dict[str, pd.DataFrame] = {}
+    to_fetch: list[Location] = []
+
+    for location in locations:
+        path = _apparent_cache_path(location, start_year, end_year)
+        if path.exists() and not refresh:
+            frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+            result[location.slug] = frame.dropna(subset=["apparent_temperature_max"])
+        else:
+            to_fetch.append(location)
+
+    if _OFFLINE and to_fetch:
+        print(f"  (offline) {len(to_fetch)} location(s) without apparent cache, skipped")
+        to_fetch = []
+
+    for start in range(0, len(to_fetch), _CHUNK):
+        if start:
+            time.sleep(_CHUNK_PAUSE)
+        chunk = to_fetch[start:start + _CHUNK]
+        params = {
+            "latitude": ",".join(str(loc.latitude) for loc in chunk),
+            "longitude": ",".join(str(loc.longitude) for loc in chunk),
+            "start_date": f"{start_year}-01-01",
+            "end_date": f"{end_year}-12-31",
+            "daily": "apparent_temperature_max",
+            "timezone": "auto",
+        }
+        label = f"{len(chunk)} locations ({chunk[0].name}…) apparent"
+        try:
+            payload = _request(params, label)
+        except RuntimeError as error:
+            print(f"  ! skipping {label}: {error}")
+            continue
+        items = payload if isinstance(payload, list) else [payload]
+        for location, item in zip(chunk, items):
+            frame = _parse_apparent(item.get("daily"), location.name)
+            frame.to_csv(_apparent_cache_path(location, start_year, end_year))
+            result[location.slug] = frame.dropna(subset=["apparent_temperature_max"])
+
+    return result
+
+
 # --- current (partial) year ------------------------------------------------
 # The ongoing calendar year is fetched separately so the interactive widgets
 # can offer it as a selectable year *without* it polluting the static trend

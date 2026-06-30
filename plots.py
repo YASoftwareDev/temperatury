@@ -45,6 +45,23 @@ SWING_C = 6.0
 GROW_C = 5.0
 GROW_RUN = 6
 
+# --- health-impact thresholds ---------------------------------------------
+# Heat/cold spells (ETCCDI WSDI/CSDI style): a run of >= SPELL_RUN days beyond a
+# calendar-day percentile of the 1961-1990 baseline.
+SPELL_RUN = 3
+HEAT_PCT = 90    # daily-max exceedances -> heat wave
+COLD_PCT = 10    # daily-min shortfalls  -> cold spell
+# Tropical night (WMO): daily minimum stays at/above this (no nocturnal relief).
+TROPICAL_NIGHT_C = 20.0
+# Degree-day bases (population thermal-comfort / energy burden).
+HDD_BASE_C = 18.0   # heating degree days below this mean
+CDD_BASE_C = 22.0   # cooling degree days above this mean
+# Heavy-rain day (ETCCDI R20mm): daily precipitation at/above this.
+HEAVY_RAIN_MM = 20.0
+# Apparent-temperature (heat-index) stress thresholds, NWS-style °C.
+APPARENT_STRONG_C = 32.0   # "extreme caution" — heat exhaustion likely on exertion
+APPARENT_DANGER_C = 41.0   # "danger" — heat stroke risk
+
 
 # --- statistics helpers ----------------------------------------------------
 def annual_means(df: pd.DataFrame) -> pd.Series:
@@ -624,6 +641,186 @@ def plot_seasonal_shift(
     ax.legend(loc="best")
 
 
+# --- health-impact charts --------------------------------------------------
+def _doy_threshold(series: pd.Series, pct: float, window: int = 7) -> np.ndarray:
+    """Calendar-day percentile of the 1961-1990 baseline (±window-day pool).
+
+    Returns a length-367 array indexed by day-of-year (1..366); the climate-
+    relative threshold behind the heat-wave / cold-spell indices (ETCCDI style).
+    """
+    lo, hi = BASELINE
+    base = series[(series.index.year >= lo) & (series.index.year <= hi)]
+    by_doy: dict[int, list] = {}
+    for d, v in zip(base.index.dayofyear.to_numpy(), base.to_numpy(dtype=float)):
+        by_doy.setdefault(int(d), []).append(v)
+    thr = np.full(367, np.nan)
+    for d in range(1, 367):
+        pool: list = []
+        for w in range(-window, window + 1):
+            pool.extend(by_doy.get((d - 1 + w) % 366 + 1, []))
+        if pool:
+            thr[d] = np.percentile(pool, pct)
+    return thr
+
+
+def _spell_mask(flag: np.ndarray) -> np.ndarray:
+    """True where a day sits inside a run of >= SPELL_RUN consecutive True days."""
+    out = np.zeros(len(flag), dtype=bool)
+    i, n = 0, len(flag)
+    while i < n:
+        if flag[i]:
+            j = i
+            while j < n and flag[j]:
+                j += 1
+            if j - i >= SPELL_RUN:
+                out[i:j] = True
+            i = j
+        else:
+            i += 1
+    return out
+
+
+def _count_panel(ax, years, values, color, series_label, title, ylabel, unit, tr):
+    """Shared annual-count panel: faint points + LOESS + dashed robust trend."""
+    slope, line = robust_trend_line(years, values)
+    sig = trend_significance(values, tr)
+    ax.plot(years, values, color=color, linewidth=0.8, marker="o",
+            markersize=2.0, alpha=0.3, label=series_label)
+    ax.plot(years, loess(years, values), color=color, linewidth=2.6,
+            label=tr["smoothed"])
+    ax.plot(years, line, color="#334155", linewidth=1.4, linestyle="--",
+            label=f"{tr['trend']} {slope * 10:+.1f} {unit} ({sig})")
+    ax.set_title(title)
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(ylabel)
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best")
+    ax.margins(x=0.01)
+
+
+def plot_heatwave(df_ext: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
+    """Heat-wave days/year: runs of >=3 days with Tmax above the local 90th pct.
+
+    Sustained daytime heat is the canonical driver of heat-wave excess mortality;
+    a climate-relative (percentile) threshold makes it comparable across cities.
+    """
+    tmax = df_ext["temperature_2m_max"]
+    thr = _doy_threshold(tmax, HEAT_PCT)
+    doy = tmax.index.dayofyear.to_numpy()
+    spell = _spell_mask(tmax.to_numpy(dtype=float) > thr[doy])
+    annual = pd.Series(spell, index=tmax.index).groupby(tmax.index.year).sum()
+    _count_panel(ax, annual.index.to_numpy(dtype=float), annual.to_numpy(dtype=float),
+                 "#b91c1c", tr["heatwave_series"],
+                 tr["heatwave_title"].format(name=location.name),
+                 tr["heatwave_ylabel"], tr["per_decade_days"], tr)
+
+
+def plot_tropical_nights(df_ext: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
+    """Tropical nights/year: nights with Tmin >= 20 C (no nocturnal relief).
+
+    Warm nights stop the body recovering from daytime heat and are a leading,
+    often-underestimated driver of heat-related death.
+    """
+    tmin = df_ext["temperature_2m_min"]
+    annual = (tmin >= TROPICAL_NIGHT_C).groupby(tmin.index.year).sum()
+    _count_panel(ax, annual.index.to_numpy(dtype=float), annual.to_numpy(dtype=float),
+                 "#c2410c", tr["tropic_series"].format(t=TROPICAL_NIGHT_C),
+                 tr["tropic_title"].format(name=location.name),
+                 tr["tropic_ylabel"], tr["per_decade_days"], tr)
+
+
+def plot_cold_spells(df_ext: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
+    """Cold-spell days/year: runs of >=3 days with Tmin below the local 10th pct.
+
+    Prolonged extreme cold drives winter cardiovascular/respiratory excess
+    mortality; warming makes these spells rarer.
+    """
+    tmin = df_ext["temperature_2m_min"]
+    thr = _doy_threshold(tmin, COLD_PCT)
+    doy = tmin.index.dayofyear.to_numpy()
+    spell = _spell_mask(tmin.to_numpy(dtype=float) < thr[doy])
+    annual = pd.Series(spell, index=tmin.index).groupby(tmin.index.year).sum()
+    _count_panel(ax, annual.index.to_numpy(dtype=float), annual.to_numpy(dtype=float),
+                 "#1d4ed8", tr["coldspell_series"],
+                 tr["coldspell_title"].format(name=location.name),
+                 tr["coldspell_ylabel"], tr["per_decade_days"], tr)
+
+
+def plot_degree_days(df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
+    """Heating (below 18 C) and cooling (above 22 C) degree-days per year.
+
+    The annual thermal-comfort burden on a population: heating need falls and
+    cooling need rises as the climate warms (proxy for energy poverty / AC load).
+    """
+    mean = df["temperature_2m_mean"]
+    hdd = (HDD_BASE_C - mean).clip(lower=0).groupby(mean.index.year).sum()
+    cdd = (mean - CDD_BASE_C).clip(lower=0).groupby(mean.index.year).sum()
+    years = hdd.index.to_numpy(dtype=float)
+    series = [
+        (hdd, "#1d4ed8", tr["hdd_label"].format(t=HDD_BASE_C)),
+        (cdd, "#b91c1c", tr["cdd_label"].format(t=CDD_BASE_C)),
+    ]
+    for data, color, label in series:
+        v = data.to_numpy(dtype=float)
+        slope, _ = robust_trend_line(years, v)
+        sig = trend_significance(v, tr)
+        ax.plot(years, v, color=color, linewidth=0.8, marker="o",
+                markersize=2.0, alpha=0.25)
+        ax.plot(years, loess(years, v), color=color, linewidth=2.6,
+                label=f"{label}: {slope * 10:+.0f} {tr['per_decade_dd']} ({sig})")
+    ax.set_title(tr["degreedays_title"].format(name=location.name))
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(tr["dd_ylabel"])
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best")
+    ax.margins(x=0.01)
+
+
+def plot_heavy_rain(df_precip: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
+    """Heavy-rain days/year: days with >= 20 mm precipitation (ETCCDI R20mm).
+
+    Flood-triggering downpours drive injury, displacement and waterborne disease;
+    their frequency is a direct extreme-event exposure metric.
+    """
+    p = df_precip["precipitation_sum"]
+    annual = (p >= HEAVY_RAIN_MM).groupby(p.index.year).sum()
+    _count_panel(ax, annual.index.to_numpy(dtype=float), annual.to_numpy(dtype=float),
+                 "#0f766e", tr["heavyrain_series"].format(mm=HEAVY_RAIN_MM),
+                 tr["heavyrain_title"].format(name=location.name),
+                 tr["heavyrain_ylabel"], tr["per_decade_days"], tr)
+
+
+def plot_heat_index(df_app: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
+    """Days/year the apparent temperature (heat index) clears stress thresholds.
+
+    Apparent temperature folds humidity into the felt heat — the metric public
+    heat advisories use. Counts days above 'extreme caution' (32 C) and 'danger'
+    (41 C). Needs the apparent-temperature dataset, so renders only where cached.
+    """
+    app = df_app["apparent_temperature_max"]
+    strong = (app >= APPARENT_STRONG_C).groupby(app.index.year).sum()
+    danger = (app >= APPARENT_DANGER_C).groupby(app.index.year).sum()
+    years = strong.index.to_numpy(dtype=float)
+    series = [
+        (strong, "#f59e0b", tr["heat_strong"].format(t=APPARENT_STRONG_C)),
+        (danger, "#b91c1c", tr["heat_danger"].format(t=APPARENT_DANGER_C)),
+    ]
+    for data, color, label in series:
+        v = data.to_numpy(dtype=float)
+        slope, _ = robust_trend_line(years, v)
+        sig = trend_significance(v, tr)
+        ax.plot(years, v, color=color, linewidth=0.8, marker="o",
+                markersize=2.0, alpha=0.25)
+        ax.plot(years, loess(years, v), color=color, linewidth=2.6,
+                label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
+    ax.set_title(tr["heatindex_title"].format(name=location.name))
+    ax.set_xlabel(tr["year"])
+    ax.set_ylabel(tr["heatindex_ylabel"])
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="best")
+    ax.margins(x=0.01)
+
+
 # --- composition -----------------------------------------------------------
 def build_dashboard(
     df: pd.DataFrame, location: Location, tr: dict,
@@ -665,12 +862,16 @@ def save_all(
     tr: dict,
     df_precip: pd.DataFrame | None = None,
     df_ext: pd.DataFrame | None = None,
+    df_app: pd.DataFrame | None = None,
 ) -> list[Path]:
     """Render the dashboard plus each standalone panel; return written paths.
 
     The monthly-range and record charts are interactive on the web (see
     :mod:`interactive`), so only their dashboard versions are rendered here.
-    ``df_precip`` adds the annual precipitation panel when its data is given.
+    Optional add-on datasets each unlock extra panels where their data is given:
+    ``df_ext`` (daily max/min) -> diurnal range, heat waves, tropical nights,
+    cold spells; ``df_precip`` -> precipitation + heavy-rain days; ``df_app``
+    (apparent temperature) -> heat-index days.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
@@ -682,6 +883,16 @@ def save_all(
     plt.close(dashboard)
     written.append(dash_path)
 
+    # Higher DPI than the dashboard so panels stay crisp when opened full-page.
+    def render(name: str, draw, data) -> None:
+        fig, ax = plt.subplots(figsize=(9, 5.5))
+        draw(data, location, ax, tr)
+        fig.tight_layout()
+        path = output_dir / f"{slug}_{name}.png"
+        fig.savefig(path, dpi=160)
+        plt.close(fig)
+        written.append(path)
+
     panels = {
         "threshold-days": plot_threshold_days,
         "yearly-trend": plot_yearly_trend,
@@ -691,35 +902,25 @@ def save_all(
         "monthly-anomaly": plot_monthly_anomaly_heatmap,
         "growing-season": plot_growing_season,
         "seasonal-shift": plot_seasonal_shift,
+        "degree-days": plot_degree_days,
         "volatility": plot_temp_volatility,
     }
     for name, draw in panels.items():
-        fig, ax = plt.subplots(figsize=(9, 5.5))
-        draw(df, location, ax, tr)
-        fig.tight_layout()
-        path = output_dir / f"{slug}_{name}.png"
-        # Higher DPI than the dashboard so panels stay crisp when opened full-page.
-        fig.savefig(path, dpi=160)
-        plt.close(fig)
-        written.append(path)
+        render(name, draw, df)
 
-    # Diurnal range needs the daily max/min dataset — render only where cached.
+    # Daily max/min add-ons (diurnal range + heat/cold extremes for health).
     if df_ext is not None:
-        fig, ax = plt.subplots(figsize=(9, 5.5))
-        plot_diurnal_range(df_ext, location, ax, tr)
-        fig.tight_layout()
-        path = output_dir / f"{slug}_diurnal-range.png"
-        fig.savefig(path, dpi=160)
-        plt.close(fig)
-        written.append(path)
+        render("diurnal-range", plot_diurnal_range, df_ext)
+        render("heatwave", plot_heatwave, df_ext)
+        render("tropical-nights", plot_tropical_nights, df_ext)
+        render("cold-spells", plot_cold_spells, df_ext)
 
     if df_precip is not None:
-        fig, ax = plt.subplots(figsize=(9, 5.5))
-        plot_precip(df_precip, location, ax, tr)
-        fig.tight_layout()
-        path = output_dir / f"{slug}_precipitation.png"
-        fig.savefig(path, dpi=160)
-        plt.close(fig)
-        written.append(path)
+        render("precipitation", plot_precip, df_precip)
+        render("heavy-rain", plot_heavy_rain, df_precip)
+
+    # Apparent temperature (humidity-aware heat index) — needs its own dataset.
+    if df_app is not None:
+        render("heat-index", plot_heat_index, df_app)
 
     return written

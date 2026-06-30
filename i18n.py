@@ -144,6 +144,49 @@ TRANSLATIONS: dict[str, dict] = {
                            "record. The gap between the curves at each month shows "
                            "which parts of the year warmed most (often winters more "
                            "than summers).",
+        "health_heading": "Health-impact indicators",
+        "health_sub": "How the warming trends above translate into recognised heat-, "
+                      "cold- and extreme-event exposure metrics. Each chart appears "
+                      "where the data it needs is available.",
+        "degreedays_title": "Heating & cooling degree-days — {name}",
+        "dd_ylabel": "Degree-days per year (°C·days)",
+        "hdd_label": "heating (< {t:.0f} °C)",
+        "cdd_label": "cooling (> {t:.0f} °C)",
+        "per_decade_dd": "°C·days / decade",
+        "cap_degreedays": "The annual thermal-comfort burden: heating need (below "
+                          "18 °C) falls while cooling need (above 22 °C) rises — a "
+                          "proxy for cold exposure and air-conditioning demand.",
+        "heatwave_title": "Heat-wave days per year — {name}",
+        "heatwave_ylabel": "Heat-wave days per year",
+        "heatwave_series": "heat-wave days",
+        "cap_heatwave": "Days in a heat wave — a run of ≥3 days with the daily high "
+                        "above the local 1961–1990 90th percentile. Sustained daytime "
+                        "heat is the main driver of heat-wave excess mortality.",
+        "tropic_title": "Tropical nights per year — {name}",
+        "tropic_ylabel": "Nights per year",
+        "tropic_series": "nights ≥ {t:.0f} °C",
+        "cap_tropic": "Nights when the low stays at or above 20 °C, so the body gets "
+                      "no overnight relief — a leading, often-overlooked driver of "
+                      "heat-related death.",
+        "coldspell_title": "Cold-spell days per year — {name}",
+        "coldspell_ylabel": "Cold-spell days per year",
+        "coldspell_series": "cold-spell days",
+        "cap_coldspell": "Days in a cold spell — a run of ≥3 days with the daily low "
+                         "below the local 1961–1990 10th percentile. Prolonged cold "
+                         "drives winter cardiovascular and respiratory excess deaths.",
+        "heavyrain_title": "Heavy-rain days per year — {name}",
+        "heavyrain_ylabel": "Days per year",
+        "heavyrain_series": "days ≥ {mm:.0f} mm",
+        "cap_heavyrain": "Days with at least 20 mm of rain (ETCCDI R20mm) — "
+                         "flood-triggering downpours that bring injury, displacement "
+                         "and waterborne disease.",
+        "heatindex_title": "Dangerous heat-index days per year — {name}",
+        "heatindex_ylabel": "Days per year",
+        "heat_strong": "≥ {t:.0f} °C (extreme caution)",
+        "heat_danger": "≥ {t:.0f} °C (danger)",
+        "cap_heatindex": "Days the apparent temperature (heat index, which folds in "
+                         "humidity) reaches heat-stress levels — the metric public "
+                         "heat advisories use. Needs the apparent-temperature dataset.",
         "footer": 'Generated {date} · data from '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   'historical reanalysis (ERA5) · '
@@ -273,6 +316,53 @@ TRANSLATIONS: dict[str, dict] = {
                            "Odstęp między krzywymi w każdym miesiącu pokazuje, które "
                            "części roku ociepliły się najbardziej (często zimy "
                            "bardziej niż lata).",
+        "health_heading": "Wskaźniki wpływu na zdrowie",
+        "health_sub": "Jak powyższe trendy ocieplenia przekładają się na uznane miary "
+                      "narażenia na upał, mróz i zjawiska ekstremalne. Każdy wykres "
+                      "pojawia się tam, gdzie dostępne są potrzebne dane.",
+        "degreedays_title": "Stopniodni grzania i chłodzenia — {name}",
+        "dd_ylabel": "Stopniodni w roku (°C·dni)",
+        "hdd_label": "grzanie (< {t:.0f} °C)",
+        "cdd_label": "chłodzenie (> {t:.0f} °C)",
+        "per_decade_dd": "°C·dni / dekadę",
+        "cap_degreedays": "Roczne obciążenie komfortem cieplnym: zapotrzebowanie na "
+                          "grzanie (poniżej 18 °C) spada, a na chłodzenie (powyżej "
+                          "22 °C) rośnie — przybliżenie narażenia na zimno i potrzeby "
+                          "klimatyzacji.",
+        "heatwave_title": "Dni fali upałów w roku — {name}",
+        "heatwave_ylabel": "Dni fali upałów w roku",
+        "heatwave_series": "dni fali upałów",
+        "cap_heatwave": "Dni w fali upałów — ciąg ≥3 dni z dobowym maksimum powyżej "
+                        "lokalnego 90. percentyla z lat 1961–1990. Długotrwały upał "
+                        "w dzień to główny czynnik nadmiarowej śmiertelności w falach "
+                        "upałów.",
+        "tropic_title": "Noce tropikalne w roku — {name}",
+        "tropic_ylabel": "Nocy w roku",
+        "tropic_series": "noce ≥ {t:.0f} °C",
+        "cap_tropic": "Noce, gdy minimum nie spada poniżej 20 °C, więc organizm nie "
+                      "ma nocnej ulgi — wiodący, często pomijany czynnik zgonów "
+                      "związanych z upałem.",
+        "coldspell_title": "Dni fali mrozów w roku — {name}",
+        "coldspell_ylabel": "Dni fali mrozów w roku",
+        "coldspell_series": "dni fali mrozów",
+        "cap_coldspell": "Dni w fali mrozów — ciąg ≥3 dni z dobowym minimum poniżej "
+                         "lokalnego 10. percentyla z lat 1961–1990. Długotrwały mróz "
+                         "zwiększa zimową nadmiarową śmiertelność sercowo-naczyniową "
+                         "i oddechową.",
+        "heavyrain_title": "Dni ulewnych deszczy w roku — {name}",
+        "heavyrain_ylabel": "Dni w roku",
+        "heavyrain_series": "dni ≥ {mm:.0f} mm",
+        "cap_heavyrain": "Dni z opadem co najmniej 20 mm (ETCCDI R20mm) — ulewy "
+                         "wywołujące powodzie, niosące urazy, przesiedlenia i choroby "
+                         "przenoszone przez wodę.",
+        "heatindex_title": "Dni groźnego indeksu upału w roku — {name}",
+        "heatindex_ylabel": "Dni w roku",
+        "heat_strong": "≥ {t:.0f} °C (skrajna ostrożność)",
+        "heat_danger": "≥ {t:.0f} °C (niebezpiecznie)",
+        "cap_heatindex": "Dni, gdy temperatura odczuwalna (indeks upału uwzględniający "
+                         "wilgotność) osiąga poziom stresu cieplnego — miara z "
+                         "ostrzeżeń przed upałem. Wymaga zbioru temperatury "
+                         "odczuwalnej.",
         "footer": 'Wygenerowano {date} · dane z '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanaliza historyczna ERA5) · '
@@ -405,6 +495,52 @@ TRANSLATIONS: dict[str, dict] = {
                            "letzten Dekade. Der Abstand der Kurven je Monat zeigt, "
                            "welche Teile des Jahres sich am stärksten erwärmten (oft "
                            "Winter mehr als Sommer).",
+        "health_heading": "Gesundheitsrelevante Indikatoren",
+        "health_sub": "Wie sich die Erwärmungstrends oben in anerkannte Maße für "
+                      "Hitze-, Kälte- und Extremereignis-Belastung übersetzen. Jedes "
+                      "Diagramm erscheint, wo die nötigen Daten vorliegen.",
+        "degreedays_title": "Heiz- und Kühlgradtage — {name}",
+        "dd_ylabel": "Gradtage pro Jahr (°C·Tage)",
+        "hdd_label": "Heizen (< {t:.0f} °C)",
+        "cdd_label": "Kühlen (> {t:.0f} °C)",
+        "per_decade_dd": "°C·Tage / Dekade",
+        "cap_degreedays": "Die jährliche thermische Komfortlast: der Heizbedarf "
+                          "(unter 18 °C) sinkt, der Kühlbedarf (über 22 °C) steigt — "
+                          "ein Maß für Kältebelastung und Klimaanlagenbedarf.",
+        "heatwave_title": "Hitzewellentage pro Jahr — {name}",
+        "heatwave_ylabel": "Hitzewellentage pro Jahr",
+        "heatwave_series": "Hitzewellentage",
+        "cap_heatwave": "Tage in einer Hitzewelle — eine Folge von ≥3 Tagen mit "
+                        "Tageshöchstwert über dem lokalen 90. Perzentil von "
+                        "1961–1990. Anhaltende Tageshitze ist der Haupttreiber der "
+                        "Übersterblichkeit bei Hitzewellen.",
+        "tropic_title": "Tropennächte pro Jahr — {name}",
+        "tropic_ylabel": "Nächte pro Jahr",
+        "tropic_series": "Nächte ≥ {t:.0f} °C",
+        "cap_tropic": "Nächte, in denen das Minimum nicht unter 20 °C fällt, sodass "
+                      "der Körper keine nächtliche Erholung hat — ein führender, oft "
+                      "übersehener Treiber hitzebedingter Todesfälle.",
+        "coldspell_title": "Kältewellentage pro Jahr — {name}",
+        "coldspell_ylabel": "Kältewellentage pro Jahr",
+        "coldspell_series": "Kältewellentage",
+        "cap_coldspell": "Tage in einer Kältewelle — eine Folge von ≥3 Tagen mit "
+                         "Tagestiefstwert unter dem lokalen 10. Perzentil von "
+                         "1961–1990. Anhaltende Kälte treibt die winterliche "
+                         "Übersterblichkeit (Herz-Kreislauf, Atemwege).",
+        "heavyrain_title": "Starkregentage pro Jahr — {name}",
+        "heavyrain_ylabel": "Tage pro Jahr",
+        "heavyrain_series": "Tage ≥ {mm:.0f} mm",
+        "cap_heavyrain": "Tage mit mindestens 20 mm Regen (ETCCDI R20mm) — "
+                         "überschwemmungsauslösende Güsse mit Verletzungen, "
+                         "Vertreibung und wasserbürtigen Krankheiten.",
+        "heatindex_title": "Gefährliche Hitzeindex-Tage pro Jahr — {name}",
+        "heatindex_ylabel": "Tage pro Jahr",
+        "heat_strong": "≥ {t:.0f} °C (erhöhte Vorsicht)",
+        "heat_danger": "≥ {t:.0f} °C (Gefahr)",
+        "cap_heatindex": "Tage, an denen die gefühlte Temperatur (Hitzeindex inkl. "
+                         "Luftfeuchte) Hitzestress-Niveaus erreicht — das Maß "
+                         "amtlicher Hitzewarnungen. Benötigt den Datensatz der "
+                         "gefühlten Temperatur.",
         "footer": 'Erstellt {date} · Daten von '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(historische Reanalyse ERA5) · '
@@ -539,6 +675,54 @@ TRANSLATIONS: dict[str, dict] = {
                            "dernière. L'écart entre les courbes à chaque mois montre "
                            "quelles parties de l'année se sont le plus réchauffées "
                            "(souvent les hivers plus que les étés).",
+        "health_heading": "Indicateurs d'impact sanitaire",
+        "health_sub": "Comment les tendances au réchauffement ci-dessus se traduisent "
+                      "en mesures reconnues d'exposition à la chaleur, au froid et aux "
+                      "événements extrêmes. Chaque graphique apparaît là où les "
+                      "données nécessaires sont disponibles.",
+        "degreedays_title": "Degrés-jours de chauffage et de climatisation — {name}",
+        "dd_ylabel": "Degrés-jours par an (°C·jours)",
+        "hdd_label": "chauffage (< {t:.0f} °C)",
+        "cdd_label": "climatisation (> {t:.0f} °C)",
+        "per_decade_dd": "°C·jours / décennie",
+        "cap_degreedays": "La charge annuelle de confort thermique : le besoin de "
+                          "chauffage (sous 18 °C) baisse tandis que le besoin de "
+                          "climatisation (au-dessus de 22 °C) augmente — un indicateur "
+                          "d'exposition au froid et de demande de climatisation.",
+        "heatwave_title": "Jours de canicule par an — {name}",
+        "heatwave_ylabel": "Jours de canicule par an",
+        "heatwave_series": "jours de canicule",
+        "cap_heatwave": "Jours en canicule — une série de ≥3 jours dont le maximum "
+                        "dépasse le 90e centile local de 1961–1990. La chaleur diurne "
+                        "prolongée est le principal moteur de la surmortalité des "
+                        "canicules.",
+        "tropic_title": "Nuits tropicales par an — {name}",
+        "tropic_ylabel": "Nuits par an",
+        "tropic_series": "nuits ≥ {t:.0f} °C",
+        "cap_tropic": "Nuits où le minimum reste au moins à 20 °C, sans répit nocturne "
+                      "pour l'organisme — un moteur majeur, souvent négligé, des décès "
+                      "liés à la chaleur.",
+        "coldspell_title": "Jours de vague de froid par an — {name}",
+        "coldspell_ylabel": "Jours de vague de froid par an",
+        "coldspell_series": "jours de vague de froid",
+        "cap_coldspell": "Jours en vague de froid — une série de ≥3 jours dont le "
+                         "minimum est sous le 10e centile local de 1961–1990. Le froid "
+                         "prolongé alimente la surmortalité hivernale (cardiovasculaire "
+                         "et respiratoire).",
+        "heavyrain_title": "Jours de fortes pluies par an — {name}",
+        "heavyrain_ylabel": "Jours par an",
+        "heavyrain_series": "jours ≥ {mm:.0f} mm",
+        "cap_heavyrain": "Jours avec au moins 20 mm de pluie (ETCCDI R20mm) — des "
+                         "averses provoquant inondations, blessures, déplacements et "
+                         "maladies hydriques.",
+        "heatindex_title": "Jours d'indice de chaleur dangereux par an — {name}",
+        "heatindex_ylabel": "Jours par an",
+        "heat_strong": "≥ {t:.0f} °C (extrême prudence)",
+        "heat_danger": "≥ {t:.0f} °C (danger)",
+        "cap_heatindex": "Jours où la température ressentie (indice de chaleur "
+                         "intégrant l'humidité) atteint des niveaux de stress "
+                         "thermique — la mesure des alertes canicule. Nécessite le jeu "
+                         "de données de température ressentie.",
         "footer": 'Généré le {date} · données de '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(réanalyse historique ERA5) · '
@@ -673,6 +857,54 @@ TRANSLATIONS: dict[str, dict] = {
                            "distancia entre las curvas en cada mes muestra qué partes "
                            "del año se calentaron más (a menudo los inviernos más que "
                            "los veranos).",
+        "health_heading": "Indicadores de impacto en la salud",
+        "health_sub": "Cómo las tendencias de calentamiento anteriores se traducen en "
+                      "medidas reconocidas de exposición al calor, al frío y a eventos "
+                      "extremos. Cada gráfico aparece donde están disponibles los "
+                      "datos necesarios.",
+        "degreedays_title": "Grados-día de calefacción y refrigeración — {name}",
+        "dd_ylabel": "Grados-día por año (°C·días)",
+        "hdd_label": "calefacción (< {t:.0f} °C)",
+        "cdd_label": "refrigeración (> {t:.0f} °C)",
+        "per_decade_dd": "°C·días / década",
+        "cap_degreedays": "La carga anual de confort térmico: la necesidad de "
+                          "calefacción (por debajo de 18 °C) baja mientras la de "
+                          "refrigeración (por encima de 22 °C) sube — un indicador de "
+                          "exposición al frío y demanda de aire acondicionado.",
+        "heatwave_title": "Días de ola de calor al año — {name}",
+        "heatwave_ylabel": "Días de ola de calor al año",
+        "heatwave_series": "días de ola de calor",
+        "cap_heatwave": "Días en ola de calor — una racha de ≥3 días con la máxima "
+                        "diaria por encima del percentil 90 local de 1961–1990. El "
+                        "calor diurno sostenido es el principal motor de la "
+                        "sobremortalidad por olas de calor.",
+        "tropic_title": "Noches tropicales al año — {name}",
+        "tropic_ylabel": "Noches al año",
+        "tropic_series": "noches ≥ {t:.0f} °C",
+        "cap_tropic": "Noches en que la mínima no baja de 20 °C, sin alivio nocturno "
+                      "para el cuerpo — un motor principal, a menudo pasado por alto, "
+                      "de las muertes por calor.",
+        "coldspell_title": "Días de ola de frío al año — {name}",
+        "coldspell_ylabel": "Días de ola de frío al año",
+        "coldspell_series": "días de ola de frío",
+        "cap_coldspell": "Días en ola de frío — una racha de ≥3 días con la mínima "
+                         "diaria por debajo del percentil 10 local de 1961–1990. El "
+                         "frío prolongado impulsa la sobremortalidad invernal "
+                         "(cardiovascular y respiratoria).",
+        "heavyrain_title": "Días de lluvia intensa al año — {name}",
+        "heavyrain_ylabel": "Días al año",
+        "heavyrain_series": "días ≥ {mm:.0f} mm",
+        "cap_heavyrain": "Días con al menos 20 mm de lluvia (ETCCDI R20mm) — aguaceros "
+                         "que provocan inundaciones, con lesiones, desplazamientos y "
+                         "enfermedades transmitidas por el agua.",
+        "heatindex_title": "Días de índice de calor peligroso al año — {name}",
+        "heatindex_ylabel": "Días al año",
+        "heat_strong": "≥ {t:.0f} °C (precaución extrema)",
+        "heat_danger": "≥ {t:.0f} °C (peligro)",
+        "cap_heatindex": "Días en que la sensación térmica (índice de calor que "
+                         "incluye la humedad) alcanza niveles de estrés térmico — la "
+                         "medida de los avisos de calor. Requiere el conjunto de datos "
+                         "de sensación térmica.",
         "footer": 'Generado el {date} · datos de '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(reanálisis histórico ERA5) · '
@@ -803,6 +1035,50 @@ TRANSLATIONS: dict[str, dict] = {
                            "Відстань між кривими в кожному місяці показує, які "
                            "частини року потеплішали найбільше (часто зими більше, "
                            "ніж літо).",
+        "health_heading": "Показники впливу на здоров'я",
+        "health_sub": "Як наведені вище тренди потепління переходять у визнані міри "
+                      "впливу спеки, холоду та екстремальних явищ. Кожен графік "
+                      "з'являється там, де доступні потрібні дані.",
+        "degreedays_title": "Градусо-дні опалення та охолодження — {name}",
+        "dd_ylabel": "Градусо-дні на рік (°C·дні)",
+        "hdd_label": "опалення (< {t:.0f} °C)",
+        "cdd_label": "охолодження (> {t:.0f} °C)",
+        "per_decade_dd": "°C·дні / десятиліття",
+        "cap_degreedays": "Річне навантаження теплового комфорту: потреба в опаленні "
+                          "(нижче 18 °C) спадає, а в охолодженні (вище 22 °C) зростає "
+                          "— наближення впливу холоду та потреби в кондиціонуванні.",
+        "heatwave_title": "Дні хвиль спеки на рік — {name}",
+        "heatwave_ylabel": "Дні хвиль спеки на рік",
+        "heatwave_series": "дні хвиль спеки",
+        "cap_heatwave": "Дні у хвилі спеки — низка ≥3 днів із добовим максимумом вище "
+                        "місцевого 90-го перцентиля 1961–1990. Тривала денна спека — "
+                        "головний чинник надлишкової смертності під час хвиль спеки.",
+        "tropic_title": "Тропічні ночі на рік — {name}",
+        "tropic_ylabel": "Ночей на рік",
+        "tropic_series": "ночі ≥ {t:.0f} °C",
+        "cap_tropic": "Ночі, коли мінімум не опускається нижче 20 °C, тож організм не "
+                      "має нічного перепочинку — провідний, часто недооцінений чинник "
+                      "смертей, пов'язаних зі спекою.",
+        "coldspell_title": "Дні хвиль холоду на рік — {name}",
+        "coldspell_ylabel": "Дні хвиль холоду на рік",
+        "coldspell_series": "дні хвиль холоду",
+        "cap_coldspell": "Дні у хвилі холоду — низка ≥3 днів із добовим мінімумом нижче "
+                         "місцевого 10-го перцентиля 1961–1990. Тривалий холод посилює "
+                         "зимову надлишкову смертність (серцево-судинну та дихальну).",
+        "heavyrain_title": "Дні сильних дощів на рік — {name}",
+        "heavyrain_ylabel": "Днів на рік",
+        "heavyrain_series": "дні ≥ {mm:.0f} мм",
+        "cap_heavyrain": "Дні щонайменше з 20 мм дощу (ETCCDI R20mm) — зливи, що "
+                         "спричиняють повені, травми, переселення та хвороби, що "
+                         "передаються через воду.",
+        "heatindex_title": "Дні небезпечного індексу спеки на рік — {name}",
+        "heatindex_ylabel": "Днів на рік",
+        "heat_strong": "≥ {t:.0f} °C (надзвичайна обережність)",
+        "heat_danger": "≥ {t:.0f} °C (небезпека)",
+        "cap_heatindex": "Дні, коли відчутна температура (індекс спеки з урахуванням "
+                         "вологості) сягає рівнів теплового стресу — міра офіційних "
+                         "попереджень про спеку. Потребує набору даних відчутної "
+                         "температури.",
         "footer": 'Згенеровано {date} · дані з '
                   '<a href="https://open-meteo.com/">Open-Meteo</a> '
                   '(історичний реаналіз ERA5) · '

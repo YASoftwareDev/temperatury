@@ -146,6 +146,11 @@ _PAGE = Template(
   .ican { position: relative; height: 300px; }
   .iwidget figcaption { color: var(--muted); font-size: .85rem; padding: .5rem .25rem 0;
                         text-align: center; }
+  h2.section { font-family: var(--serif); font-weight: 600; font-size: 1.5rem;
+               letter-spacing: -.01em; margin: 3rem 0 .25rem;
+               padding-top: 1.5rem; border-top: 1px solid var(--line); }
+  .section-sub { margin: 0 0 1.25rem; color: var(--muted); font-size: .92rem;
+                 max-width: 60ch; }
   .charts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
@@ -262,6 +267,20 @@ ${chart_js}
     ${dtr_figure}
     ${precip_figure}
   </section>
+
+  <h2 class="section">${health_heading}</h2>
+  <p class="section-sub">${health_sub}</p>
+  <section class="charts">
+    <figure>
+      <img src="${slug}_degree-days.png" alt="">
+      <figcaption>${cap_degreedays}</figcaption>
+    </figure>
+    ${heatwave_figure}
+    ${tropic_figure}
+    ${coldspell_figure}
+    ${heavyrain_figure}
+    ${heatindex_figure}
+  </section>
 </main>
 <footer>${footer}</footer>
 
@@ -351,6 +370,7 @@ def build_site(
     records_data: dict | None = None,
     has_precip: bool = False,
     has_dtr: bool = False,
+    has_appheat: bool = False,
 ) -> Path:
     """Write ``<slug>.html`` (localised) into ``output_dir``; return its path."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -376,6 +396,19 @@ def build_site(
         f'      <figcaption>{tr["cap_dtr"]}</figcaption>\n    </figure>'
         if has_dtr else ""
     )
+
+    def _fig(name: str, cap_key: str) -> str:
+        return (
+            f'<figure>\n      <img src="{slug}_{name}.png" alt="">\n'
+            f'      <figcaption>{tr[cap_key]}</figcaption>\n    </figure>'
+        )
+
+    # Health-impact panels, each gated on the dataset it needs.
+    heatwave_figure = _fig("heatwave", "cap_heatwave") if has_dtr else ""
+    tropic_figure = _fig("tropical-nights", "cap_tropic") if has_dtr else ""
+    coldspell_figure = _fig("cold-spells", "cap_coldspell") if has_dtr else ""
+    heavyrain_figure = _fig("heavy-rain", "cap_heavyrain") if has_precip else ""
+    heatindex_figure = _fig("heat-index", "cap_heatindex") if has_appheat else ""
 
     html = _PAGE.substitute(
         html_lang=tr["html_lang"],
@@ -410,6 +443,14 @@ def build_site(
         cap_seasonshift=tr["cap_seasonshift"],
         dtr_figure=dtr_figure,
         precip_figure=precip_figure,
+        health_heading=tr["health_heading"],
+        health_sub=tr["health_sub"],
+        cap_degreedays=tr["cap_degreedays"],
+        heatwave_figure=heatwave_figure,
+        tropic_figure=tropic_figure,
+        coldspell_figure=coldspell_figure,
+        heavyrain_figure=heavyrain_figure,
+        heatindex_figure=heatindex_figure,
         guide_title=tr["guide_title"],
         guide_body=tr["guide_body"],
         hint=tr["hint"],

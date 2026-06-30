@@ -28,6 +28,7 @@ from config import (
     Location,
 )
 from data import (
+    load_apparent_bulk,
     load_current_bulk,
     load_current_extremes_bulk,
     load_extremes_bulk,
@@ -112,6 +113,10 @@ def main() -> None:
     # Daily precipitation — optional add-on dataset (same backfill model).
     precip = load_precip_bulk(locations, args.start, args.end,
                               refresh=args.refresh)
+    # Apparent temperature (humidity-aware heat index) — powers the heat-index
+    # health chart; same optional-add-on backfill model.
+    apparent = load_apparent_bulk(locations, args.start, args.end,
+                                  refresh=args.refresh)
     # The year in progress (partial) — fed only to the interactive widgets so
     # readers can pick it, kept out of the static trend charts. Cached under a
     # distinct key; in offline mode only committed current-year data is used.
@@ -129,6 +134,7 @@ def main() -> None:
                   f"trend {s['trend_per_decade']:+.2f}/dec")
         df_ext = extremes.get(location.slug)
         df_precip = precip.get(location.slug)
+        df_app = apparent.get(location.slug)
         range_data = interactive.range_payload(df, extra=current.get(location.slug))
         records_data = (
             interactive.records_payload(df_ext, extra=current_ext.get(location.slug))
@@ -137,11 +143,12 @@ def main() -> None:
             tr = i18n.get(lang)
             lang_dir = OUTPUT_DIR / lang
             written += len(save_all(df, location, lang_dir, tr,
-                                    df_precip=df_precip, df_ext=df_ext))
+                                    df_precip=df_precip, df_ext=df_ext, df_app=df_app))
             build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr,
                        range_data=range_data, records_data=records_data,
                        has_precip=df_precip is not None,
-                       has_dtr=df_ext is not None)
+                       has_dtr=df_ext is not None,
+                       has_appheat=df_app is not None)
             written += 1
 
     # Each language's index.html is the Leaflet map chooser; root redirects.
