@@ -625,15 +625,29 @@ def plot_seasonal_shift(
 
 
 # --- composition -----------------------------------------------------------
-def build_dashboard(df: pd.DataFrame, location: Location, tr: dict) -> Figure:
-    """Arrange all five views in a single 3x2 figure (one slot left blank)."""
-    fig, axes = plt.subplots(3, 2, figsize=(16, 16))
-    plot_threshold_days(df, location, axes[0, 0], tr)
+def build_dashboard(
+    df: pd.DataFrame, location: Location, tr: dict,
+    df_ext: pd.DataFrame | None = None,
+) -> Figure:
+    """Arrange the headline views in a single 4x2 figure for the README.
+
+    Showcases the marquee charts including the newer ones (warming stripes,
+    seasonal-cycle shift, growing season, and — where daily max/min is given —
+    the diurnal range). ``df_ext`` is optional; without it the last slot falls
+    back to the monthly min–max range.
+    """
+    fig, axes = plt.subplots(4, 2, figsize=(16, 21))
+    plot_warming_stripes(df, location, axes[0, 0], tr)
     plot_yearly_trend(df, location, axes[0, 1], tr)
     plot_anomalies(df, location, axes[1, 0], tr)
-    plot_monthly_heatmap(df, location, axes[1, 1], tr)
-    plot_monthly_anomaly_heatmap(df, location, axes[2, 0], tr)
-    plot_monthly_range(df, location, axes[2, 1], tr)
+    plot_seasonal_shift(df, location, axes[1, 1], tr)
+    plot_monthly_heatmap(df, location, axes[2, 0], tr)
+    plot_growing_season(df, location, axes[2, 1], tr)
+    plot_threshold_days(df, location, axes[3, 0], tr)
+    if df_ext is not None:
+        plot_diurnal_range(df_ext, location, axes[3, 1], tr)
+    else:
+        plot_monthly_range(df, location, axes[3, 1], tr)
     start, end = df.index.year.min(), df.index.year.max()
     fig.suptitle(
         tr["dashboard_suptitle"].format(name=location.name, start=start, end=end),
@@ -662,7 +676,7 @@ def save_all(
     slug = location.slug
     written: list[Path] = []
 
-    dashboard = build_dashboard(df, location, tr)
+    dashboard = build_dashboard(df, location, tr, df_ext=df_ext)
     dash_path = output_dir / f"{slug}_dashboard.png"
     dashboard.savefig(dash_path, dpi=120)
     plt.close(dashboard)
