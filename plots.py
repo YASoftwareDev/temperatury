@@ -30,6 +30,41 @@ from matplotlib.figure import Figure
 
 from config import Location
 
+# Editorial chart theme — matches the light "Our World in Data"-style page
+# (warm-white cards, muted warm-grey chrome, hairline grid, no box). Bump
+# RENDER_VERSION whenever this theme or any plot_* output changes, so the
+# incremental build cache (see save_all / main.py) re-renders every chart.
+RENDER_VERSION = "2"
+
+plt.rcParams.update({
+    "figure.facecolor": "#ffffff",
+    "axes.facecolor": "#ffffff",
+    "savefig.facecolor": "#ffffff",
+    "axes.edgecolor": "#cfcabf",
+    "axes.linewidth": 0.8,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.titlesize": 12,
+    "axes.titleweight": "bold",
+    "axes.titlecolor": "#232220",
+    "axes.titlepad": 10,
+    "axes.labelcolor": "#6f6c66",
+    "axes.labelsize": 9,
+    "xtick.color": "#6f6c66",
+    "ytick.color": "#6f6c66",
+    "xtick.labelsize": 8,
+    "ytick.labelsize": 8,
+    "text.color": "#232220",
+    "grid.color": "#e6e3dc",
+    "grid.linewidth": 0.6,
+    "legend.frameon": True,
+    "legend.framealpha": 0.85,
+    "legend.edgecolor": "#e6e3dc",
+    "legend.facecolor": "#ffffff",
+    "legend.fontsize": 8,
+    "font.size": 10,
+})
+
 # Standard WMO climatological reference period for anomalies.
 BASELINE = (1961, 1990)
 
@@ -863,6 +898,7 @@ def save_all(
     df_precip: pd.DataFrame | None = None,
     df_ext: pd.DataFrame | None = None,
     df_app: pd.DataFrame | None = None,
+    signature: str | None = None,
 ) -> list[Path]:
     """Render the dashboard plus each standalone panel; return written paths.
 
@@ -876,6 +912,15 @@ def save_all(
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
     written: list[Path] = []
+
+    # Incremental build: if this city's data + render version match the marker
+    # left by a previous build (restored from the CI cache) and the charts are
+    # present, skip the (expensive) re-render entirely.
+    marker = output_dir / f".{slug}.render"
+    if (signature is not None and marker.exists()
+            and marker.read_text() == signature
+            and (output_dir / f"{slug}_dashboard.png").exists()):
+        return written
 
     dashboard = build_dashboard(df, location, tr, df_ext=df_ext)
     dash_path = output_dir / f"{slug}_dashboard.png"
@@ -923,4 +968,6 @@ def save_all(
     if df_app is not None:
         render("heat-index", plot_heat_index, df_app)
 
+    if signature is not None:
+        marker.write_text(signature)
     return written

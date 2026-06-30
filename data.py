@@ -419,6 +419,29 @@ def load_apparent_bulk(
     return result
 
 
+def cache_signature(location: Location, start_year: int, end_year: int) -> str:
+    """Content hash of a location's historical caches — for incremental builds.
+
+    Covers the datasets that feed the rendered PNGs (mean, extremes, precip,
+    apparent); current-year data is excluded because it only affects the HTML
+    widgets, not the static charts. A city whose signature is unchanged since
+    the last build can have its (expensive) chart rendering skipped.
+    """
+    import hashlib
+
+    digest = hashlib.sha1()
+    for path in (
+        _cache_path(location, start_year, end_year),
+        _extremes_cache_path(location, start_year, end_year),
+        _precip_cache_path(location, start_year, end_year),
+        _apparent_cache_path(location, start_year, end_year),
+    ):
+        if path.exists():
+            digest.update(path.name.encode())
+            digest.update(path.read_bytes())
+    return digest.hexdigest()[:16]
+
+
 # --- current (partial) year ------------------------------------------------
 # The ongoing calendar year is fetched separately so the interactive widgets
 # can offer it as a selectable year *without* it polluting the static trend

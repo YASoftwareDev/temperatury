@@ -36,6 +36,18 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # Restore the previously rendered output/ so main.py only re-renders the
+      # cities whose data (or the chart theme version) actually changed — the
+      # render is the slow part. A unique key per run always saves a fresh
+      # cache; restore-keys pulls the most recent prior one.
+      - name: Restore rendered-charts cache
+        uses: actions/cache@v4
+        with:
+          path: output
+          key: charts-${{ github.run_id }}
+          restore-keys: |
+            charts-
+
       - name: Generate charts and pages
         run: python main.py --all
         env:

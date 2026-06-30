@@ -28,6 +28,7 @@ from config import (
     Location,
 )
 from data import (
+    cache_signature,
     load_apparent_bulk,
     load_current_bulk,
     load_current_extremes_bulk,
@@ -35,7 +36,7 @@ from data import (
     load_precip_bulk,
     load_temperatures_bulk,
 )
-from plots import save_all, summary_stats
+from plots import RENDER_VERSION, save_all, summary_stats
 from report import build_map_page, build_site, write_redirect
 
 
@@ -135,6 +136,9 @@ def main() -> None:
         df_ext = extremes.get(location.slug)
         df_precip = precip.get(location.slug)
         df_app = apparent.get(location.slug)
+        # Per-city render signature: skip re-rendering charts whose data and
+        # theme version are unchanged since the last (cache-restored) build.
+        signature = f"{RENDER_VERSION}:{cache_signature(location, args.start, args.end)}"
         range_data = interactive.range_payload(df, extra=current.get(location.slug))
         records_data = (
             interactive.records_payload(df_ext, extra=current_ext.get(location.slug))
@@ -143,7 +147,8 @@ def main() -> None:
             tr = i18n.get(lang)
             lang_dir = OUTPUT_DIR / lang
             written += len(save_all(df, location, lang_dir, tr,
-                                    df_precip=df_precip, df_ext=df_ext, df_app=df_app))
+                                    df_precip=df_precip, df_ext=df_ext, df_app=df_app,
+                                    signature=signature))
             build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr,
                        range_data=range_data, records_data=records_data,
                        has_precip=df_precip is not None,
