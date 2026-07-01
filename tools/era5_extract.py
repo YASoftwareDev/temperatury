@@ -85,8 +85,21 @@ def _client():
     return cdsapi.Client()
 
 
-def download_year(client, api_var, stat, year, nc_path, area, retries=4):
-    """Retrieve one global (or --area) daily grid for a (variable, stat, year)."""
+# CDS limits the number of *queued* requests per dataset per user, so we run a
+# SINGLE serial worker (one request in flight at a time) and treat a queue-limit
+# rejection as "wait your turn", not a failure — otherwise a full queue makes us
+# skip years. These signals appear in the raised error / rejected-job message.
+_QUEUE_SIGNALS = ("queued requests", "temporarily limited", "too many",
+                  "rate limit", "429", "rejected")
+
+
+def download_year(client, api_var, stat, year, nc_path, area, retries=60):
+    """Retrieve one global (or --area) daily grid for a (variable, stat, year).
+
+    Patient with CDS's per-dataset queue limit: a queue-limit rejection waits a
+    flat 120 s and retries without consuming the (large) retry budget, so a busy
+    queue only slows us down — it never drops a year.
+    """
     request = {
         "product_type": "reanalysis",
         "variable": [api_var],
@@ -101,15 +114,24 @@ def download_year(client, api_var, stat, year, nc_path, area, retries=4):
     if area:
         request["area"] = area  # [N, W, S, E]
     tmp = nc_path.with_suffix(".nc.part")
-    for attempt in range(1, retries + 1):
+    attempt = 0
+    while True:
+        attempt += 1
         try:
             client.retrieve(DATASET, request, str(tmp))
             tmp.replace(nc_path)
             return
         except Exception as error:  # noqa: BLE001 — CDS raises many types
-            if attempt == retries:
+            msg = str(error).lower()
+            queue_limited = any(s in msg for s in _QUEUE_SIGNALS)
+            if queue_limited:
+                print(f"    … {api_var}/{stat}/{year} queue full, waiting 120s")
+                time.sleep(120)
+                attempt -= 1  # don't count a "wait your turn" against the budget
+                continue
+            if attempt >= retries:
                 raise
-            wait = min(30 * attempt, 180)
+            wait = min(30 * attempt, 300)
             print(f"    ! retry {attempt}/{retries} for {api_var}/{stat}/{year} "
                   f"in {wait}s: {error}")
             time.sleep(wait)

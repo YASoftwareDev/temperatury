@@ -28,16 +28,13 @@ if pgrep -f "$_GUARD" >/dev/null 2>&1; then
   exit 0
 fi
 
-launch() {  # name  extra-args...
-  local name="$1"; shift
-  setsid nohup "$PY" tools/era5_extract.py --extract-only --staging "$STAGE" "$@" \
-    > "$STAGE/logs/$name.log" 2>&1 &
-  echo "launched $name (pid $!): $*"
-}
-
-launch w1_mean      --groups mean     --start 1940 --end 2025
-launch w2_precip    --groups precip   --start 1940 --end 2025
-launch w3_ext_early --groups extremes --start 1940 --end 1982
-launch w4_ext_late  --groups extremes --start 1983 --end 2025
-
+# ONE serial worker only. CDS limits queued requests per dataset per user, so
+# parallel workers just flood the queue and get rejected. cdsapi.retrieve()
+# blocks per request, so a single worker keeps exactly one request in flight —
+# always under the cap. Group order mean→precip→extremes: mean unlocks a city's
+# rendering, so it goes first; precip (1 grid/yr) before extremes (2 grids/yr).
+setsid nohup "$PY" tools/era5_extract.py --extract-only --staging "$STAGE" \
+  --groups mean,precip,extremes --start 1940 --end 2025 \
+  > "$STAGE/logs/worker.log" 2>&1 &
+echo "launched serial worker (pid $!)"
 echo "pickles so far: $(ls "$STAGE"/extract/*.pkl 2>/dev/null | wc -l)/344"
