@@ -17,7 +17,9 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import multiprocessing as mp
 import os
+from concurrent.futures import ProcessPoolExecutor
 
 import i18n
 import interactive
@@ -82,6 +84,43 @@ def _print_summary(df, location: Location) -> None:
     print(f"  coldest year            : {s['coldest_year']} ({s['coldest_value']:.2f} °C)")
 
 
+# --- parallel rendering ----------------------------------------------------
+# Rendering a city's charts (matplotlib) is the build bottleneck and each city
+# is independent, so cities are rendered across a process pool. ``locations``
+# and the language list are the same for every city, so they are shipped once
+# per worker via the pool initializer instead of in every task.
+_WORKER: dict = {}
+
+
+def _init_render_worker(locations: list[Location], languages: list[str]) -> None:
+    _WORKER["locations"] = locations
+    _WORKER["languages"] = languages
+
+
+def _render_city(task) -> tuple[str, int]:
+    """Render one city into every language (charts + page). Runs in a worker."""
+    location, df, df_ext, df_precip, df_app, df_cur, df_cur_ext, signature = task
+    locations = _WORKER["locations"]
+    languages = _WORKER["languages"]
+    range_data = interactive.range_payload(df, extra=df_cur)
+    records_data = (
+        interactive.records_payload(df_ext, extra=df_cur_ext)
+        if df_ext is not None else None)
+    n = 0
+    for lang in languages:
+        tr = i18n.get(lang)
+        lang_dir = OUTPUT_DIR / lang
+        n += len(save_all(df, location, lang_dir, tr, df_precip=df_precip,
+                          df_ext=df_ext, df_app=df_app, signature=signature))
+        build_site(df, location, lang_dir, locations, lang, languages, tr,
+                   range_data=range_data, records_data=records_data,
+                   has_precip=df_precip is not None,
+                   has_dtr=df_ext is not None,
+                   has_appheat=df_app is not None)
+        n += 1
+    return location.slug, n
+
+
 def main() -> None:
     args = _parse_args()
     if args.start > args.end:
@@ -134,7 +173,10 @@ def main() -> None:
     current = load_current_bulk(locations, refresh=args.refresh)
     current_ext = load_current_extremes_bulk(locations, refresh=args.refresh)
 
-    written = 0
+    # Per-city render tasks (data + signature). The summary print stays in the
+    # main process so log order is stable; ``signature`` lets a worker skip
+    # re-rendering charts whose data + theme version are unchanged.
+    tasks = []
     for location in locations:
         df = frames[location.slug]
         if len(locations) == 1:
@@ -143,28 +185,33 @@ def main() -> None:
             s = summary_stats(df)
             print(f"  {location.name:18s} mean {s['mean']:5.1f} °C  "
                   f"trend {s['trend_per_decade']:+.2f}/dec")
-        df_ext = extremes.get(location.slug)
-        df_precip = precip.get(location.slug)
-        df_app = apparent.get(location.slug)
-        # Per-city render signature: skip re-rendering charts whose data and
-        # theme version are unchanged since the last (cache-restored) build.
         signature = f"{RENDER_VERSION}:{cache_signature(location, args.start, args.end)}"
-        range_data = interactive.range_payload(df, extra=current.get(location.slug))
-        records_data = (
-            interactive.records_payload(df_ext, extra=current_ext.get(location.slug))
-            if df_ext is not None else None)
-        for lang in i18n.LANGUAGES:
-            tr = i18n.get(lang)
-            lang_dir = OUTPUT_DIR / lang
-            written += len(save_all(df, location, lang_dir, tr,
-                                    df_precip=df_precip, df_ext=df_ext, df_app=df_app,
-                                    signature=signature))
-            build_site(df, location, lang_dir, locations, lang, i18n.LANGUAGES, tr,
-                       range_data=range_data, records_data=records_data,
-                       has_precip=df_precip is not None,
-                       has_dtr=df_ext is not None,
-                       has_appheat=df_app is not None)
-            written += 1
+        tasks.append((location, df, extremes.get(location.slug),
+                      precip.get(location.slug), apparent.get(location.slug),
+                      current.get(location.slug), current_ext.get(location.slug),
+                      signature))
+
+    # Render cities across a process pool — matplotlib is the bottleneck and
+    # cities are independent (each writes its own files). TEMPERATURY_JOBS
+    # overrides the worker count (default: all cores).
+    jobs = int(os.environ.get("TEMPERATURY_JOBS") or 0) or (os.cpu_count() or 1)
+    jobs = max(1, min(jobs, len(tasks)))
+    written = 0
+    if jobs == 1:
+        _init_render_worker(locations, i18n.LANGUAGES)
+        for task in tasks:
+            written += _render_city(task)[1]
+    else:
+        print(f"Rendering {len(tasks)} cities × {len(i18n.LANGUAGES)} languages "
+              f"on {jobs} processes …")
+        # ``fork`` inherits the parent's imports/data and avoids re-importing
+        # __main__ (Python 3.14 defaults to forkserver, which would).
+        ctx = mp.get_context("fork")
+        with ProcessPoolExecutor(max_workers=jobs, mp_context=ctx,
+                                 initializer=_init_render_worker,
+                                 initargs=(locations, i18n.LANGUAGES)) as pool:
+            for _slug, n in pool.map(_render_city, tasks):
+                written += n
 
     # Each language's index.html is the Leaflet map chooser; root redirects.
     for lang in i18n.LANGUAGES:
