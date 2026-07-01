@@ -369,4 +369,16 @@ for _region, _name, _lat, _lon, _tz in _CITIES:
     _city = Location(_name, _lat, _lon, _tz, _region)
     LOCATIONS[_city.slug] = _city
 
+# Every city with population > 750,000 (GeoNames), de-duplicated against the
+# curated list above by proximity. Committed as a TSV (region, name, lat, lon,
+# IANA timezone) so the set is reproducible; regenerate with tools/gen_cities.py.
+_EXTRA_CITIES = ROOT / "cities750k.tsv"
+if _EXTRA_CITIES.exists():
+    for _row in _EXTRA_CITIES.read_text(encoding="utf-8").splitlines():
+        if not _row.strip():
+            continue
+        _region, _name, _lat, _lon, _tz = _row.split("\t")
+        _city = Location(_name, float(_lat), float(_lon), _tz, _region)
+        LOCATIONS.setdefault(_city.slug, _city)  # curated entries win on collision
+
 DEFAULT_LOCATION = "warszawa"
