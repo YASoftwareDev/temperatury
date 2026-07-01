@@ -18,9 +18,12 @@ STAGE="${ERA5_STAGE:-/home/devuser/era5_staging}"
 PY=.venv/bin/python
 mkdir -p "$STAGE/logs"
 
-if pgrep -f "era5_extract.py --extract-only" >/dev/null 2>&1; then
+# Match the actual python worker process, not a shell wrapper whose command
+# line merely mentions the script (which caused false "already running" hits).
+_GUARD='python[^ ]* tools/era5_extract\.py --extract-only'
+if pgrep -f "$_GUARD" >/dev/null 2>&1; then
   echo "ERA5 workers already running — refusing to double-launch:"
-  pgrep -af "era5_extract.py --extract-only"
+  pgrep -af "$_GUARD"
   echo "(kill them first if you want a clean restart)"
   exit 0
 fi
