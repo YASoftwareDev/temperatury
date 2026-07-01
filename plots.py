@@ -36,40 +36,11 @@ from config import Location
 # incremental build cache (see save_all / main.py) re-renders every chart.
 RENDER_VERSION = "5"
 
-# Register bundled multi-script fonts (CJK / Arabic / Devanagari / Bengali) so
-# chart titles/labels render in every language; matplotlib falls back per glyph.
-import logging as _logging  # noqa: E402
-import warnings as _warnings  # noqa: E402
-
-_warnings.filterwarnings("ignore", message="Glyph .* missing from font")
-# The bundled Noto fonts ship Regular only; bold non-Latin titles fall back to
-# regular weight — quiet that (and any per-glyph) font chatter in CI logs.
-_logging.getLogger("matplotlib.font_manager").setLevel(_logging.ERROR)
-from matplotlib import font_manager as _fm  # noqa: E402
-
-_FONT_DIR = Path(__file__).parent / "fonts"
-if _FONT_DIR.exists():
-    for _f in sorted(_FONT_DIR.glob("*.[to]tf")):
-        try:
-            _fm.fontManager.addfont(str(_f))
-        except Exception:
-            pass
-
-# Right-to-left shaping (Arabic/Persian/Urdu) for text drawn into charts.
-try:
-    import arabic_reshaper as _reshaper
-    from bidi.algorithm import get_display as _bidi_display
-    _HAS_RTL = True
-except Exception:  # libs optional — RTL chart text just won't be shaped
-    _HAS_RTL = False
-
+# Charts are language-neutral now — their titles are localised in the HTML, and
+# axis/legend text is English (Latin). So the default DejaVu Sans covers every
+# glyph (incl. European diacritics); no bundled multi-script fonts or RTL shaping.
 plt.rcParams.update({
-    # A direct font.family LIST (not the "sans-serif" alias) is what enables
-    # matplotlib's per-glyph fallback: Latin/Cyrillic from DejaVu, then each
-    # script from its Noto font. Arabic before DejaVu so reshaped presentation
-    # forms use Noto Arabic.
-    "font.family": ["DejaVu Sans", "Noto Sans Arabic", "Noto Sans CJK SC",
-                    "Noto Sans Devanagari", "Noto Sans Bengali"],
+    "font.family": ["DejaVu Sans"],
     "figure.facecolor": "#ffffff",
     "axes.facecolor": "#ffffff",
     "savefig.facecolor": "#ffffff",
@@ -97,30 +68,6 @@ plt.rcParams.update({
     "legend.fontsize": 8,
     "font.size": 10,
 })
-
-
-def _shape_rtl(text: str) -> str:
-    """Reshape + bidi-reorder Arabic-script text for correct display in a chart.
-
-    matplotlib draws glyphs left-to-right without joining, so RTL text must be
-    pre-shaped. Latin/numeric runs are handled by the bidi algorithm.
-    """
-    if not _HAS_RTL or not text:
-        return text
-    return _bidi_display(_reshaper.reshape(text))
-
-
-def _shape_rtl_figure(fig: Figure) -> None:
-    """Apply RTL shaping to every text artist in a finished figure."""
-    artists = list(fig.texts)  # figure-level text (e.g. suptitle)
-    for ax in fig.axes:
-        artists += [ax.title, ax.xaxis.label, ax.yaxis.label]
-        artists += list(ax.get_xticklabels()) + list(ax.get_yticklabels())
-        legend = ax.get_legend()
-        if legend is not None:
-            artists += list(legend.get_texts())
-    for artist in artists:
-        artist.set_text(_shape_rtl(artist.get_text()))
 
 
 # Standard WMO climatological reference period for anomalies.
@@ -980,11 +927,7 @@ def save_all(
             and (output_dir / f"{slug}_dashboard.png").exists()):
         return written
 
-    rtl = tr.get("dir") == "rtl"
-
     dashboard = build_dashboard(df, location, tr, df_ext=df_ext)
-    if rtl:
-        _shape_rtl_figure(dashboard)
     dash_path = output_dir / f"{slug}_dashboard.png"
     dashboard.savefig(dash_path, dpi=120)
     plt.close(dashboard)
@@ -997,8 +940,6 @@ def save_all(
         # The title is rendered as localised HTML above the image instead, so the
         # PNG stays language-neutral and is shared across all languages.
         ax.set_title("")
-        if rtl:
-            _shape_rtl_figure(fig)
         fig.tight_layout()
         path = output_dir / f"{slug}_{name}.png"
         fig.savefig(path, dpi=160)

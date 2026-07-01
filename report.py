@@ -407,9 +407,9 @@ _LANG_FLAG = {
 
 
 def _lang_nav(current_lang: str, languages: list[str], slug: str) -> str:
-    """Pill links to the same city in each sibling-language folder."""
+    """Pill links to the same city in each sibling-language folder (A–Z by name)."""
     links = []
-    for code in languages:
+    for code in sorted(languages, key=lambda c: LANG_NAMES[c].casefold()):
         cls = ' class="active"' if code == current_lang else ""
         cc = _LANG_FLAG.get(code)
         flag = (f'<img class="flag" src="https://flagcdn.com/20x15/{cc}.png" '
