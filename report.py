@@ -530,9 +530,18 @@ _MAP_PAGE = Template(
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   var cities = ${markers};
-  var map = L.map('map', { scrollWheelZoom: false }).setView([54, 15], 4);
+  // Confine to a single, non-repeating world copy so every marker is always
+  // visible: without this Leaflet wraps the tiles infinitely but a marker
+  // exists at only one longitude, so the Americas (negative lon) showed only on
+  // a western copy and Asia (positive lon) only on an eastern copy.
+  var map = L.map('map', {
+    scrollWheelZoom: false,
+    worldCopyJump: true,
+    maxBounds: [[-85, -180], [85, 180]],
+    maxBoundsViscosity: 1.0
+  }).setView([54, 15], 4);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 12, attribution: '© OpenStreetMap'
+    maxZoom: 12, noWrap: true, attribution: '© OpenStreetMap'
   }).addTo(map);
   cities.forEach(function (c) {
     L.marker([c.lat, c.lon]).addTo(map)
