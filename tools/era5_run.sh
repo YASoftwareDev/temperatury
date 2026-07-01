@@ -28,13 +28,21 @@ if pgrep -f "$_GUARD" >/dev/null 2>&1; then
   exit 0
 fi
 
-# ONE serial worker only. CDS limits queued requests per dataset per user, so
-# parallel workers just flood the queue and get rejected. cdsapi.retrieve()
-# blocks per request, so a single worker keeps exactly one request in flight —
-# always under the cap. Group order mean→precip→extremes: mean unlocks a city's
-# rendering, so it goes first; precip (1 grid/yr) before extremes (2 grids/yr).
-setsid nohup "$PY" tools/era5_extract.py --extract-only --staging "$STAGE" \
-  --groups mean,precip,extremes --start 1940 --end 2025 \
-  > "$STAGE/logs/worker.log" 2>&1 &
-echo "launched serial worker (pid $!)"
+# THREE workers, split by year-third. CDS caps *queued* requests per dataset per
+# user, but the sustainable depth is ≥3 (measured: 3 jobs accepted, 0 rejected —
+# the earlier rejection storm was a 170-request flood, not modest concurrency).
+# cdsapi.retrieve() blocks per request, so each worker keeps exactly ONE request
+# in flight → 3 workers = 3 in flight = at the safe depth. Each does its year
+# range mean→precip→extremes (mean first), so all mean-years finish ~3× sooner.
+# NWORKERS can be raised only if CDS proves it runs >3 in parallel.
+launch() {  # name  start  end
+  local name="$1" s="$2" e="$3"
+  setsid nohup "$PY" tools/era5_extract.py --extract-only --staging "$STAGE" \
+    --groups mean,precip,extremes --start "$s" --end "$e" \
+    > "$STAGE/logs/$name.log" 2>&1 &
+  echo "launched $name (pid $!): ${s}-${e}"
+}
+launch w_early 1940 1968
+launch w_mid   1969 1997
+launch w_late  1998 2025
 echo "pickles so far: $(ls "$STAGE"/extract/*.pkl 2>/dev/null | wc -l)/344"
