@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import os
 
 import i18n
 import interactive
@@ -85,6 +86,15 @@ def main() -> None:
     args = _parse_args()
     if args.start > args.end:
         raise SystemExit(f"--start ({args.start}) must not exceed --end ({args.end}).")
+
+    # Optional TEMPERATURY_LANGS=pl,en restricts which languages render — lets a
+    # CI build ship a fast subset (e.g. a map/HTML fix) without the full
+    # 21-language chart render. Unset = every language (normal behaviour).
+    _langs_env = os.environ.get("TEMPERATURY_LANGS", "").strip()
+    if _langs_env:
+        wanted = [c.strip() for c in _langs_env.split(",") if c.strip()]
+        i18n.LANGUAGES = [l for l in i18n.LANGUAGES if l in wanted]
+        print(f"Restricting to languages: {i18n.LANGUAGES}")
 
     if args.all:
         locations = [LOCATIONS[key] for key in sorted(LOCATIONS)]

@@ -54,6 +54,9 @@ jobs:
           # Render from the committed cache only; CI's shared IP is
           # rate-limited by Open-Meteo. Refresh the cache locally.
           TEMPERATURY_OFFLINE: "1"
+          # TEMP: fast pl,en-only build to ship the map wrap-fix quickly; the
+          # follow-up commit removes this line to restore all 21 languages.
+          TEMPERATURY_LANGS: "pl,en"
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
