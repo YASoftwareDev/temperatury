@@ -38,8 +38,11 @@ def main() -> None:
     if len(sys.argv) < 2:
         raise SystemExit("usage: python tools/gen_cities.py <cities15000.txt>")
     src = Path(sys.argv[1])
-    coords = [(l.latitude, l.longitude) for l in config.LOCATIONS.values()]
-    slugs = set(config.LOCATIONS)
+    # De-dupe against the CURATED list only (config._CITIES), never against the
+    # generated TSV itself — otherwise a second run dedupes against its own
+    # output and produces nothing.
+    coords = [(la, lo) for _, _, la, lo, _ in config._CITIES]
+    slugs = {config.slugify(name) for _, name, _, _, _ in config._CITIES}
     rows: list[tuple] = []
     skipped = 0
 
