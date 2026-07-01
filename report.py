@@ -96,6 +96,8 @@ _PAGE = Template(
   nav.langs { margin-top: .6rem; }
   nav.langs a { font-size: .8rem; padding: .25rem .65rem; }
   nav.langs a.active { background: var(--accent); border-color: var(--accent); }
+  nav.langs .flag { vertical-align: -2px; margin-inline-end: .4rem;
+    border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.12); }
   .chooser { margin-top: 1.1rem; display: flex; flex-wrap: wrap;
              gap: .45rem; justify-content: center; align-items: center; }
   .chooser a {
@@ -350,12 +352,29 @@ def _city_chooser(current: Location, nav_locations: list[Location], tr: dict) ->
     return f'<a href="index.html">{tr["back_to_map"]}</a>{select}'
 
 
+# Language -> ISO 3166-1 alpha-2 country whose flag conventionally represents it.
+# Languages aren't countries, so a few are best-effort conventions (English→GB,
+# Arabic→SA, Urdu→PK, Persian→IR). Flags are served as images (flagcdn.com) not
+# emoji, since flag emoji don't render on Windows.
+_LANG_FLAG = {
+    "pl": "pl", "en": "gb", "de": "de", "fr": "fr", "es": "es", "uk": "ua",
+    "zh": "cn", "hi": "in", "ar": "sa", "pt": "pt", "bn": "bd", "ru": "ru",
+    "id": "id", "ja": "jp", "ur": "pk", "it": "it", "tr": "tr", "ko": "kr",
+    "fa": "ir", "vi": "vn", "nl": "nl",
+}
+
+
 def _lang_nav(current_lang: str, languages: list[str], slug: str) -> str:
     """Pill links to the same city in each sibling-language folder."""
     links = []
     for code in languages:
         cls = ' class="active"' if code == current_lang else ""
-        links.append(f'<a href="../{code}/{slug}.html"{cls}>{LANG_NAMES[code]}</a>')
+        cc = _LANG_FLAG.get(code)
+        flag = (f'<img class="flag" src="https://flagcdn.com/20x15/{cc}.png" '
+                f'width="20" height="15" alt="" loading="lazy">') if cc else ""
+        links.append(
+            f'<a href="../{code}/{slug}.html"{cls}>{flag}{LANG_NAMES[code]}</a>'
+        )
     return "".join(links)
 
 
@@ -492,12 +511,16 @@ _MAP_PAGE = Template(
   header h1 { margin:0 0 .45rem; font-family:var(--serif); font-weight:600;
               letter-spacing:-.01em; font-size:clamp(1.85rem,4vw,2.7rem); }
   header p { margin:0; color:var(--muted); font-size:.95rem; }
+  header p.intro { max-width:44rem; margin:.1rem auto .55rem; color:var(--ink);
+                   font-size:1.02rem; }
   nav.langs { margin-top:1rem; display:flex; flex-wrap:wrap; gap:.45rem;
               justify-content:center; }
   nav.langs a { color:var(--ink); text-decoration:none; font-size:.82rem;
                 padding:.25rem .65rem; border-radius:4px;
                 border:1px solid var(--line); background:#fff; }
   nav.langs a.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  nav.langs .flag { vertical-align:-2px; margin-inline-end:.4rem;
+    border-radius:2px; box-shadow:0 0 0 1px rgba(0,0,0,.12); }
   main { max-width:1080px; margin:0 auto; padding:1.75rem 1.5rem; }
   .chooser { display:flex; justify-content:center; margin-bottom:.25rem; }
   .chooser select { background:#fff; color:var(--ink); border:1px solid var(--line);
@@ -515,6 +538,7 @@ _MAP_PAGE = Template(
 <body>
 <header>
   <h1>${heading}</h1>
+  <p class="intro">${intro}</p>
   <p>${sub}</p>
   <nav class="langs">${lang_nav}</nav>
 </header>
@@ -577,6 +601,7 @@ def build_map_page(
         html_dir=tr["dir"],
         title=tr["site_title"],
         heading=tr["map_heading"],
+        intro=tr.get("intro", ""),
         sub=tr["map_sub"],
         choose=tr["choose_city"],
         lang_nav=_lang_nav(lang, languages, "index"),
