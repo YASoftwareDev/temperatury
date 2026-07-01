@@ -48,7 +48,9 @@ GROUPS = {
 def _atomic_write(frame, path: Path) -> None:
     """Write a gzipped CSV atomically so readers never see a partial file."""
     tmp = path.with_suffix(path.suffix + ".part")
-    frame.to_csv(tmp)
+    # Force gzip explicitly: pandas infers compression from the extension, and
+    # the ``.part`` temp name would otherwise write an UNcompressed .csv.gz.
+    frame.to_csv(tmp, compression="gzip")
     os.replace(tmp, path)
 
 
