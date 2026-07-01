@@ -84,6 +84,11 @@ def _print_summary(df, location: Location) -> None:
     print(f"  coldest year            : {s['coldest_year']} ({s['coldest_value']:.2f} °C)")
 
 
+# Language whose axis/legend text is baked into the shared, language-neutral
+# charts (titles are localised in the HTML instead). English reads as neutral.
+CHART_LANG = "en"
+
+
 # --- parallel rendering ----------------------------------------------------
 # Rendering a city's charts (matplotlib) is the build bottleneck and each city
 # is independent, so cities are rendered across a process pool. ``locations``
@@ -98,7 +103,13 @@ def _init_render_worker(locations: list[Location], languages: list[str]) -> None
 
 
 def _render_city(task) -> tuple[str, int]:
-    """Render one city into every language (charts + page). Runs in a worker."""
+    """Render one city: charts ONCE (shared), then a page per language.
+
+    Charts are language-neutral (titles live in the HTML, not the PNG), so they
+    are rendered a single time into ``output/charts`` and every language's page
+    references them — instead of re-rendering the same image 21 times. Runs in a
+    worker process.
+    """
     location, df, df_ext, df_precip, df_app, df_cur, df_cur_ext, signature = task
     locations = _WORKER["locations"]
     languages = _WORKER["languages"]
@@ -106,13 +117,14 @@ def _render_city(task) -> tuple[str, int]:
     records_data = (
         interactive.records_payload(df_ext, extra=df_cur_ext)
         if df_ext is not None else None)
-    n = 0
+    # Render the charts once, language-neutral (English axis/legend text).
+    charts_dir = OUTPUT_DIR / "charts"
+    n = len(save_all(df, location, charts_dir, i18n.get(CHART_LANG),
+                     df_precip=df_precip, df_ext=df_ext, df_app=df_app,
+                     signature=signature))
     for lang in languages:
         tr = i18n.get(lang)
-        lang_dir = OUTPUT_DIR / lang
-        n += len(save_all(df, location, lang_dir, tr, df_precip=df_precip,
-                          df_ext=df_ext, df_app=df_app, signature=signature))
-        build_site(df, location, lang_dir, locations, lang, languages, tr,
+        build_site(df, location, OUTPUT_DIR / lang, locations, lang, languages, tr,
                    range_data=range_data, records_data=records_data,
                    has_precip=df_precip is not None,
                    has_dtr=df_ext is not None,
@@ -172,6 +184,13 @@ def main() -> None:
     # distinct key; in offline mode only committed current-year data is used.
     current = load_current_bulk(locations, refresh=args.refresh)
     current_ext = load_current_extremes_bulk(locations, refresh=args.refresh)
+
+    # Charts are now shared under output/charts; drop any per-language chart
+    # PNGs left by an older build (restored from cache) so the deploy doesn't
+    # carry ~20× stale duplicates.
+    for _lang in i18n.LANGUAGES:
+        for _png in (OUTPUT_DIR / _lang).glob("*.png"):
+            _png.unlink()
 
     # Per-city render tasks (data + signature). The summary print stays in the
     # main process so log order is stable; ``signature`` lets a worker skip

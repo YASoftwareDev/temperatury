@@ -17,14 +17,16 @@ permissions:
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment; let an in-progress run finish.
+# One run at a time; a newer push supersedes an in-progress one (this repo
+# pushes often — data backfills + iteration — and only the latest matters).
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45  # a stuck render fails fast instead of burning the 6h default
     steps:
       - uses: actions/checkout@v5
 

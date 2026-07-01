@@ -34,7 +34,7 @@ from config import Location
 # (warm-white cards, muted warm-grey chrome, hairline grid, no box). Bump
 # RENDER_VERSION whenever this theme or any plot_* output changes, so the
 # incremental build cache (see save_all / main.py) re-renders every chart.
-RENDER_VERSION = "4"
+RENDER_VERSION = "5"
 
 # Register bundled multi-script fonts (CJK / Arabic / Devanagari / Bengali) so
 # chart titles/labels render in every language; matplotlib falls back per glyph.
@@ -994,6 +994,9 @@ def save_all(
     def render(name: str, draw, data) -> None:
         fig, ax = plt.subplots(figsize=(9, 5.5))
         draw(data, location, ax, tr)
+        # The title is rendered as localised HTML above the image instead, so the
+        # PNG stays language-neutral and is shared across all languages.
+        ax.set_title("")
         if rtl:
             _shape_rtl_figure(fig)
         fig.tight_layout()

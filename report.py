@@ -16,7 +16,7 @@ from string import Template
 import interactive
 from config import REGIONS, Location
 from i18n import LANG_NAMES
-from plots import summary_stats
+from plots import BASELINE, summary_stats
 
 
 def _grouped_options(
@@ -169,6 +169,8 @@ _PAGE = Template(
   figure img { width: 100%; height: auto; display: block; border-radius: 3px; }
   figcaption { color: var(--muted); font-size: .85rem; padding: .6rem .3rem .15rem;
                text-align: center; line-height: 1.45; }
+  figcaption .fig-title { display: inline-block; color: var(--ink); font-weight: 600;
+               font-size: .95rem; margin-bottom: .15rem; }
   .charts figure { cursor: zoom-in; transition: border-color .15s ease,
                    box-shadow .15s ease; }
   .charts figure:hover { border-color: #c9c5bc;
@@ -230,41 +232,41 @@ ${chart_js}
 
   <section class="charts">
     <figure>
-      <img src="${slug}_yearly-trend.png" alt="">
+      <img src="../charts/${slug}_yearly-trend.png" alt="">
       <figcaption>${cap_yearly}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_anomalies.png" alt="">
+      <img src="../charts/${slug}_anomalies.png" alt="">
       <figcaption>${cap_anomalies}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_warming-stripes.png" alt="">
+      <img src="../charts/${slug}_warming-stripes.png" alt="">
       <figcaption>${cap_stripes}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_monthly-heatmap.png" alt="">
+      <img src="../charts/${slug}_monthly-heatmap.png" alt="">
       <figcaption>${cap_heatmap}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_monthly-anomaly.png" alt="">
+      <img src="../charts/${slug}_monthly-anomaly.png" alt="">
       <figcaption>${cap_anom_heatmap}</figcaption>
     </figure>
     ${range_widget}
     ${records_widget}
     <figure>
-      <img src="${slug}_threshold-days.png" alt="">
+      <img src="../charts/${slug}_threshold-days.png" alt="">
       <figcaption>${cap_threshold}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_growing-season.png" alt="">
+      <img src="../charts/${slug}_growing-season.png" alt="">
       <figcaption>${cap_season}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_seasonal-shift.png" alt="">
+      <img src="../charts/${slug}_seasonal-shift.png" alt="">
       <figcaption>${cap_seasonshift}</figcaption>
     </figure>
     <figure>
-      <img src="${slug}_volatility.png" alt="">
+      <img src="../charts/${slug}_volatility.png" alt="">
       <figcaption>${cap_volatility}</figcaption>
     </figure>
     ${dtr_figure}
@@ -275,7 +277,7 @@ ${chart_js}
   <p class="section-sub">${health_sub}</p>
   <section class="charts">
     <figure>
-      <img src="${slug}_degree-days.png" alt="">
+      <img src="../charts/${slug}_degree-days.png" alt="">
       <figcaption>${cap_degreedays}</figcaption>
     </figure>
     ${heatwave_figure}
@@ -406,29 +408,28 @@ def build_site(
             tr["cap_records"], tr["year"], records_data, tr["months"])
         if records_data else ""
     )
-    precip_figure = (
-        f'<figure>\n      <img src="{slug}_precipitation.png" alt="">\n'
-        f'      <figcaption>{tr["cap_precip"]}</figcaption>\n    </figure>'
-        if has_precip else ""
-    )
-    dtr_figure = (
-        f'<figure>\n      <img src="{slug}_diurnal-range.png" alt="">\n'
-        f'      <figcaption>{tr["cap_dtr"]}</figcaption>\n    </figure>'
-        if has_dtr else ""
-    )
+    # Charts are shared/language-neutral, so the localised title lives in the
+    # HTML caption (bold) above the description, and images come from ../charts.
+    def _titled(title_key: str, cap_key: str, **fmt) -> str:
+        return (f'<strong class="fig-title">'
+                f'{tr[title_key].format(name=location.name, **fmt)}</strong>'
+                f'<br>{tr[cap_key]}')
 
-    def _fig(name: str, cap_key: str) -> str:
+    def _fig(name: str, title_key: str, cap_key: str) -> str:
         return (
-            f'<figure>\n      <img src="{slug}_{name}.png" alt="">\n'
-            f'      <figcaption>{tr[cap_key]}</figcaption>\n    </figure>'
+            f'<figure>\n      <img src="../charts/{slug}_{name}.png" alt="">\n'
+            f'      <figcaption>{_titled(title_key, cap_key)}</figcaption>\n    </figure>'
         )
 
+    precip_figure = _fig("precipitation", "precip_title", "cap_precip") if has_precip else ""
+    dtr_figure = _fig("diurnal-range", "dtr_title", "cap_dtr") if has_dtr else ""
+
     # Health-impact panels, each gated on the dataset it needs.
-    heatwave_figure = _fig("heatwave", "cap_heatwave") if has_dtr else ""
-    tropic_figure = _fig("tropical-nights", "cap_tropic") if has_dtr else ""
-    coldspell_figure = _fig("cold-spells", "cap_coldspell") if has_dtr else ""
-    heavyrain_figure = _fig("heavy-rain", "cap_heavyrain") if has_precip else ""
-    heatindex_figure = _fig("heat-index", "cap_heatindex") if has_appheat else ""
+    heatwave_figure = _fig("heatwave", "heatwave_title", "cap_heatwave") if has_dtr else ""
+    tropic_figure = _fig("tropical-nights", "tropic_title", "cap_tropic") if has_dtr else ""
+    coldspell_figure = _fig("cold-spells", "coldspell_title", "cap_coldspell") if has_dtr else ""
+    heavyrain_figure = _fig("heavy-rain", "heavyrain_title", "cap_heavyrain") if has_precip else ""
+    heatindex_figure = _fig("heat-index", "heatindex_title", "cap_heatindex") if has_appheat else ""
 
     html = _PAGE.substitute(
         html_lang=tr["html_lang"],
@@ -450,23 +451,24 @@ def build_site(
         card_mean=tr["card_mean"],
         card_warmest=tr["card_warmest"],
         card_coldest=tr["card_coldest"],
-        cap_yearly=tr["cap_yearly"],
-        cap_anomalies=tr["cap_anomalies"],
-        cap_heatmap=tr["cap_heatmap"],
-        cap_anom_heatmap=tr["cap_anom_heatmap"],
+        cap_yearly=_titled("yearly_title", "cap_yearly"),
+        cap_anomalies=_titled("anomaly_title", "cap_anomalies"),
+        cap_heatmap=_titled("heatmap_title", "cap_heatmap"),
+        cap_anom_heatmap=_titled("anom_heatmap_title", "cap_anom_heatmap",
+                                 base=f"{BASELINE[0]}–{BASELINE[1]}"),
         chart_js=chart_js,
         range_widget=range_widget,
         records_widget=records_widget,
-        cap_threshold=tr["cap_threshold"],
-        cap_volatility=tr["cap_volatility"],
-        cap_stripes=tr["cap_stripes"],
-        cap_season=tr["cap_season"],
-        cap_seasonshift=tr["cap_seasonshift"],
+        cap_threshold=_titled("threshold_title", "cap_threshold"),
+        cap_volatility=_titled("volatility_title", "cap_volatility"),
+        cap_stripes=_titled("stripes_title", "cap_stripes"),
+        cap_season=_titled("season_title", "cap_season"),
+        cap_seasonshift=_titled("seasonshift_title", "cap_seasonshift"),
         dtr_figure=dtr_figure,
         precip_figure=precip_figure,
         health_heading=tr["health_heading"],
         health_sub=tr["health_sub"],
-        cap_degreedays=tr["cap_degreedays"],
+        cap_degreedays=_titled("degreedays_title", "cap_degreedays"),
         heatwave_figure=heatwave_figure,
         tropic_figure=tropic_figure,
         coldspell_figure=coldspell_figure,
