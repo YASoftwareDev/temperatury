@@ -26,6 +26,13 @@ from config import ARCHIVE_URL, DATA_DIR, Location
 # Fetching is a local task — CI's shared IP is rate-limited by Open-Meteo.
 _OFFLINE = os.environ.get("TEMPERATURY_OFFLINE") == "1"
 
+# A paid Open-Meteo API key (export OPENMETEO_API_KEY=...) lifts the free-tier
+# per-minute/hour/day limits — by far the fastest way to fill the backfill.
+# When unset, the free archive endpoint is used and behaviour is unchanged.
+_API_KEY = os.environ.get("OPENMETEO_API_KEY")
+_ARCHIVE_URL = ("https://customer-archive-api.open-meteo.com/v1/archive"
+                if _API_KEY else ARCHIVE_URL)
+
 # Network timeout for the (potentially large) archive request, in seconds.
 _REQUEST_TIMEOUT = 120
 # Retries guard against transient timeouts and Open-Meteo rate limiting (429).
@@ -51,10 +58,12 @@ def _cache_path(location: Location, start_year: int, end_year: int) -> Path:
 
 def _request(params: dict, what: str):
     """GET the archive with retry + 429-aware backoff; return parsed JSON."""
+    if _API_KEY:
+        params = {**params, "apikey": _API_KEY}
     response = None
     for attempt in range(1, _MAX_ATTEMPTS + 1):
         try:
-            response = requests.get(ARCHIVE_URL, params=params, timeout=_REQUEST_TIMEOUT)
+            response = requests.get(_ARCHIVE_URL, params=params, timeout=_REQUEST_TIMEOUT)
             if response.status_code == 429 and attempt < _MAX_ATTEMPTS:
                 time.sleep(_retry_after(response, attempt))
                 continue
