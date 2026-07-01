@@ -491,7 +491,7 @@ _MAP_PAGE = Template(
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title}</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<!-- world map rendered as SVG with D3 (Equal Earth, an equal-area projection) -->
 <style>
   :root {
     color-scheme: light;
@@ -526,9 +526,12 @@ _MAP_PAGE = Template(
   .chooser select { background:#fff; color:var(--ink); border:1px solid var(--line);
                     border-radius:4px; padding:.4rem 1rem; font-size:.95rem;
                     font-family:inherit; }
-  #map { height:70vh; min-height:480px; border-radius:6px;
-         border:1px solid var(--line); margin:1rem 0; }
-  .leaflet-popup-content a { color:var(--accent); font-weight:600; text-decoration:none; }
+  #map { position:relative; margin:1rem 0; }
+  #map svg { width:100%; height:auto; display:block; border:1px solid var(--line);
+             border-radius:6px; background:#fff; }
+  #map .maptip { position:absolute; pointer-events:none; background:var(--ink);
+                 color:#fff; padding:.2rem .5rem; border-radius:4px; font-size:.8rem;
+                 white-space:nowrap; transform:translateY(-6px); z-index:5; }
   footer { text-align:center; color:var(--muted); font-size:.82rem;
            padding:2.5rem 1.5rem 3.5rem; border-top:1px solid var(--line);
            margin-top:2rem; }
@@ -551,27 +554,49 @@ _MAP_PAGE = Template(
   <div id="map"></div>
 </main>
 <footer>${footer}</footer>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script>
   var cities = ${markers};
-  // Confine to a single, non-repeating world copy so every marker is always
-  // visible: without this Leaflet wraps the tiles infinitely but a marker
-  // exists at only one longitude, so the Americas (negative lon) showed only on
-  // a western copy and Asia (positive lon) only on an eastern copy.
-  var map = L.map('map', {
-    scrollWheelZoom: false,
-    worldCopyJump: true,
-    maxBounds: [[-85, -180], [85, 180]],
-    maxBoundsViscosity: 1.0
-  }).setView([54, 15], 4);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 12, noWrap: true, attribution: '© OpenStreetMap'
-  }).addTo(map);
-  cities.forEach(function (c) {
-    L.marker([c.lat, c.lon]).addTo(map)
-      .bindTooltip(c.n)
-      .on('click', function () { location.href = c.s; });
-  });
+  // Equal Earth projection: an equal-area world map, so a city's size/spacing
+  // isn't distorted the way Web Mercator inflates the high latitudes. One
+  // continuous world (no tile wrapping), every city dot always visible.
+  (function () {
+    var host = document.getElementById('map');
+    var width = Math.max(320, host.clientWidth || 960);
+    var height = Math.round(width * 0.5);
+    var svg = d3.select(host).append('svg')
+      .attr('viewBox', '0 0 ' + width + ' ' + height);
+    var projection = d3.geoEqualEarth().fitSize([width, height], { type: 'Sphere' });
+    var path = d3.geoPath(projection);
+    svg.append('path').datum({ type: 'Sphere' }).attr('d', path)
+      .attr('fill', '#eef3f6');
+    var tip = d3.select(host).append('div').attr('class', 'maptip').style('opacity', 0);
+    var url = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+    d3.json(url).then(function (world) {
+      var land = topojson.feature(world, world.objects.countries);
+      svg.append('g').selectAll('path').data(land.features).enter().append('path')
+        .attr('d', path).attr('fill', '#dde5df')
+        .attr('stroke', '#fff').attr('stroke-width', 0.4);
+      svg.append('g').selectAll('circle').data(cities).enter().append('circle')
+        .attr('cx', function (c) { var p = projection([c.lon, c.lat]); return p ? p[0] : -99; })
+        .attr('cy', function (c) { var p = projection([c.lon, c.lat]); return p ? p[1] : -99; })
+        .attr('r', 2.6).attr('fill', '#c0392b').attr('fill-opacity', 0.8)
+        .attr('stroke', '#fff').attr('stroke-width', 0.5).style('cursor', 'pointer')
+        .on('mouseover', function (e, c) {
+          d3.select(this).attr('r', 5).attr('fill-opacity', 1);
+          tip.style('opacity', 1).text(c.n);
+        })
+        .on('mousemove', function (e) {
+          tip.style('left', (e.offsetX + 10) + 'px').style('top', (e.offsetY) + 'px');
+        })
+        .on('mouseout', function () {
+          d3.select(this).attr('r', 2.6).attr('fill-opacity', 0.8);
+          tip.style('opacity', 0);
+        })
+        .on('click', function (e, c) { location.href = c.s; });
+    });
+  })();
 </script>
 </body>
 </html>
