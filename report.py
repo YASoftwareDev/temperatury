@@ -42,7 +42,7 @@ def _grouped_options(
 
 _PAGE = Template(
     """<!DOCTYPE html>
-<html lang="${html_lang}">
+<html lang="${html_lang}" dir="${html_dir}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -135,6 +135,7 @@ _PAGE = Template(
                      color: #4a4843; font-size: .9rem; }
   details.guide li { margin: .35rem 0; }
   details.guide b { color: var(--ink); }
+  [dir="rtl"] details.guide ul { margin: .8rem 1.1rem .3rem 0; }
   .iwidget { background: #fff; border: 1px solid var(--line); border-radius: 6px;
              padding: .6rem .7rem; display: flex; flex-direction: column; margin: 0; }
   .iwhead { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
@@ -418,6 +419,7 @@ def build_site(
             wy=stats["warmest_year"], wv=stats["warmest_value"],
             cy=stats["coldest_year"], cv=stats["coldest_value"],
         ),
+        html_dir=tr["dir"],
         chooser=_city_chooser(location, nav_locations, tr),
         lang_nav=_lang_nav(lang, languages, slug),
         trend=f"{stats['trend_per_decade']:+.2f}",
@@ -465,7 +467,7 @@ def build_site(
 
 _MAP_PAGE = Template(
     """<!DOCTYPE html>
-<html lang="${html_lang}">
+<html lang="${html_lang}" dir="${html_dir}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -563,6 +565,7 @@ def build_map_page(
 
     html = _MAP_PAGE.substitute(
         html_lang=tr["html_lang"],
+        html_dir=tr["dir"],
         title=tr["site_title"],
         heading=tr["map_heading"],
         sub=tr["map_sub"],

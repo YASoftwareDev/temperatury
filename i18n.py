@@ -1088,6 +1088,55 @@ TRANSLATIONS: dict[str, dict] = {
 }
 
 
+# --- additional languages, loaded from i18n_data/<code>.json ----------------
+# The languages above are hand-authored; the rest are translated into JSON
+# files (one per language) so the set can scale to the world's most-spoken
+# tongues. Order below is the switcher order appended after the originals;
+# ``dir`` is "rtl" for right-to-left scripts (Arabic, Urdu, Persian).
+import json as _json  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+
+_EXTRA_LANGS = [
+    ("zh", "中文", "ltr"),
+    ("hi", "हिन्दी", "ltr"),
+    ("ar", "العربية", "rtl"),
+    ("pt", "Português", "ltr"),
+    ("bn", "বাংলা", "ltr"),
+    ("ru", "Русский", "ltr"),
+    ("id", "Bahasa Indonesia", "ltr"),
+    ("ja", "日本語", "ltr"),
+    ("ur", "اردو", "rtl"),
+    ("it", "Italiano", "ltr"),
+    ("tr", "Türkçe", "ltr"),
+    ("ko", "한국어", "ltr"),
+    ("fa", "فارسی", "rtl"),
+    ("vi", "Tiếng Việt", "ltr"),
+    ("nl", "Nederlands", "ltr"),
+]
+_DIRECTIONS: dict[str, str] = {code: "ltr" for code in LANGUAGES}
+_DATA_DIR = _Path(__file__).parent / "i18n_data"
+for _code, _native, _dir in _EXTRA_LANGS:
+    _path = _DATA_DIR / f"{_code}.json"
+    if not _path.exists():
+        continue  # translated file not added yet — language simply absent
+    _block = _json.loads(_path.read_text(encoding="utf-8"))
+    _block["html_lang"] = _code  # force the correct BCP-47 code
+    TRANSLATIONS[_code] = _block
+    LANG_NAMES[_code] = _native
+    _DIRECTIONS[_code] = _dir
+    if _code not in LANGUAGES:
+        LANGUAGES.append(_code)
+
+# Inject text direction into every table so templates set <html dir=...>.
+for _code in TRANSLATIONS:
+    TRANSLATIONS[_code]["dir"] = _DIRECTIONS.get(_code, "ltr")
+
+
+def direction(lang: str) -> str:
+    """Text direction ('ltr'/'rtl') for a language code."""
+    return _DIRECTIONS.get(lang, "ltr")
+
+
 def get(lang: str) -> dict:
     """Return the translation table for ``lang`` (falls back to default)."""
     return TRANSLATIONS.get(lang, TRANSLATIONS[DEFAULT_LANG])
