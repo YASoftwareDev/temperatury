@@ -342,11 +342,6 @@ def plot_anomalies(
     ax.axhline(0, color="black", linewidth=0.8)
     ax.plot(means.index, loess(means.index.to_numpy(float), anomaly.to_numpy()),
             color="#0f172a", linewidth=2.0)
-    label = (
-        tr["vs_baseline"].format(lo=lo, hi=hi, base=baseline)
-        if not baseline_years.empty
-        else tr["vs_full"].format(base=baseline)
-    )
     ax.set_title(tr["anomaly_title"].format(name=location.name))
     ax.set_xlabel(_L(tr, "year"))
     ax.set_ylabel(_Lf(tr, lambda t, base=baseline, lo=lo, hi=hi,
