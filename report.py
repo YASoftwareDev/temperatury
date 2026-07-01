@@ -207,6 +207,10 @@ _PAGE = Template(
     border: 1px solid var(--line);
   }
   figure img { width: 100%; height: auto; display: block; border-radius: 3px; }
+  /* Charts are shared SVGs embedded as <object> (scriptable, so the browser can
+     localise their text); aspect-ratio keeps them sized without a fixed height. */
+  figure object.chart { width: 100%; aspect-ratio: 9 / 5.5; display: block;
+                        border-radius: 3px; background: #fff; pointer-events: none; }
   figcaption { color: var(--muted); font-size: .85rem; padding: .6rem .3rem .15rem;
                text-align: center; line-height: 1.45; }
   figcaption .fig-title { display: inline-block; color: var(--ink); font-weight: 600;
@@ -272,41 +276,41 @@ ${chart_js}
 
   <section class="charts">
     <figure>
-      <img src="../charts/${slug}_yearly-trend.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_yearly-trend.svg"></object>
       <figcaption>${cap_yearly}</figcaption>
     </figure>
     <figure>
-      <img src="../charts/${slug}_anomalies.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_anomalies.svg"></object>
       <figcaption>${cap_anomalies}</figcaption>
     </figure>
     <figure>
-      <img src="../charts/${slug}_warming-stripes.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_warming-stripes.svg"></object>
       <figcaption>${cap_stripes}</figcaption>
     </figure>
     <figure>
-      <img src="../charts/${slug}_monthly-heatmap.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_monthly-heatmap.svg"></object>
       <figcaption>${cap_heatmap}</figcaption>
     </figure>
     <figure>
-      <img src="../charts/${slug}_monthly-anomaly.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_monthly-anomaly.svg"></object>
       <figcaption>${cap_anom_heatmap}</figcaption>
     </figure>
     ${range_widget}
     ${records_widget}
     <figure>
-      <img src="../charts/${slug}_threshold-days.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_threshold-days.svg"></object>
       <figcaption>${cap_threshold}</figcaption>
     </figure>
     <figure>
-      <img src="../charts/${slug}_growing-season.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_growing-season.svg"></object>
       <figcaption>${cap_season}</figcaption>
     </figure>
     <figure>
-      <img src="../charts/${slug}_seasonal-shift.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_seasonal-shift.svg"></object>
       <figcaption>${cap_seasonshift}</figcaption>
     </figure>
     <figure>
-      <img src="../charts/${slug}_volatility.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_volatility.svg"></object>
       <figcaption>${cap_volatility}</figcaption>
     </figure>
     ${dtr_figure}
@@ -317,7 +321,7 @@ ${chart_js}
   <p class="section-sub">${health_sub}</p>
   <section class="charts">
     <figure>
-      <img src="../charts/${slug}_degree-days.png" alt="">
+      <object class="chart" type="image/svg+xml" data="../charts/${slug}_degree-days.svg"></object>
       <figcaption>${cap_degreedays}</figcaption>
     </figure>
     ${heatwave_figure}
@@ -335,15 +339,34 @@ ${chart_js}
   <p class="hint">${hint}</p>
 </div>
 <script>
+  // Localise the shared (English) chart SVGs in the browser: swap each <text>
+  // whose content is a known English string to this page's language.
+  window.__ci18n = ${chart_i18n};
+  (function () {
+    var map = window.__ci18n || {};
+    function localize(doc) {
+      if (!doc) return;
+      doc.querySelectorAll('text').forEach(function (t) {
+        var s = (t.textContent || '').trim();
+        if (s && Object.prototype.hasOwnProperty.call(map, s)) t.textContent = map[s];
+      });
+    }
+    document.querySelectorAll('object.chart').forEach(function (o) {
+      try { if (o.contentDocument) localize(o.contentDocument); } catch (e) {}
+      o.addEventListener('load', function () { localize(o.contentDocument); });
+    });
+  })();
+</script>
+<script>
 (function () {
   var box = document.getElementById('lightbox');
   var img = document.getElementById('lightbox-img');
   var cap = document.getElementById('lightbox-cap');
 
   function open(figure) {
-    var thumb = figure.querySelector('img');
+    var thumb = figure.querySelector('object') || figure.querySelector('img');
     var caption = figure.querySelector('figcaption');
-    img.src = thumb.src;
+    img.src = thumb ? (thumb.data || thumb.src) : '';
     cap.textContent = caption ? caption.textContent : '';
     box.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -433,6 +456,7 @@ def build_site(
     has_precip: bool = False,
     has_dtr: bool = False,
     has_appheat: bool = False,
+    chart_i18n: dict | None = None,
 ) -> Path:
     """Write ``<slug>.html`` (localised) into ``output_dir``; return its path."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -457,7 +481,8 @@ def build_site(
 
     def _fig(name: str, title_key: str, cap_key: str) -> str:
         return (
-            f'<figure>\n      <img src="../charts/{slug}_{name}.png" alt="">\n'
+            f'<figure>\n      <object class="chart" type="image/svg+xml" '
+            f'data="../charts/{slug}_{name}.svg"></object>\n'
             f'      <figcaption>{_titled(title_key, cap_key)}</figcaption>\n    </figure>'
         )
 
@@ -480,6 +505,7 @@ def build_site(
             cy=stats["coldest_year"], cv=stats["coldest_value"],
         ),
         html_dir=tr["dir"],
+        chart_i18n=json.dumps(chart_i18n or {}, ensure_ascii=False),
         chooser=_city_chooser(location, nav_locations, tr),
         lang_nav=_lang_nav(lang, languages, slug),
         trend=f"{stats['trend_per_decade']:+.2f}",

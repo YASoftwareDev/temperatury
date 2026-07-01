@@ -39,7 +39,7 @@ from data import (
     load_precip_bulk,
     load_temperatures_bulk,
 )
-from plots import RENDER_VERSION, save_all, summary_stats
+from plots import RENDER_VERSION, localize_specs, save_all, summary_stats
 from report import build_map_page, build_site, write_redirect
 
 
@@ -117,18 +117,24 @@ def _render_city(task) -> tuple[str, int]:
     records_data = (
         interactive.records_payload(df_ext, extra=df_cur_ext)
         if df_ext is not None else None)
-    # Render the charts once, language-neutral (English axis/legend text).
+    # Render the charts once as SVG (English text) and collect each text's
+    # localisation recipe, so every language's page can localise the shared SVGs.
     charts_dir = OUTPUT_DIR / "charts"
-    n = len(save_all(df, location, charts_dir, i18n.get(CHART_LANG),
+    specs = save_all(df, location, charts_dir, i18n.get(CHART_LANG),
                      df_precip=df_precip, df_ext=df_ext, df_app=df_app,
-                     signature=signature))
+                     signature=signature)
+    n = 0
     for lang in languages:
         tr = i18n.get(lang)
+        chart_i18n: dict[str, str] = {}
+        for cs in specs.values():
+            chart_i18n.update(localize_specs(cs, tr))
         build_site(df, location, OUTPUT_DIR / lang, locations, lang, languages, tr,
                    range_data=range_data, records_data=records_data,
                    has_precip=df_precip is not None,
                    has_dtr=df_ext is not None,
-                   has_appheat=df_app is not None)
+                   has_appheat=df_app is not None,
+                   chart_i18n=chart_i18n)
         n += 1
     return location.slug, n
 

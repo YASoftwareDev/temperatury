@@ -34,13 +34,16 @@ from config import Location
 # (warm-white cards, muted warm-grey chrome, hairline grid, no box). Bump
 # RENDER_VERSION whenever this theme or any plot_* output changes, so the
 # incremental build cache (see save_all / main.py) re-renders every chart.
-RENDER_VERSION = "5"
+RENDER_VERSION = "6"
 
 # Charts are language-neutral now — their titles are localised in the HTML, and
 # axis/legend text is English (Latin). So the default DejaVu Sans covers every
 # glyph (incl. European diacritics); no bundled multi-script fonts or RTL shaping.
 plt.rcParams.update({
     "font.family": ["DejaVu Sans"],
+    # Emit real <text> elements (not glyph paths) so the page can localise chart
+    # text in the browser — one shared SVG serves every language.
+    "svg.fonttype": "none",
     "figure.facecolor": "#ffffff",
     "axes.facecolor": "#ffffff",
     "savefig.facecolor": "#ffffff",
@@ -68,6 +71,49 @@ plt.rcParams.update({
     "legend.fontsize": 8,
     "font.size": 10,
 })
+
+
+# --- chart-text localisation -------------------------------------------------
+# Charts render once (English text). Each translatable string registers how to
+# reproduce itself in any language; build_site turns that into a
+# {english: localized} map the browser applies to the shared SVG. ``_TCOLL`` is
+# set to a fresh list by save_all around each chart, then read back.
+_TCOLL: "list | None" = None
+
+
+def _L(tr: dict, key: str, **kw) -> str:
+    """Return an i18n text and record its (key, values) for later localisation."""
+    s = tr[key].format(**kw)
+    if _TCOLL is not None:
+        _TCOLL.append((s, key, kw, None))
+    return s
+
+
+def _Lf(tr: dict, fn) -> str:
+    """Like _L but for composite text (several keys/values) via a closure fn(tr)."""
+    s = fn(tr)
+    if _TCOLL is not None:
+        _TCOLL.append((s, None, None, fn))
+    return s
+
+
+def localize_specs(specs: list, tr: dict) -> dict:
+    """{english_string: string_in_tr's_language} for one chart's collected texts."""
+    out = {}
+    for s_en, key, kw, fn in specs:
+        out[s_en] = fn(tr) if fn is not None else tr[key].format(**kw)
+    return out
+
+
+def _svg_responsive(path) -> None:
+    """Drop the fixed pt size on a saved SVG so it scales to its container."""
+    import re
+    txt = path.read_text(encoding="utf-8")
+    txt = re.sub(
+        r'(<svg[^>]*?)\s+width="[\d.]+pt"\s+height="[\d.]+pt"',
+        r'\1 width="100%" height="100%" preserveAspectRatio="xMidYMid meet"',
+        txt, count=1)
+    path.write_text(txt, encoding="utf-8")
 
 
 # Standard WMO climatological reference period for anomalies.
@@ -231,10 +277,10 @@ def plot_threshold_days(
     years = hot.index.to_numpy(dtype=float)
 
     series = [
-        (hot, "#d62728", tr["threshold_hot"].format(t=HOT_DAY_C)),
-        (freeze, "#2c7fb8", tr["threshold_freeze"].format(t=FREEZE_DAY_C)),
+        (hot, "#d62728", "threshold_hot", {"t": HOT_DAY_C}),
+        (freeze, "#2c7fb8", "threshold_freeze", {"t": FREEZE_DAY_C}),
     ]
-    for data, color, label in series:
+    for data, color, lkey, lkw in series:
         values = data.to_numpy(dtype=float)
         slope, line = robust_trend_line(years, values)
         sig = trend_significance(values, tr)
@@ -244,13 +290,15 @@ def plot_threshold_days(
         ax.plot(years, values, color=color, linestyle="none", marker="o",
                 markersize=2.6, alpha=0.4)
         ax.plot(years, loess(years, values), color=color, linewidth=2.6,
-                label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
+                label=_Lf(tr, lambda t, lkey=lkey, lkw=lkw, slope=slope, sig=sig:
+                          f"{t[lkey].format(**lkw)}: {slope * 10:+.1f} "
+                          f"{t['per_decade_days']} ({sig})"))
         ax.plot(years, line, color=color, linewidth=1.3, linestyle="--",
                 alpha=0.8)
 
     ax.set_title(tr["threshold_title"].format(name=location.name))
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(tr["days_per_year"])
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_L(tr, "days_per_year"))
     ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
     ax.margins(x=0.01)
@@ -267,14 +315,14 @@ def plot_yearly_trend(
     sig = trend_significance(values, tr)
 
     ax.plot(years, values, marker="o", markersize=3, color="#2c7fb8",
-            linestyle="none", alpha=0.55, label=tr["annual_mean"])
+            linestyle="none", alpha=0.55, label=_L(tr, "annual_mean"))
     ax.plot(years, loess(years, values), color="#d62728", linewidth=2.6,
-            label=tr["smoothed"])
+            label=_L(tr, "smoothed"))
     ax.plot(years, line, color="#334155", linewidth=1.6, linestyle="--",
-            label=f"{tr['trend']} {slope * 10:+.2f} {tr['per_decade_c']} ({sig})")
+            label=_Lf(tr, lambda t: f"{t['trend']} {slope * 10:+.2f} {t['per_decade_c']} ({sig})"))
     ax.set_title(tr["yearly_title"].format(name=location.name))
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(tr["yearly_ylabel"])
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_L(tr, "yearly_ylabel"))
     ax.legend()
     ax.grid(True, alpha=0.3)
 
@@ -300,8 +348,12 @@ def plot_anomalies(
         else tr["vs_full"].format(base=baseline)
     )
     ax.set_title(tr["anomaly_title"].format(name=location.name))
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(f"{tr['anomaly_ylabel']}\n{label}")
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_Lf(tr, lambda t, base=baseline, lo=lo, hi=hi,
+                      e=baseline_years.empty:
+                      f"{t['anomaly_ylabel']}\n"
+                      + (t['vs_full'].format(base=base) if e
+                         else t['vs_baseline'].format(lo=lo, hi=hi, base=base))))
     ax.grid(True, axis="y", alpha=0.3)
 
 
@@ -332,14 +384,14 @@ def plot_monthly_heatmap(
         extent=(0.5, 12.5, pivot.index.min() - 0.5, pivot.index.max() + 0.5),
     )
     ax.set_title(tr["heatmap_title"].format(name=location.name))
-    ax.set_xlabel(tr["month"])
-    ax.set_ylabel(tr["year"])
+    ax.set_xlabel(_L(tr, "month"))
+    ax.set_ylabel(_L(tr, "year"))
     ax.set_xticks(range(1, 13))
     ax.set_xticklabels(tr["months"])
     colorbar = ax.figure.colorbar(
         image, ax=ax, fraction=0.046, pad=0.04, ticks=levels[::2]
     )
-    colorbar.set_label(tr["heatmap_cbar"])
+    colorbar.set_label(_L(tr, "heatmap_cbar"))
 
 
 def plot_monthly_anomaly_heatmap(
@@ -379,14 +431,14 @@ def plot_monthly_anomaly_heatmap(
     )
     base_label = f"{lo}–{hi}" if not base_rows.empty else tr["full_period"]
     ax.set_title(tr["anom_heatmap_title"].format(base=base_label, name=location.name))
-    ax.set_xlabel(tr["month"])
-    ax.set_ylabel(tr["year"])
+    ax.set_xlabel(_L(tr, "month"))
+    ax.set_ylabel(_L(tr, "year"))
     ax.set_xticks(range(1, 13))
     ax.set_xticklabels(tr["months"])
     colorbar = ax.figure.colorbar(
         image, ax=ax, fraction=0.046, pad=0.04, ticks=levels[::2]
     )
-    colorbar.set_label(tr["anom_heatmap_cbar"].format(base=base_label))
+    colorbar.set_label(_L(tr, "anom_heatmap_cbar", base=base_label))
 
 
 def plot_monthly_range(
@@ -407,16 +459,16 @@ def plot_monthly_range(
     latest = pivot.loc[latest_year].to_numpy()
 
     ax.fill_between(months, mn, mx, color="#94a3b8", alpha=0.35,
-                    label=tr["range_min_max"].format(start=start, end=latest_year))
+                    label=_L(tr, "range_min_max", start=start, end=latest_year))
     ax.plot(months, mx, color="#94a3b8", linewidth=0.8)
     ax.plot(months, mn, color="#94a3b8", linewidth=0.8)
     ax.plot(months, avg, color="#334155", linewidth=1.5, linestyle="--",
-            label=tr["range_average"])
+            label=_L(tr, "range_average"))
     ax.plot(months, latest, color="#d62728", linewidth=2.4, marker="o",
-            markersize=4, label=tr["range_latest"].format(year=latest_year))
+            markersize=4, label=_L(tr, "range_latest", year=latest_year))
     ax.set_title(tr["range_title"].format(name=location.name))
-    ax.set_xlabel(tr["month"])
-    ax.set_ylabel(tr["range_ylabel"])
+    ax.set_xlabel(_L(tr, "month"))
+    ax.set_ylabel(_L(tr, "range_ylabel"))
     ax.set_xticks(months)
     ax.set_xticklabels(tr["months"])
     ax.grid(True, alpha=0.3)
@@ -447,18 +499,18 @@ def plot_record_range(
 
     ax.fill_between(months, rec_low.to_numpy(), rec_high.to_numpy(),
                     color="#cbd5e1", alpha=0.55,
-                    label=tr["record_band"].format(start=start, end=latest_year))
+                    label=_L(tr, "record_band", start=start, end=latest_year))
     ax.plot(months, rec_high.to_numpy(), color="#b91c1c", linewidth=1.0)
     ax.plot(months, rec_low.to_numpy(), color="#1d4ed8", linewidth=1.0)
     ax.plot(months, lat_high.to_numpy(), color="#d62728", linewidth=2.2,
             marker="o", markersize=4,
-            label=tr["record_latest_high"].format(year=latest_year))
+            label=_L(tr, "record_latest_high", year=latest_year))
     ax.plot(months, lat_low.to_numpy(), color="#2c7fb8", linewidth=2.2,
             marker="o", markersize=4,
-            label=tr["record_latest_low"].format(year=latest_year))
+            label=_L(tr, "record_latest_low", year=latest_year))
     ax.set_title(tr["record_title"].format(name=location.name))
-    ax.set_xlabel(tr["month"])
-    ax.set_ylabel(tr["record_ylabel"])
+    ax.set_xlabel(_L(tr, "month"))
+    ax.set_ylabel(_L(tr, "record_ylabel"))
     ax.set_xticks(months)
     ax.set_xticklabels(tr["months"])
     ax.grid(True, alpha=0.3)
@@ -485,13 +537,13 @@ def plot_temp_volatility(
     ax.plot(years, values, color="#7c3aed", linestyle="none", marker="o",
             markersize=3, alpha=0.45)
     ax.plot(years, loess(years, values), color="#7c3aed", linewidth=2.6,
-            label=tr["smoothed"])
+            label=_L(tr, "smoothed"))
     ax.plot(years, line, color="#334155", linewidth=1.6, linestyle="--",
-            label=(f"≥{SWING_C:.0f} °C {tr['volatility_jump']}: "
-                   f"{slope * 10:+.1f} {tr['per_decade_days']} ({sig})"))
+            label=_Lf(tr, lambda t: (f"≥{SWING_C:.0f} °C {t['volatility_jump']}: "
+                   f"{slope * 10:+.1f} {t['per_decade_days']} ({sig})")))
     ax.set_title(tr["volatility_title"].format(name=location.name))
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(tr["volatility_ylabel"])
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_L(tr, "volatility_ylabel"))
     ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
     ax.margins(x=0.01)
@@ -508,14 +560,14 @@ def plot_precip(
     sig = trend_significance(values, tr)
 
     ax.bar(years, values, color="#2c7fb8", alpha=0.45, width=0.9,
-           label=tr["precip_annual"])
+           label=_L(tr, "precip_annual"))
     ax.plot(years, loess(years, values), color="#0f766e", linewidth=2.6,
-            label=tr["smoothed"])
+            label=_L(tr, "smoothed"))
     ax.plot(years, line, color="#d62728", linewidth=1.8, linestyle="--",
-            label=f"{tr['trend']} {slope * 10:+.0f} {tr['per_decade_mm']} ({sig})")
+            label=_Lf(tr, lambda t: f"{t['trend']} {slope * 10:+.0f} {t['per_decade_mm']} ({sig})"))
     ax.set_title(tr["precip_title"].format(name=location.name))
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(tr["precip_ylabel"])
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_L(tr, "precip_ylabel"))
     ax.grid(True, axis="y", alpha=0.3)
     ax.legend(loc="best")
     ax.margins(x=0.01)
@@ -543,12 +595,12 @@ def plot_warming_stripes(
               vmin=-limit, vmax=limit,
               extent=(years[0] - 0.5, years[-1] + 0.5, 0, 1))
     ax.set_yticks([])
-    ax.set_xlabel(tr["year"])
+    ax.set_xlabel(_L(tr, "year"))
     ax.set_title(tr["stripes_title"].format(name=location.name))
     sm = plt.cm.ScalarMappable(cmap="RdBu_r",
                                norm=plt.Normalize(vmin=-limit, vmax=limit))
     cbar = ax.figure.colorbar(sm, ax=ax, fraction=0.05, pad=0.02)
-    cbar.set_label(tr["stripes_cbar"].format(lo=lo, hi=hi))
+    cbar.set_label(_L(tr, "stripes_cbar", lo=lo, hi=hi))
 
 
 def _season_length(daily_mean: np.ndarray) -> float:
@@ -599,14 +651,14 @@ def plot_growing_season(
     sig = trend_significance(values, tr)
 
     ax.plot(years, values, color="#15803d", linestyle="none", marker="o",
-            markersize=2.6, alpha=0.45, label=tr["season_annual"])
+            markersize=2.6, alpha=0.45, label=_L(tr, "season_annual"))
     ax.plot(years, loess(years, values), color="#15803d", linewidth=2.6,
-            label=tr["smoothed"])
+            label=_L(tr, "smoothed"))
     ax.plot(years, line, color="#b45309", linewidth=1.6, linestyle="--",
-            label=f"{tr['trend']} {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
+            label=_Lf(tr, lambda t: f"{t['trend']} {slope * 10:+.1f} {t['per_decade_days']} ({sig})"))
     ax.set_title(tr["season_title"].format(name=location.name))
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(tr["season_ylabel"])
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_L(tr, "season_ylabel"))
     ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
     ax.margins(x=0.01)
@@ -630,14 +682,14 @@ def plot_diurnal_range(
     sig = trend_significance(values, tr)
 
     ax.plot(years, values, color="#7c3aed", linestyle="none", marker="o",
-            markersize=2.6, alpha=0.45, label=tr["dtr_annual"])
+            markersize=2.6, alpha=0.45, label=_L(tr, "dtr_annual"))
     ax.plot(years, loess(years, values), color="#7c3aed", linewidth=2.6,
-            label=tr["smoothed"])
+            label=_L(tr, "smoothed"))
     ax.plot(years, line, color="#b45309", linewidth=1.6, linestyle="--",
-            label=f"{tr['trend']} {slope * 10:+.2f} {tr['per_decade_c']} ({sig})")
+            label=_Lf(tr, lambda t: f"{t['trend']} {slope * 10:+.2f} {t['per_decade_c']} ({sig})"))
     ax.set_title(tr["dtr_title"].format(name=location.name))
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(tr["dtr_ylabel"])
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_L(tr, "dtr_ylabel"))
     ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
     ax.margins(x=0.01)
@@ -675,8 +727,8 @@ def plot_seasonal_shift(
     ax.set_xticks(months)
     ax.set_xticklabels(tr["months"])
     ax.set_title(tr["seasonshift_title"].format(name=location.name))
-    ax.set_xlabel(tr["month"])
-    ax.set_ylabel(tr["seasonshift_ylabel"])
+    ax.set_xlabel(_L(tr, "month"))
+    ax.set_ylabel(_L(tr, "seasonshift_ylabel"))
     ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
 
@@ -720,19 +772,21 @@ def _spell_mask(flag: np.ndarray) -> np.ndarray:
     return out
 
 
-def _count_panel(ax, years, values, color, series_label, title, ylabel, unit, tr):
+def _count_panel(ax, years, values, color, series_key, series_kw, title,
+                 ylabel_key, unit_key, tr):
     """Shared annual-count panel: faint points + LOESS + dashed robust trend."""
     slope, line = robust_trend_line(years, values)
     sig = trend_significance(values, tr)
     ax.plot(years, values, color=color, linestyle="none", marker="o",
-            markersize=2.6, alpha=0.45, label=series_label)
+            markersize=2.6, alpha=0.45, label=_L(tr, series_key, **series_kw))
     ax.plot(years, loess(years, values), color=color, linewidth=2.6,
-            label=tr["smoothed"])
+            label=_L(tr, "smoothed"))
     ax.plot(years, line, color="#334155", linewidth=1.4, linestyle="--",
-            label=f"{tr['trend']} {slope * 10:+.1f} {unit} ({sig})")
+            label=_Lf(tr, lambda t, uk=unit_key, slope=slope, sig=sig:
+                      f"{t['trend']} {slope * 10:+.1f} {t[uk]} ({sig})"))
     ax.set_title(title)
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(ylabel)
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_L(tr, ylabel_key))
     ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
     ax.margins(x=0.01)
@@ -750,9 +804,9 @@ def plot_heatwave(df_ext: pd.DataFrame, location: Location, ax: plt.Axes, tr: di
     spell = _spell_mask(tmax.to_numpy(dtype=float) > thr[doy])
     annual = pd.Series(spell, index=tmax.index).groupby(tmax.index.year).sum()
     _count_panel(ax, annual.index.to_numpy(dtype=float), annual.to_numpy(dtype=float),
-                 "#b91c1c", tr["heatwave_series"],
+                 "#b91c1c", "heatwave_series", {},
                  tr["heatwave_title"].format(name=location.name),
-                 tr["heatwave_ylabel"], tr["per_decade_days"], tr)
+                 "heatwave_ylabel", "per_decade_days", tr)
 
 
 def plot_tropical_nights(df_ext: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
@@ -764,9 +818,9 @@ def plot_tropical_nights(df_ext: pd.DataFrame, location: Location, ax: plt.Axes,
     tmin = df_ext["temperature_2m_min"]
     annual = (tmin >= TROPICAL_NIGHT_C).groupby(tmin.index.year).sum()
     _count_panel(ax, annual.index.to_numpy(dtype=float), annual.to_numpy(dtype=float),
-                 "#c2410c", tr["tropic_series"].format(t=TROPICAL_NIGHT_C),
+                 "#c2410c", "tropic_series", {"t": TROPICAL_NIGHT_C},
                  tr["tropic_title"].format(name=location.name),
-                 tr["tropic_ylabel"], tr["per_decade_days"], tr)
+                 "tropic_ylabel", "per_decade_days", tr)
 
 
 def plot_cold_spells(df_ext: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
@@ -781,9 +835,9 @@ def plot_cold_spells(df_ext: pd.DataFrame, location: Location, ax: plt.Axes, tr:
     spell = _spell_mask(tmin.to_numpy(dtype=float) < thr[doy])
     annual = pd.Series(spell, index=tmin.index).groupby(tmin.index.year).sum()
     _count_panel(ax, annual.index.to_numpy(dtype=float), annual.to_numpy(dtype=float),
-                 "#1d4ed8", tr["coldspell_series"],
+                 "#1d4ed8", "coldspell_series", {},
                  tr["coldspell_title"].format(name=location.name),
-                 tr["coldspell_ylabel"], tr["per_decade_days"], tr)
+                 "coldspell_ylabel", "per_decade_days", tr)
 
 
 def plot_degree_days(df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
@@ -797,20 +851,22 @@ def plot_degree_days(df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dic
     cdd = (mean - CDD_BASE_C).clip(lower=0).groupby(mean.index.year).sum()
     years = hdd.index.to_numpy(dtype=float)
     series = [
-        (hdd, "#1d4ed8", tr["hdd_label"].format(t=HDD_BASE_C)),
-        (cdd, "#b91c1c", tr["cdd_label"].format(t=CDD_BASE_C)),
+        (hdd, "#1d4ed8", "hdd_label", {"t": HDD_BASE_C}),
+        (cdd, "#b91c1c", "cdd_label", {"t": CDD_BASE_C}),
     ]
-    for data, color, label in series:
+    for data, color, lkey, lkw in series:
         v = data.to_numpy(dtype=float)
         slope, _ = robust_trend_line(years, v)
         sig = trend_significance(v, tr)
         ax.plot(years, v, color=color, linestyle="none", marker="o",
                 markersize=2.6, alpha=0.4)
         ax.plot(years, loess(years, v), color=color, linewidth=2.6,
-                label=f"{label}: {slope * 10:+.0f} {tr['per_decade_dd']} ({sig})")
+                label=_Lf(tr, lambda t, lkey=lkey, lkw=lkw, slope=slope, sig=sig:
+                          f"{t[lkey].format(**lkw)}: {slope * 10:+.0f} "
+                          f"{t['per_decade_dd']} ({sig})"))
     ax.set_title(tr["degreedays_title"].format(name=location.name))
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(tr["dd_ylabel"])
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_L(tr, "dd_ylabel"))
     ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
     ax.margins(x=0.01)
@@ -825,9 +881,9 @@ def plot_heavy_rain(df_precip: pd.DataFrame, location: Location, ax: plt.Axes, t
     p = df_precip["precipitation_sum"]
     annual = (p >= HEAVY_RAIN_MM).groupby(p.index.year).sum()
     _count_panel(ax, annual.index.to_numpy(dtype=float), annual.to_numpy(dtype=float),
-                 "#0f766e", tr["heavyrain_series"].format(mm=HEAVY_RAIN_MM),
+                 "#0f766e", "heavyrain_series", {"mm": HEAVY_RAIN_MM},
                  tr["heavyrain_title"].format(name=location.name),
-                 tr["heavyrain_ylabel"], tr["per_decade_days"], tr)
+                 "heavyrain_ylabel", "per_decade_days", tr)
 
 
 def plot_heat_index(df_app: pd.DataFrame, location: Location, ax: plt.Axes, tr: dict) -> None:
@@ -842,20 +898,22 @@ def plot_heat_index(df_app: pd.DataFrame, location: Location, ax: plt.Axes, tr: 
     danger = (app >= APPARENT_DANGER_C).groupby(app.index.year).sum()
     years = strong.index.to_numpy(dtype=float)
     series = [
-        (strong, "#f59e0b", tr["heat_strong"].format(t=APPARENT_STRONG_C)),
-        (danger, "#b91c1c", tr["heat_danger"].format(t=APPARENT_DANGER_C)),
+        (strong, "#f59e0b", "heat_strong", {"t": APPARENT_STRONG_C}),
+        (danger, "#b91c1c", "heat_danger", {"t": APPARENT_DANGER_C}),
     ]
-    for data, color, label in series:
+    for data, color, lkey, lkw in series:
         v = data.to_numpy(dtype=float)
         slope, _ = robust_trend_line(years, v)
         sig = trend_significance(v, tr)
         ax.plot(years, v, color=color, linestyle="none", marker="o",
                 markersize=2.6, alpha=0.4)
         ax.plot(years, loess(years, v), color=color, linewidth=2.6,
-                label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
+                label=_Lf(tr, lambda t, lkey=lkey, lkw=lkw, slope=slope, sig=sig:
+                          f"{t[lkey].format(**lkw)}: {slope * 10:+.1f} "
+                          f"{t['per_decade_days']} ({sig})"))
     ax.set_title(tr["heatindex_title"].format(name=location.name))
-    ax.set_xlabel(tr["year"])
-    ax.set_ylabel(tr["heatindex_ylabel"])
+    ax.set_xlabel(_L(tr, "year"))
+    ax.set_ylabel(_L(tr, "heatindex_ylabel"))
     ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
     ax.margins(x=0.01)
@@ -904,7 +962,7 @@ def save_all(
     df_ext: pd.DataFrame | None = None,
     df_app: pd.DataFrame | None = None,
     signature: str | None = None,
-) -> list[Path]:
+) -> "dict[str, list]":
     """Render the dashboard plus each standalone panel; return written paths.
 
     The monthly-range and record charts are interactive on the web (see
@@ -918,33 +976,32 @@ def save_all(
     slug = location.slug
     written: list[Path] = []
 
-    # Incremental build: if this city's data + render version match the marker
-    # left by a previous build (restored from the CI cache) and the charts are
-    # present, skip the (expensive) re-render entirely.
+    chart_specs: "dict[str, list]" = {}
+
+    # Incremental build: SVGs are only re-written when the city's data + render
+    # version differ from the marker (restored from the CI cache). Text specs are
+    # always (re)collected below — cheap (no savefig) — so pages can localise the
+    # shared SVGs even for a cached city.
     marker = output_dir / f".{slug}.render"
-    if (signature is not None and marker.exists()
-            and marker.read_text() == signature
-            and (output_dir / f"{slug}_dashboard.png").exists()):
-        return written
+    cached = (signature is not None and marker.exists()
+              and marker.read_text() == signature
+              and (output_dir / f"{slug}_dashboard.svg").exists())
 
-    dashboard = build_dashboard(df, location, tr, df_ext=df_ext)
-    dash_path = output_dir / f"{slug}_dashboard.png"
-    dashboard.savefig(dash_path, dpi=120)
-    plt.close(dashboard)
-    written.append(dash_path)
-
-    # Higher DPI than the dashboard so panels stay crisp when opened full-page.
     def render(name: str, draw, data) -> None:
+        global _TCOLL
         fig, ax = plt.subplots(figsize=(9, 5.5))
+        _TCOLL = []
         draw(data, location, ax, tr)
-        # The title is rendered as localised HTML above the image instead, so the
-        # PNG stays language-neutral and is shared across all languages.
-        ax.set_title("")
-        fig.tight_layout()
-        path = output_dir / f"{slug}_{name}.png"
-        fig.savefig(path, dpi=160)
+        ax.set_title("")  # title is localised HTML above the image
+        chart_specs[name] = _TCOLL
+        _TCOLL = None
+        if not cached:
+            fig.tight_layout()
+            path = output_dir / f"{slug}_{name}.svg"
+            fig.savefig(path, format="svg")
+            _svg_responsive(path)
+            written.append(path)
         plt.close(fig)
-        written.append(path)
 
     panels = {
         "threshold-days": plot_threshold_days,
@@ -976,6 +1033,11 @@ def save_all(
     if df_app is not None:
         render("heat-index", plot_heat_index, df_app)
 
-    if signature is not None:
-        marker.write_text(signature)
-    return written
+    if not cached:
+        dashboard = build_dashboard(df, location, tr, df_ext=df_ext)
+        dashboard.savefig(output_dir / f"{slug}_dashboard.svg", format="svg")
+        plt.close(dashboard)
+        written.append(output_dir / f"{slug}_dashboard.svg")
+        if signature is not None:
+            marker.write_text(signature)
+    return chart_specs
