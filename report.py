@@ -19,25 +19,65 @@ from i18n import LANG_NAMES
 from plots import BASELINE, summary_stats
 
 
+# Coarse geographic sub-regions, so the big regions (Asia has ~380 cities) split
+# into navigable <optgroup>s instead of one unusable list. Boundaries are broad
+# lat/lon bands — good enough to find a city quickly, not a strict definition.
+def _subregion(loc: Location) -> str:
+    r, lat, lon = loc.region, loc.latitude, loc.longitude
+    if r == "Europe":
+        if lat >= 55:
+            return "North"
+        return "West" if lon < 10 else ("Central" if lon < 22 else "East")
+    if r == "Asia":
+        if lat >= 45:
+            return "North"
+        if lon < 66:
+            return "West & Central"
+        if lon >= 95 and lat < 23:
+            return "Southeast"
+        if lon >= 102:
+            return "East"
+        return "South"
+    if r == "Africa":
+        if lat >= 18:
+            return "North"
+        if lat < -12:
+            return "Southern"
+        return "West" if lon < 16 else "Central & East"
+    if r == "North America":
+        if lat >= 49:
+            return "Canada"
+        return "United States" if lat >= 25 else "Mexico, C. America & Caribbean"
+    if r == "South America":
+        return "North" if lat >= -16 else "South"
+    return ""  # Middle East, Oceania: small enough to leave ungrouped
+
+
 def _grouped_options(
     locations: list[Location], current_slug: str | None, tr: dict | None = None
 ) -> str:
-    """City <option>s grouped into <optgroup> by region (config order)."""
+    """City <option>s grouped into <optgroup> by region, then sub-region."""
     region_names = (tr or {}).get("regions", {})
     by_region: dict[str, list[Location]] = {}
     for loc in locations:
         by_region.setdefault(loc.region, []).append(loc)
     out = []
     for region in REGIONS:
-        cities = sorted(by_region.get(region, []), key=lambda location: location.name)
+        cities = by_region.get(region, [])
         if not cities:
             continue
-        label = region_names.get(region, region)
-        out.append(f'<optgroup label="{label}">')
+        rlabel = region_names.get(region, region)
+        # Split into sub-regions; keep first-seen sub-region order for stability.
+        subs: dict[str, list[Location]] = {}
         for loc in cities:
-            sel = " selected" if loc.slug == current_slug else ""
-            out.append(f'<option value="{loc.slug}.html"{sel}>{loc.name}</option>')
-        out.append("</optgroup>")
+            subs.setdefault(_subregion(loc), []).append(loc)
+        for sub, group in subs.items():
+            label = f"{rlabel} · {sub}" if sub and len(subs) > 1 else rlabel
+            out.append(f'<optgroup label="{label}">')
+            for loc in sorted(group, key=lambda location: location.name):
+                sel = " selected" if loc.slug == current_slug else ""
+                out.append(f'<option value="{loc.slug}.html"{sel}>{loc.name}</option>')
+            out.append("</optgroup>")
     return "".join(out)
 
 _PAGE = Template(
@@ -528,9 +568,12 @@ _MAP_PAGE = Template(
   .chooser select { background:#fff; color:var(--ink); border:1px solid var(--line);
                     border-radius:4px; padding:.4rem 1rem; font-size:.95rem;
                     font-family:inherit; }
-  #map { position:relative; margin:1rem 0; }
+  /* Break out of the centred content column to (nearly) full viewport width so
+     dense regions like Europe have room; scroll/drag to zoom in further. */
+  #map { position:relative; width:96vw; margin:1.25rem calc(50% - 48vw); }
   #map svg { width:100%; height:auto; display:block; border:1px solid var(--line);
-             border-radius:6px; background:#fff; }
+             border-radius:6px; background:#fff; cursor:grab; }
+  #map svg:active { cursor:grabbing; }
   #map .maptip { position:absolute; pointer-events:none; background:var(--ink);
                  color:#fff; padding:.2rem .5rem; border-radius:4px; font-size:.8rem;
                  white-space:nowrap; transform:translateY(-6px); z-index:5; }
@@ -561,43 +604,48 @@ _MAP_PAGE = Template(
 <script>
   var cities = ${markers};
   // Equal Earth projection: an equal-area world map, so a city's size/spacing
-  // isn't distorted the way Web Mercator inflates the high latitudes. One
-  // continuous world (no tile wrapping), every city dot always visible.
+  // isn't distorted the way Web Mercator inflates the high latitudes. Scroll or
+  // drag to zoom into dense regions (Europe); dots stay crisp at any zoom.
   (function () {
     var host = document.getElementById('map');
-    var width = Math.max(320, host.clientWidth || 960);
+    var width = Math.max(640, host.clientWidth || 1000);
     var height = Math.round(width * 0.5);
     var svg = d3.select(host).append('svg')
       .attr('viewBox', '0 0 ' + width + ' ' + height);
+    var g = svg.append('g');
     var projection = d3.geoEqualEarth().fitSize([width, height], { type: 'Sphere' });
     var path = d3.geoPath(projection);
-    svg.append('path').datum({ type: 'Sphere' }).attr('d', path)
-      .attr('fill', '#eef3f6');
+    g.append('path').datum({ type: 'Sphere' }).attr('d', path).attr('fill', '#eef3f6');
     var tip = d3.select(host).append('div').attr('class', 'maptip').style('opacity', 0);
-    var url = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
-    d3.json(url).then(function (world) {
+    var dots = null;
+    d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(function (world) {
       var land = topojson.feature(world, world.objects.countries);
-      svg.append('g').selectAll('path').data(land.features).enter().append('path')
+      g.append('g').selectAll('path').data(land.features).enter().append('path')
         .attr('d', path).attr('fill', '#dde5df')
-        .attr('stroke', '#fff').attr('stroke-width', 0.4);
-      svg.append('g').selectAll('circle').data(cities).enter().append('circle')
+        .attr('stroke', '#fff').attr('stroke-width', 0.4).attr('vector-effect', 'non-scaling-stroke');
+      dots = g.append('g').selectAll('circle').data(cities).enter().append('circle')
         .attr('cx', function (c) { var p = projection([c.lon, c.lat]); return p ? p[0] : -99; })
         .attr('cy', function (c) { var p = projection([c.lon, c.lat]); return p ? p[1] : -99; })
-        .attr('r', 2.6).attr('fill', '#c0392b').attr('fill-opacity', 0.8)
+        .attr('r', 2.6).attr('fill', '#c0392b').attr('fill-opacity', 0.85)
         .attr('stroke', '#fff').attr('stroke-width', 0.5).style('cursor', 'pointer')
         .on('mouseover', function (e, c) {
-          d3.select(this).attr('r', 5).attr('fill-opacity', 1);
+          d3.select(this).attr('fill-opacity', 1);
           tip.style('opacity', 1).text(c.n);
         })
         .on('mousemove', function (e) {
           tip.style('left', (e.offsetX + 10) + 'px').style('top', (e.offsetY) + 'px');
         })
         .on('mouseout', function () {
-          d3.select(this).attr('r', 2.6).attr('fill-opacity', 0.8);
+          d3.select(this).attr('fill-opacity', 0.85);
           tip.style('opacity', 0);
         })
         .on('click', function (e, c) { location.href = c.s; });
     });
+    // Zoom/pan; counter-scale dot radius + stroke so they stay the same size.
+    svg.call(d3.zoom().scaleExtent([1, 12]).on('zoom', function (e) {
+      g.attr('transform', e.transform);
+      if (dots) dots.attr('r', 2.6 / e.transform.k).attr('stroke-width', 0.5 / e.transform.k);
+    }));
   })();
 </script>
 </body>
