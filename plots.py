@@ -34,7 +34,7 @@ from config import Location
 # (warm-white cards, muted warm-grey chrome, hairline grid, no box). Bump
 # RENDER_VERSION whenever this theme or any plot_* output changes, so the
 # incremental build cache (see save_all / main.py) re-renders every chart.
-RENDER_VERSION = "3"
+RENDER_VERSION = "4"
 
 # Register bundled multi-script fonts (CJK / Arabic / Devanagari / Bengali) so
 # chart titles/labels render in every language; matplotlib falls back per glyph.
@@ -294,8 +294,8 @@ def plot_threshold_days(
         # Faint raw counts, a bold LOESS smoother (reveals the non-linear
         # shape of the change), and a thin dashed robust trend line that
         # carries the single per-decade rate + significance in the legend.
-        ax.plot(years, values, color=color, linewidth=0.8, marker="o",
-                markersize=2.0, alpha=0.25)
+        ax.plot(years, values, color=color, linestyle="none", marker="o",
+                markersize=2.6, alpha=0.4)
         ax.plot(years, loess(years, values), color=color, linewidth=2.6,
                 label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
         ax.plot(years, line, color=color, linewidth=1.3, linestyle="--",
@@ -320,7 +320,7 @@ def plot_yearly_trend(
     sig = trend_significance(values, tr)
 
     ax.plot(years, values, marker="o", markersize=3, color="#2c7fb8",
-            linewidth=1, alpha=0.45, label=tr["annual_mean"])
+            linestyle="none", alpha=0.55, label=tr["annual_mean"])
     ax.plot(years, loess(years, values), color="#d62728", linewidth=2.6,
             label=tr["smoothed"])
     ax.plot(years, line, color="#334155", linewidth=1.6, linestyle="--",
@@ -535,8 +535,8 @@ def plot_temp_volatility(
     slope, line = robust_trend_line(years, values)
     sig = trend_significance(values, tr)
 
-    ax.plot(years, values, color="#7c3aed", linewidth=1.0, marker="o",
-            markersize=2.5, alpha=0.35)
+    ax.plot(years, values, color="#7c3aed", linestyle="none", marker="o",
+            markersize=3, alpha=0.45)
     ax.plot(years, loess(years, values), color="#7c3aed", linewidth=2.6,
             label=tr["smoothed"])
     ax.plot(years, line, color="#334155", linewidth=1.6, linestyle="--",
@@ -651,8 +651,8 @@ def plot_growing_season(
     slope, line = robust_trend_line(years, values)
     sig = trend_significance(values, tr)
 
-    ax.plot(years, values, color="#15803d", linewidth=0.8, marker="o",
-            markersize=2.0, alpha=0.3, label=tr["season_annual"])
+    ax.plot(years, values, color="#15803d", linestyle="none", marker="o",
+            markersize=2.6, alpha=0.45, label=tr["season_annual"])
     ax.plot(years, loess(years, values), color="#15803d", linewidth=2.6,
             label=tr["smoothed"])
     ax.plot(years, line, color="#b45309", linewidth=1.6, linestyle="--",
@@ -682,8 +682,8 @@ def plot_diurnal_range(
     slope, line = robust_trend_line(years, values)
     sig = trend_significance(values, tr)
 
-    ax.plot(years, values, color="#7c3aed", linewidth=0.8, marker="o",
-            markersize=2.0, alpha=0.3, label=tr["dtr_annual"])
+    ax.plot(years, values, color="#7c3aed", linestyle="none", marker="o",
+            markersize=2.6, alpha=0.45, label=tr["dtr_annual"])
     ax.plot(years, loess(years, values), color="#7c3aed", linewidth=2.6,
             label=tr["smoothed"])
     ax.plot(years, line, color="#b45309", linewidth=1.6, linestyle="--",
@@ -777,8 +777,8 @@ def _count_panel(ax, years, values, color, series_label, title, ylabel, unit, tr
     """Shared annual-count panel: faint points + LOESS + dashed robust trend."""
     slope, line = robust_trend_line(years, values)
     sig = trend_significance(values, tr)
-    ax.plot(years, values, color=color, linewidth=0.8, marker="o",
-            markersize=2.0, alpha=0.3, label=series_label)
+    ax.plot(years, values, color=color, linestyle="none", marker="o",
+            markersize=2.6, alpha=0.45, label=series_label)
     ax.plot(years, loess(years, values), color=color, linewidth=2.6,
             label=tr["smoothed"])
     ax.plot(years, line, color="#334155", linewidth=1.4, linestyle="--",
@@ -857,8 +857,8 @@ def plot_degree_days(df: pd.DataFrame, location: Location, ax: plt.Axes, tr: dic
         v = data.to_numpy(dtype=float)
         slope, _ = robust_trend_line(years, v)
         sig = trend_significance(v, tr)
-        ax.plot(years, v, color=color, linewidth=0.8, marker="o",
-                markersize=2.0, alpha=0.25)
+        ax.plot(years, v, color=color, linestyle="none", marker="o",
+                markersize=2.6, alpha=0.4)
         ax.plot(years, loess(years, v), color=color, linewidth=2.6,
                 label=f"{label}: {slope * 10:+.0f} {tr['per_decade_dd']} ({sig})")
     ax.set_title(tr["degreedays_title"].format(name=location.name))
@@ -902,8 +902,8 @@ def plot_heat_index(df_app: pd.DataFrame, location: Location, ax: plt.Axes, tr: 
         v = data.to_numpy(dtype=float)
         slope, _ = robust_trend_line(years, v)
         sig = trend_significance(v, tr)
-        ax.plot(years, v, color=color, linewidth=0.8, marker="o",
-                markersize=2.0, alpha=0.25)
+        ax.plot(years, v, color=color, linestyle="none", marker="o",
+                markersize=2.6, alpha=0.4)
         ax.plot(years, loess(years, v), color=color, linewidth=2.6,
                 label=f"{label}: {slope * 10:+.1f} {tr['per_decade_days']} ({sig})")
     ax.set_title(tr["heatindex_title"].format(name=location.name))
