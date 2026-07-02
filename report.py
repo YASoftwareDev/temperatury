@@ -207,16 +207,16 @@ _PAGE = Template(
     border: 1px solid var(--line);
   }
   figure img { width: 100%; height: auto; display: block; border-radius: 3px; }
-  /* Charts are shared SVGs embedded as <object> (scriptable, so the browser can
-     localise their text); aspect-ratio keeps them sized without a fixed height. */
-  figure object.chart { width: 100%; aspect-ratio: 9 / 5.5; display: block;
-                        border-radius: 3px; background: #fff; pointer-events: none; }
+  /* Charts are drawn client-side into a <canvas> (Chart.js). The wrapper gives
+     Chart.js a definite box to fill responsively; hovering shows tooltips and
+     the wheel/drag zooms, so no fixed image and no lightbox needed. */
+  .chart-wrap { position: relative; height: 320px; width: 100%; }
+  .chart-wrap canvas { border-radius: 3px; }
   figcaption { color: var(--muted); font-size: .85rem; padding: .6rem .3rem .15rem;
                text-align: center; line-height: 1.45; }
   figcaption .fig-title { display: inline-block; color: var(--ink); font-weight: 600;
                font-size: .95rem; margin-bottom: .15rem; }
-  .charts figure { cursor: zoom-in; transition: border-color .15s ease,
-                   box-shadow .15s ease; }
+  .charts figure { transition: border-color .15s ease, box-shadow .15s ease; }
   .charts figure:hover { border-color: #c9c5bc;
                          box-shadow: 0 6px 20px rgba(0,0,0,.06); }
   .lightbox {
@@ -276,41 +276,41 @@ ${chart_js}
 
   <section class="charts">
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_yearly-trend.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-yearly-trend"></canvas></div>
       <figcaption>${cap_yearly}</figcaption>
     </figure>
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_anomalies.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-anomalies"></canvas></div>
       <figcaption>${cap_anomalies}</figcaption>
     </figure>
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_warming-stripes.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-warming-stripes"></canvas></div>
       <figcaption>${cap_stripes}</figcaption>
     </figure>
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_monthly-heatmap.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-monthly-heatmap"></canvas></div>
       <figcaption>${cap_heatmap}</figcaption>
     </figure>
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_monthly-anomaly.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-monthly-anomaly"></canvas></div>
       <figcaption>${cap_anom_heatmap}</figcaption>
     </figure>
     ${range_widget}
     ${records_widget}
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_threshold-days.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-threshold-days"></canvas></div>
       <figcaption>${cap_threshold}</figcaption>
     </figure>
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_growing-season.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-growing-season"></canvas></div>
       <figcaption>${cap_season}</figcaption>
     </figure>
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_seasonal-shift.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-seasonal-shift"></canvas></div>
       <figcaption>${cap_seasonshift}</figcaption>
     </figure>
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_volatility.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-volatility"></canvas></div>
       <figcaption>${cap_volatility}</figcaption>
     </figure>
     ${dtr_figure}
@@ -321,7 +321,7 @@ ${chart_js}
   <p class="section-sub">${health_sub}</p>
   <section class="charts">
     <figure>
-      <object class="chart" type="image/svg+xml" data="../charts/${slug}_degree-days.svg"></object>
+      <div class="chart-wrap"><canvas id="c-${slug}-degree-days"></canvas></div>
       <figcaption>${cap_degreedays}</figcaption>
     </figure>
     ${heatwave_figure}
@@ -333,58 +333,24 @@ ${chart_js}
 </main>
 <footer>${footer}</footer>
 
-<div id="lightbox" class="lightbox" hidden>
-  <img id="lightbox-img" src="" alt="">
-  <p id="lightbox-cap"></p>
-  <p class="hint">${hint}</p>
-</div>
 <script>
-  // Localise the shared (English) chart SVGs in the browser: swap each <text>
-  // whose content is a known English string to this page's language.
+  // Chart-label localisation map (english -> this page's language) and localised
+  // month names — read by charts.js. The chart DATA is language-neutral and
+  // identical across all 21 languages, so it is fetched once from a shared
+  // per-city JSON (charts/<slug>.json) rather than inlined into every page.
   window.__ci18n = ${chart_i18n};
+  window.__cmonths = ${months_json};
   (function () {
-    var map = window.__ci18n || {};
-    function localize(doc) {
-      if (!doc) return;
-      doc.querySelectorAll('text').forEach(function (t) {
-        var s = (t.textContent || '').trim();
-        if (s && Object.prototype.hasOwnProperty.call(map, s)) t.textContent = map[s];
+    function draw(C) {
+      Object.keys(C).forEach(function (id) {
+        if (window.renderChart) window.renderChart('c-${slug}-' + id, C[id]);
       });
     }
-    document.querySelectorAll('object.chart').forEach(function (o) {
-      try { if (o.contentDocument) localize(o.contentDocument); } catch (e) {}
-      o.addEventListener('load', function () { localize(o.contentDocument); });
-    });
+    fetch('../charts/${slug}.json')
+      .then(function (r) { return r.json(); })
+      .then(draw)
+      .catch(function (e) { if (window.console) console.error('charts load', e); });
   })();
-</script>
-<script>
-(function () {
-  var box = document.getElementById('lightbox');
-  var img = document.getElementById('lightbox-img');
-  var cap = document.getElementById('lightbox-cap');
-
-  function open(figure) {
-    var thumb = figure.querySelector('object') || figure.querySelector('img');
-    var caption = figure.querySelector('figcaption');
-    img.src = thumb ? (thumb.data || thumb.src) : '';
-    cap.textContent = caption ? caption.textContent : '';
-    box.hidden = false;
-    document.body.style.overflow = 'hidden';
-  }
-  function close() {
-    box.hidden = true;
-    img.src = '';
-    document.body.style.overflow = '';
-  }
-
-  document.querySelectorAll('.charts figure').forEach(function (figure) {
-    figure.addEventListener('click', function () { open(figure); });
-  });
-  box.addEventListener('click', close);
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') close();
-  });
-})();
 </script>
 </body>
 </html>
@@ -462,7 +428,18 @@ def build_site(
     output_dir.mkdir(parents=True, exist_ok=True)
     slug = location.slug
     stats = summary_stats(df)
-    chart_js = interactive.CHARTJS_INCLUDE + interactive.SHARED_JS
+    # Chart.js + the matrix (heatmap) and zoom/pan plugins, the range/records
+    # widget helpers, and our shared per-archetype render layer (charts.js, a
+    # root asset referenced from each per-language page).
+    chart_js = (
+        interactive.CHARTJS_INCLUDE
+        + '<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/'
+          'dist/chartjs-chart-matrix.min.js"></script>'
+        + '<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/'
+          'dist/chartjs-plugin-zoom.min.js"></script>'
+        + interactive.SHARED_JS
+        + '<script src="../charts.js"></script>'
+    )
     range_widget = interactive.range_widget_html(
         slug, tr["range_title"].format(name=location.name), tr["cap_range"],
         tr["year"], range_data, tr["months"])
@@ -481,8 +458,8 @@ def build_site(
 
     def _fig(name: str, title_key: str, cap_key: str) -> str:
         return (
-            f'<figure>\n      <object class="chart" type="image/svg+xml" '
-            f'data="../charts/{slug}_{name}.svg"></object>\n'
+            f'<figure>\n      <div class="chart-wrap">'
+            f'<canvas id="c-{slug}-{name}"></canvas></div>\n'
             f'      <figcaption>{_titled(title_key, cap_key)}</figcaption>\n    </figure>'
         )
 
@@ -506,6 +483,7 @@ def build_site(
         ),
         html_dir=tr["dir"],
         chart_i18n=json.dumps(chart_i18n or {}, ensure_ascii=False),
+        months_json=json.dumps(tr["months"], ensure_ascii=False),
         chooser=_city_chooser(location, nav_locations, tr),
         lang_nav=_lang_nav(lang, languages, slug),
         trend=f"{stats['trend_per_decade']:+.2f}",

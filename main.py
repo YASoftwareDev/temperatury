@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import json
 import multiprocessing as mp
 import os
 from concurrent.futures import ProcessPoolExecutor
@@ -39,7 +40,8 @@ from data import (
     load_precip_bulk,
     load_temperatures_bulk,
 )
-from plots import RENDER_VERSION, localize_specs, save_all, summary_stats
+import chartdata
+from plots import RENDER_VERSION, localize_specs, summary_stats
 from report import build_map_page, build_site, write_redirect
 
 
@@ -117,12 +119,19 @@ def _render_city(task) -> tuple[str, int]:
     records_data = (
         interactive.records_payload(df_ext, extra=df_cur_ext)
         if df_ext is not None else None)
-    # Render the charts once as SVG (English text) and collect each text's
-    # localisation recipe, so every language's page can localise the shared SVGs.
+    # Compute each chart's data ONCE as a language-neutral JSON payload (charts
+    # are drawn in the browser now — no matplotlib render). The same pass
+    # collects each label's localisation recipe, so every language's page ships
+    # the shared payload plus a {english: localized} label map.
+    payloads, specs = chartdata.compute_payloads(
+        df, location, i18n.get(CHART_LANG),
+        df_precip=df_precip, df_ext=df_ext, df_app=df_app)
+    # The data is language-neutral, so write it ONCE to a shared per-city JSON
+    # that every language's page fetches (instead of inlining ~50 KB × 21 langs).
     charts_dir = OUTPUT_DIR / "charts"
-    specs = save_all(df, location, charts_dir, i18n.get(CHART_LANG),
-                     df_precip=df_precip, df_ext=df_ext, df_app=df_app,
-                     signature=signature)
+    charts_dir.mkdir(parents=True, exist_ok=True)
+    (charts_dir / f"{location.slug}.json").write_text(
+        json.dumps(payloads, ensure_ascii=False), encoding="utf-8")
     n = 0
     for lang in languages:
         tr = i18n.get(lang)
@@ -191,12 +200,19 @@ def main() -> None:
     current = load_current_bulk(locations, refresh=args.refresh)
     current_ext = load_current_extremes_bulk(locations, refresh=args.refresh)
 
-    # Charts are now shared under output/charts; drop any per-language chart
-    # PNGs left by an older build (restored from cache) so the deploy doesn't
-    # carry ~20× stale duplicates.
+    # Charts are drawn in the browser now (Chart.js): ship the shared render
+    # layer as a root asset, and drop stale artefacts a cached build may carry
+    # (old per-language PNGs and the pre-interactive shared SVGs).
+    from pathlib import Path
+    _charts_js = Path(__file__).resolve().parent / "assets" / "charts.js"
+    (OUTPUT_DIR / "charts.js").write_bytes(_charts_js.read_bytes())
     for _lang in i18n.LANGUAGES:
         for _png in (OUTPUT_DIR / _lang).glob("*.png"):
             _png.unlink()
+    _charts_dir = OUTPUT_DIR / "charts"
+    if _charts_dir.is_dir():
+        for _svg in _charts_dir.glob("*.svg"):
+            _svg.unlink()
 
     # Per-city render tasks (data + signature). The summary print stays in the
     # main process so log order is stable; ``signature`` lets a worker skip
