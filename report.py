@@ -1,9 +1,11 @@
 """Generate a self-contained static web page for GitHub Pages.
 
-``build_site`` writes ``<slug>.html`` into a per-language output directory next
-to the localised PNGs produced by :mod:`plots`. Each page carries a city
-switcher (same language) and a language switcher (same city, sibling language
-folder). No external CSS/JS/CDN — everything is inline.
+``build_site`` writes ``<slug>.html`` into a per-language output directory. The
+charts are drawn in the browser with Chart.js (see :mod:`chartdata` and
+``assets/charts.js``): each page fetches a shared, language-neutral
+``charts/<slug>.json`` and localises the labels via an inline ``__ci18n`` map.
+Each page carries a city switcher (same language) and a language switcher (same
+city, sibling-language folder). CSS is inline; Chart.js + plugins load from CDN.
 """
 
 from __future__ import annotations
@@ -222,22 +224,6 @@ _PAGE = Template(
   .charts figure { transition: border-color .15s ease, box-shadow .15s ease; }
   .charts figure:hover { border-color: #c9c5bc;
                          box-shadow: 0 6px 20px rgba(0,0,0,.06); }
-  .lightbox {
-    position: fixed; inset: 0; z-index: 50;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 2rem; cursor: zoom-out;
-    background: rgba(28, 27, 24, .92);
-  }
-  .lightbox[hidden] { display: none; }
-  .lightbox img {
-    max-width: 96vw; max-height: 88vh;
-    background: #fff; border-radius: 6px;
-    box-shadow: 0 12px 48px rgba(0, 0, 0, .4);
-  }
-  .lightbox p { color: #f0efe9; margin: .9rem 0 0; font-size: .95rem;
-                text-align: center; }
-  .lightbox .hint { color: #b8b4aa; font-size: .8rem; margin-top: .4rem; }
   footer { text-align: center; color: var(--muted); font-size: .82rem;
            padding: 2.5rem 1.5rem 3.5rem; border-top: 1px solid var(--line);
            margin-top: 2.5rem; }
@@ -526,7 +512,6 @@ def build_site(
         heatindex_figure=heatindex_figure,
         guide_title=tr["guide_title"],
         guide_body=tr["guide_body"],
-        hint=tr["hint"],
         footer=tr["footer"].format(date=dt.date.today().isoformat()),
         slug=slug,
     )

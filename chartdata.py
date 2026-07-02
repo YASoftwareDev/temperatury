@@ -426,7 +426,8 @@ def _heat_index(df_app, tr, L, Lf):
           "per_decade_days", 1),
          (danger.to_numpy(), "#b91c1c", "heat_danger", {"t": APPARENT_DANGER_C},
           "per_decade_days", 1)],
-        tr, L, Lf, xlabel_key="year", ylabel_key="heatindex_ylabel")
+        tr, L, Lf, xlabel_key="year", ylabel_key="heatindex_ylabel",
+        show_trend=False)
 
 
 # id -> (builder, required-frame). "mean" always present; others gate on data.
