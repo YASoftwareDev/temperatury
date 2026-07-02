@@ -331,4 +331,13 @@
     try { return fn(el.getContext("2d"), payload); }
     catch (e) { failNotice(el, canvasId, e); return null; }
   };
+
+  // Called when the shared chart JSON fails to load: mark every not-yet-drawn
+  // chart canvas as unavailable rather than leaving the page silently blank.
+  window.chartsUnavailable = function (err) {
+    if (window.console) console.error("charts data load failed", err);
+    document.querySelectorAll(".chart-wrap canvas").forEach(function (el) {
+      failNotice(el, el.id, err);
+    });
+  };
 })();

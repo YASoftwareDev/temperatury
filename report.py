@@ -338,9 +338,15 @@ ${chart_js}
       });
     }
     fetch('../charts/' + encodeURIComponent(slug) + '.json')
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
       .then(draw)
-      .catch(function (e) { if (window.console) console.error('charts load', e); });
+      .catch(function (e) {
+        if (window.chartsUnavailable) window.chartsUnavailable(e);
+        else if (window.console) console.error('charts load', e);
+      });
   })();
 </script>
 </body>
