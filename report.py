@@ -212,6 +212,9 @@ _PAGE = Template(
      the wheel/drag zooms, so no fixed image and no lightbox needed. */
   .chart-wrap { position: relative; height: 320px; width: 100%; }
   .chart-wrap canvas { border-radius: 3px; }
+  .chart-error { display: flex; align-items: center; justify-content: center;
+                 height: 100%; color: var(--muted); font-size: .85rem;
+                 background: #faf9f6; border-radius: 3px; }
   figcaption { color: var(--muted); font-size: .85rem; padding: .6rem .3rem .15rem;
                text-align: center; line-height: 1.45; }
   figcaption .fig-title { display: inline-block; color: var(--ink); font-weight: 600;
@@ -341,12 +344,14 @@ ${chart_js}
   window.__ci18n = ${chart_i18n};
   window.__cmonths = ${months_json};
   (function () {
+    // JSON-encoded so slugs with apostrophes (n'djamena, huai'an) stay valid JS.
+    var slug = ${slug_js};
     function draw(C) {
       Object.keys(C).forEach(function (id) {
-        if (window.renderChart) window.renderChart('c-${slug}-' + id, C[id]);
+        if (window.renderChart) window.renderChart('c-' + slug + '-' + id, C[id]);
       });
     }
-    fetch('../charts/${slug}.json')
+    fetch('../charts/' + encodeURIComponent(slug) + '.json')
       .then(function (r) { return r.json(); })
       .then(draw)
       .catch(function (e) { if (window.console) console.error('charts load', e); });
@@ -484,6 +489,7 @@ def build_site(
         html_dir=tr["dir"],
         chart_i18n=json.dumps(chart_i18n or {}, ensure_ascii=False),
         months_json=json.dumps(tr["months"], ensure_ascii=False),
+        slug_js=json.dumps(slug),
         chooser=_city_chooser(location, nav_locations, tr),
         lang_nav=_lang_nav(lang, languages, slug),
         trend=f"{stats['trend_per_decade']:+.2f}",

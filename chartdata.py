@@ -98,7 +98,7 @@ def _trend_meta(years: np.ndarray, values: np.ndarray, tr: dict, Lf,
 def _trend_chart(years, values, tr, L, Lf, *, xlabel_key, ylabel_key,
                  raw_color, raw_style, raw_label_key, raw_label_kw,
                  loess_color, trend_unit_key, trend_decimals,
-                 trend_label_fn=None):
+                 trend_label_fn=None, trend_color="#334155"):
     """One series drawn as faint raw points/bars + bold LOESS + dashed trend."""
     yf = np.asarray(values, dtype=float)
     yrs = np.asarray(years, dtype=float)
@@ -118,15 +118,19 @@ def _trend_chart(years, values, tr, L, Lf, *, xlabel_key, ylabel_key,
                   "color": loess_color, "label": L(tr, "smoothed")},
         "trend": {**_trend_meta(yrs, yf, tr, Lf, trend_unit_key,
                                 trend_decimals, trend_label_fn),
-                  "color": "#334155"},
+                  "color": trend_color},
     }
 
 
-def _multitrend_chart(years, series, tr, L, Lf, *, xlabel_key, ylabel_key):
-    """Two+ series, each faint points + LOESS + dashed trend (own legend line).
+def _multitrend_chart(years, series, tr, L, Lf, *, xlabel_key, ylabel_key,
+                      show_trend=True):
+    """Two+ series, each faint points + LOESS + (optional) dashed trend line.
 
     ``series`` items: (values, color, label_key, label_kw, unit_key, decimals).
-    The legend label carries "<series>: +N <unit>/decade (sig)".
+    The legend label carries "<series>: +N <unit>/decade (sig)". ``show_trend``
+    matches the original plots: threshold-days drew a dashed trend line, but
+    degree-days and heat-index drew only points + LOESS (the rate lives in the
+    label), so those pass ``show_trend=False``.
     """
     yrs = np.asarray(years, dtype=float)
     out = []
@@ -144,7 +148,7 @@ def _multitrend_chart(years, series, tr, L, Lf, *, xlabel_key, ylabel_key):
             "color": color,
             "raw": _floats(v),
             "loess": _floats(loess(yrs, v)),
-            "trend": meta["line"],
+            "trend": meta["line"] if show_trend else None,
             "label": meta["label"],
         })
     return {
@@ -157,12 +161,26 @@ def _multitrend_chart(years, series, tr, L, Lf, *, xlabel_key, ylabel_key):
 
 
 def _matrix_chart(pivot, values, tr, L, *, step, cbar_key, cbar_kw, diverging):
-    """Year×month heatmap: cell rows + range for the client's colour scale."""
+    """Year×month heatmap: cell rows + the discrete colour-band scale.
+
+    The scale bounds mirror ``plots.py`` exactly so the colours match the old
+    static heatmaps: the absolute map snaps to whole ``step``-°C bands over the
+    data range; the anomaly map is symmetric around zero and clamped to the 96th
+    percentile of |anomaly| (so a few extreme winter months don't wash out the
+    smaller summer signal — the client saturates values beyond the clamp).
+    """
     years = [int(y) for y in pivot.index]
     rows = [_floats(r) for r in values]
     finite = values[np.isfinite(values)]
-    vmin = float(np.nanmin(finite)) if finite.size else 0.0
-    vmax = float(np.nanmax(finite)) if finite.size else 1.0
+    if diverging:
+        robust = float(np.nanpercentile(np.abs(finite), 96)) if finite.size else step
+        vmax = max(np.ceil(robust / step) * step, 2 * step)
+        vmin = -vmax
+    else:
+        lo = float(np.nanmin(finite)) if finite.size else 0.0
+        hi = float(np.nanmax(finite)) if finite.size else 1.0
+        vmin = np.floor(lo / step) * step
+        vmax = np.ceil(hi / step) * step
     return {
         "kind": "matrix",
         "years": years,
@@ -170,8 +188,8 @@ def _matrix_chart(pivot, values, tr, L, *, step, cbar_key, cbar_kw, diverging):
         "xlabel": L(tr, "month"),
         "ylabel": L(tr, "year"),
         "cells": rows,                       # rows[y][m] aligned to years/months
-        "vmin": round(vmin, 2),
-        "vmax": round(vmax, 2),
+        "vmin": round(float(vmin), 2),
+        "vmax": round(float(vmax), 2),
         "step": step,
         "diverging": diverging,
         "cbarLabel": L(tr, cbar_key, **(cbar_kw or {})),
@@ -291,7 +309,7 @@ def _precip(df_precip, tr, L, Lf):
         xlabel_key="year", ylabel_key="precip_ylabel",
         raw_color="#2c7fb8", raw_style="bars", raw_label_key="precip_annual",
         raw_label_kw={}, loess_color="#0f766e",
-        trend_unit_key="per_decade_mm", trend_decimals=0)
+        trend_unit_key="per_decade_mm", trend_decimals=0, trend_color="#d62728")
 
 
 def _growing_season(df, tr, L, Lf):
@@ -305,7 +323,7 @@ def _growing_season(df, tr, L, Lf):
         xlabel_key="year", ylabel_key="season_ylabel",
         raw_color="#15803d", raw_style="points", raw_label_key="season_annual",
         raw_label_kw={}, loess_color="#15803d",
-        trend_unit_key="per_decade_days", trend_decimals=1)
+        trend_unit_key="per_decade_days", trend_decimals=1, trend_color="#b45309")
 
 
 def _diurnal_range(df_ext, tr, L, Lf):
@@ -316,7 +334,7 @@ def _diurnal_range(df_ext, tr, L, Lf):
         xlabel_key="year", ylabel_key="dtr_ylabel",
         raw_color="#7c3aed", raw_style="points", raw_label_key="dtr_annual",
         raw_label_kw={}, loess_color="#7c3aed",
-        trend_unit_key="per_decade_c", trend_decimals=2)
+        trend_unit_key="per_decade_c", trend_decimals=2, trend_color="#b45309")
 
 
 def _seasonal_shift(df, tr, L, Lf):
@@ -351,7 +369,7 @@ def _degree_days(df, tr, L, Lf):
           "per_decade_dd", 0),
          (cdd.to_numpy(), "#b91c1c", "cdd_label", {"t": CDD_BASE_C},
           "per_decade_dd", 0)],
-        tr, L, Lf, xlabel_key="year", ylabel_key="dd_ylabel")
+        tr, L, Lf, xlabel_key="year", ylabel_key="dd_ylabel", show_trend=False)
 
 
 def _count_single(annual, color, series_key, series_kw, tr, L, Lf, ylabel_key):

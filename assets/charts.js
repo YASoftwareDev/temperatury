@@ -45,13 +45,16 @@
   // RdBu reversed (blue -> white -> red): diverging anomalies around zero.
   var RDBU = [[33, 102, 172], [103, 169, 207], [209, 229, 240],
     [247, 247, 247], [253, 219, 199], [239, 138, 98], [178, 24, 43]];
-  function heatColor(v, vmin, vmax, diverging) {
+  // Snap a value to a discrete step-wide colour band (matching the old static
+  // heatmaps); values outside [vmin,vmax] saturate to the end bands.
+  function heatColor(v, vmin, vmax, diverging, step) {
     if (v == null || isNaN(v)) return "rgba(0,0,0,0)";
-    if (diverging) {
-      var lim = Math.max(Math.abs(vmin), Math.abs(vmax)) || 1;
-      return ramp(RDBU, (v / lim + 1) / 2);
-    }
-    return ramp(RDYLBU, (v - vmin) / ((vmax - vmin) || 1));
+    var stops = diverging ? RDBU : RDYLBU;
+    var span = vmax - vmin;
+    if (!(span > 0) || !(step > 0)) return ramp(stops, 0.5);
+    var nb = Math.max(1, Math.round(span / step));
+    var idx = Math.max(0, Math.min(nb - 1, Math.floor((v - vmin) / step)));
+    return ramp(stops, (idx + 0.5) / nb);
   }
 
   // --- shared Chart.js option blocks ---------------------------------------
@@ -67,6 +70,33 @@
       scales: {}
     };
     return Object.assign(o, extra || {});
+  }
+  // Legend that omits datasets flagged __hidden (raw points / trend lines whose
+  // value is already conveyed by the LOESS entry) — an explicit flag rather than
+  // matching an invisible label string.
+  function hideLegend() {
+    return {
+      labels: { boxWidth: 12, usePointStyle: true, color: MUTED,
+        filter: function (item, data) {
+          return !data.datasets[item.datasetIndex].__hidden;
+        } },
+      // Clicking a series entry toggles every dataset in its group (raw points +
+      // trend line follow the LOESS), not just the one legend row.
+      onClick: function (_e, item, legend) {
+        var chart = legend.chart;
+        var grp = chart.data.datasets[item.datasetIndex].group;
+        if (grp == null) {
+          var vis = chart.isDatasetVisible(item.datasetIndex);
+          chart.setDatasetVisibility(item.datasetIndex, !vis);
+        } else {
+          var on = chart.isDatasetVisible(item.datasetIndex);
+          chart.data.datasets.forEach(function (d, i) {
+            if (d.group === grp) chart.setDatasetVisibility(i, !on);
+          });
+        }
+        chart.update();
+      }
+    };
   }
   // Scroll/pinch-zoom + drag-pan on the x (year) axis.
   function zoomPlugin() {
@@ -90,8 +120,12 @@
   // Trend: faint raw points/bars + bold LOESS + dashed robust trend line.
   function mkTrend(ctx, p) {
     var isBar = p.raw.style === "bars";
+    // Three independent legend entries (raw / LOESS / trend), matching the old
+    // static chart; raw has no entry when it carries no label (e.g. volatility).
     var raw = {
-      type: isBar ? "bar" : "line", label: p.raw.label ? T(p.raw.label) : "​",
+      type: isBar ? "bar" : "line",
+      label: p.raw.label ? T(p.raw.label) : undefined,
+      __hidden: !p.raw.label,   // legend entry suppressed (see hideLegend)
       data: p.raw.data, borderColor: p.raw.color,
       backgroundColor: isBar ? p.raw.color + "73" : p.raw.color,
       borderWidth: 0, pointRadius: isBar ? 0 : 2.4,
@@ -111,11 +145,7 @@
       type: isBar ? "bar" : "line",
       data: { labels: p.x, datasets: [raw, loess, trend] },
       options: baseOpts({
-        plugins: {
-          legend: { labels: { boxWidth: 12, usePointStyle: true, color: MUTED,
-            filter: function (i) { return i.text !== "​"; } } },
-          zoom: zoomPlugin()
-        },
+        plugins: { legend: hideLegend(), zoom: zoomPlugin() },
         scales: { x: yearScale(lines(p.xlabel)[0]), y: valScale(lines(p.ylabel)) }
       })
     });
@@ -124,24 +154,26 @@
   // Multitrend: N series, each faint points + LOESS + dashed trend.
   function mkMultitrend(ctx, p) {
     var ds = [];
-    p.series.forEach(function (s) {
-      ds.push({ type: "line", label: "​", data: s.raw, borderColor: s.color,
-        showLine: false, pointRadius: 2.2, pointBackgroundColor: s.color + "b0",
-        order: 3 });
-      ds.push({ type: "line", label: T(s.label), data: s.loess,
+    // Each series' raw points + (optional) trend line are hidden from the legend
+    // and grouped with its LOESS entry, so clicking that entry toggles them all.
+    p.series.forEach(function (s, i) {
+      var g = "s" + i;
+      ds.push({ type: "line", group: g, __hidden: true, data: s.raw,
+        borderColor: s.color, showLine: false, pointRadius: 2.2,
+        pointBackgroundColor: s.color + "b0", order: 3 });
+      ds.push({ type: "line", group: g, label: T(s.label), data: s.loess,
         borderColor: s.color, borderWidth: 2.6, pointRadius: 0, tension: 0.3,
         order: 1 });
-      ds.push({ type: "line", label: "​", data: s.trend, borderColor: s.color,
-        borderWidth: 1.3, borderDash: [6, 4], pointRadius: 0, order: 2 });
+      if (s.trend) {
+        ds.push({ type: "line", group: g, __hidden: true, data: s.trend,
+          borderColor: s.color, borderWidth: 1.3, borderDash: [6, 4],
+          pointRadius: 0, order: 2 });
+      }
     });
     return new Chart(ctx, {
       type: "line", data: { labels: p.x, datasets: ds },
       options: baseOpts({
-        plugins: {
-          legend: { labels: { boxWidth: 12, usePointStyle: true, color: MUTED,
-            filter: function (i) { return i.text !== "​"; } } },
-          zoom: zoomPlugin()
-        },
+        plugins: { legend: hideLegend(), zoom: zoomPlugin() },
         scales: { x: yearScale(lines(p.xlabel)[0]), y: valScale(lines(p.ylabel)) }
       })
     });
@@ -152,11 +184,10 @@
     var colors = p.values.map(function (v) {
       return v == null ? "#ccc" : (v >= 0 ? p.posColor : p.negColor);
     });
-    var bars = { type: "bar", label: "​", data: p.values,
+    var bars = { type: "bar", data: p.values,
       backgroundColor: colors, borderWidth: 0, order: 2 };
-    var smooth = { type: "line", label: "​",
-      data: p.loess, borderColor: "#0f172a", borderWidth: 2, pointRadius: 0,
-      tension: 0.3, order: 1 };
+    var smooth = { type: "line", data: p.loess, borderColor: "#0f172a",
+      borderWidth: 2, pointRadius: 0, tension: 0.3, order: 1 };
     return new Chart(ctx, {
       type: "bar", data: { labels: p.x, datasets: [bars, smooth] },
       options: baseOpts({
@@ -237,7 +268,7 @@
       data: { datasets: [{
         label: T(p.cbarLabel), data: data,
         backgroundColor: function (c) {
-          return heatColor(c.raw.v, p.vmin, p.vmax, p.diverging);
+          return heatColor(c.raw.v, p.vmin, p.vmax, p.diverging, p.step);
         },
         borderWidth: 0,
         width: function (c) {
@@ -278,12 +309,26 @@
     stripes: mkStripes, seasonshift: mkSeasonShift, matrix: mkMatrix
   };
 
+  // Replace a canvas with a small visible notice so a failed chart reads as an
+  // error rather than a silent blank (and the cause is still logged).
+  function failNotice(el, canvasId, err) {
+    if (window.console) console.error("chart " + canvasId, err);
+    var wrap = el.parentNode;
+    if (wrap) {
+      var msg = document.createElement("div");
+      msg.className = "chart-error";
+      msg.setAttribute("role", "img");
+      msg.textContent = "⚠ chart unavailable";
+      wrap.replaceChild(msg, el);
+    }
+  }
+
   window.renderChart = function (canvasId, payload) {
     var el = document.getElementById(canvasId);
     if (!el) return null;
-    var fn = BUILDERS[payload.kind];
-    if (!fn) return null;
+    var fn = BUILDERS[payload && payload.kind];
+    if (!fn) { failNotice(el, canvasId, "unknown chart kind: " + (payload && payload.kind)); return null; }
     try { return fn(el.getContext("2d"), payload); }
-    catch (e) { if (window.console) console.error("chart " + canvasId, e); return null; }
+    catch (e) { failNotice(el, canvasId, e); return null; }
   };
 })();

@@ -32,7 +32,6 @@ from config import (
     Location,
 )
 from data import (
-    cache_signature,
     load_apparent_bulk,
     load_current_bulk,
     load_current_extremes_bulk,
@@ -41,7 +40,7 @@ from data import (
     load_temperatures_bulk,
 )
 import chartdata
-from plots import RENDER_VERSION, localize_specs, summary_stats
+from plots import localize_specs, summary_stats
 from report import build_map_page, build_site, write_redirect
 
 
@@ -112,7 +111,7 @@ def _render_city(task) -> tuple[str, int]:
     references them — instead of re-rendering the same image 21 times. Runs in a
     worker process.
     """
-    location, df, df_ext, df_precip, df_app, df_cur, df_cur_ext, signature = task
+    location, df, df_ext, df_precip, df_app, df_cur, df_cur_ext = task
     locations = _WORKER["locations"]
     languages = _WORKER["languages"]
     range_data = interactive.range_payload(df, extra=df_cur)
@@ -204,6 +203,7 @@ def main() -> None:
     # layer as a root asset, and drop stale artefacts a cached build may carry
     # (old per-language PNGs and the pre-interactive shared SVGs).
     from pathlib import Path
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)  # cold build: no restored cache
     _charts_js = Path(__file__).resolve().parent / "assets" / "charts.js"
     (OUTPUT_DIR / "charts.js").write_bytes(_charts_js.read_bytes())
     for _lang in i18n.LANGUAGES:
@@ -214,9 +214,9 @@ def main() -> None:
         for _svg in _charts_dir.glob("*.svg"):
             _svg.unlink()
 
-    # Per-city render tasks (data + signature). The summary print stays in the
-    # main process so log order is stable; ``signature`` lets a worker skip
-    # re-rendering charts whose data + theme version are unchanged.
+    # Per-city render tasks (each carries its city's data). The summary print
+    # stays in the main process so log order is stable. Charts are now cheap to
+    # (re)compute (no matplotlib render), so every city is built every run.
     tasks = []
     for location in locations:
         df = frames[location.slug]
@@ -226,11 +226,9 @@ def main() -> None:
             s = summary_stats(df)
             print(f"  {location.name:18s} mean {s['mean']:5.1f} °C  "
                   f"trend {s['trend_per_decade']:+.2f}/dec")
-        signature = f"{RENDER_VERSION}:{cache_signature(location, args.start, args.end)}"
         tasks.append((location, df, extremes.get(location.slug),
                       precip.get(location.slug), apparent.get(location.slug),
-                      current.get(location.slug), current_ext.get(location.slug),
-                      signature))
+                      current.get(location.slug), current_ext.get(location.slug)))
 
     # Render cities across a process pool — matplotlib is the bottleneck and
     # cities are independent (each writes its own files). TEMPERATURY_JOBS
