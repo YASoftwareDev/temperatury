@@ -318,7 +318,7 @@
       var msg = document.createElement("div");
       msg.className = "chart-error";
       msg.setAttribute("role", "img");
-      msg.textContent = "⚠ chart unavailable";
+      msg.textContent = "⚠ " + (window.__chartErr || "chart unavailable");
       wrap.replaceChild(msg, el);
     }
   }

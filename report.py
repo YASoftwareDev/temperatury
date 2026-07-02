@@ -329,6 +329,7 @@ ${chart_js}
   // per-city JSON (charts/<slug>.json) rather than inlined into every page.
   window.__ci18n = ${chart_i18n};
   window.__cmonths = ${months_json};
+  window.__chartErr = ${chart_err_json};
   (function () {
     // JSON-encoded so slugs with apostrophes (n'djamena, huai'an) stay valid JS.
     var slug = ${slug_js};
@@ -389,6 +390,23 @@ _LANG_FLAG = {
     "zh": "cn", "hi": "in", "ar": "sa", "pt": "pt", "bn": "bd", "ru": "ru",
     "id": "id", "ja": "jp", "ur": "pk", "it": "it", "tr": "tr", "ko": "kr",
     "fa": "ir", "vi": "vn", "nl": "nl",
+}
+
+# Localised fallback shown (with a ⚠ icon, in charts.js) when a chart's data or
+# render fails — a degraded state, so it lives here with the other per-language
+# presentation strings rather than in the main i18n tables.
+_CHART_ERR = {
+    "en": "chart unavailable", "pl": "wykres niedostępny",
+    "de": "Diagramm nicht verfügbar", "fr": "graphique indisponible",
+    "es": "gráfico no disponible", "uk": "діаграма недоступна",
+    "ru": "график недоступен", "it": "grafico non disponibile",
+    "pt": "gráfico indisponível", "nl": "grafiek niet beschikbaar",
+    "tr": "grafik kullanılamıyor", "id": "bagan tidak tersedia",
+    "vi": "biểu đồ không khả dụng", "zh": "图表不可用",
+    "ja": "グラフを表示できません", "ko": "차트를 사용할 수 없음",
+    "hi": "चार्ट अनुपलब्ध", "bn": "চার্ট অনুপলব্ধ",
+    "ar": "الرسم البياني غير متوفر", "fa": "نمودار در دسترس نیست",
+    "ur": "چارٹ دستیاب نہیں",
 }
 
 
@@ -481,6 +499,8 @@ def build_site(
         html_dir=tr["dir"],
         chart_i18n=json.dumps(chart_i18n or {}, ensure_ascii=False),
         months_json=json.dumps(tr["months"], ensure_ascii=False),
+        chart_err_json=json.dumps(_CHART_ERR.get(lang, _CHART_ERR["en"]),
+                                  ensure_ascii=False),
         slug_js=json.dumps(slug),
         chooser=_city_chooser(location, nav_locations, tr),
         lang_nav=_lang_nav(lang, languages, slug),
