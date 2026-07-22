@@ -1,0 +1,532 @@
+/* SOURCE FILE for the landing / world-map page stylesheet.
+   Edit here, then run tools/build-css.sh to regenerate the committed landing.css.
+   Do NOT hand-edit landing.css - it is generated. See page.src.css for the
+   Tailwind (utilities-only, no preflight) rationale. */
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../report.py";
+@source "./charts.js";
+@source "./i18n-runtime.js";
+
+/* ==================== bespoke landing-page CSS (unlayered) ==================== */
+  /* ===== Appearance token system =========================================
+     Visitors pick a look (direction + accent + headline face + density +
+     light/dark); the inline bootstrap + appearance panel set data-* on <html>
+     and everything below routes through these tokens. Charts read --ink /
+     --muted / --line too (charts.js), so they re-colour with the theme.
+     Base :root is the default look (Objective / light / cobalt). ===== */
+  :root {
+    color-scheme: light;
+    --serif: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype",
+             Palatino, "Times New Roman", serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+            Helvetica, Arial, sans-serif;
+    /* fixed / semantic (never themed) */
+    --good:#16a34a; --warn:#d97706; --bad:#dc2626;
+    --on-accent:#ffffff; --su:1;
+    /* Warm/cool DATA encoding (distinct from --accent). Themed: these light
+       values only reach ~3.3:1 on the dark neutrals, so dark lifts them.
+       --cool is darkened from #2c7fb8, which was 4.34:1 on white. */
+    --warm:#d62728; --cool:#2b6ca3;
+    /* default = Objective / light / cobalt */
+    --bg:#ffffff; --panel:#ffffff; --panel-2:#f6f7f8; --field:#ffffff;
+    --ink:#111317; --ink-2:#333842; --muted:#5b616b; --line:#e6e8ec; --line-2:#c9cdd4;
+    --accent:#2f5fd0; --radius:5px; --hdr:var(--sans);
+  }
+  /* ---- directions (light) ---- */
+  :root[data-dir="objective"]{ --bg:#ffffff;--panel:#ffffff;--panel-2:#f6f7f8;--field:#ffffff;
+    --ink:#111317;--ink-2:#333842;--muted:#5b616b;--line:#e6e8ec;--line-2:#c9cdd4;
+    --radius:4px;--hdr:var(--sans); }
+  :root[data-dir="editorial"]{ --bg:#f6f7f8;--panel:#ffffff;--panel-2:#eef0f3;--field:#ffffff;
+    --ink:#1a1c20;--ink-2:#40454d;--muted:#666b73;--line:#e3e6ea;--line-2:#cfd3d9;
+    --radius:3px;--hdr:var(--serif); }
+  :root[data-dir="product"]{ --bg:#f4f6f9;--panel:#ffffff;--panel-2:#eef2f6;--field:#ffffff;
+    --ink:#16181d;--ink-2:#3a3f4a;--muted:#667085;--line:#e7ebf0;--line-2:#d3d9e0;
+    --radius:12px;--hdr:var(--sans); }
+  :root[data-dir="atlas"]{ --bg:#ffffff;--panel:#fbfcfb;--panel-2:#f1f5f2;--field:#ffffff;
+    --ink:#14201a;--ink-2:#37413b;--muted:#5c6b63;--line:#e2e8e4;--line-2:#cdd6d0;
+    --radius:7px;--hdr:var(--sans); }
+  /* ---- directions (dark): redefine only the neutrals ---- */
+  :root[data-theme="dark"]{ color-scheme:dark;
+    --bg:#0e0f12;--panel:#15171c;--panel-2:#1b1e24;--field:#15171c;
+    --ink:#eef0f3;--ink-2:#c4c9d1;--muted:#9aa0aa;--line:#262a30;--line-2:#363b44; }
+  :root[data-dir="editorial"][data-theme="dark"]{
+    --bg:#14161a;--panel:#1b1e23;--panel-2:#22262d;--field:#1b1e23;
+    --ink:#eceef2;--ink-2:#c3c8d1;--muted:#9096a0;--line:#2a2e35;--line-2:#3a3f48; }
+  :root[data-dir="product"][data-theme="dark"]{
+    --bg:#0f1216;--panel:#171b21;--panel-2:#1e232b;--field:#171b21;
+    --ink:#e9edf2;--ink-2:#bfc6d1;--muted:#8b95a3;--line:#232a33;--line-2:#333c47; }
+  :root[data-dir="atlas"][data-theme="dark"]{
+    --bg:#0e1411;--panel:#161d19;--panel-2:#1d2621;--field:#161d19;
+    --ink:#e7efe9;--ink-2:#bdc7c0;--muted:#8a978f;--line:#232c27;--line-2:#333e37; }
+  /* ---- accent / headline / density (declared AFTER directions so an explicit
+         visitor choice wins over the direction default) ---- */
+  :root[data-accent="red"]{ --accent:#d64541; }
+  :root[data-accent="cobalt"]{ --accent:#2f5fd0; }
+  :root[data-accent="teal"]{ --accent:#0f8a7e; }
+  :root[data-accent="forest"]{ --accent:#2f7d5b; }
+  :root[data-accent="amber"]{ --accent:#b9741a; }
+  :root[data-accent="slate"]{ --accent:#425a6e; }
+  :root[data-font="sans"]{ --hdr:var(--sans); }
+  :root[data-font="serif"]{ --hdr:var(--serif); }
+  :root[data-density="compact"]{ --su:.8; }
+  /* Dark grounds need lighter accents: the light-mode accents fall below the
+     4.5:1 text contrast on the dark neutrals (measured). Higher specificity
+     than the [data-accent] blocks above, so an explicit choice still wins. */
+  :root[data-theme="dark"]{ --accent:#7aa2ff; }
+  /* The dark-mode accents are light, so text ON an accent must be dark. */
+  :root[data-theme="dark"]{ --on-accent:#0f1319; }
+  /* Same warm/cool encoding, lifted to clear 4.5:1 on the dark neutrals. */
+  :root[data-theme="dark"]{ --warm:#ff8f88; --cool:#7fb3ff; }
+  :root[data-theme="dark"][data-accent="cobalt"]{ --accent:#7aa2ff; }
+  :root[data-theme="dark"][data-accent="red"]{ --accent:#ff8f88; }
+  :root[data-theme="dark"][data-accent="teal"]{ --accent:#3fd0c0; }
+  :root[data-theme="dark"][data-accent="forest"]{ --accent:#5fcf9e; }
+  :root[data-theme="dark"][data-accent="amber"]{ --accent:#e6ac4d; }
+  :root[data-theme="dark"][data-accent="slate"]{ --accent:#a7bdd4; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:var(--sans); color:var(--ink);
+         background:var(--bg);
+         line-height:1.6; -webkit-font-smoothing:antialiased; }
+  header { position:relative; padding:2.4rem 1.5rem 1.5rem; text-align:center;
+           border-bottom:1px solid var(--line); }
+  header h1 { margin:0 0 .45rem; font-family:var(--hdr); font-weight:600;
+              letter-spacing:-.01em; font-size:clamp(1.85rem,4vw,2.7rem); }
+  header p { margin:0; color:var(--muted); font-size:.95rem; }
+  header p.intro { max-width:44rem; margin:.1rem auto .55rem; color:var(--ink);
+                   font-size:1.02rem; }
+  nav.langs { margin:0; }
+  /* Sticky top bar holding the Cities/Countries toggle + language picker. On
+     mobile it auto-hides on scroll-down and returns on scroll-up (JS toggles
+     .hide) so it never eats vertical space while reading. */
+  .topbar { position:sticky; top:6px; z-index:50; background:color-mix(in srgb, var(--bg) 90%, transparent);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line); transition:transform .28s ease; will-change:transform; }
+  .topbar.hide { transform:translateY(-100%); }
+  .topbar-in { max-width:1100px; margin:0 auto; display:flex; align-items:center;
+    justify-content:space-between; gap:.5rem .7rem; padding:.4rem .9rem; flex-wrap:wrap; }
+  .tb-nav { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
+  .tb-link { font-size:.82rem; text-decoration:none; color:var(--ink);
+    display:inline-flex; align-items:center; gap:.25rem; padding:.3rem .55rem;
+    border-radius:6px; white-space:nowrap; }
+  .tb-link:hover { background:var(--line); }
+  .lang-select { font:inherit; font-size:.82rem; color:var(--ink);
+    padding:.32rem .6rem; border-radius:4px; border:1px solid var(--line);
+    background:var(--panel); cursor:pointer; max-width:100%; }
+  .lang-select:hover { border-color:var(--line-2); }
+  main { max-width:1200px; margin:0 auto; padding:calc(1.75rem * var(--su)) 1.5rem; }
+  .chooser { display:flex; justify-content:center; align-items:center;
+             flex-wrap:wrap; gap:.5rem; margin-bottom:.25rem; }
+  .chooser select { background:var(--panel); color:var(--ink); border:1px solid var(--line);
+                    border-radius:4px; padding:.4rem 1rem; font-size:.95rem;
+                    font-family:inherit; }
+  /* Searchable city picker: one type-to-filter combobox over every city. */
+  .citypick { display:flex; justify-content:center; }
+  .cp-combo { position:relative; width:min(92vw,360px); }
+  .cp-input { width:100%; box-sizing:border-box; font:inherit; font-size:.95rem;
+    padding:.5rem .8rem; border-radius:6px; border:1px solid var(--line);
+    background:var(--panel); color:var(--ink); }
+  .cp-input:focus { outline:none; border-color:var(--accent); }
+  .cp-results { position:absolute; z-index:20; inset-inline:0; top:calc(100% + 4px);
+    margin:0; padding:.25rem; list-style:none; max-height:320px; overflow-y:auto;
+    background:var(--panel); border:1px solid var(--line); border-radius:6px;
+    box-shadow:0 8px 24px rgba(0,0,0,.12); text-align:start; }
+  .cp-results li { display:flex; justify-content:space-between; align-items:baseline;
+    gap:.6rem; padding:.45rem .6rem; border-radius:4px; cursor:pointer; }
+  .cp-results li.on, .cp-results li:hover { background:var(--accent); color:var(--on-accent); }
+  .cp-results li.on .cp-sub, .cp-results li:hover .cp-sub { color:rgba(255,255,255,.85); }
+  .cp-sub { font-size:.78rem; color:var(--muted); white-space:nowrap; }
+  /* Break out of the centred content column to (nearly) full viewport width so
+     dense regions like Europe have room; scroll/drag to zoom in further. */
+  /* Centred and height-capped (~56vh) so it never fills the viewport - you can
+     always scroll past it - while staying comfortably wide on big screens. */
+  #map { position:relative; width:100%; max-width:min(94vw, 112vh);
+         height:70vh; min-height:460px; overflow:hidden; border-radius:8px;
+         border:1px solid var(--line); box-shadow:0 8px 28px rgba(28,48,68,.10);
+         margin:1.25rem auto; }
+  /* MapLibre dark popup to match the site's tooltip style. */
+  .maplibregl-popup.mappop .maplibregl-popup-content { background:var(--ink);
+         color:var(--bg); padding:.22rem .55rem; border-radius:4px; font-size:.8rem;
+         box-shadow:0 2px 8px rgba(0,0,0,.25); }
+  .maplibregl-popup.mappop .maplibregl-popup-tip { display:none; }
+  #map svg { width:100%; height:auto; display:block; border:1px solid var(--line);
+             border-radius:8px; background:var(--panel); cursor:grab;
+             box-shadow:0 8px 28px rgba(28,48,68,.10); }
+  #map svg:active { cursor:grabbing; }
+  #map .maptip { position:absolute; pointer-events:none; background:var(--ink);
+                 color:var(--bg); padding:.2rem .5rem; border-radius:4px; font-size:.8rem;
+                 white-space:nowrap; transform:translateY(-6px); z-index:5; }
+  /* Map filter: a row of continent pill buttons + a country picker that narrow
+     which dots the map shows and fit-zoom to the selection. */
+  .map-filter { display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+    gap:.5rem .7rem; margin:1rem auto 0; max-width:70rem; }
+  .map-filter #map-region { flex:1 1 auto; }
+  .map-filter select { flex:0 0 auto; }
+  /* Climate-zone legend under the map (colours match the zone bands + the
+     dashboard's comparison chart). */
+  .zone-legend { display:flex; flex-wrap:wrap; gap:.45rem 1.1rem; justify-content:center;
+                 margin:.85rem auto 0; max-width:70rem; font-size:.85rem;
+                 color:var(--muted); }
+  .zone-legend .zl { display:inline-flex; align-items:center; gap:.4rem; }
+  .zone-legend i { width:.85rem; height:.85rem; border-radius:2px; display:inline-block;
+                   box-shadow:0 0 0 1px rgba(0,0,0,.12); }
+  /* Data-coverage grid toggle + its own three-state legend (green/amber/red). */
+  .grid-toggle { font-family:inherit; font-size:.9rem; cursor:pointer; white-space:nowrap;
+                 padding:.32rem .7rem; border:1px solid var(--line); border-radius:999px;
+                 background:var(--panel); color:var(--ink); }
+  .grid-toggle:hover { border-color:var(--line-2); }
+  .grid-toggle[aria-pressed="true"] { background:var(--ink); border-color:var(--ink);
+                 color:var(--bg); }
+  /* Street-map / satellite basemap switch (segmented control). */
+  .basemap-switch { display:inline-flex; border:1px solid var(--line); border-radius:999px;
+                 overflow:hidden; }
+  .basemap-switch button { font-family:inherit; font-size:.85rem; cursor:pointer;
+                 padding:.32rem .7rem; border:0; background:var(--panel); color:var(--ink); }
+  .basemap-switch button + button { border-left:1px solid var(--line); }
+  .basemap-switch button:hover { background:var(--panel-2); }
+  .basemap-switch button.active { background:var(--ink); color:var(--bg); }
+  .grid-legend { display:flex; flex-wrap:wrap; gap:.45rem 1.1rem; justify-content:center;
+                 margin:.85rem auto 0; max-width:70rem; font-size:.85rem;
+                 color:var(--muted); }
+  .grid-legend .gl { display:inline-flex; align-items:center; gap:.4rem; }
+  .grid-legend i { width:.85rem; height:.85rem; border-radius:2px; display:inline-block;
+                   box-shadow:0 0 0 1px rgba(0,0,0,.12); }
+  .grid-legend .gl-green { background:#16a34a; }
+  .grid-legend .gl-amber { background:#f59e0b; }
+  .grid-legend .gl-red { background:#dc2626; }
+  /* Coverage note under the map: how far the data gathering has come. */
+  .map-coverage { text-align:center; font-size:.85rem; color:var(--muted);
+                  margin:.6rem auto 0; max-width:70rem; }
+  /* KPI band: the landing's headline numbers, dark, right under the map. */
+  .kpi-band { display:grid; grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));
+              gap:.6rem; background:var(--ink); border-radius:14px;
+              padding:1rem 1.2rem; margin:1.1rem auto 0; max-width:70rem; }
+  .kpi { text-align:center; color:var(--bg); }
+  .kpi b { display:block; font-size:clamp(1.1rem,2.6vw,1.55rem); }
+  .kpi span { font-size:.8rem; opacity:.75; }
+  /* Zone cards: one anomaly sparkline per climate zone. */
+  .zone-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+                gap:.6rem; margin:.6rem auto 0; max-width:70rem; }
+  .zcard { background:var(--panel); border:1px solid var(--line); border-radius:12px;
+           padding:.6rem .7rem .5rem; text-align:center; }
+  .zc-name { display:block; font-size:.8rem; color:var(--muted); margin-bottom:.25rem; }
+  .zc-spark { width:100%; height:2.6rem; display:block; }
+  .zc-trend { display:block; font-size:.95rem; margin-top:.25rem; }
+  /* Quick-view card (dot click): headline stats + the link to the city page. */
+  .qv { min-width:190px; max-width:260px; font-size:.85rem; line-height:1.45;
+        color:var(--ink); }
+  .qv-name { font-weight:700; font-size:1rem; margin-bottom:.15rem; }
+  .qv-trend { font-weight:700; font-size:1.05rem; }
+  .qv-warm { color:var(--warm); }
+  .qv-cool { color:var(--cool); }
+  .qv-line { color:var(--muted); margin-top:.15rem; }
+  .qv-stripes { display:flex; height:.55rem; margin:.4rem 0 .1rem;
+                border-radius:2px; overflow:hidden; }
+  .qv-stripes i { flex:1 1 auto; background:var(--line); }
+  .qv-open { display:inline-block; margin-top:.5rem; font-weight:600; }
+  /* The [hidden] attribute must win over the flex display above (author flex
+     rules otherwise override the UA [hidden]{display:none}, leaving both the
+     zone and grid legends visible at once when the grid view is toggled). */
+  .zone-legend[hidden], .grid-legend[hidden] { display:none; }
+  /* --- embedded world/regional dashboard --- */
+  .dash-h2 { font-family:var(--hdr); font-weight:600; font-size:1.6rem;
+             letter-spacing:-.01em; margin:3.25rem 0 .3rem; padding-top:1.75rem;
+             border-top:1px solid var(--line); text-align:center; }
+  .section-sub { text-align:center; max-width:64ch; margin:0 auto 1.5rem;
+                 color:var(--muted); font-size:.95rem; }
+  .zonebar { display:flex; align-items:center; justify-content:center; gap:.6rem;
+             flex-wrap:wrap; margin:2.25rem 0 1.25rem; font-size:1rem; }
+  .zonebar-label { color:var(--muted); }
+  /* World warming-ranking table: every city, fastest-warming first, searchable. */
+  .ranking { margin-top:1rem; }
+  .rank-controls { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center;
+    align-items:center; margin:0 0 .8rem; }
+  .rank-search { width:min(92vw,300px); box-sizing:border-box; font:inherit;
+    font-size:.95rem; padding:.5rem .8rem; border-radius:6px;
+    border:1px solid var(--line); background:var(--panel); color:var(--ink); }
+  .rank-search:focus { outline:none; border-color:var(--accent); }
+  .rank-table-wrap { max-width:640px; margin:0 auto; }
+  .rank-table { width:100%; border-collapse:collapse; font-size:.92rem; }
+  .rank-table th, .rank-table td { padding:.5rem .55rem; text-align:start;
+    border-bottom:1px solid var(--line); }
+  .rank-sort { cursor:pointer; user-select:none; white-space:nowrap; }
+  .rank-sort:hover { color:var(--ink); }
+  .rank-sort[aria-sort="ascending"]::after { content:" ▲"; font-size:.7em; }
+  .rank-sort[aria-sort="descending"]::after { content:" ▼"; font-size:.7em; }
+  .rank-count { text-align:center; color:var(--muted); font-size:.82rem;
+    margin:0; font-variant-numeric:tabular-nums; }
+  .rank-note { text-align:center; color:var(--muted); font-size:.74rem;
+    margin:.35rem auto 0; max-width:44ch; opacity:.85; }
+  /* Cities/Countries segmented toggle. */
+  /* Cities/Countries mode: one segmented pill switch, centered in the ranking
+     section (it chooses what the ranking below lists). */
+  .rank-toggle { display:flex; width:fit-content; margin:.2rem auto 1rem; padding:.22rem;
+    gap:.15rem; background:var(--line); border-radius:999px; }
+  .rank-toggle button { font:inherit; font-size:.9rem; font-weight:600; cursor:pointer;
+    padding:.4rem 1.25rem; border:0; border-radius:999px; background:transparent;
+    color:var(--muted); transition:background .15s ease, color .15s ease; }
+  .rank-toggle button:hover { color:var(--ink); }
+  .rank-toggle button.active { background:var(--ink); color:var(--bg); }
+  /* Footer under the table: a "show more" button + the count. */
+  .rank-foot { display:flex; flex-direction:column; align-items:center; gap:.5rem;
+    margin-top:.9rem; }
+  .rank-more { font:inherit; font-size:.9rem; font-weight:600; cursor:pointer;
+    padding:.45rem 1.2rem; border:1px solid var(--line); border-radius:6px;
+    background:var(--panel); color:var(--ink); }
+  .rank-more:hover { border-color:var(--line-2); }
+  .rank-table thead th { color:var(--muted); font-weight:600; font-size:.8rem;
+    text-transform:uppercase; letter-spacing:.03em; position:sticky; top:0;
+    background:var(--bg); }
+  .rank-num { width:2.5rem; color:var(--muted); font-variant-numeric:tabular-nums;
+    text-align:end; }
+  /* When filtered, the local 1..N number is primary; the global rank rides along
+     as a small muted "#123". */
+  .rank-grank { display:block; font-size:.68rem; font-weight:400; color:var(--muted);
+    opacity:.7; }
+  /* Country rows drill into that country's cities on click. */
+  .rank-clickable { cursor:pointer; }
+  .rank-clickable:hover { background:color-mix(in srgb, var(--accent) 6%, transparent); }
+  .rank-table td.rank-city { font-weight:600; }
+  .rc-top { display:flex; align-items:center; gap:.5rem; }
+  .rc-sub { display:flex; align-items:center; gap:.45rem; margin-top:.2rem; flex-wrap:wrap; }
+  .rank-flag { width:20px; height:15px; border-radius:2px; flex:0 0 auto;
+    box-shadow:0 0 0 1px rgba(0,0,0,.12); object-fit:cover; }
+  .rc-top a { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  /* Inline warming stripes: nine decade bars, blue(cold)->red(hot). */
+  .rank-stripes { display:inline-flex; height:12px; border-radius:2px; overflow:hidden;
+    flex:0 0 auto; box-shadow:0 0 0 1px rgba(0,0,0,.08); }
+  .rank-stripes i { display:block; width:5px; height:12px; }
+  .rank-stripes i.empty { background:rgba(128,128,128,.18); }
+  .rc-meta { font-size:.76rem; font-weight:500; color:var(--muted);
+    font-variant-numeric:tabular-nums; }
+  .rank-wiki { flex:0 0 auto; width:1.2rem; height:1.2rem; line-height:1.12rem;
+    text-align:center; font-family:var(--hdr); font-weight:700; font-size:.72rem;
+    color:var(--muted); border:1px solid rgba(128,128,128,.35); border-radius:50%;
+    text-decoration:none; opacity:.6; transition:opacity .15s, color .15s, border-color .15s; }
+  .rank-wiki:hover, .rank-wiki:focus-visible {
+    opacity:1; color:var(--accent); border-color:var(--accent); }
+  .rank-cty { color:var(--muted); }
+  .rank-val { text-align:end; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  /* .cool darkened from #1f6feb, which cleared 4.5:1 on white but not on the
+     tinted light grounds (4.32:1 editorial, 4.28:1 product). */
+  .rank-val.warm { color:#c0392b; } .rank-val.cool { color:#1a63d8; }
+  /* Same lift as the shared tokens; the light values above stay distinct. */
+  :root[data-theme="dark"] .rank-val.warm { color:var(--warm); }
+  :root[data-theme="dark"] .rank-val.cool { color:var(--cool); }
+  .rank-table tbody tr.self { background:rgba(230,126,34,.14); }
+  .rank-empty { text-align:center; color:var(--muted); margin:1rem 0; }
+  /* Compare two cities: two datalist pickers over one overlaid anomaly chart. */
+  .compare { text-align:center; }
+  .cmp-controls { display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap;
+                  margin:.4rem 0 1rem; }
+  .cmp-controls .rank-search { max-width:16rem; }
+  .cmp-figure { max-width:60rem; margin:0 auto; }
+  #cmp-stats { font-size:.9rem; color:var(--muted); margin-top:.5rem; }
+  #cmp-stats .cs-row { margin:.15rem 0; }
+  #cmp-stats .cs-dot { display:inline-block; width:.7rem; height:.7rem;
+                       border-radius:50%; vertical-align:baseline; }
+  .rank-legend { text-align:center; color:var(--muted); font-size:.82rem;
+    max-width:60ch; margin:-.4rem auto 1rem; }
+  /* Per-country headline: a country picker + one-line warming stat. */
+  .cstat { text-align:center; margin-bottom:1.5rem; }
+  /* It's the page hook now (first thing under the header), so drop the section
+     divider the other dash-h2 headings carry. */
+  .cstat .dash-h2 { margin:1.4rem 0 .5rem; padding-top:0; border-top:0; }
+  .cstat-row { display:flex; justify-content:center; margin:.2rem 0 .6rem; }
+  .cstat-line { max-width:60ch; margin:0 auto; font-size:1.15rem; color:var(--ink);
+    line-height:1.5; }
+  .cstat-line b { color:var(--accent); }
+  @media (max-width:480px){ .rank-cty { display:none; } }
+  /* Omni search: one box that finds a city, country, region or any place. */
+  .omni { max-width:min(94vw,640px); margin:1.4rem auto .4rem; }
+  .omni-combo { position:relative; }
+  .omni-input { width:100%; box-sizing:border-box; font:inherit; font-size:1.05rem;
+    padding:.8rem 1rem; border-radius:10px; border:1px solid var(--line);
+    background:var(--panel); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.05); }
+  .omni-input:focus { outline:none; border-color:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
+  .omni-results { position:absolute; z-index:30; inset-inline:0; top:calc(100% + 5px);
+    margin:0; padding:.25rem; list-style:none; max-height:60vh; overflow-y:auto;
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 12px 32px rgba(0,0,0,.15); text-align:start; }
+  .omni-h { padding:.45rem .65rem .2rem; font-size:.72rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  .omni-opt { display:flex; align-items:baseline; justify-content:space-between;
+    gap:.6rem; padding:.5rem .65rem; border-radius:6px; cursor:pointer; }
+  .omni-opt.on, .omni-opt:hover { background:var(--accent); color:var(--on-accent); }
+  .omni-opt.on .omni-sub, .omni-opt:hover .omni-sub { color:rgba(255,255,255,.85); }
+  .omni-n { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .omni-sub { font-size:.8rem; color:var(--muted); white-space:nowrap; flex:0 0 auto; }
+  .omni-any { font-weight:600; }
+  /* "Check any place on Earth" - client-side lookup for towns not on the map. */
+  .lookup { max-width:640px; margin:0 auto 1.5rem; text-align:center; }
+  .lookup-form { display:flex; gap:.5rem; max-width:520px; margin:.2rem auto 0; }
+  .lookup-input { flex:1 1 auto; min-width:0; font:inherit; font-size:1rem;
+    padding:.6rem .8rem; border:1px solid var(--line); border-radius:8px;
+    background:var(--panel); color:var(--ink); }
+  .lookup-input:focus { outline:none; border-color:var(--accent); }
+  .lookup-go { flex:0 0 auto; font:inherit; font-weight:600; cursor:pointer;
+    color:var(--bg); background:var(--ink); border:0; border-radius:8px; padding:.6rem 1.2rem; }
+  .lookup-go:hover { background:color-mix(in srgb, var(--ink) 82%, #000); }
+  .lookup-status { color:var(--muted); font-size:.9rem; margin:.7rem 0 0; min-height:1.1em; }
+  .lookup-result { margin:1rem auto 0; padding:1.1rem 1.2rem; max-width:520px;
+    border:1px solid var(--line); border-radius:12px; background:var(--panel); text-align:start; }
+  .lu-place { font-family:var(--hdr); font-weight:600; font-size:1.3rem; margin:0 0 .1rem; }
+  .lu-sub { color:var(--muted); font-size:.85rem; margin:0 0 .7rem; }
+  .lu-big { font-family:var(--hdr); font-weight:700; font-size:2.4rem; line-height:1; }
+  .lu-big.warm { color:var(--accent); } .lu-big.cool { color:#1f6feb; }
+  .lu-since { color:var(--muted); font-size:1rem; margin-inline-start:.4rem; }
+  .lu-meta { color:var(--muted); font-size:.9rem; margin:.35rem 0 .6rem; }
+  .lu-faster { font-weight:600; color:var(--ink); margin:.2rem 0 .7rem; }
+  .lu-stripes { display:flex; height:26px; border-radius:4px; overflow:hidden;
+    box-shadow:0 0 0 1px rgba(0,0,0,.08); margin:.2rem 0 .8rem; }
+  .lu-stripes i { display:block; flex:1 1 0; }
+  .lu-news { display:inline-flex; align-items:center; gap:.4rem; font-weight:600;
+    font-size:.9rem; color:var(--ink); text-decoration:none; border:1px solid var(--line);
+    border-radius:8px; padding:.4rem .9rem; }
+  .lu-news:hover { border-color:var(--accent); color:var(--accent); }
+  /* Climate-zone picker as a row of pill buttons (like the language switcher),
+     each with its zone-colour swatch echoing the map bands + legend. */
+  .zonebtns { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; }
+  .zonebtns button { font-family:inherit; font-size:.9rem; cursor:pointer;
+    display:inline-flex; align-items:center; gap:.4rem; padding:.35rem .8rem;
+    border-radius:4px; border:1px solid var(--line); background:var(--panel);
+    color:var(--ink); transition:border-color .12s ease, background .12s ease; }
+  .zonebtns button:hover { border-color:var(--line-2); }
+  .zonebtns button.active { background:var(--ink); border-color:var(--ink);
+    color:var(--bg); font-weight:600; }
+  .zonebtns button i { width:.7rem; height:.7rem; border-radius:2px;
+    display:inline-block; box-shadow:0 0 0 1px rgba(0,0,0,.15); }
+  /* "Worldwide" is the default/reset, set apart from the zone filters. */
+  .zonebtns .wb { font-weight:600; }
+  .zonebtns-sep { width:1px; height:1.4rem; align-self:center;
+    background:var(--line); margin:0 .2rem; }
+  /* Chart grid: columns per row track the viewport (breaks out wider than the
+     text column on big screens; 2→1 columns as it narrows). */
+  .charts { display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));
+            gap:1.5rem; width:min(96vw,1760px);
+            margin-inline:calc((100% - min(96vw,1760px)) / 2); }
+  .charts.hero { grid-template-columns:1fr; margin-bottom:.5rem; }
+  /* "Your region" featured hero: a clean, light full-bleed band that opens the
+     page on the visitor's nearest covered city - place name, its warming figure
+     and a link on the page ground. Full-bleed width is kept, but the previous
+     dark immersive treatment (scrim, silhouette, stripe ribbon, heat-haze) is
+     neutralised so it reads as a normal padded header band. Hero variants
+     (data-hero on <html>): plain, or a subtle accent tint band. */
+  .region-hero { position:relative; width:100vw; margin-inline:calc(50% - 50vw);
+    margin-top:-2rem; margin-bottom:2.75rem; isolation:auto;
+    display:block;
+    background:var(--bg); border-bottom:1px solid var(--line); }
+  :root[data-hero="tint"] .region-hero,
+  :root[data-hero="map"] .region-hero {
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 9%, var(--bg)), var(--bg)); }
+  .region-hero .rh-scrim, .region-hero .rh-silho { display:none; }
+  .region-hero::before, .region-hero::after { content:none; }
+  .region-hero .rh-figure > span:first-child {
+    background:none; -webkit-background-clip:border-box; background-clip:border-box;
+    color:var(--accent); }
+  .heat-badge { display:inline-flex; align-items:center; gap:.4rem; font-family:var(--sans);
+    font-size:.78rem; font-weight:700; color:var(--accent); white-space:nowrap;
+    border:1px solid var(--line); border-radius:999px; padding:.18rem .6rem; background:var(--panel); }
+  .heat-badge .hb-since { font-weight:600; opacity:.62; }
+  .heat-badge .hb-dot { width:8px; height:8px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent); animation:hbpulse 2.4s ease-out infinite; }
+  @keyframes hbpulse { 0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent);}
+    70%{box-shadow:0 0 0 8px transparent;} 100%{box-shadow:0 0 0 0 transparent;} }
+  @media (max-width:700px){ .heat-badge { display:none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .heat-badge .hb-dot { animation:none; }
+  }
+  .region-hero .rh-inner { position:relative; z-index:3; width:100%;
+    max-width:1160px; margin:0 auto; color:var(--ink);
+    padding:clamp(1.6rem,5vw,3.2rem) clamp(1.3rem,5vw,3.4rem) clamp(1.9rem,5vw,3rem);
+    text-shadow:none; }
+  .region-hero .rh-eyebrow { font-size:.74rem; letter-spacing:.18em;
+    text-transform:uppercase; font-weight:700; color:var(--accent);
+    margin:0 0 .55rem; }
+  .region-hero .rh-place { display:flex; align-items:center; gap:.5rem; margin:0;
+    font-family:var(--hdr); font-weight:600; letter-spacing:-.01em;
+    color:var(--ink); font-size:clamp(1.9rem,5vw,3rem); }
+  .region-hero .rh-pin { width:.85em; height:.85em; flex:0 0 auto; color:var(--muted);
+    opacity:.95; filter:none; }
+  .region-hero .rh-figure { display:flex; align-items:baseline; gap:.22em;
+    font-family:var(--hdr); font-weight:600; line-height:.95; color:var(--accent);
+    letter-spacing:-.03em; font-size:clamp(3.8rem,14vw,8.25rem); margin:.35rem 0 .1rem; }
+  .region-hero .rh-unit { font-family:var(--sans); font-weight:600; font-size:.2em;
+    color:var(--muted); letter-spacing:.01em; }
+  .region-hero .rh-meta { font-size:clamp(.95rem,2.1vw,1.15rem); line-height:1.5;
+    color:var(--muted); margin:.15rem 0 0; max-width:46ch; }
+  .region-hero .rh-meta b { font-weight:700; color:var(--ink); }
+  /* City-page percentile badge: a quieter second line under the warming figure. */
+  .region-hero .rh-pct { font-size:clamp(.85rem,1.8vw,1rem); opacity:.85;
+                         margin-top:.1rem; }
+  .region-hero .rh-cta { margin:1.5rem 0 .2rem; }
+  .region-hero .rh-cta a { display:inline-flex; align-items:center; gap:.5rem;
+    font-weight:600; font-size:1rem; text-decoration:none; color:var(--on-accent);
+    background:var(--accent); border:1px solid var(--accent);
+    border-radius:var(--radius); padding:.7rem 1.35rem; transition:background .15s ease; }
+  .region-hero .rh-cta a:hover { background:color-mix(in srgb, var(--accent) 85%, #000); }
+  .region-hero .rh-hint { font-size:.82rem; color:var(--muted);
+    margin:.8rem 0 0; min-height:1em; }
+  /* Climate analog on the hero (filled by JS for the resolved city): a light
+     tinted card matching the city-page hero. Empty until geolocation resolves. */
+  #rh-analog:empty { display:none; }
+  /* "This year so far" strip: the partial current year vs the same calendar
+     window of the baseline, dated in the text itself. */
+  .curyear { text-align:center; background:var(--panel-2); border:1px solid var(--line);
+             border-radius:10px; padding:.55rem .95rem; margin:0 auto 1.1rem;
+             max-width:46rem; font-size:.95rem; color:var(--ink); }
+  .region-hero .analog { display:flex; align-items:center; gap:.7rem;
+    margin:1.1rem 0 .1rem; max-width:52ch; padding:.8rem 1.05rem;
+    background:color-mix(in srgb, var(--accent) 7%, var(--panel));
+    border:1px solid var(--line); border-radius:var(--radius); }
+  .region-hero .analog-emoji { font-size:1.4rem; flex:0 0 auto; }
+  .region-hero .analog-lines { display:flex; flex-direction:column; gap:.3rem; }
+  .region-hero .analog-line { margin:0; color:var(--ink); line-height:1.4; }
+  figure { position:relative; margin:0; background:var(--panel); border-radius:6px;
+           padding:.6rem; border:1px solid var(--line); }
+  .fs-btn, .rz-btn { position:absolute; top:.45rem; z-index:3;
+    width:1.9rem; height:1.9rem; padding:0; cursor:pointer; display:flex;
+    align-items:center; justify-content:center; border:1px solid var(--line);
+    border-radius:4px; background:color-mix(in srgb, var(--panel) 85%, transparent); color:var(--muted);
+    transition:opacity .15s ease, color .15s ease, border-color .15s ease; }
+  .fs-btn { inset-inline-end:.45rem; opacity:0; }
+  .rz-btn { inset-inline-end:2.6rem; opacity:.5; }
+  .rz-btn.z, .rz-btn:hover, .rz-btn:focus-visible { opacity:1; }
+  .charts figure:hover .fs-btn, .fs-btn:focus-visible { opacity:1; }
+  .fs-btn:hover, .rz-btn:hover { color:var(--ink); border-color:var(--line-2); }
+  @media (hover:none) { .fs-btn { opacity:.5; } }
+  figure:fullscreen { background:var(--panel); padding:1.25rem 1.5rem; display:flex;
+    flex-direction:column; justify-content:center; }
+  figure:fullscreen .fs-btn { opacity:1; }
+  figure:fullscreen .chart-wrap { height:86vh; }
+  figure:fullscreen figcaption { font-size:1rem; }
+  figure:-webkit-full-screen { background:var(--panel); padding:1.25rem 1.5rem;
+    display:flex; flex-direction:column; justify-content:center; }
+  figure:-webkit-full-screen .fs-btn { opacity:1; }
+  figure:-webkit-full-screen .chart-wrap { height:86vh; }
+  .chart-wrap { position:relative; height:320px; width:100%; }
+  .chart-wrap.tall { height:440px; }
+  .chart-wrap canvas { border-radius:3px; }
+  .chart-error { display:flex; align-items:center; justify-content:center;
+    height:100%; color:var(--muted); font-size:.85rem; background:var(--panel-2);
+    border-radius:3px; }
+  figcaption { color:var(--muted); font-size:.85rem; padding:.6rem .3rem .15rem;
+    text-align:center; line-height:1.45; }
+  figcaption .fig-title { display:inline-block; color:var(--ink); font-weight:600;
+    font-size:.95rem; margin-bottom:.15rem; }
+  .charts figure { transition:border-color .15s ease, box-shadow .15s ease; }
+  .charts figure:hover { border-color:var(--line-2); box-shadow:0 6px 20px rgba(0,0,0,.06); }
+  footer { text-align:center; color:var(--muted); font-size:.82rem;
+           padding:2.5rem 1.5rem 3.5rem; border-top:1px solid var(--line);
+           margin-top:2rem; }
+  footer a { color:var(--accent); }
+  footer a[href*="github.com"]::before {
+    content:""; display:inline-block; width:.95em; height:.95em;
+    margin-inline-end:.3em; vertical-align:-.15em; background-color:currentColor;
+    -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%200C3.58%200%200%203.58%200%208c0%203.54%202.29%206.53%205.47%207.59.4.07.55-.17.55-.38%200-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01%201.08.58%201.23.82.72%201.21%201.87.87%202.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95%200-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12%200%200%20.67-.21%202.2.82.64-.18%201.32-.27%202-.27.68%200%201.36.09%202%20.271.53-1.04%202.2-.82%202.2-.82.44%201.1.16%201.92.08%202.12.51.56.82%201.27.82%202.15%200%203.07-1.87%203.75-3.65%203.95.29.25.54.73.54%201.48%200%201.07-.01%201.93-.01%202.2%200%20.21.15.46.55.38A8.013%208.013%200%200%200%2016%208c0-4.42-3.58-8-8-8z%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+            mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%200C3.58%200%200%203.58%200%208c0%203.54%202.29%206.53%205.47%207.59.4.07.55-.17.55-.38%200-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01%201.08.58%201.23.82.72%201.21%201.87.87%202.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95%200-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12%200%200%20.67-.21%202.2.82.64-.18%201.32-.27%202-.27.68%200%201.36.09%202%20.271.53-1.04%202.2-.82%202.2-.82.44%201.1.16%201.92.08%202.12.51.56.82%201.27.82%202.15%200%203.07-1.87%203.75-3.65%203.95.29.25.54.73.54%201.48%200%201.07-.01%201.93-.01%202.2%200%20.21.15.46.55.38A8.013%208.013%200%200%200%2016%208c0-4.42-3.58-8-8-8z%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+  }

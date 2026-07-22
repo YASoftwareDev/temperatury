@@ -1,0 +1,77 @@
+name: Build and deploy site
+
+# Regenerates the charts + page from live Open-Meteo data and publishes the
+# result to GitHub Pages. Runs on every push to main, on demand, and yearly
+# once the previous calendar year is complete.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # 06:00 UTC on 5 January — once the previous calendar year is complete.
+    - cron: "0 6 5 1 *"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One run at a time; a newer push supersedes an in-progress one (this repo
+# pushes often — data backfills + iteration — and only the latest matters).
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45  # a stuck render fails fast instead of burning the 6h default
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Restore the previously rendered output/ so main.py only re-renders the
+      # cities whose data (or the chart theme version) actually changed — the
+      # render is the slow part. A unique key per run always saves a fresh
+      # cache; restore-keys pulls the most recent prior one.
+      - name: Restore rendered-charts cache
+        uses: actions/cache@v4
+        with:
+          path: output
+          key: charts-${{ github.run_id }}
+          restore-keys: |
+            charts-
+
+      - name: Generate charts and pages
+        run: python main.py --all
+        env:
+          # Render from the committed cache only; CI's shared IP is
+          # rate-limited by Open-Meteo. Refresh the cache locally.
+          TEMPERATURY_OFFLINE: "1"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: output
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

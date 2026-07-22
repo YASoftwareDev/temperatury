@@ -1,0 +1,453 @@
+/* SOURCE FILE for the city-page stylesheet.
+   Edit here, then run tools/build-css.sh to regenerate the committed page.css.
+   Do NOT hand-edit page.css - it is generated.
+
+   Tailwind v4 utilities are imported WITHOUT preflight, so no reset touches the
+   existing design. Utilities live in @layer utilities; the bespoke rules below
+   are unlayered and therefore win any class-name collision. New/future styling
+   should prefer utility classes (compiled on demand from the @source files). */
+@layer theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../report.py";
+@source "../interactive.py";
+@source "./charts.js";
+@source "./i18n-runtime.js";
+
+/* ==================== bespoke city-page CSS (unlayered) ==================== */
+  /* ===== Appearance token system =========================================
+     Visitors pick a look (direction + accent + headline face + density +
+     light/dark); the inline bootstrap + appearance panel set data-* on <html>
+     and everything below routes through these tokens. Charts read --ink /
+     --muted / --line too (charts.js), so they re-colour with the theme.
+     Base :root is the default look (Objective / light / cobalt). ===== */
+  :root {
+    color-scheme: light;
+    --serif: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype",
+             Palatino, "Times New Roman", serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+            Helvetica, Arial, sans-serif;
+    /* fixed / semantic (never themed) */
+    --good:#16a34a; --warn:#d97706; --bad:#dc2626;
+    --on-accent:#ffffff; --su:1;
+    /* Warm/cool DATA encoding (distinct from --accent). charts.js reads these
+       at build time, so a theme switch re-colours the canvases. */
+    --warm:#d62728; --cool:#2b6ca3;
+    /* default = Objective / light / cobalt */
+    --bg:#ffffff; --panel:#ffffff; --panel-2:#f6f7f8; --field:#ffffff;
+    --ink:#111317; --ink-2:#333842; --muted:#5b616b; --line:#e6e8ec; --line-2:#c9cdd4;
+    --accent:#2f5fd0; --radius:5px; --hdr:var(--sans);
+  }
+  /* ---- directions (light) ---- */
+  :root[data-dir="objective"]{ --bg:#ffffff;--panel:#ffffff;--panel-2:#f6f7f8;--field:#ffffff;
+    --ink:#111317;--ink-2:#333842;--muted:#5b616b;--line:#e6e8ec;--line-2:#c9cdd4;
+    --radius:4px;--hdr:var(--sans); }
+  :root[data-dir="editorial"]{ --bg:#f6f7f8;--panel:#ffffff;--panel-2:#eef0f3;--field:#ffffff;
+    --ink:#1a1c20;--ink-2:#40454d;--muted:#666b73;--line:#e3e6ea;--line-2:#cfd3d9;
+    --radius:3px;--hdr:var(--serif); }
+  :root[data-dir="product"]{ --bg:#f4f6f9;--panel:#ffffff;--panel-2:#eef2f6;--field:#ffffff;
+    --ink:#16181d;--ink-2:#3a3f4a;--muted:#667085;--line:#e7ebf0;--line-2:#d3d9e0;
+    --radius:12px;--hdr:var(--sans); }
+  :root[data-dir="atlas"]{ --bg:#ffffff;--panel:#fbfcfb;--panel-2:#f1f5f2;--field:#ffffff;
+    --ink:#14201a;--ink-2:#37413b;--muted:#5c6b63;--line:#e2e8e4;--line-2:#cdd6d0;
+    --radius:7px;--hdr:var(--sans); }
+  /* ---- directions (dark): redefine only the neutrals ---- */
+  :root[data-theme="dark"]{ color-scheme:dark;
+    --bg:#0e0f12;--panel:#15171c;--panel-2:#1b1e24;--field:#15171c;
+    --ink:#eef0f3;--ink-2:#c4c9d1;--muted:#9aa0aa;--line:#262a30;--line-2:#363b44; }
+  :root[data-dir="editorial"][data-theme="dark"]{
+    --bg:#14161a;--panel:#1b1e23;--panel-2:#22262d;--field:#1b1e23;
+    --ink:#eceef2;--ink-2:#c3c8d1;--muted:#9096a0;--line:#2a2e35;--line-2:#3a3f48; }
+  :root[data-dir="product"][data-theme="dark"]{
+    --bg:#0f1216;--panel:#171b21;--panel-2:#1e232b;--field:#171b21;
+    --ink:#e9edf2;--ink-2:#bfc6d1;--muted:#8b95a3;--line:#232a33;--line-2:#333c47; }
+  :root[data-dir="atlas"][data-theme="dark"]{
+    --bg:#0e1411;--panel:#161d19;--panel-2:#1d2621;--field:#161d19;
+    --ink:#e7efe9;--ink-2:#bdc7c0;--muted:#8a978f;--line:#232c27;--line-2:#333e37; }
+  /* ---- accent / headline / density (declared AFTER directions so an explicit
+         visitor choice wins over the direction default) ---- */
+  :root[data-accent="red"]{ --accent:#d64541; }
+  :root[data-accent="cobalt"]{ --accent:#2f5fd0; }
+  :root[data-accent="teal"]{ --accent:#0f8a7e; }
+  :root[data-accent="forest"]{ --accent:#2f7d5b; }
+  :root[data-accent="amber"]{ --accent:#b9741a; }
+  :root[data-accent="slate"]{ --accent:#425a6e; }
+  :root[data-font="sans"]{ --hdr:var(--sans); }
+  :root[data-font="serif"]{ --hdr:var(--serif); }
+  :root[data-density="compact"]{ --su:.8; }
+  /* Dark grounds need lighter accents: the light-mode accents fall below the
+     4.5:1 text contrast on the dark neutrals (measured). Higher specificity
+     than the [data-accent] blocks above, so an explicit choice still wins. */
+  :root[data-theme="dark"]{ --accent:#7aa2ff; }
+  /* The dark-mode accents are light, so text ON an accent must be dark. */
+  :root[data-theme="dark"]{ --on-accent:#0f1319; }
+  /* Same warm/cool encoding, lifted for the dark grounds. */
+  :root[data-theme="dark"]{ --warm:#ff8f88; --cool:#7fb3ff; }
+  :root[data-theme="dark"][data-accent="cobalt"]{ --accent:#7aa2ff; }
+  :root[data-theme="dark"][data-accent="red"]{ --accent:#ff8f88; }
+  :root[data-theme="dark"][data-accent="teal"]{ --accent:#3fd0c0; }
+  :root[data-theme="dark"][data-accent="forest"]{ --accent:#5fcf9e; }
+  :root[data-theme="dark"][data-accent="amber"]{ --accent:#e6ac4d; }
+  :root[data-theme="dark"][data-accent="slate"]{ --accent:#a7bdd4; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  header {
+    position: relative;
+    padding: 2.4rem 1.5rem 1.75rem;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+  }
+  header h1 { margin: 0 0 .45rem; font-family: var(--hdr); font-weight: 600;
+              letter-spacing: -.01em; font-size: clamp(1.85rem, 4vw, 2.7rem); }
+  header p { margin: 0; color: var(--muted); font-size: .95rem; }
+  /* City-page header: a clean, light page header (no immersive dark block, no
+     stripes) - the place, its warming rate and key figures on the page ground.
+     Hero variants (data-hero on <html>): plain, or a subtle accent tint band.
+     The dark-only sub-elements (scrim, silhouette, stripe ribbon, heat-haze)
+     from the previous design are neutralised so nothing muddy remains. */
+  header.region-hero { padding: 0; text-align: start; isolation: auto;
+    min-height: 0; display: block; overflow: visible;
+    background: var(--bg); border-bottom: 1px solid var(--line); }
+  :root[data-hero="tint"] header.region-hero,
+  :root[data-hero="map"] header.region-hero {
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 9%, var(--bg)), var(--bg)); }
+  .region-hero .rh-scrim, .region-hero .rh-silho { display: none; }
+  .region-hero::before, .region-hero::after { content: none; }
+  .region-hero .rh-figure > span:first-child {
+    background: none; -webkit-background-clip: border-box; background-clip: border-box;
+    color: var(--accent); }
+  /* Live global-anomaly badge (injected into the topbar by charts.js). */
+  .heat-badge { display: inline-flex; align-items: center; gap: .4rem; font-family: var(--sans);
+    font-size: .78rem; font-weight: 700; color: var(--accent); white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 999px; padding: .18rem .6rem; background: var(--panel); }
+  .heat-badge .hb-since { font-weight: 600; opacity: .62; }
+  .heat-badge .hb-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent);
+    animation: hbpulse 2.4s ease-out infinite; }
+  @keyframes hbpulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent); }
+    70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  @media (max-width: 700px) { .heat-badge { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .heat-badge .hb-dot { animation: none; }
+  }
+  .region-hero .rh-inner { position: relative; z-index: 1; width: 100%; max-width: 1120px;
+    margin: 0 auto; color: var(--ink); text-shadow: none;
+    padding: clamp(1.6rem,5vw,2.6rem) clamp(1.3rem,5vw,3rem) clamp(1.5rem,4vw,2.2rem); }
+  .region-hero .rh-eyebrow { font-family: var(--sans); font-size: .72rem;
+    letter-spacing: .16em; text-transform: uppercase; font-weight: 700;
+    color: var(--accent); margin: 0 0 .55rem; }
+  .region-hero .rh-place { display: flex; align-items: center; gap: .5rem; margin: 0; }
+  .region-hero .rh-place h1 { font-family: var(--hdr); font-weight: 600;
+    letter-spacing: -.015em; font-size: clamp(1.7rem, 4.4vw, 2.6rem); margin: 0;
+    color: var(--ink); line-height: 1.04; }
+  .region-hero .rh-pin { width: .8em; height: .8em; flex: 0 0 auto; color: var(--muted);
+    opacity: .9; filter: none; }
+  .region-hero .rh-figure { display: flex; align-items: baseline; gap: .14em;
+    font-family: var(--hdr); font-weight: 600; line-height: .92; letter-spacing: -.03em;
+    font-size: clamp(3rem, 11vw, 5.6rem); margin: .3rem 0 .1rem; color: var(--accent); }
+  .region-hero .rh-unit { font-family: var(--sans); font-weight: 600; font-size: .22em;
+    color: var(--muted); letter-spacing: .01em; }
+  .region-hero .rh-meta { font-size: clamp(.95rem, 2.1vw, 1.1rem);
+    color: var(--muted); margin: .15rem 0 0; }
+  .region-hero .rh-meta b { font-weight: 700; color: var(--ink); }
+  .region-hero .rh-chips { display: flex; gap: .55rem; flex-wrap: wrap; margin: 1.1rem 0 0; }
+  .region-hero .rh-chip { background: var(--panel);
+    border: 1px solid var(--line); -webkit-backdrop-filter: none; backdrop-filter: none;
+    border-radius: var(--radius); padding: .5rem .8rem;
+    font-size: .8rem; color: var(--muted); }
+  .region-hero .rh-chip b { display: block; font-size: 1.05rem; font-weight: 700;
+    color: var(--ink); font-variant-numeric: tabular-nums; margin-top: .05rem; }
+  .region-hero .grid-alias-note { color: var(--muted); position: relative;
+    z-index: 1; width: 100%; max-width: 1120px; margin-left: auto; margin-right: auto;
+    padding: 0 clamp(1.3rem,5vw,3rem) 1rem; text-shadow: none; }
+  /* Climate analog ("in 1940 it felt like X; by 2050, like Y"): a light tinted card. */
+  .region-hero .analog { margin: 1.1rem 0 0; max-width: 54ch; justify-content: flex-start;
+    background: color-mix(in srgb, var(--accent) 7%, var(--panel));
+    border: 1px solid var(--line); -webkit-backdrop-filter: none; backdrop-filter: none;
+    border-radius: var(--radius); padding: .8rem 1.05rem; }
+  .region-hero .analog-line { color: var(--ink); }
+  .region-hero .analog-emoji { filter: none; }
+  nav { margin-top: 1.1rem; display: flex; flex-wrap: wrap;
+        gap: .45rem; justify-content: center; }
+  nav a {
+    color: var(--ink); text-decoration: none; font-size: .85rem;
+    padding: .3rem .8rem; border-radius: 4px;
+    border: 1px solid var(--line); background: var(--panel);
+  }
+  nav a:hover { border-color: var(--line-2); }
+  nav a.active { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  nav.langs { margin: 0; }
+  /* Sticky top bar, consistent with the main page: rankings shortcut + language,
+     auto-hiding on scroll (mobile). */
+  .topbar { position: sticky; top: 6px; z-index: 50; background: color-mix(in srgb, var(--bg) 90%, transparent);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line); transition: transform .28s ease; will-change: transform; }
+  .topbar.hide { transform: translateY(-100%); }
+  .topbar-in { max-width: 1100px; margin: 0 auto; display: flex; align-items: center;
+    justify-content: space-between; gap: .5rem .7rem; padding: .4rem .9rem; flex-wrap: wrap; }
+  /* Single nav hub: back-to-map + ranking toggle + world dashboard, then a city
+     search, then languages. Replaces the old floating map button + chooser row. */
+  .tb-nav { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+  .tb-link { font-size: .82rem; text-decoration: none; color: var(--ink);
+    display: inline-flex; align-items: center; gap: .25rem; padding: .3rem .55rem;
+    border-radius: 6px; white-space: nowrap; }
+  .tb-link:hover { background: var(--line); }
+  .tb-search { flex: 1 1 220px; display: flex; justify-content: center; min-width: 0; }
+  .tb-search .citypick { width: 100%; }
+  .tb-search .cp-combo { width: min(92vw, 340px); }
+  .rank-toggle { display: flex; gap: 0; }
+  .rank-toggle a { font: inherit; font-size: .82rem; text-decoration: none; cursor: pointer;
+    padding: .3rem .8rem; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+  .rank-toggle a:first-child { border-radius: 6px 0 0 6px; }
+  .rank-toggle a:last-child { border-radius: 0 6px 6px 0; border-inline-start: 0; }
+  .rank-toggle a:hover { background: var(--line); }
+  .lang-select { font: inherit; font-size: .82rem; color: var(--ink);
+    padding: .32rem .6rem; border-radius: 4px; border: 1px solid var(--line);
+    background: var(--panel); cursor: pointer; max-width: 100%; }
+  .lang-select:hover { border-color: var(--line-2); }
+  .chooser { margin-top: 1.1rem; display: flex; flex-wrap: wrap;
+             gap: .45rem; justify-content: center; align-items: center; }
+  .chooser a {
+    color: var(--ink); text-decoration: none; font-size: .85rem;
+    padding: .3rem .8rem; border-radius: 4px;
+    border: 1px solid var(--line); background: var(--panel);
+  }
+  .chooser a:hover { border-color: var(--line-2); }
+  .chooser select {
+    background: var(--panel); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 4px; padding: .3rem .7rem; font-size: .9rem; font-family: inherit;
+  }
+  /* Searchable city picker: one type-to-filter combobox over every city. */
+  .citypick { display: flex; justify-content: center; }
+  .cp-combo { position: relative; width: min(92vw, 360px); }
+  .cp-input { width: 100%; box-sizing: border-box; font: inherit; font-size: .95rem;
+    padding: .5rem .8rem; border-radius: 6px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--ink); }
+  .cp-input:focus { outline: none; border-color: var(--accent); }
+  .cp-results { position: absolute; z-index: 20; inset-inline: 0; top: calc(100% + 4px);
+    margin: 0; padding: .25rem; list-style: none; max-height: 320px; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12); text-align: start; }
+  .cp-results li { display: flex; justify-content: space-between; align-items: baseline;
+    gap: .6rem; padding: .45rem .6rem; border-radius: 4px; cursor: pointer; }
+  .cp-results li.on, .cp-results li:hover { background: var(--accent); color: var(--on-accent); }
+  .cp-results li.on .cp-sub, .cp-results li:hover .cp-sub { color: rgba(255,255,255,.85); }
+  .cp-sub { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+  #map { height: 70vh; min-height: 460px; border-radius: 6px;
+         border: 1px solid var(--line); margin: 1.5rem 0; }
+  .leaflet-popup-content a { color: var(--accent); font-weight: 600; }
+  main { max-width: 1200px; margin: 0 auto; padding: calc(2rem * var(--su)) 1.5rem; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: calc(.5rem * var(--su)) 0 calc(2.5rem * var(--su));
+  }
+  .card { background: var(--panel); padding: 1.1rem 1.25rem; }
+  .card .label { font-size: .72rem; text-transform: uppercase;
+                 letter-spacing: .06em; color: var(--muted); }
+  .card .value { font-family: var(--hdr); font-size: 1.8rem; font-weight: 600;
+                 margin-top: .3rem; }
+  .card.trend .value { color: var(--accent); }
+  details.guide { background: var(--panel); border: 1px solid var(--line);
+                  border-radius: 6px; padding: .7rem 1.15rem; margin: 0 0 2rem; }
+  details.guide summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+  details.guide ul { margin: .8rem 0 .3rem 1.1rem; padding: 0;
+                     color: var(--ink-2); font-size: .9rem; }
+  details.guide li { margin: .35rem 0; }
+  details.guide b { color: var(--ink); }
+  [dir="rtl"] details.guide ul { margin: .8rem 1.1rem .3rem 0; }
+  /* Deep-history explainer: what/why of pre-1940 climate, set apart in a warm
+     tone so it reads as context, not another chart. */
+  details.deephist { background: var(--panel-2); border: 1px solid var(--line);
+                     border-radius: 6px; padding: .75rem 1.2rem; margin: 2.5rem 0 0; }
+  details.deephist summary { cursor: pointer; font-weight: 600; color: var(--ink);
+                             font-family: var(--hdr); font-size: 1.02rem; }
+  details.deephist .dh-body { margin-top: .6rem; color: var(--ink-2); font-size: .9rem;
+                              max-width: 68ch; }
+  details.deephist p { margin: .55rem 0; }
+  details.deephist b { color: var(--ink); }
+  details.deephist .dh-here { border-inline-start: 3px solid var(--accent);
+                              padding-inline-start: .7rem; margin-top: .85rem; }
+  .iwidget { background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+             padding: .6rem .7rem; display: flex; flex-direction: column; margin: 0; }
+  .iwhead { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+            justify-content: space-between; color: var(--ink); padding: .2rem .25rem .4rem; }
+  .iwhead strong { font-size: .95rem; font-family: var(--hdr); font-weight: 600; }
+  .ypick { color: var(--muted); font-size: .85rem; }
+  .ypick select { background: var(--panel); color: var(--ink); border: 1px solid var(--line);
+                  border-radius: 4px; padding: .15rem .4rem; font-size: .85rem; }
+  .ican { position: relative; height: 300px; }
+  .iwidget figcaption { color: var(--muted); font-size: .85rem; padding: .5rem .25rem 0;
+                        text-align: center; }
+  h2.section { font-family: var(--hdr); font-weight: 600; font-size: 1.5rem;
+               letter-spacing: -.01em; margin: calc(3rem * var(--su)) 0 .25rem;
+               padding-top: calc(1.5rem * var(--su)); border-top: 1px solid var(--line); }
+  .section-sub { margin: 0 0 1.25rem; color: var(--muted); font-size: .92rem;
+                 max-width: 60ch; }
+  /* Chart grid: the number of charts per row tracks the viewport. The grid
+     breaks out wider than the (readable) text column on big screens - so 4K /
+     ultrawide fit ~4-5 per row - and auto-fit collapses to 2 then 1 column as
+     the viewport narrows. min(100%, ...) stops a lone column overflowing on
+     phones narrower than the track. */
+  .charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: calc(1.5rem * var(--su));
+    width: min(96vw, 1760px);
+    margin-inline: calc((100% - min(96vw, 1760px)) / 2);
+  }
+  figure {
+    position: relative;
+    margin: 0;
+    background: var(--panel);
+    border-radius: 6px;
+    padding: .6rem;
+    border: 1px solid var(--line);
+  }
+  /* Per-chart fullscreen: a corner button (injected by charts.js) expands the
+     figure via the native Fullscreen API; Chart.js is responsive with
+     maintainAspectRatio off, so it redraws to fill the enlarged box. */
+  .fs-btn, .rz-btn {
+    position: absolute; top: .45rem; z-index: 3;
+    width: 1.9rem; height: 1.9rem; padding: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line); border-radius: 4px;
+    background: color-mix(in srgb, var(--panel) 85%, transparent); color: var(--muted);
+    transition: opacity .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .fs-btn { inset-inline-end: .45rem; opacity: 0; }
+  /* Reset sits left of fullscreen, present on every zoomable chart (subtle by
+     default) and brightened once the chart is actually zoomed - the way back. */
+  .rz-btn { inset-inline-end: 2.6rem; opacity: .5; }
+  .rz-btn.z, .rz-btn:hover, .rz-btn:focus-visible { opacity: 1; }
+  /* Persistent "back to the map" button - fixed so it's always reachable on a
+     long page (esp. mobile), where the header scrolls out of view. */
+  .home-fab { position: fixed; bottom: 1rem; inset-inline-start: 1rem; z-index: 50;
+    width: 3rem; height: 3rem; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; background: var(--accent);
+    color: var(--on-accent); box-shadow: 0 3px 12px rgba(0,0,0,.28); text-decoration: none;
+    opacity: .92; }
+  .home-fab:hover, .home-fab:focus-visible { opacity: 1; }
+  .share-row { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center;
+    align-items: center; margin: .2rem 0 1.5rem; }
+  .news-btn { display: inline-flex; align-items: center; gap: .5rem; cursor: pointer;
+    font: inherit; font-weight: 600; font-size: .95rem; color: var(--ink);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: .55rem 1.1rem; text-decoration: none; transition: border-color .15s, color .15s; }
+  .news-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .share-btn { display: inline-flex; align-items: center; gap: .5rem; cursor: pointer;
+    font: inherit; font-weight: 600; font-size: .95rem; color: var(--on-accent); background: var(--accent);
+    border: 0; border-radius: 8px; padding: .6rem 1.2rem;
+    transition: background .15s, transform .1s; }
+  .share-btn:hover { background: color-mix(in srgb, var(--accent) 85%, #000); }
+  .share-btn:active { transform: translateY(1px); }
+  .share-btn.copied { background: var(--good); }
+  .analog { display: flex; align-items: center; gap: .7rem; justify-content: center;
+    max-width: 54ch; margin: .1rem auto 1.4rem; padding: .8rem 1.1rem;
+    background: rgba(192,57,43,.08); border: 1px solid rgba(192,57,43,.22);
+    border-radius: 10px; }
+  .analog-emoji { font-size: 1.5rem; flex: 0 0 auto; }
+  .analog-lines { display: flex; flex-direction: column; gap: .3rem; }
+  .analog-line { margin: 0; font-size: 1.02rem; color: var(--ink); line-height: 1.45; }
+  .charts figure:hover .fs-btn, .fs-btn:focus-visible { opacity: 1; }
+  .fs-btn:hover, .rz-btn:hover { color: var(--ink); border-color: var(--line-2); }
+  @media (hover: none) { .fs-btn { opacity: .5; } }  /* no hover on touch */
+  figure:fullscreen {
+    background: var(--panel); padding: 1.25rem 1.5rem;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  figure:fullscreen .fs-btn { opacity: 1; }
+  figure:fullscreen .chart-wrap, figure:fullscreen .ican { height: 86vh; }
+  figure:fullscreen figcaption { font-size: 1rem; }
+  /* Same rules for older WebKit (must be separate - an unknown pseudo-class
+     invalidates the whole selector list). */
+  figure:-webkit-full-screen {
+    background: var(--panel); padding: 1.25rem 1.5rem;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  figure:-webkit-full-screen .fs-btn { opacity: 1; }
+  figure:-webkit-full-screen .chart-wrap,
+  figure:-webkit-full-screen .ican { height: 86vh; }
+  figure:-webkit-full-screen figcaption { font-size: 1rem; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 3px; }
+  /* Charts are drawn client-side into a <canvas> (Chart.js). The wrapper gives
+     Chart.js a definite box to fill responsively; hovering shows tooltips and
+     the wheel/drag zooms, so no fixed image and no lightbox needed. */
+  .chart-wrap { position: relative; height: 320px; width: 100%; }
+  .chart-wrap canvas { border-radius: 3px; }
+  .chart-error { display: flex; align-items: center; justify-content: center;
+                 height: 100%; color: var(--muted); font-size: .85rem;
+                 background: var(--panel-2); border-radius: 3px; }
+  figcaption { color: var(--muted); font-size: .85rem; padding: .6rem .3rem .15rem;
+               text-align: center; line-height: 1.45; }
+  figcaption .fig-title { display: inline-block; color: var(--ink); font-weight: 600;
+               font-size: .95rem; margin-bottom: .15rem; }
+  .charts figure { transition: border-color .15s ease, box-shadow .15s ease; }
+  .charts figure:hover { border-color: var(--line-2);
+                         box-shadow: 0 6px 20px rgba(0,0,0,.06); }
+  /* Scrollytelling: the charts read as one story column. Each figure is a
+     frameless "scene" - its title promoted to a serif headline that leads,
+     the caption the supporting note, the chart below - with generous rhythm.
+     Reuses every existing (localized) title + caption; only the layout changes. */
+  .charts.story { display: block; width: min(100%, 960px); margin: 0 auto; }
+  .charts.story > figure:not(.iwidget) { display: flex; flex-direction: column;
+    background: transparent; border: 0; border-radius: 0; padding: 0;
+    margin: 0 auto clamp(3rem, 7vw, 5rem); }
+  .charts.story > figure:not(.iwidget):hover { border: 0; box-shadow: none; }
+  .charts.story > figure:not(.iwidget) > figcaption { order: -1; text-align: start;
+    padding: 0; margin: 0 0 1.1rem; color: var(--muted); font-size: 1.02rem;
+    line-height: 1.5; max-width: 64ch; }
+  .charts.story > figure:not(.iwidget) > figcaption .fig-title { display: block;
+    font-family: var(--hdr); font-weight: 600; color: var(--ink);
+    font-size: clamp(1.4rem, 3.4vw, 2.05rem); line-height: 1.1; letter-spacing: -.01em;
+    margin-bottom: .4rem; text-wrap: balance; }
+  /* Interactive widgets keep their own head; just center and space them. */
+  .charts.story > .iwidget { max-width: 960px; margin: 0 auto clamp(3rem, 7vw, 5rem); }
+  [dir="rtl"] .charts.story > figure:not(.iwidget) > figcaption { text-align: start; }
+  /* Fullscreen must out-rank the story-section restyle above: its 3-class
+     selector beats plain figure:fullscreen, so without this the chart went
+     fullscreen with a TRANSPARENT background over the browser's default
+     black ::backdrop - a black screen instead of the site's paper look. */
+  .charts.story > figure:not(.iwidget):fullscreen {
+    background: var(--bg); padding: 1.25rem 1.5rem;
+  }
+  .charts.story > figure:not(.iwidget):-webkit-full-screen {
+    background: var(--bg); padding: 1.25rem 1.5rem;
+  }
+  /* And theme the backdrop itself, so nothing black can ever peek through. */
+  figure:fullscreen::backdrop { background: var(--bg); }
+  figure:-webkit-full-screen::backdrop { background: var(--bg); }
+  footer { text-align: center; color: var(--muted); font-size: .82rem;
+           padding: 2.5rem 1.5rem 3.5rem; border-top: 1px solid var(--line);
+           margin-top: 2.5rem; }
+  footer a { color: var(--accent); }
+  /* GitHub mark before the source link (icon, not just text). */
+  footer a[href*="github.com"]::before {
+    content: ""; display: inline-block; width: .95em; height: .95em;
+    margin-inline-end: .3em; vertical-align: -.15em;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%200C3.58%200%200%203.58%200%208c0%203.54%202.29%206.53%205.47%207.59.4.07.55-.17.55-.38%200-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01%201.08.58%201.23.82.72%201.21%201.87.87%202.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95%200-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12%200%200%20.67-.21%202.2.82.64-.18%201.32-.27%202-.27.68%200%201.36.09%202%20.271.53-1.04%202.2-.82%202.2-.82.44%201.1.16%201.92.08%202.12.51.56.82%201.27.82%202.15%200%203.07-1.87%203.75-3.65%203.95.29.25.54.73.54%201.48%200%201.07-.01%201.93-.01%202.2%200%20.21.15.46.55.38A8.013%208.013%200%200%200%2016%208c0-4.42-3.58-8-8-8z%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%200C3.58%200%200%203.58%200%208c0%203.54%202.29%206.53%205.47%207.59.4.07.55-.17.55-.38%200-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01%201.08.58%201.23.82.72%201.21%201.87.87%202.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95%200-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12%200%200%20.67-.21%202.2.82.64-.18%201.32-.27%202-.27.68%200%201.36.09%202%20.271.53-1.04%202.2-.82%202.2-.82.44%201.1.16%201.92.08%202.12.51.56.82%201.27.82%202.15%200%203.07-1.87%203.75-3.65%203.95.29.25.54.73.54%201.48%200%201.07-.01%201.93-.01%202.2%200%20.21.15.46.55.38A8.013%208.013%200%200%200%2016%208c0-4.42-3.58-8-8-8z%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;
+  }
+
+/* Deep-link anchor appended to each chart caption by _page.js. */
+.sec-link { text-decoration:none; opacity:.45; font-weight:700;
+            margin-inline-start:.35rem; }
+.sec-link:hover { opacity:1; }
+.sec-link.ok { color:var(--good); opacity:1; }
+/* Anchored scrolls land below the sticky top bar. */
+figure[id^="sec-"] { scroll-margin-top:4.5rem; }
