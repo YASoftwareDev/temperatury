@@ -1607,8 +1607,44 @@ ${chart_js}
     }
 
     // --- quick-view card: click a dot for headline stats, not a hard jump -----
-    var cardPopup = new maplibregl.Popup({ closeButton: true, closeOnClick: true,
+    /* closeOnClick is off: the card now opens on hover AND on tap, and the
+       built-in handler would race the tap - closing the popup the same click
+       just opened. Dismissal is explicit (hover out, close button, or a click
+       away, wired below). */
+    var cardPopup = new maplibregl.Popup({ closeButton: true, closeOnClick: false,
                                            maxWidth: '300px', offset: 10 });
+    /* The card opens on hover. Two things that has to get right:
+       - mousemove fires continuously over a dot, so rebuild only when the
+         hovered feature actually changes, otherwise the DOM is thrown away
+         mid-interaction and the card flickers;
+       - the card holds a link, so leaving the dot starts a short timer instead
+         of closing outright, and hovering the card itself cancels it. */
+    var cardKey = null, cardTimer = null;
+    function cancelCardClose() {
+      if (cardTimer) { clearTimeout(cardTimer); cardTimer = null; }
+    }
+    function scheduleCardClose() {
+      cancelCardClose();
+      cardTimer = setTimeout(function () { cardPopup.remove(); }, 260);
+    }
+    cardPopup.on('close', function () { cardKey = null; cancelCardClose(); });
+    function showCard(f) {
+      cancelCardClose();
+      popup.remove();                       // drop the plain name tooltip
+      var p = f.properties;
+      var key = (p.s || '') + '|' + p.n;
+      if (key === cardKey && cardPopup.isOpen()) return;   // same dot, leave it be
+      cardKey = key;
+      cardPopup.setLngLat(f.geometry.coordinates)
+               .setDOMContent(qvCard(p)).addTo(map);
+      // Re-wire per open: MapLibre builds a fresh container each addTo.
+      var el = cardPopup.getElement();
+      if (el && !el.hoverWired) {
+        el.hoverWired = true;
+        el.addEventListener('mouseenter', cancelCardClose);
+        el.addEventListener('mouseleave', scheduleCardClose);
+      }
+    }
     var rankIdx = null;
     function rankOf(slug) {
       // The ranking arrives with _global.json (window.__gd); before it loads
@@ -1708,15 +1744,21 @@ ${chart_js}
           'circle-stroke-width': 0.8, 'circle-stroke-color': '#ffffff' } });
 
       map.on('mouseenter', 'cities', function () { map.getCanvas().style.cursor = 'pointer'; });
-      map.on('mousemove', 'cities', function (e) {
-        popup.setLngLat(e.lngLat).setText(e.features[0].properties.n).addTo(map);
+      map.on('mousemove', 'cities', function (e) { showCard(e.features[0]); });
+      // Closing is deferred: the card carries a link, so the pointer has to be
+      // able to travel from the dot onto the card without it vanishing en route.
+      map.on('mouseleave', 'cities', function () {
+        map.getCanvas().style.cursor = ''; scheduleCardClose();
       });
-      map.on('mouseleave', 'cities', function () { map.getCanvas().style.cursor = ''; popup.remove(); });
       map.on('click', 'cities', function (e) {
-        popup.remove();
-        var f = e.features[0];
-        cardPopup.setLngLat(f.geometry.coordinates)
-                 .setDOMContent(qvCard(f.properties)).addTo(map);
+        // Still needed on touch, where no hover event ever fires.
+        showCard(e.features[0]);
+      });
+      // Tapping empty map dismisses the card - on touch there is no mouseleave
+      // to do it, so without this the card would stay pinned.
+      map.on('click', function (e) {
+        if (map.queryRenderedFeatures(e.point, { layers: ['cities'] }).length) return;
+        cancelCardClose(); cardPopup.remove();
       });
       map.on('mousemove', 'refs', function (e) {
         popup.setLngLat(e.lngLat).setText(e.features[0].properties.n).addTo(map);
