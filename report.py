@@ -1666,13 +1666,48 @@ ${chart_js}
       return n;
     }
     function qvSigned(v, dec) { return (v >= 0 ? '+' : '') + v.toFixed(dec); }
-    function qvStripeColor(v) {   // same fixed blue->white->red scale as the ranking
-      function lerp(a, b, t) { return Math.round(a + (b - a) * t); }
-      var lo = -1.0, hi = 1.5, x = Math.max(lo, Math.min(hi, v));
-      if (x < 0) { var t = (x - lo) / (0 - lo);
-        return 'rgb(' + lerp(8, 247, t) + ',' + lerp(48, 247, t) + ',' + lerp(107, 247, t) + ')'; }
-      var u = x / hi;
-      return 'rgb(' + lerp(247, 103, u) + ',' + lerp(247, 0, u) + ',' + lerp(247, 13, u) + ')';
+    function qvCss(name, fb) {   // themed token, light default as fallback
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fb;
+    }
+    // The nine decade-mean anomalies (vs the 1961-1990 normal) drawn as a
+    // filled area: the rise reads as a shape before any number. Warm/cool by
+    // the sign of the latest decade; nulls (decades with no data) are skipped,
+    // so a short record just starts the curve later. Returns null when fewer
+    // than two decades exist - nothing legible to plot.
+    function qvSpark(st) {
+      var pts = [];
+      for (var i = 0; i < st.length; i++)
+        if (st[i] != null) pts.push({ i: i, v: st[i] });
+      if (pts.length < 2) return null;
+      var W = 232, H = 52, padX = 6, padT = 6, padB = 6;
+      var vals = pts.map(function (p) { return p.v; });
+      var lo = Math.min.apply(null, vals.concat(0));
+      var hi = Math.max.apply(null, vals.concat(0.001));
+      var range = hi - lo || 1;
+      var iw = W - 2 * padX, ih = H - padT - padB, span = (st.length - 1) || 1;
+      function X(i) { return padX + i * (iw / span); }
+      function Y(v) { return padT + ih - ((v - lo) / range) * ih; }
+      var lv = pts[pts.length - 1].v;
+      var col = lv >= 0 ? qvCss('--warm', '#d62728') : qvCss('--cool', '#2b6ca3');
+      var hair = qvCss('--line', 'rgba(120,120,120,.4)');
+      var zeroY = Y(0).toFixed(1);
+      var poly = pts.map(function (p) { return X(p.i).toFixed(1) + ',' + Y(p.v).toFixed(1); }).join(' ');
+      var x0 = X(pts[0].i).toFixed(1), xN = X(pts[pts.length - 1].i).toFixed(1);
+      var gid = 'qvg' + Math.round(Y(0));
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H
+        + '" width="100%" height="' + H + '" class="qv-spark" role="img" aria-label="'
+        + (QV.chartAlt || 'Decade warming trend') + '">'
+        + '<line x1="' + padX + '" y1="' + zeroY + '" x2="' + (W - padX) + '" y2="' + zeroY
+        + '" stroke="' + hair + '" stroke-width="1" stroke-dasharray="2 3"/>'
+        + '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">'
+        + '<stop offset="0" stop-color="' + col + '" stop-opacity=".34"/>'
+        + '<stop offset="1" stop-color="' + col + '" stop-opacity="0"/></linearGradient></defs>'
+        + '<polygon points="' + x0 + ',' + zeroY + ' ' + poly + ' ' + xN + ',' + zeroY
+        + '" fill="url(#' + gid + ')"/>'
+        + '<polyline points="' + poly + '" fill="none" stroke="' + col
+        + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+        + '<circle cx="' + xN + '" cy="' + Y(lv).toFixed(1) + '" r="3.4" fill="' + col + '"/></svg>';
     }
     function qvCard(p) {
       var root = qvEl('div', 'qv');
@@ -1690,14 +1725,13 @@ ${chart_js}
                               '#' + rk.pos + ' / ' + rk.total + ' · '
                               + QV.faster.replace('{pct}', pct)));
         if (rk.row.st && rk.row.st.length) {
-          var stw = qvEl('div', 'qv-stripes');
-          stw.setAttribute('aria-hidden', 'true');
-          rk.row.st.forEach(function (v) {
-            var b = qvEl('i');
-            if (v != null) b.style.background = qvStripeColor(v);
-            stw.appendChild(b);
-          });
-          root.appendChild(stw);
+          var svg = qvSpark(rk.row.st);
+          if (svg) {
+            var w = qvEl('div', 'qv-sparkwrap');
+            w.innerHTML = svg;   // built from numbers + theme tokens, no user data
+            root.appendChild(w);
+            root.appendChild(qvEl('div', 'qv-cap', QV.baseline));
+          }
         }
       }
       if (p.s) {
@@ -2372,6 +2406,8 @@ def build_map_page(
         "perDecade": tr.get("per_decade_c", "°C / decade"),
         "nodata": tr.get("qv_nodata", "No data for this city yet."),
         "nearest": tr.get("qv_nearest", "Nearest analysed city"),
+        "baseline": tr.get("qv_baseline", "Decade averages vs the 1961-1990 baseline"),
+        "chartAlt": tr.get("qv_chart_alt", "Decade-by-decade warming, filled area chart"),
     }, ensure_ascii=False)
     # KPI band + zone sparkline cards: the landing's headline numbers, all
     # server-rendered from the same cell-weighted series the charts draw.
