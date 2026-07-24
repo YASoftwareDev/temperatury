@@ -251,6 +251,7 @@ ${chart_js}
     <div class="rh-figure"><span>${trend}</span><span class="rh-unit"${trend_unit_attr}>${trend_unit}</span></div>
     <p class="rh-meta"${hero_meta_attr}>${hero_meta}</p>
     ${hero_pct}
+    ${hero_spark_block}
     <div class="rh-chips">
       <div class="rh-chip"><span${card_mean_attr}>${card_mean}</span><b>${mean} °C</b></div>
       <div class="rh-chip"><span${card_warmest_attr}>${card_warmest}</span><b>${warmest_year}</b></div>
@@ -910,6 +911,20 @@ def build_site(
     hero_bg = _stripe_gradient_css([float(v) for v in (_means - _baseline)])
     _span = max(1, stats["end"] - stats["start"])
     _dt = stats["trend_per_decade"] * _span / 10.0
+    # Data-forward hero: the decade anomalies as a filled area chart (same idiom
+    # as the map card), server-rendered as inline SVG so it needs no client JS.
+    _decades = _decade_anomalies(_means, _baseline)
+    hero_spark = _hero_spark_svg(_decades, tr.get("qv_chart_alt",
+                                 "Decade-by-decade warming, filled area chart"))
+    _dfirst = next((d0 for d0, v in zip(range(1940, 2030, 10), _decades)
+                    if v is not None), 1940)
+    _dlast = next((d0 for d0, v in zip(range(2020, 1930, -10), reversed(_decades))
+                   if v is not None), 2020)
+    hero_spark_block = (
+        f'<div class="rh-spark-wrap">{hero_spark}'
+        f'<div class="rh-spark-axis"><span>{_dfirst}</span>'
+        f'<span>{_dlast}</span></div></div>'
+    ) if hero_spark else ""
     hero_range = f"{stats['start']}-{stats['end']}"
     hero_meta = _hero_str(lang, "since").format(v=f"<b>{_signed(_dt, 1)} °C</b>")
     hero_meta_attr = _i18n_attr("hero_since",
@@ -1189,6 +1204,7 @@ def build_site(
         hero_meta=hero_meta,
         hero_meta_attr=hero_meta_attr,
         hero_pct=hero_pct,
+        hero_spark_block=hero_spark_block,
         i18n_head=_i18n_head(slug, lang, _switch_langs, location.name),
         # Static localized labels: keyed for the client runtime ("" when the
         # flag is off). {name} for figure titles is auto-provided client-side.
@@ -2374,6 +2390,58 @@ def _stripe_gradient_css(st: list) -> str:
         r, g, b = _stripe_rgb(v)
         stops.append(f"rgb({r},{g},{b}) {i * 100 / n:.2f}% {(i + 1) * 100 / n:.2f}%")
     return "linear-gradient(96deg," + ",".join(stops) + ")" if stops else "none"
+
+
+def _decade_anomalies(means, baseline) -> list:
+    """Nine decade-mean anomalies (degC vs the 1961-1990 baseline), 1940s..2020s,
+    None where a decade has no data - the same series the map card draws, but
+    computed from this city's own annual means."""
+    out = []
+    for d0 in range(1940, 2030, 10):
+        yrs = means[(means.index >= d0) & (means.index < d0 + 10)]
+        out.append(round(float(yrs.mean() - baseline), 2) if len(yrs) else None)
+    return out
+
+
+def _hero_spark_svg(decades: list, alt: str = "") -> str:
+    """The decade anomalies as a filled area chart for the city-page hero, in the
+    same visual language as the map quick-view card. Colours come from CSS classes
+    (currentColor + --warm/--cool via .warm/.cool), so a theme switch re-colours it
+    with no JS. Warm/cool by the sign of the latest decade; nulls are skipped."""
+    pts = [(i, v) for i, v in enumerate(decades) if v is not None]
+    if len(pts) < 2:
+        return ""
+    W, H, padX, padT, padB = 880, 132, 6, 12, 12
+    vals = [v for _, v in pts]
+    lo = min(vals + [0.0])
+    hi = max(vals + [0.001])
+    rng = (hi - lo) or 1
+    iw = W - 2 * padX
+    ih = H - padT - padB
+    span = (len(decades) - 1) or 1
+
+    def X(i):
+        return padX + i * (iw / span)
+
+    def Y(v):
+        return padT + ih - ((v - lo) / rng) * ih
+
+    lv = pts[-1][1]
+    cls = "warm" if lv >= 0 else "cool"
+    zero = f"{Y(0):.1f}"
+    poly = " ".join(f"{X(i):.1f},{Y(v):.1f}" for i, v in pts)
+    x0, xn = f"{X(pts[0][0]):.1f}", f"{X(pts[-1][0]):.1f}"
+    return (
+        f'<svg class="rh-spark {cls}" viewBox="0 0 {W} {H}" role="img" '
+        f'aria-label="{_esc(alt)}">'
+        f'<line class="rh-spark-base" x1="{padX}" y1="{zero}" x2="{W - padX}" y2="{zero}"/>'
+        '<defs><linearGradient id="rhg" x1="0" y1="0" x2="0" y2="1">'
+        '<stop class="rh-spark-g0" offset="0"/>'
+        '<stop class="rh-spark-g1" offset="1"/></linearGradient></defs>'
+        f'<polygon class="rh-spark-fill" points="{x0},{zero} {poly} {xn},{zero}"/>'
+        f'<polyline class="rh-spark-line" points="{poly}"/>'
+        f'<circle class="rh-spark-dot" cx="{xn}" cy="{Y(lv):.1f}" r="4"/></svg>'
+    )
 
 
 def _trend_percentile(t: float, sorted_trends: list) -> int:
