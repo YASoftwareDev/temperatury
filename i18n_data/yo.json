@@ -166,5 +166,7 @@
   "season_spring": "ìgbà ìrúwé",
   "season_summer": "ìgbà ẹ̀ẹ̀rùn",
   "season_autumn": "ìgbà ìwọ́wé",
-  "grid_alias_note": "A ń ṣírò àkọsílẹ̀ ìgbóná fún sẹ́ẹ̀lì àkànrí data ojú-ọjọ́ tí ó tó ~11 km. {alias} pín sẹ́ẹ̀lì rẹ̀ pẹ̀lú {city}, nítorí náà àwọn méjèèjì ń fi àkọsílẹ̀ kan náà hàn láti 1940."
+  "grid_alias_note": "A ń ṣírò àkọsílẹ̀ ìgbóná fún sẹ́ẹ̀lì àkànrí data ojú-ọjọ́ tí ó tó ~11 km. {alias} pín sẹ́ẹ̀lì rẹ̀ pẹ̀lú {city}, nítorí náà àwọn méjèèjì ń fi àkọsílẹ̀ kan náà hàn láti 1940.",
+  "qv_baseline": "Awọn aropin ọdun mẹwa vs ipilẹ 1961-1990",
+  "qv_chart_alt": "Imurusi ọdun mẹwa nipasẹ mewa, aworan agbegbe ti o kun"
 }

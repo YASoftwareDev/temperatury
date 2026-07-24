@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (vaara)",
   "cap_heatindex": "Päivisin näennäinen lämpötila (lämpöindeksi, joka taittuu kosteudessa) saavuttaa lämpöstressitasot, käyttää metristä julkista lämpöä. Tarvitsee näennäislämpötilatietojoukon.",
   "footer": "Luotu {date} · tiedot <a href=\"https://open-meteo.com/\">Open-Meteo</a> historiallisesta uudelleenanalyysistä (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">lähde GitHubissa</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Vuosikymmenen keskiarvot vs. 1961-1990 perusviiva",
+  "qv_chart_alt": "Vuosikymmen vuosikymmeneltä lämpeneminen, täytetty aluekaavio"
 }

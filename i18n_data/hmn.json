@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (kev phom sij)",
   "cap_heatindex": "Hnub uas pom tseeb qhov kub thiab txias (qhov ntsuas cua sov, uas folds hauv cov av noo) nce mus txog qhov kub thiab txias, cov lus qhia txog kev siv hluav taws xob rau pej xeem siv. Xav tau cov ntaub ntawv qhia meej-kub.",
   "footer": "Generated {date} · cov ntaub ntawv los ntawm <a href=\"https://open-meteo.com/\">Open-Meteo</a> keeb kwm reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source ntawm GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Xyoo caum nruab nrab vs lub hauv paus ntawm 1961-1990",
+  "qv_chart_alt": "Xyoo caum-los-xyoo-laus ua kom sov, puv cheeb tsam daim ntawv"
 }

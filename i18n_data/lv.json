@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (bīstamība)",
   "cap_heatindex": "Dienās redzamā temperatūra (siltuma indekss, kas salokās mitrumā) sasniedz karstuma stresa līmeni, izmanto metrisko publisko siltuma ieteikumu. Nepieciešama šķietamās temperatūras datu kopa.",
   "footer": "Ģenerēti {date} · dati no <a href=\"https://open-meteo.com/\">Open-Meteo</a> vēsturiskās atkārtotās analīzes (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">avots vietnē GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Desmitgades vidējie rādītāji salīdzinājumā ar 1961.–1990. gada bāzes līniju",
+  "qv_chart_alt": "Gadu desmitu gadu sasilšana, aizpildīta apgabala diagramma"
 }

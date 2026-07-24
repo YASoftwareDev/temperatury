@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (ሓደጋ)",
   "cap_heatindex": "መዓልታት እቲ ርኡይ ሙቐት (መዐቀኒ ሙቐት፡ ኣብ ርስሓት ዝዕጸፍ) ኣብ ደረጃታት ዋዒ-ጸቕጢ ይበጽሕ፡ እቶም ሜትሪክ ህዝባዊ ኣማኸርቲ ሙቐት ይጥቀሙ። እቲ ርኡይ-ሙቐት ዳታሴት የድልዮ።",
   "footer": "ካብ <a href=\"https://open-meteo.com/\">Open-Meteo</a> ታሪኻዊ ዳግመ ትንተና (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">ፍልፍል ኣብ GitHub</a> ዝተረኽበ {date} · መረዳእታ",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "ማእከላይ ደረጃታት ዓሰርተ ዓመት ኣንጻር መበገሲ 1961-1990",
+  "qv_chart_alt": "ዓሰርተ ዓመት ብዓሰርተ ዓመት ምውዓይ፣ ዝተመልአ ሰንጠረዥ ከባቢ"
 }

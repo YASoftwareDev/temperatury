@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (tulaga matautia)",
   "cap_heatindex": "O aso e o'o atu ai le vevela (fa'ailoga o le vevela, lea e gaugau i le susū) i le maualuga o le vevela, e fa'aaoga e fautuaga fa'a vevela lautele. E mana'omia le fa'amaumauga manino-vevela.",
   "footer": "Fausia {date} · fa'amaumauga mai le <a href=\"https://open-meteo.com/\">Tatala-Meteo</a> su'esu'ega fa'asolopito (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">puna i GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Sefulu tausaga averesi vs le 1961-1990 laina faavae",
+  "qv_chart_alt": "Fa'amafanafana le sefulu tausaga ma le sefulu tausaga, fa'atumu siata o le eria"
 }

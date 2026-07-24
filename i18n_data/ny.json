@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (ngozi)",
   "cap_heatindex": "Masiku omwe amawonekera kutentha (chilozera cha kutentha, chomwe chimapindika mu chinyezi) chimafikira kupsinjika kwa kutentha, upangiri wa kutentha kwa anthu amagwiritsa ntchito. Pamafunika deta yowonekera-kutentha.",
   "footer": "Zapangidwa {date} · zochokera ku <a href=\"https://open-meteo.com/\">Open-Meteo</a> mbiriyakale ya reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">gwero pa GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Zaka khumi zapakati poyerekeza ndi zoyambira za 1961-1990",
+  "qv_chart_alt": "Kutentha kwazaka khumi ndi khumi, tchati chodzaza malo"
 }

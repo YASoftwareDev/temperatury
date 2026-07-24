@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (pilikia)",
   "cap_heatindex": "ʻO nā lā e hiki ai ka mahana (heat index, e pelu ana i ka haʻahaʻa) i nā pae wela-koʻikoʻi, e hoʻohana ʻia nā ʻōlelo aʻoaʻo wela lehulehu. Pono ka ʻikepili ʻike wela.",
   "footer": "Hana ʻia {date} · ʻikepili mai <a href=\"https://open-meteo.com/\">Open-Meteo</a> hōʻike hou i ka mōʻaukala (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">kumu ma GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "ʻO nā awelika he ʻumi makahiki ma mua o ka 1961-1990 baseline",
+  "qv_chart_alt": "ʻO ka hoʻomehana ʻana i nā makahiki he ʻumi, piha ka pakuhi ʻāpana"
 }

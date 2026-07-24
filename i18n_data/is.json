@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (hætta)",
   "cap_heatindex": "Daga sem sýnilegur hitastig (hitavísitala, sem fellur saman rakastig) nær hitaálagi, nota mæligildi opinberra hitaráðgjafa. Þarfnast gagnasafnsins fyrir sýnilegt hitastig.",
   "footer": "Búið til {date} · gögn frá <a href=\"https://open-meteo.com/\">Open-Meteo</a> sögulegri endurgreiningu (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">heimild á GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Meðaltal áratuga samanborið við grunnlínu 1961-1990",
+  "qv_chart_alt": "Hlýnandi áratug fyrir áratug, fyllt svæðisrit"
 }

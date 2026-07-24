@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} ° C (howp)",
   "cap_heatindex": "Görkezilýän temperatura (çyglylykda bukulýan ýylylyk görkezijisi) ýylylyk stres derejesine ýetýär, köpçülikleýin ýylylyk geňeşçileri. Görkezilýän temperatura maglumatlar bazasyna mätäç.",
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Ortaça on ýyllyk ortaça 1961-1990",
+  "qv_chart_alt": "Onýyllykdan ýylylyk, doldurylan meýdan diagrammasy"
 }

@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (contúirt)",
   "cap_heatindex": "Laethanta sroicheann an teocht dealraitheach (innéacs teasa, a fillteann i taise) leibhéil strus teasa, úsáideann na comhairleoirí méadrach teasa poiblí. Tá an tacar sonraí de réir dealraimh de dhíth.",
   "footer": "Gineadh {date} · sonraí ó <a href=\"https://open-meteo.com/\">Open-Meteo</a> athanailís stairiúil (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> foinse ar GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Meáin deich mbliana vs bonnlíne 1961-1990",
+  "qv_chart_alt": "Téamh deich mbliana le deich mbliana, cairt limistéir líonta"
 }

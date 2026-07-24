@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (asiane).",
   "cap_heatindex": "Nna a ɛda adi sɛ ɔhyew (ɔhyew index, a ɛbobɔw wɔ ɔhyew mu) du ɔhyew-adwennwen dodow, metric ɔmanfo ɔhyew afotufo de di dwuma. Hia dataset a ɛda adi sɛ ɛyɛ hyew.",
   "footer": "Wɔayɛ {date} · nsɛm a efi <a href=\"https://open-meteo.com/\">Open-Meteo</a> abakɔsɛm mu nhwehwɛmu a wɔasan ayɛ (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fibea wɔ GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Mfe du mu nkyɛmu vs 1961-1990 mfiase",
+  "qv_chart_alt": "Mfe du biara ɔhyew, mpɔtam nhyehyɛe a wɔahyɛ no ma"
 }

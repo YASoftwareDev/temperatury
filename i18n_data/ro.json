@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (pericol)",
   "cap_heatindex": "Zilele în care temperatura aparentă (indicele de căldură, care se pliază în umiditate) atinge niveluri de stres termic, folosesc avizele publice de căldură metrice. Necesită setul de date despre temperatură aparentă.",
   "footer": "Generate {date} · date din <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanaliza istorică (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sursă pe GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Mediile deceniale față de linia de bază din 1961-1990",
+  "qv_chart_alt": "Încălzire deceniu-cu-deceniu, grafic cu suprafețe umplut"
 }

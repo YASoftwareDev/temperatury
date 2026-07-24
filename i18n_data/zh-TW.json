@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C（危險）",
   "cap_heatindex": "表觀溫度（熱指數，隨濕度變化）達到熱壓力水準的天數，是公共高溫諮詢所使用的公制單位。需要表觀溫度資料集。",
   "footer": "產生 {date} · 來自 <a href=\"https://open-meteo.com/\">Open-Meteo</a> 歷史重新分析 (ERA5) 的資料 · <a href=\"https://github.com/YASoftwareDev/temperatury\"> GitHub 上的原始碼</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "十年平均值與 1961-1990 年基線",
+  "qv_chart_alt": "逐年暖化的填充面積圖"
 }

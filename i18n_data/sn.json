@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (ngozi)",
   "cap_heatindex": "Mazuva anotaridzika tembiricha (inopisa indekisi, iyo inopeta mukunyorova) inosvika pakupisa-kushushikana mazinga, iyo metric yeruzhinji kupisa mazano anoshandisa. Inoda iyo inooneka-tembiricha dataset.",
   "footer": "Yakagadzirwa {date} · data kubva <a href=\"https://open-meteo.com/\">Open-Meteo</a> nhoroondo reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source paGitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Makumi emakore avhareji vs iyo 1961-1990 yekutanga",
+  "qv_chart_alt": "Makumi-ne-makore ekudziya, yakazara nzvimbo chati"
 }

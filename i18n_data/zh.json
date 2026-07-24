@@ -167,5 +167,7 @@
   "omni_places": "世界各地",
   "omni_anywhere": "检查任何地方：“{q}”",
   "nav_ranking": "排名",
-  "_mt_partial": true
+  "_mt_partial": true,
+  "qv_baseline": "十年平均值与 1961-1990 年基线",
+  "qv_chart_alt": "逐年变暖的填充面积图"
 }

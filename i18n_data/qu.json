@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (peligro).",
   "cap_heatindex": "P’unchawkuna chay rikukuq temperatura (índice de calor, mayqinchus humedadpi p’altakun) chayan niveles de temperatura-estrés nisqaman, chay consejeros de calor público métrico nisqa llamk’achisqanku. Rikukuq-ruphay willay huñuta necesitan.",
   "footer": "Rurachisqa {date} · willakuykunata <a href=\"https://open-meteo.com/\">Open-Meteo</a> ñawpaqmanta pacha musuqmanta t'aqwiymanta (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">pukyuta GitHub</a> nisqapi",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Chunka wata promediokuna vs 1961-1990 watakunapi",
+  "qv_chart_alt": "Chunka watamanta chunka wata q’uñichiy, hunt’asqa área chart"
 }

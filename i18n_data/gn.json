@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (peligroso).",
   "cap_heatindex": "Ára temperatura aparente (índice de calor, ojedobláva humedad-pe) oguahë nivel haku-estrés, umi asesoramiento métrico calor público oiporúva. Oikotevẽ pe datokuéra aparente-temperatura rehegua.",
   "footer": "Ojejapo {date} · marandu <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanálisis histórico (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fuente GitHub-pe</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Umi promedio década vs línea base 1961-1990",
+  "qv_chart_alt": "Década por década calentamiento, gráfico área henyhêva"
 }

@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (kotsi)",
   "cap_heatindex": "Matsatsi ao mocheso o bonahalang (index ea mocheso, e phuthoang ka mongobo) o fihla maemong a khatello ea mocheso, ho sebelisoa likeletso tsa mocheso oa sechaba. E hloka pokello ea lintlha tsa mocheso o hlakileng.",
   "footer": "E hlahisitsoe {date} · data ho tsoa ho <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanalysis ea nalane (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> mohloli ho GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Kakaretso ea lilemo tse leshome khahlano le motheo oa 1961-1990",
+  "qv_chart_alt": "Ho futhumala ha lilemo-leshome, ho tletse chate ea sebaka"
 }

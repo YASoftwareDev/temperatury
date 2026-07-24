@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (veszély)",
   "cap_heatindex": "Napokon a látszólagos hőmérséklet (hőindex, amely a páratartalomban gyűrődik) eléri a hőstressz szintet, használja a metrikus nyilvános hőtájékoztató. Szüksége van a látszólagos hőmérséklet adatkészletére.",
   "footer": "{date} generált · adatok az <a href=\"https://open-meteo.com/\">Open-Meteo</a> történelmi újraelemzésből (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">forrás a GitHubon</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Évtizedes átlagok az 1961-1990 közötti időszakhoz képest",
+  "qv_chart_alt": "Évtizedről évtizedre felmelegedés, kitöltött területdiagram"
 }

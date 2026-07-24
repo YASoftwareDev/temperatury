@@ -167,5 +167,7 @@
   "omni_places": "전세계 장소",
   "omni_anywhere": "아무 곳이나 확인하세요: \"{q}\"",
   "nav_ranking": "순위",
-  "_mt_partial": true
+  "_mt_partial": true,
+  "qv_baseline": "10년 평균과 1961~1990년 기준 비교",
+  "qv_chart_alt": "10년별 온난화, 채워진 영역 차트"
 }

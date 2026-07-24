@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (likama).",
   "cap_heatindex": "Mikolo température apparente (indice ya chaleur, oyo e plier na humidité) ekomaka na niveau ya chaleur-stress, ba conseils métriques ya chaleur publique esalela. Esengeli na ensemble ya ba données ya température apparente.",
   "footer": "Ba données oyo esalemi {date} · oyo euti na <a href=\"https://open-meteo.com/\">Open-Meteo</a> réanalyse historique (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source na GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Moyennes ya décennie vs base ya 1961-1990",
+  "qv_chart_alt": "Bokóli ya molunge ya mbula zomi na zomi, etanda ya etando oyo etondi"
 }

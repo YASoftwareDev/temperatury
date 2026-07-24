@@ -167,5 +167,7 @@
   "omni_places": "Tempat di seluruh dunia",
   "omni_anywhere": "Periksa tempat mana saja: \"{q}\"",
   "nav_ranking": "Peringkat",
-  "_mt_partial": true
+  "_mt_partial": true,
+  "qv_baseline": "Rata-rata satu dekade vs data dasar tahun 1961-1990",
+  "qv_chart_alt": "Pemanasan dekade demi dekade, mengisi grafik area"
 }

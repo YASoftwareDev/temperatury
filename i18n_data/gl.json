@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (perigo)",
   "cap_heatindex": "Os días que a temperatura aparente (índice de calor, que se dobra na humidade) alcanza niveis de estrés térmico, empregan os avisos de calor públicos métricos. Necesita o conxunto de datos de temperatura aparente.",
   "footer": "Xeráronse {date} · datos de <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanálise histórica (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fonte en GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Medias da década fronte á referencia de 1961-1990",
+  "qv_chart_alt": "Quentamento década a década, gráfico de áreas cubertos"
 }

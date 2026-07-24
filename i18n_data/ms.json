@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (bahaya)",
   "cap_heatindex": "Hari suhu ketara (indeks haba, yang dilipat dalam kelembapan) mencapai tahap tekanan haba, metrik nasihat haba awam digunakan. Memerlukan set data suhu ketara.",
   "footer": "Dijana {date} · data daripada <a href=\"https://open-meteo.com/\">Open-Meteo</a> analisis semula sejarah (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sumber pada GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Purata dekad berbanding garis dasar 1961-1990",
+  "qv_chart_alt": "Pemanasan dekad demi dekad, carta kawasan terisi"
 }

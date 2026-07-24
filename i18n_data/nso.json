@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (kotsi).",
   "cap_heatindex": "Matšatši themperetšha ye e bonagalago (tšhupamabaka ya phišo, yeo e phuthwago ka monola) e fihla maemong a phišo-kgateletšego, metric ya dikeletšo tša phišo ya setšhaba e di šomiša. Hloka dataset bonahalang-mocheso.",
   "footer": "E tšweleditšwe {date} · ya data go tšwa go <a href=\"https://open-meteo.com/\">Open-Meteo</a> tshekatsheko ya histori gape (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">mohlodi go GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Dipalogare tša mengwaga ye lesome vs motheo wa 1961-1990",
+  "qv_chart_alt": "Go ruthetša ga nywaga e lesome ka nywaga e lesome, tšhate ya lefelo yeo e tletšego"
 }

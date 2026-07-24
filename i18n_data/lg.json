@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (akabi).",
   "cap_heatindex": "Ennaku ebbugumu erirabika (omuwendo gw’ebbugumu, oguzinga mu bunnyogovu) lituuka ku madaala g’ebbugumu-okunyigirizibwa, metric public heat advisories ze zikozesa. Yeetaaga dataset ya bbugumu erirabika.",
   "footer": "Ebikoleddwa {date} · data okuva mu <a href=\"https://open-meteo.com/\">Open-Meteo</a> okuddamu okwekenneenya ebyafaayo (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">ensibuko ku GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Average z’emyaka kkumi vs 1961-1990 baseline",
+  "qv_chart_alt": "Okubuguma kw’emyaka kkumi ku kkumi, ekipande ky’ekitundu ekijjudde"
 }

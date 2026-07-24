@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (bebaya)",
   "cap_heatindex": "Dina suhu katon (indeks panas, sing lempitan ing asor) tekan tingkat panas-kaku, metrik umum panas advisories digunakake. Butuh dataset suhu sing katon.",
   "footer": "Dihasilake {date} · data saka <a href=\"https://open-meteo.com/\">Open-Meteo</a> analisis ulang historis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sumber ing GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Rata-rata dasawarsa vs garis dasar 1961-1990",
+  "qv_chart_alt": "Pemanasan dasawarsa-dasawarsa, bagan wilayah sing diisi"
 }

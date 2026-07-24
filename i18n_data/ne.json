@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (खतरा)",
   "cap_heatindex": "स्पष्ट तापक्रम (तातो सूचकांक, जुन आर्द्रतामा तह) तातो-तनावको स्तरमा पुग्छ, मेट्रिक सार्वजनिक ताप सल्लाहहरू प्रयोग गर्दछ। स्पष्ट-तापमान डेटासेट चाहिन्छ।",
   "footer": "उत्पन्न {date} · डाटा <a href=\"https://open-meteo.com/\">Open-Meteo</a> ऐतिहासिक पुनर्विश्लेषण (ERA5) बाट · <a href=\"https://github.com/YASoftwareDev/temperatury\">स्रोत GitHub</a> मा",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "दशक औसत बनाम 1961-1990 आधार रेखा",
+  "qv_chart_alt": "दशक-दशक तापक्रम, भरिएको क्षेत्र चार्ट"
 }

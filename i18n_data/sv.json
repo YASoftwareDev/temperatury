@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (fara)",
   "cap_heatindex": "Dagar då den skenbara temperaturen (värmeindex, som fälls in fuktighet) når värmestressnivåer, använder de metriska offentliga värmerådgivningarna. Behöver datauppsättningen för skenbar temperatur.",
   "footer": "Genererade {date} · data från <a href=\"https://open-meteo.com/\">Open-Meteo</a> historisk omanalys (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">källa på GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Decenniumsmedelvärden jämfört med 1961-1990 baslinjen",
+  "qv_chart_alt": "Uppvärmning årtionde för årtionde, fyllt områdesdiagram"
 }

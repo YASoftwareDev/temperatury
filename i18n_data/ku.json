@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (xetere)",
   "cap_heatindex": "Rojên ku germahiya xuya (indeksa germê, ku di şilbûnê de diqelişe) digihîje astên stres-germê, şîretên germahiya giştî ya metrîk bikar tînin. Pêdivî ye ku databasa germahiya xuya.",
   "footer": "{date} hate çêkirin · Daneyên ji <a href=\"https://open-meteo.com/\">Open-Meteo</a> veavakirina dîrokî (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">çavkanî li ser GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Di navbera 1961-1990-an de navînî dehsal e",
+  "qv_chart_alt": "Deh sal-bi-deh sal germbûn, nexşeya devera dagirtî"
 }

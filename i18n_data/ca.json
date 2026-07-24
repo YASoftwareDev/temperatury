@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (perill)",
   "cap_heatindex": "Els dies que la temperatura aparent (índex de calor, que es doblega en la humitat) assoleix els nivells d'estrès per calor, utilitzen els avisos de calor públics mètrics. Necessita el conjunt de dades de temperatura aparent.",
   "footer": "S'han generat {date} · dades de <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanàlisi històrica (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">font a GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Mitjanes de la dècada respecte a la línia de base 1961-1990",
+  "qv_chart_alt": "Escalfament dècada a dècada, gràfic d'àrea omplert"
 }

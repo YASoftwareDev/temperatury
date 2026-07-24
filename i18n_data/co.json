@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (periculu)",
   "cap_heatindex": "Ghjorni chì a temperatura apparente (indici di calore, chì plega in l'umidità) righjunghji u nivellu di stress di calore, i cunsiglii di u calore publiche metricu utilizanu. Hè bisognu di u dataset di a temperatura apparente.",
   "footer": "Generate {date} · dati da <a href=\"https://open-meteo.com/\">Open-Meteo</a> rianalisi storica (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fonte in GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Media di a decada versus a basa di 1961-1990",
+  "qv_chart_alt": "Riscaldamentu di decenniu per decenniu, graficu di l'area piena"
 }

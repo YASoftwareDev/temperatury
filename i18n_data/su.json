@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (bahaya)",
   "cap_heatindex": "Dinten suhu semu (indéks panas, nu narilep dina asor) ngahontal tingkat panas-stress, nu métrik advisories panas umum dipaké. Peryogi dataset semu-suhu.",
   "footer": "Dihasilkeun {date} · data tina <a href=\"https://open-meteo.com/\">Open-Meteo</a> analisis ulang sajarah (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sumber dina GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Rata-rata dékade vs garis dasar 1961-1990",
+  "qv_chart_alt": "Pemanasan dékade-demi-dékade, bagan daérah dieusian"
 }

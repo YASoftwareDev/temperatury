@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (hlauhawm) a ni.",
   "cap_heatindex": "Ni tam takah chuan temperature langsar (heat index, humidity-a fold) chu heat-stress level a thleng a, chu chu metric public heat advisory-te chuan an hmang a ni. Apparent-temperature dataset a mamawh a ni.",
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Kum sawm chhunga averages vs 1961-1990 baseline",
+  "qv_chart_alt": "Kum sawm hnu kum sawm chhunga lum chhoh zel, area chart khata khat"
 }

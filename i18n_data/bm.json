@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (farati).",
   "cap_heatindex": "Tile minnu na funteni jiralen (funteni hakɛ, min bɛ foli nɛnɛ na) bɛ se funteni-degun hakɛ ma, foroba funteni ladilikanw bɛ baara kɛ ni o ye. Mako bɛ kunnafoni-falen-falen-yɔrɔ la min bɛ ye.",
   "footer": "{date} · kunnafoniw bɔra <a href=\"https://open-meteo.com/\">Open-Meteo</a> tariku sɛgɛsɛgɛli seginni (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> sɔrɔyɔrɔ GitHub kan</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "San tan hakɛw ni san 1961-1990 daminɛw cɛ",
+  "qv_chart_alt": "San tan ni tan sumaya, yɔrɔ falen jatebɔ"
 }

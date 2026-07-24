@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (അപകടം)",
   "cap_heatindex": "മെട്രിക് പബ്ലിക് ഹീറ്റ് അഡൈ്വസറികൾ ഉപയോഗിക്കുന്ന പ്രകടമായ ഊഷ്മാവ് (ഹീറ്റ് ഇൻഡക്സ്, ആർദ്രതയിൽ മടക്കിക്കളയുന്നു) താപ-സമ്മർദ്ദ നിലയിലെത്തുന്നു. ദൃശ്യ-താപനില ഡാറ്റാഗണം ആവശ്യമാണ്.",
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "1961-1990 അടിസ്ഥാനരേഖയ്‌ക്കെതിരെ ദശാബ്ദ ശരാശരി",
+  "qv_chart_alt": "ദശാബ്ദങ്ങൾക്കുള്ളിൽ താപനം, നിറഞ്ഞ ഏരിയ ചാർട്ട്"
 }

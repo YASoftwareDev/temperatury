@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (pavojus)",
   "cap_heatindex": "Dienomis matoma temperatūra (šilumos indeksas, susilenkiantis dėl drėgmės) pasiekia šilumos streso lygį, naudojami metriniai viešieji šilumos patarimai. Reikia tariamosios temperatūros duomenų rinkinio.",
   "footer": "Sugeneruoti {date} · duomenys iš <a href=\"https://open-meteo.com/\">Open-Meteo</a> istorinės pakartotinės analizės (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> šaltinis GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Dešimtmečio vidurkiai, palyginti su 1961–1990 m. bazine linija",
+  "qv_chart_alt": "Dešimtmetis po dešimtmečio atšilimas, užpildyta plotų diagrama"
 }

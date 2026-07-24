@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (ingozi)",
   "cap_heatindex": "Iintsuku iqondo lobushushu elibonakalayo (isalathiso sobushushu, esigoqeka kumswakama) sifikelela kumanqanaba oxinzelelo lobushushu, kusetyenziswa i-metric yobushushu boluntu. Ifuna iseti yedatha yobushushu obubonakalayo.",
   "footer": "Yenziwe {date} · idatha esuka <a href=\"https://open-meteo.com/\">Open-Meteo</a> uhlaziyo lwembali (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source kwiGitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Ishumi leminyaka eliphakathi ngokuchasene nesiseko sika-1961-1990",
+  "qv_chart_alt": "Ukufudumala kweshumi leminyaka, itshathi yendawo egcweleyo"
 }

@@ -167,5 +167,7 @@
   "omni_places": "Lugares em todo o mundo",
   "omni_anywhere": "Marque qualquer lugar: \"{q}\"",
   "nav_ranking": "Classificação",
-  "_mt_partial": true
+  "_mt_partial": true,
+  "qv_baseline": "Médias da década versus a linha de base de 1961-1990",
+  "qv_chart_alt": "Aquecimento década a década, gráfico de área preenchida"
 }

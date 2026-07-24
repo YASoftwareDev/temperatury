@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (arriskua)",
   "cap_heatindex": "Itxurazko tenperatura (bero-indizea, hezetasunean tolesten dena) bero-estres mailara iristen den egunetan, bero publikoaren gomendio metrikoak erabiltzen dituzte. Itxurazko tenperaturaren datu-multzoa behar du.",
   "footer": "Sortutako {date} · <a href=\"https://open-meteo.com/\">Open-Meteo</a> biranalisi historikotik (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">iturri GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Hamarkadako batez bestekoak 1961-1990 oinarrizko lerroaren aldean",
+  "qv_chart_alt": "Hamarkadaz hamarkada beroketa, eremu-diagrama betea"
 }

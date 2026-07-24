@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (dɛnja).",
   "cap_heatindex": "Dez di apεrεnt tεmprachכ (hεt indεks, we de fold in humidity) de rich hεt-strεs lεvεl, di mεtrik pכblik hεt advayz dεm de yuz. Nid di apɔrint-tɛmpracha datasɛt.",
   "footer": "Jɛnɛret {date} · data frɔm <a href=\"https://open-meteo.com/\">Open-Meteo</a> histrikal rianalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sɔs na GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Dikɛd avɛrej vs di 1961-1990 beslayn",
+  "qv_chart_alt": "Dikɛd-bay-deka wam, ful-ɔp eria chɔt"
 }

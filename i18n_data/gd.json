@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} ° C (cunnart)",
   "cap_heatindex": "Làithean tha an teòthachd a tha coltach (clàr-amais teas, a bhios a ’pasgadh ann an taiseachd) a’ ruighinn ìrean cuideam teas, bidh na comhairlichean teas poblach meatrach a ’cleachdadh. Tha feum air an dàta teodhachd follaiseach.",
   "footer": "Gineadh {date} · dàta bho <a href=\"https://open-meteo.com/\">Open-Meteo</a> ath-sgrùdadh eachdraidheil (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> stòr air GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Cuibheasachd deichead vs bun-loidhne 1961-1990",
+  "qv_chart_alt": "Blàthachadh deich bliadhna às deidh deich bliadhna, clàr sgìre air a lìonadh"
 }

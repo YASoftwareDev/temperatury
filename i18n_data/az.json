@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (təhlükə)",
   "cap_heatindex": "Günlərdə görünən temperatur (rütubətdə qatlanan istilik indeksi) istilik-stress səviyyələrinə çatır, metrik ictimai istilik tövsiyələrindən istifadə edir. Görünən temperatur məlumat dəstinə ehtiyacı var.",
   "footer": "Yaradılan {date} · data <a href=\"https://open-meteo.com/\">Açıq Meteo</a> tarixi yenidən təhlil (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub-da mənbə</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Onillik orta göstəricilər 1961-1990-cı illərin ilkin göstəriciləri ilə müqayisədə",
+  "qv_chart_alt": "Onillikdən onillik istiləşmə, doldurulmuş sahə diaqramı"
 }

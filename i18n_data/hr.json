@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (opasnost)",
   "cap_heatindex": "Dani u kojima prividna temperatura (indeks topline, koji se ubraja u vlažnost) dosegne razinu toplinskog stresa, metričku vrijednost koju koriste javna upozorenja o toplini. Potreban je skup podataka o prividnoj temperaturi.",
   "footer": "Generirano {date} · podaci iz <a href=\"https://open-meteo.com/\">Open-Meteo</a> povijesne reanalize (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">izvor na GitHubu</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Prosjeci desetljeća u odnosu na početnu vrijednost 1961.-1990",
+  "qv_chart_alt": "Zagrijavanje desetljeće po desetljeće, ispunjeni površinski grafikon"
 }

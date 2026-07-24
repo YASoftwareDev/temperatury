@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (peligro)",
   "cap_heatindex": "Mga adlaw nga ang dayag nga temperatura (heat index, nga mopilo sa humidity) moabot sa lebel sa heat-stress, ang metric nga public heat advisories nga gigamit. Kinahanglan ang dayag nga temperatura nga dataset.",
   "footer": "Namugna {date} · datos gikan sa <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source sa GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Mga dekada nga aberids kumpara sa 1961-1990 nga baseline",
+  "qv_chart_alt": "Dekada-sa-dekada nga pag-init, napuno nga tsart sa lugar"
 }

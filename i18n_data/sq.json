@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (rrezik)",
   "cap_heatindex": "Ditët, temperatura e dukshme (indeksi i nxehtësisë, i cili paloset në lagështi) arrin nivelet e stresit të nxehtësisë, përdoren këshillat metrike për ngrohjen publike. Nevojë për të dhënat e temperaturës së dukshme.",
   "footer": "Gjeneruar {date} · të dhëna nga rianaliza historike <a href=\"https://open-meteo.com/\">Open-Meteo</a> (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">burimi në GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Mesatarja e dekadës kundrejt bazës 1961-1990",
+  "qv_chart_alt": "Ngrohja dekadë pas dekade, grafiku i zonës së mbushur"
 }

@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (fare)",
   "cap_heatindex": "Dager den tilsynelatende temperaturen (varmeindeksen, som folder inn fuktighet) når varmestressnivåer, bruker de metriske offentlige varmerådgivningene. Trenger tilsynelatende temperaturdatasettet.",
   "footer": "Generert {date} · data fra <a href=\"https://open-meteo.com/\">Open-Meteo</a> historisk reanalyse (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">kilde på GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Gjennomsnitt av tiår vs. grunnlinjen for 1961-1990",
+  "qv_chart_alt": "Tiår for tiår oppvarming, fylt områdediagram"
 }

@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} ° C (perygl)",
   "cap_heatindex": "Diwrnodau mae'r tymheredd ymddangosiadol (mynegai gwres, sy'n plygu mewn lleithder) yn cyrraedd lefelau gwres-straen, mae'r cynghorion gwres cyhoeddus metrig yn ei ddefnyddio. Angen y set ddata ymddangosiadol-tymheredd.",
   "footer": "Cynhyrchwyd {date} · data o <a href=\"https://open-meteo.com/\">Open-Meteo</a> ailddadansoddiad hanesyddol (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> ffynhonnell ar GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Cyfartaledd degawdau yn erbyn llinell sylfaen 1961-1990",
+  "qv_chart_alt": "Cynhesu ddegawd ar ôl degawd, siart ardal wedi'i llenwi"
 }

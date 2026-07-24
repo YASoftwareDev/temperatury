@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (danger)",
   "cap_heatindex": "Iminsi ubushyuhe bugaragara (indangagaciro yubushyuhe, ikubye mubushuhe) igera kurwego rwubushyuhe, ibipimo rusange byubushyuhe bukoreshwa. Ukeneye imibare-yubushyuhe.",
   "footer": "Byakozwe {date} · amakuru yo muri <a href=\"https://open-meteo.com/\">Gufungura-Meteo</a> gusesengura amateka (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source kuri GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Impuzandengo yimyaka icumi vs 1961-1990 shingiro",
+  "qv_chart_alt": "Imyaka-icumi-icumi gushyuha, imbonerahamwe yuzuye"
 }

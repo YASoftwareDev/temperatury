@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (nebezpečenstvo)",
   "cap_heatindex": "Dni zdanlivá teplota (tepelný index, ktorý sa s vlhkosťou skracuje) dosiahne úroveň tepelného stresu, ktorú používajú metrické verejné tepelné rady. Vyžaduje súbor údajov o zdanlivej teplote.",
   "footer": "Vygenerované {date} · údaje z <a href=\"https://open-meteo.com/\">Open-Meteo</a> historickej reanalýzy (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">zdroj na GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Priemery za desaťročie vs. základná hodnota z rokov 1961-1990",
+  "qv_chart_alt": "Desaťročie za desaťročím otepľovanie, vyplnený plošný graf"
 }

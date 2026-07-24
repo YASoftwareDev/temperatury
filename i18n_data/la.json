@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (danger)",
   "cap_heatindex": "Temporum temperatura apparentis (index caloris, qui duplicat in humiditate) gradus caloris attingit, quo consilio caloris publici metrici utuntur. Eget tortor elit.",
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Decennium averages nos 1961-1990 baseline",
+  "qv_chart_alt": "Decennium per-decennium calefaciens, area chartula repleta"
 }

@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (loza)",
   "cap_heatindex": "Isan'andro dia mahatratra ny haavon'ny adin-tsain'ny hafanana ny mari-pana hita (fanondroana hafanana, izay miforitra amin'ny hamandoana), araka ny fampitandremana momba ny hafanana ho an'ny daholobe. Mila angon-drakitra hita maso-mari-pana.",
   "footer": "Nateraka {date} · angona avy amin'ny <a href=\"https://open-meteo.com/\">Open-Meteo</a> fanadihadiana ara-tantara (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">loharano tao amin'ny GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Salanisan'ny folo taona vs ny baseline 1961-1990",
+  "qv_chart_alt": "Fanafanana am-polony taona, tabilao faritra feno"
 }

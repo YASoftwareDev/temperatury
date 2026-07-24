@@ -166,5 +166,7 @@
   "season_spring": "tagsibol",
   "season_summer": "tag-init",
   "season_autumn": "taglagas",
-  "grid_alias_note": "Ang tala ng temperatura ay kinukcompute kada ~11 km na grid cell ng datos ng klima. Kaparehas ng {city} ang cell ng {alias}, kaya pareho silang nagpapakita ng iisang tala mula 1940."
+  "grid_alias_note": "Ang tala ng temperatura ay kinukcompute kada ~11 km na grid cell ng datos ng klima. Kaparehas ng {city} ang cell ng {alias}, kaya pareho silang nagpapakita ng iisang tala mula 1940.",
+  "qv_baseline": "Mga average ng dekada kumpara sa 1961-1990 baseline",
+  "qv_chart_alt": "Dekada-by-dekada na pag-init, puno ng tsart ng lugar"
 }

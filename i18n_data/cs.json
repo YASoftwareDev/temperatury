@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (nebezpečí)",
   "cap_heatindex": "Dny, kdy zdánlivá teplota (tepelný index, který se sráží vlhkostí) dosáhne úrovně tepelného stresu, používají metrické veřejné tepelné rady. Potřebuje datovou sadu zdánlivé teploty.",
   "footer": "Generováno {date} · data z <a href=\"https://open-meteo.com/\">Open-Meteo</a> historické reanalýzy (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">zdroj na GitHubu</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Dekádové průměry ve srovnání se základní linií 1961-1990",
+  "qv_chart_alt": "Dekáda po dekádě oteplování, vyplněný plošný graf"
 }

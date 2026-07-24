@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (danĝero)",
   "cap_heatindex": "Tagoj la ŝajna temperaturo (varmo-indico, kiu faldiĝas en humideco) atingas varmec-streĉajn nivelojn, la metrika publika varmeca konsiloj uzas. Bezonas la ŝajn-temperaturan datumaron.",
   "footer": "Generita {date} · datumoj de <a href=\"https://open-meteo.com/\">Open-Meteo</a> historia reanalizo (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fonto sur GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Jardekaj mezumoj kontraŭ la 1961-1990 bazlinio",
+  "qv_chart_alt": "Jardeko-post-jardeka varmiĝo, plenigita areo-diagramo"
 }

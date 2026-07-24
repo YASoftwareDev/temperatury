@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (khombo).",
   "cap_heatindex": "Masiku mahiselo lawa ya vonakaka (heat index, leyi peta eka humidity) yafika eka ti heat-stress levels, metric public heat advisories yitirhisa. Swi lava dataset ya mahiselo lama vonakaka.",
   "footer": "Ku endliwile {date} · datha ku suka eka <a href=\"https://open-meteo.com/\">Open-Meteo</a> nxopaxopo wa matimu nakambe (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">xihlovo eka GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Swiringaniso swa khume ra malembe vs xiyimo xa le hansi xa 1961-1990",
+  "qv_chart_alt": "Ku kufumela ka khume hi khume ra malembe, chati ya ndhawu leyi taleke"
 }

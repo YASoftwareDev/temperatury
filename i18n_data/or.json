@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} ° C (ବିପଦ)",
   "cap_heatindex": "ଦିନଗୁଡିକ ସ୍ପଷ୍ଟ ତାପମାତ୍ରା (ଉତ୍ତାପ ସୂଚକାଙ୍କ, ଯାହା ଆର୍ଦ୍ରତା ମଧ୍ୟରେ ଫୋଲ୍ଡ୍) ଉତ୍ତାପ-ଚାପ ସ୍ତରରେ ପହଞ୍ଚେ, ମେଟ୍ରିକ୍ ସର୍ବସାଧାରଣ ଉତ୍ତାପ ପରାମର୍ଶଦାତା ବ୍ୟବହାର କରନ୍ତି | ସ୍ପଷ୍ଟ-ତାପମାତ୍ରା ଡାଟାସେଟ୍ ଆବଶ୍ୟକ କରେ |",
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "ଦଶନ୍ଧି ହାରାହାରି 1961-1990 ବେସ୍ ଲାଇନ୍ |",
+  "qv_chart_alt": "ଦଶ-ଦଶନ୍ଧି ଗରମ, ଭରପୂର କ୍ଷେତ୍ର ଚାର୍ଟ |"
 }

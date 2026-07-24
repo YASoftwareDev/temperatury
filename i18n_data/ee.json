@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (afɔku).",
   "cap_heatindex": "Ŋkeke siwo dzoxɔxɔ si dze abe (dzoxɔxɔ ƒe dzesi, si ƒoa xlãe le fafa me) ɖoa dzoxɔxɔ ƒe nuteɖeamedzi ƒe seƒe, si dutoƒo dzoxɔxɔ ŋuti aɖaŋuɖoɖowo zãna. Hiã na nyatakakadzraɖoƒe si dze abe dzoxɔxɔ ene.",
   "footer": "Wowɔ {date} · nyatakakawo tso <a href=\"https://open-meteo.com/\">Open-Meteo</a> ŋutinya me gbugbɔgadzro (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">tsoƒe le GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Ƒe ewo ƒe mamã dediewo vs 1961-1990 ƒe gɔmedzedze",
+  "qv_chart_alt": "Dzoxɔxɔ ƒe ewo ɖesiaɖe, nuto ƒe nɔnɔmetata si yɔ fũ"
 }

@@ -167,5 +167,7 @@
   "omni_places": "Luoghi in tutto il mondo",
   "omni_anywhere": "Controlla qualsiasi posto: \"{q}\"",
   "nav_ranking": "Classifica",
-  "_mt_partial": true
+  "_mt_partial": true,
+  "qv_baseline": "Medie decennali rispetto al riferimento 1961-1990",
+  "qv_chart_alt": "Riscaldamento decennio per decennio, grafico ad area piena"
 }

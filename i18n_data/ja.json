@@ -167,5 +167,7 @@
   "omni_places": "世界中の場所",
   "omni_anywhere": "任意の場所を確認してください:「{q}」",
   "nav_ranking": "ランキング",
-  "_mt_partial": true
+  "_mt_partial": true,
+  "qv_baseline": "10 年間の平均と 1961 ～ 1990 年の基準値の比較",
+  "qv_chart_alt": "数十年ごとの温暖化、塗りつぶされた領域グラフ"
 }

@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (oht)",
   "cap_heatindex": "Päevade jooksul saavutab näiv temperatuur (soojusindeks, mis voldib niiskuse sisse) kuumastressi tasemeni, kasutatakse meetermõõdustikust avalikku soojuse nõuannet. Vajab näiva temperatuuri andmekogu.",
   "footer": "Loodud {date} · andmed <a href=\"https://open-meteo.com/\">Open-Meteo</a> ajaloolisest ümberanalüüsist (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">allikast GitHubis</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Kümnendi keskmised võrreldes 1961–1990 lähtetasemega",
+  "qv_chart_alt": "Aastakümnete kaupa soojenemine, täidetud alade diagramm"
 }

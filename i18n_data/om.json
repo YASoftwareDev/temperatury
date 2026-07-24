@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (balaa).",
   "cap_heatindex": "Guyyoota ho’i mul’atu (indeeksii ho’aa, kan jiidhina keessatti dachaafamu) sadarkaa dhiibbaa ho’aa ga’a, gorsi ho’a ummataa meetirikii fayyadamu. Kuusaa deetaa ho'a mul'ataa barbaada.",
   "footer": "Madda {date} · <a href=\"https://open-meteo.com/\">Open-Meteo</a> irra deebiin xiinxaluu seenaa (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">madda GitHub irratti</a> irraa argame.",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Giddugaleessa waggoota kurnan vs bu’uura bara 1961-1990",
+  "qv_chart_alt": "Ho’ina kurmaana kurmaanaan, chaartii naannoo guutame"
 }

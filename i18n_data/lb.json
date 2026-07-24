@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (Gefor)",
   "cap_heatindex": "Deeg déi scheinbar Temperatur (Hëtztindex, deen an der Fiichtegkeet klappt) Hëtzt-Stressniveauen erreecht, benotzen déi metresch ëffentlech Hëtztberodungen. Braucht déi scheinbar Temperaturdates.",
   "footer": "Generéiert {date} · Daten aus <a href=\"https://open-meteo.com/\">Open-Meteo</a> historesch Reanalyse (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> Quell op GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Dekade Duerchschnëtt vs der 1961-1990 Baseline",
+  "qv_chart_alt": "Joerzéngt-fir-Joerzéngt Erwiermung, gefëllte Beräichdiagramm"
 }

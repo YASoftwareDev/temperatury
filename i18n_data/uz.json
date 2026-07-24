@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (xavfli)",
   "cap_heatindex": "Kundalik ko'rinadigan harorat (namlikda katlanadigan issiqlik indeksi) issiqlik-stress darajasiga etadi, metrik umumiy issiqlik bo'yicha maslahatlar qo'llaniladi. Ko'rinadigan harorat ma'lumotlar to'plami kerak.",
   "footer": "Yaratilgan {date} · maʼlumotlar <a href=\"https://open-meteo.com/\">Ochiq meteo</a> tarixiy qayta tahlil (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub-dagi manba</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "O'n yillik o'rtacha ko'rsatkichlar 1961-1990 yillardagi asosiy ko'rsatkichga nisbatan",
+  "qv_chart_alt": "O'n yillik isinish, to'ldirilgan maydon jadvali"
 }

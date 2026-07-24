@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f}°C (ihe egwu)",
   "cap_heatindex": "Ụbọchị okpomọkụ pụtara ìhè (nkọwa okpomọkụ, nke na-apịaji na iru mmiri) na-erute ọkwa nrụgide okpomọkụ, metric ọha okpomọkụ ndụmọdụ na-eji. Chọrọ ihe ndekọ data nke okpomọkụ pụtara.",
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Nkezi afọ iri vs ntọala 1961-1990",
+  "qv_chart_alt": "Okpomọkụ afọ iri na afọ iri, eserese mpaghara juputara"
 }

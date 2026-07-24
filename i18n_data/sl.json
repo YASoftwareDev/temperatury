@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (nevarnost)",
   "cap_heatindex": "Dnevi, ko navidezna temperatura (toplotni indeks, ki se zloži v vlažnost) doseže raven toplotne obremenitve, metrično vrednost, ki jo uporabljajo javni toplotni nasveti. Potrebuje nabor podatkov o navidezni temperaturi.",
   "footer": "Ustvarjeno {date} · podatki iz <a href=\"https://open-meteo.com/\">Open-Meteo</a> zgodovinske ponovne analize (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">vir na GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Povprečja desetletja v primerjavi z izhodiščem 1961–1990",
+  "qv_chart_alt": "Segrevanje iz desetletja v desetletje, zapolnjena ploščinska tabela"
 }

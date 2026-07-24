@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (gevaar)",
   "cap_heatindex": "Dae wat die skynbare temperatuur (hitte-indeks, wat in humiditeit vou) hitte-stresvlakke bereik, gebruik die metrieke openbare hitte-advies. Benodig die skynbare temperatuur-datastel.",
   "footer": "Gegenereerde {date} · data van <a href=\"https://open-meteo.com/\">Open-Meteo</a> historiese heranalise (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">bron ​​op GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Dekade gemiddeldes teenoor die 1961-1990 basislyn",
+  "qv_chart_alt": "Dekade-vir-dekade opwarming, gevulde area grafiek"
 }

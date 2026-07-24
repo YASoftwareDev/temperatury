@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (periklu)",
   "cap_heatindex": "Jiem it-temperatura apparenti (indiċi tas-sħana, li jintewa fl-umdità) tilħaq livelli ta 'tensjoni tas-sħana, l-użu ta' pariri pubbliċi metriċi dwar is-sħana. Jeħtieġ is-sett tad-dejta tat-temperatura apparenti.",
   "footer": "Ġġenerata {date} · dejta minn <a href=\"https://open-meteo.com/\">Open-Meteo</a> analiżi mill-ġdid storika (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sors fuq GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Medji ta' għaxar snin vs il-linja bażi 1961-1990",
+  "qv_chart_alt": "Deċennju b'deċennju tisħin, ċart taż-żona mimlija"
 }

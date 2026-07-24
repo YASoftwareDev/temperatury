@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (khatar)",
   "cap_heatindex": "Maalmaha heerkulka muuqda (tusmada kulaylka, kaas oo laalaabaya qoyaanka) wuxuu gaaraa heerarka kulaylka-cadawga, cabbirka la-talinta kulaylka dadweynaha ayaa la isticmaalaa. Wuxuu u baahan yahay kaydka xogta heerkulka-muuqda.",
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Celcelis ahaan tobankii sano ee la soo dhaafay 1961-1990",
+  "qv_chart_alt": "Toban sano-toban sano oo kululaynta, shaxda aagga oo buuxa"
 }

@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (ingozi)",
   "cap_heatindex": "Izinsuku izinga lokushisa elibonakalayo (inkomba yokushisa, egoqeka ngokuswakama) ifinyelela amazinga okucindezela ukushisa, kusetshenziswa izeluleko zokushisa zomphakathi zemethrikhi. Idinga idathasethi yezinga lokushisa elibonakalayo.",
   "footer": "Kwenziwe {date} · idatha evela ku-<a href=\"https://open-meteo.com/\">Open-Meteo</a> ukuhlaziywa kabusha komlando (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">umthombo ku-GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Izilinganiso zeminyaka eyishumi uma ziqhathaniswa nesisekelo sango-1961-1990",
+  "qv_chart_alt": "Ukufudumala kweshumi neshumi leminyaka, ishadi lendawo eligcwele"
 }

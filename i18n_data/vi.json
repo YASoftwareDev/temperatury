@@ -167,5 +167,7 @@
   "omni_places": "Địa điểm trên toàn thế giới",
   "omni_anywhere": "Kiểm tra bất kỳ nơi nào: \"{q}\"",
   "nav_ranking": "Xếp hạng",
-  "_mt_partial": true
+  "_mt_partial": true,
+  "qv_baseline": "Trung bình thập kỷ so với đường cơ sở 1961-1990",
+  "qv_chart_alt": "Biểu đồ vùng được lấp đầy theo sự nóng lên theo từng thập kỷ"
 }

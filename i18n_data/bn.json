@@ -167,5 +167,7 @@
   "omni_places": "বিশ্বব্যাপী স্থান",
   "omni_anywhere": "যেকোনো জায়গা চেক করুন: \"{q}\"",
   "nav_ranking": "র‍্যাঙ্কিং",
-  "_mt_partial": true
+  "_mt_partial": true,
+  "qv_baseline": "দশক গড় বনাম 1961-1990 বেসলাইন",
+  "qv_chart_alt": "দশকে দশকে উষ্ণায়ন, ভরা এলাকা চার্ট"
 }

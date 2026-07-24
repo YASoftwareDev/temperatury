@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (peggad).",
   "cap_heatindex": "Aldaw ti agparang a temperatura (heat index, a maitimbukel iti dam-eg) ket dumanon kadagiti heat-stress levels, us-usaren dagiti metriko a public heat advisories. Kasapulan ti agparang-temperatura a dataset.",
   "footer": "Napataud {date} · a datos manipud iti <a href=\"https://open-meteo.com/\">Open-Meteo</a> historikal a panaganalisar manen (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">gubuayan iti GitHub</a>.",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Dekada a promedio vs ti 1961-1990 a batayan",
+  "qv_chart_alt": "Dekada-por-dekada a panagbara, napno a tsart ti lugar"
 }

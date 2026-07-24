@@ -143,5 +143,7 @@
   "heat_danger": "≥ {t:.0f} °C (morearea)",
   "cap_heatindex": "I nga ra ka tae te ahua o te pāmahana (taupū wera, e takai ana i te haumākū) ki nga taumata taumaha-wera, ka whakamahia e nga tohutohu whakamahana mo te iwi. Kei te hiahia te huingararaunga kitea-mahana.",
   "footer": "Hangaia {date} · raraunga mai i <a href=\"https://open-meteo.com/\">Tuwhera-Meteo</a> arotakenga o mua (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">puna i runga i GitHub</a>",
-  "_mt": true
+  "_mt": true,
+  "qv_baseline": "Tekau tau toharite ki te rarangi 1961-1990",
+  "qv_chart_alt": "Te whakamahanatanga tekau tau ki te tekau tau, kua whakakiia te tūtohi rohe"
 }
