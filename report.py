@@ -1369,8 +1369,8 @@ ${chart_js}
     <p class="section-sub">${rank_intro}</p>
     <div class="rank-toggle" id="rank-toggle" role="group"
          aria-label="${rank_cities} / ${rank_countries}">
-      <button type="button" data-mode="city">${rank_cities}</button>
-      <button type="button" data-mode="country" class="active">${rank_countries}</button>
+      <button type="button" data-mode="city" aria-pressed="false">${rank_cities}</button>
+      <button type="button" data-mode="country" class="active" aria-pressed="true">${rank_countries}</button>
     </div>
     <p class="rank-legend">${rank_legend}</p>
     <div class="rank-controls">

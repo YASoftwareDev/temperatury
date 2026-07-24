@@ -1299,7 +1299,9 @@
     function focusCountry(cc) {
       mode = "city";
       tbtns.forEach(function (x) {
-        x.classList.toggle("active", x.getAttribute("data-mode") === "city");
+        var on = x.getAttribute("data-mode") === "city";
+        x.classList.toggle("active", on);
+        x.setAttribute("aria-pressed", on ? "true" : "false");
       });
       if (regionSel) { regionSel.style.display = ""; regionSel.value = ""; }
       if (countrySel) { countrySel.style.display = ""; countrySel.value = cc; }
@@ -1331,7 +1333,10 @@
     tbtns.forEach(function (b) {
       b.addEventListener("click", function () {
         mode = b.getAttribute("data-mode");
-        tbtns.forEach(function (x) { x.classList.toggle("active", x === b); });
+        tbtns.forEach(function (x) {
+          x.classList.toggle("active", x === b);
+          x.setAttribute("aria-pressed", x === b ? "true" : "false");
+        });
         var cityOnly = mode === "country" ? "none" : "";
         if (regionSel) { regionSel.style.display = cityOnly; regionSel.value = ""; }
         if (countrySel) { countrySel.style.display = cityOnly; countrySel.value = ""; }
@@ -1344,7 +1349,9 @@
     if (hash === "cities" || hash === "countries") {
       mode = hash === "countries" ? "country" : "city";
       tbtns.forEach(function (x) {
-        x.classList.toggle("active", x.getAttribute("data-mode") === mode);
+        var on = x.getAttribute("data-mode") === mode;
+        x.classList.toggle("active", on);
+        x.setAttribute("aria-pressed", on ? "true" : "false");
       });
     }
     // Apply the initial mode's filter visibility (country mode hides city-only filters).
