@@ -1628,22 +1628,43 @@ ${chart_js}
       cardTimer = setTimeout(function () { cardPopup.remove(); }, 260);
     }
     cardPopup.on('close', function () { cardKey = null; cancelCardClose(); });
-    function showCard(f) {
-      cancelCardClose();
+    // Swap hysteresis: while a card is open, a DIFFERENT dot only takes over
+    // after the pointer lingers on it (SWAP_MS). Dots merely skimmed while
+    // travelling from the dot to the card's link no longer steal the card.
+    var SWAP_MS = 150, swapTimer = null, swapKey = null;
+    function cancelSwap() {
+      if (swapTimer) { clearTimeout(swapTimer); swapTimer = null; }
+      swapKey = null;
+    }
+    function hoverDot(key, show) {
+      if (key === cardKey && cardPopup.isOpen()) { cancelCardClose(); cancelSwap(); return; }
+      if (!cardPopup.isOpen()) { cancelSwap(); show(); return; }   // nothing up: open now
+      if (key === swapKey) return;                                 // already counting down
+      cancelSwap(); swapKey = key;
+      swapTimer = setTimeout(function () {
+        swapTimer = null; swapKey = null; show();
+      }, SWAP_MS);
+    }
+    // One opener for every dot kind (real city, awaiting-data) so the whole map
+    // behaves as one system: hover shows a card, the pointer can cross onto it
+    // (grace-close), and re-hovering the same dot leaves it be.
+    function openCard(key, lngLat, node) {
+      cancelCardClose(); cancelSwap();
       popup.remove();                       // drop the plain name tooltip
-      var p = f.properties;
-      var key = (p.s || '') + '|' + p.n;
-      if (key === cardKey && cardPopup.isOpen()) return;   // same dot, leave it be
+      if (key === cardKey && cardPopup.isOpen()) return;
       cardKey = key;
-      cardPopup.setLngLat(f.geometry.coordinates)
-               .setDOMContent(qvCard(p)).addTo(map);
+      cardPopup.setLngLat(lngLat).setDOMContent(node).addTo(map);
       // Re-wire per open: MapLibre builds a fresh container each addTo.
       var el = cardPopup.getElement();
       if (el && !el.hoverWired) {
         el.hoverWired = true;
-        el.addEventListener('mouseenter', cancelCardClose);
+        el.addEventListener('mouseenter', function () { cancelCardClose(); cancelSwap(); });
         el.addEventListener('mouseleave', scheduleCardClose);
       }
+    }
+    function showCard(f) {
+      var p = f.properties;
+      openCard((p.s || '') + '|' + p.n, f.geometry.coordinates, qvCard(p));
     }
     var rankIdx = null;
     function rankOf(slug) {
@@ -1778,35 +1799,41 @@ ${chart_js}
           'circle-stroke-width': 0.8, 'circle-stroke-color': '#ffffff' } });
 
       map.on('mouseenter', 'cities', function () { map.getCanvas().style.cursor = 'pointer'; });
-      map.on('mousemove', 'cities', function (e) { showCard(e.features[0]); });
+      map.on('mousemove', 'cities', function (e) {
+        var f = e.features[0], p = f.properties;
+        hoverDot((p.s || '') + '|' + p.n, function () { showCard(f); });
+      });
       // Closing is deferred: the card carries a link, so the pointer has to be
       // able to travel from the dot onto the card without it vanishing en route.
       map.on('mouseleave', 'cities', function () {
-        map.getCanvas().style.cursor = ''; scheduleCardClose();
+        map.getCanvas().style.cursor = ''; cancelSwap(); scheduleCardClose();
       });
       map.on('click', 'cities', function (e) {
-        // Still needed on touch, where no hover event ever fires.
-        showCard(e.features[0]);
+        var f = e.features[0], p = f.properties, key = (p.s || '') + '|' + p.n;
+        // Clicking the dot itself opens the city, so no need to travel to the
+        // card's link. On desktop the hover already opened this dot's card, so
+        // the click navigates. On touch (no hover) the first tap opens the card
+        // and a second tap - card now up for this dot - navigates.
+        if (p.s && key === cardKey && cardPopup.isOpen()) { window.location.href = p.s; return; }
+        cancelSwap(); showCard(f);   // also resolves a pending debounced swap
       });
       // Tapping empty map dismisses the card - on touch there is no mouseleave
       // to do it, so without this the card would stay pinned.
       map.on('click', function (e) {
-        if (map.queryRenderedFeatures(e.point, { layers: ['cities'] }).length) return;
+        var hit = ['cities'];
+        if (PREVIEW && PREVIEW.length) hit.push('preview');
+        if (map.queryRenderedFeatures(e.point, { layers: hit }).length) return;
         cancelCardClose(); cardPopup.remove();
       });
       map.on('mousemove', 'refs', function (e) {
         popup.setLngLat(e.lngLat).setText(e.features[0].properties.n).addTo(map);
       });
       map.on('mouseleave', 'refs', function () { popup.remove(); });
-      // Awaiting-data dots: no page yet, but the click still leads somewhere -
-      // the nearest city that IS analysed (straight-line distance).
-      map.on('mouseenter', 'preview', function () { map.getCanvas().style.cursor = 'pointer'; });
-      map.on('mouseleave', 'preview', function () { map.getCanvas().style.cursor = ''; });
-      map.on('click', 'preview', function (e) {
-        // A real dot under the same click wins (its handler also fired).
-        if (map.queryRenderedFeatures(e.point, { layers: ['cities'] }).length) return;
-        var f = e.features[0], c = f.geometry.coordinates;
-        var best = null, bd = Infinity;
+      // Awaiting-data dots: no page yet, but the card still leads somewhere -
+      // the nearest city that IS analysed (straight-line distance). Same hover
+      // card + grace-close as the real dots, so the map reads as one system.
+      function previewCard(f) {
+        var c = f.geometry.coordinates, best = null, bd = Infinity;
         for (var i = 0; i < realCities.length; i++) {
           var d = havKm(c[1], c[0], realCities[i].lat, realCities[i].lon);
           if (d < bd) { bd = d; best = realCities[i]; }
@@ -1823,8 +1850,27 @@ ${chart_js}
           ln.appendChild(document.createTextNode(' (~' + Math.round(bd) + ' km)'));
           root.appendChild(ln);
         }
-        popup.remove();
-        cardPopup.setLngLat(c).setDOMContent(root).addTo(map);
+        return root;
+      }
+      function showPreview(f) {
+        openCard('preview|' + f.properties.n + '|' + f.geometry.coordinates.join(','),
+                 f.geometry.coordinates, previewCard(f));
+      }
+      map.on('mouseenter', 'preview', function () { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mousemove', 'preview', function (e) {
+        // A real dot under the pointer wins - its card is the richer one.
+        if (map.queryRenderedFeatures(e.point, { layers: ['cities'] }).length) return;
+        var f = e.features[0];
+        hoverDot('preview|' + f.properties.n + '|' + f.geometry.coordinates.join(','),
+                 function () { showPreview(f); });
+      });
+      map.on('mouseleave', 'preview', function () {
+        map.getCanvas().style.cursor = ''; cancelSwap(); scheduleCardClose();
+      });
+      map.on('click', 'preview', function (e) {
+        // Still needed on touch, where no hover event ever fires.
+        if (map.queryRenderedFeatures(e.point, { layers: ['cities'] }).length) return;
+        showPreview(e.features[0]);
       });
 
       loadGrid();
@@ -2109,7 +2155,7 @@ _HERO_I18N = {
            "locating": "Finding the nearest city to you...",
            "near": "Nearest city with records to your location",
            "default": "A featured region. Allow location for yours."},
-    "pl": {"eyebrow": "Twój region", "cta": "Poznaj {name}",
+    "pl": {"eyebrow": "Twój region", "cta": "Poznaj miasto {name}",
            "since": "{v} cieplej niż w 1940",
            "faster": "ociepla się szybciej niż {pct}% świata",
            "locating": "Szukanie najbliższego miasta...",
@@ -2133,13 +2179,13 @@ _HERO_I18N = {
            "locating": "Buscando la ciudad más cercana...",
            "near": "Ciudad con datos más cercana a tu ubicación",
            "default": "Una región destacada. Permite la ubicación para ver la tuya."},
-    "uk": {"eyebrow": "Ваш регіон", "cta": "Дослідити {name}",
+    "uk": {"eyebrow": "Ваш регіон", "cta": "Дослідити місто {name}",
            "since": "{v} тепліше, ніж у 1940",
            "faster": "теплішає швидше, ніж {pct}% світу",
            "locating": "Пошук найближчого міста...",
            "near": "Найближче місто з даними до вашого розташування",
            "default": "Показовий регіон. Дозвольте геолокацію, щоб побачити свій."},
-    "ru": {"eyebrow": "Ваш регион", "cta": "Открыть {name}",
+    "ru": {"eyebrow": "Ваш регион", "cta": "Открыть город {name}",
            "since": "на {v} теплее, чем в 1940",
            "faster": "теплеет быстрее, чем {pct}% мира",
            "locating": "Поиск ближайшего города...",
