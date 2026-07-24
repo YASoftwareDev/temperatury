@@ -460,6 +460,23 @@
   .region-hero .rh-meta { font-size:clamp(.95rem,2.1vw,1.15rem); line-height:1.5;
     color:var(--muted); margin:.15rem 0 0; max-width:46ch; }
   .region-hero .rh-meta b { font-weight:700; color:var(--ink); }
+  /* Data-forward hero: the decade area chart (same idiom as the map card and the
+     city page). Colour flows from --warm/--cool via `color` + currentColor, so a
+     theme switch re-tints it with no JS. */
+  .region-hero .rh-spark-wrap { margin:1.25rem 0 0; max-width:640px; }
+  .region-hero .rh-spark { display:block; width:100%; height:auto; }
+  .region-hero .rh-spark.warm { color:var(--warm); }
+  .region-hero .rh-spark.cool { color:var(--cool); }
+  .region-hero .rh-spark-base { stroke:var(--line); stroke-width:1.4; stroke-dasharray:3 4; }
+  .region-hero .rh-spark-line { fill:none; stroke:currentColor; stroke-width:2.4;
+    stroke-linejoin:round; stroke-linecap:round; }
+  .region-hero .rh-spark-fill { fill:url(#rhg); }
+  .region-hero .rh-spark-g0 { stop-color:currentColor; stop-opacity:.26; }
+  .region-hero .rh-spark-g1 { stop-color:currentColor; stop-opacity:0; }
+  .region-hero .rh-spark-dot { fill:currentColor; }
+  .region-hero .rh-spark-axis { display:flex; justify-content:space-between;
+    font-family:var(--mono); font-size:.7rem; color:var(--muted); margin-top:.2rem;
+    max-width:640px; font-variant-numeric:tabular-nums; }
   /* City-page percentile badge: a quieter second line under the warming figure. */
   .region-hero .rh-pct { font-size:clamp(.85rem,1.8vw,1rem); opacity:.85;
                          margin-top:.1rem; }

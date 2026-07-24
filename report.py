@@ -1307,6 +1307,7 @@ ${chart_js}
            data-cta="${hero_cta}" data-since="${hero_since_tmpl}"
            data-faster="${hero_faster_tmpl}" data-locating="${hero_locating}"
            data-near="${hero_near_note}" data-default-note="${hero_default_note}"
+           data-chart-alt="${hero_chart_alt}"
            data-analog-past="${hero_analog_past}" data-analog-future="${hero_analog_future}">
     <div class="rh-scrim" aria-hidden="true"></div>
     <div class="rh-inner">
@@ -1322,6 +1323,7 @@ ${chart_js}
         <span class="rh-unit">${hero_unit}</span>
       </div>
       <p class="rh-meta" id="rh-meta">${hero_default_meta}</p>
+      ${hero_default_spark}
       <div id="rh-analog"></div>
       <p class="rh-cta"><a id="rh-link" href="${hero_default_slug}"><span id="rh-cta-label">${hero_default_cta}</span> <span aria-hidden="true">&rarr;</span></a></p>
       <p class="rh-hint" id="rh-hint">${hero_default_note}</p>
@@ -2622,6 +2624,16 @@ def build_map_page(
         hero_default_meta = f"<b>{_since}</b> · {_faster}"
     else:
         hero_default_meta = ""
+    # Data-forward hero (same idiom as the city page + the map card): the default
+    # city's decade area chart on first paint; charts.js re-renders it for the
+    # geolocated city. Wrapper + axis stay static; only the <svg> in #rh-spark swaps.
+    hero_chart_alt = tr.get("qv_chart_alt",
+                            "Decade-by-decade warming, filled area chart")
+    _def_spark = _hero_spark_svg(_def_rank["st"], hero_chart_alt) if _def_rank else ""
+    hero_default_spark = (
+        f'<div class="rh-spark-wrap"><div id="rh-spark">{_def_spark}</div>'
+        f'<div class="rh-spark-axis"><span>1940</span><span>2020</span></div></div>'
+    ) if _def_spark else '<div class="rh-spark-wrap"><div id="rh-spark"></div></div>'
 
     def _title(key: str) -> str:  # per-city chart title minus its ", {name}" tail
         # Strip whatever separator precedes {name} (dash, colon, comma, ...).
@@ -2808,6 +2820,8 @@ def build_map_page(
         hero_default_name=hero_default_name,
         hero_default_trend=hero_default_trend,
         hero_default_meta=hero_default_meta,
+        hero_default_spark=hero_default_spark,
+        hero_chart_alt=hero_chart_alt,
         hero_default_cta=hero_default_cta,
         nav_ranking=tr.get("nav_ranking", "Ranking"),
         nav_dashboard=tr.get("nav_dashboard", "Climate dashboard"),

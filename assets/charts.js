@@ -1667,6 +1667,35 @@
     }
     return "linear-gradient(96deg," + stops.join(",") + ")";
   }
+  // A city's decade anomalies -> a filled area chart for the "your region" hero,
+  // the same idiom as the map card and the city-page hero (_hero_spark_svg in
+  // report.py). Colour flows from --warm/--cool via the .warm/.cool class +
+  // currentColor, so a theme switch re-tints it; nulls skipped; "" if < 2 decades.
+  function heroSpark(st, alt) {
+    if (!st || !st.length) return "";
+    var pts = [];
+    for (var i = 0; i < st.length; i++) if (st[i] != null) pts.push([i, st[i]]);
+    if (pts.length < 2) return "";
+    var W = 880, H = 132, padX = 6, padT = 12, padB = 12;
+    var vals = pts.map(function (p) { return p[1]; });
+    var lo = Math.min.apply(null, vals.concat(0));
+    var hi = Math.max.apply(null, vals.concat(0.001));
+    var rng = (hi - lo) || 1, iw = W - 2 * padX, ih = H - padT - padB, span = (st.length - 1) || 1;
+    function X(i) { return padX + i * (iw / span); }
+    function Y(v) { return padT + ih - ((v - lo) / rng) * ih; }
+    var lv = pts[pts.length - 1][1], cls = lv >= 0 ? "warm" : "cool";
+    var zero = Y(0).toFixed(1);
+    var poly = pts.map(function (p) { return X(p[0]).toFixed(1) + "," + Y(p[1]).toFixed(1); }).join(" ");
+    var x0 = X(pts[0][0]).toFixed(1), xn = X(pts[pts.length - 1][0]).toFixed(1);
+    return '<svg class="rh-spark ' + cls + '" viewBox="0 0 ' + W + ' ' + H
+      + '" role="img" aria-label="' + (alt || "") + '">'
+      + '<line class="rh-spark-base" x1="' + padX + '" y1="' + zero + '" x2="' + (W - padX) + '" y2="' + zero + '"/>'
+      + '<defs><linearGradient id="rhg" x1="0" y1="0" x2="0" y2="1">'
+      + '<stop class="rh-spark-g0" offset="0"/><stop class="rh-spark-g1" offset="1"/></linearGradient></defs>'
+      + '<polygon class="rh-spark-fill" points="' + x0 + ',' + zero + ' ' + poly + ' ' + xn + ',' + zero + '"/>'
+      + '<polyline class="rh-spark-line" points="' + poly + '"/>'
+      + '<circle class="rh-spark-dot" cx="' + xn + '" cy="' + Y(lv).toFixed(1) + '" r="4"/></svg>';
+  }
   // Share of cities warming slower than this one (from the sorted __trends).
   function heroPercentile(t) {
     var T = window.__trends || [];
@@ -1747,6 +1776,9 @@
     // fixed; --rh-stripes drives the bottom data ribbon, see .region-hero::before).
     var bg = heroStripeBg(entry.st);
     if (bg) host.style.setProperty("--rh-stripes", bg);
+    // Swap the decade area chart to this city (same idiom as the city page).
+    var sp = document.getElementById("rh-spark");
+    if (sp) sp.innerHTML = heroSpark(entry.st, host.getAttribute("data-chart-alt") || "");
     // Draw this city's country border silhouette behind the hero.
     injectHeroOutline(host, entry.cc);
     // Rebuild the secondary line: total warming since 1940 + rate percentile.
