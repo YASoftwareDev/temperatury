@@ -70,38 +70,10 @@
     window.__ci18n = map;
   };
 
-  // ISO-2 country code -> flag emoji (regional-indicator letters). Renders a flag
-  // on Apple/Android/Linux, degrades to the two letters on Windows.
-  /* Country <select>s label options "<flag>  Name". A native select's type-ahead
-     matches the option's LEADING character, which is the flag emoji, so typing
-     "p" never reaches Poland. Match on the name instead: repeated same letter
-     cycles through the matches, a longer burst is treated as a prefix. */
-  function attachFlagTypeahead(sel) {
-    if (!sel || sel.__flagTa) return;
-    sel.__flagTa = 1;
-    var buf = "", at = 0;
-    sel.addEventListener("keydown", function (e) {
-      if (!e.key || e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
-      var now = Date.now(), ch = e.key.toLowerCase();
-      buf = (now - at < 900 ? buf : "") + ch; at = now;
-      var cycle = buf.split("").every(function (c) { return c === ch; });
-      var q = cycle ? ch : buf;
-      var o = sel.options, n = o.length, cur = sel.selectedIndex;
-      function nameOf(i) {                       /* strip the flag + padding */
-        return (o[i].textContent || "").replace(/^[^\p{L}\p{N}]+/u, "").toLowerCase();
-      }
-      for (var k = 1; k <= n; k++) {
-        var idx = cycle ? (cur + k) % n : (k - 1);
-        if (nameOf(idx).indexOf(q) === 0) {
-          sel.selectedIndex = idx;
-          sel.dispatchEvent(new Event("change", { bubbles: true }));
-          break;
-        }
-      }
-      e.preventDefault();
-    });
-  }
-
+  // Country <select> options are labelled "Name  <flag>" (name first) so the
+  // browser's native type-ahead matches on the name in both the open and closed
+  // states - no custom keydown handler needed. (A leading flag emoji would make
+  // native type-ahead match the flag, never the name.)
   function flagEmoji(cc) {
     cc = (cc || "").toUpperCase();
     if (!/^[A-Z]{2}$/.test(cc)) return "";
@@ -1043,10 +1015,9 @@
     sel.innerHTML = "";
     opts.forEach(function (o) {
       var op = document.createElement("option");
-      op.value = o.cc; op.textContent = flagEmoji(o.cc) + "  " + o.nm;
+      op.value = o.cc; op.textContent = o.nm + "  " + flagEmoji(o.cc);
       sel.appendChild(op);
     });
-    attachFlagTypeahead(sel);
     var tmplCool = sec.getAttribute("data-tmpl-cool") || tmpl;
     function show(cc) {
       var c = byCc[cc];
@@ -1232,10 +1203,9 @@
       clist.sort(function (a, b) { return a.nm.localeCompare(b.nm, lang); });
       clist.forEach(function (c) {
         var op = document.createElement("option");
-        op.value = c.cc; op.textContent = flagEmoji(c.cc) + "  " + c.nm;
+        op.value = c.cc; op.textContent = c.nm + "  " + flagEmoji(c.cc);
         countrySel.appendChild(op);
       });
-      attachFlagTypeahead(countrySel);
     }
     var count = document.getElementById("rank-count");
     var empty = document.getElementById("rank-empty");

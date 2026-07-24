@@ -1929,39 +1929,14 @@ ${chart_js}
       opts.sort(function (a, b) { return a.nm.localeCompare(b.nm, flang); });
       opts.forEach(function (o) {
         var op = document.createElement('option');
-        op.value = o.cc; op.textContent = flagEmoji(o.cc) + '  ' + o.nm;
+        // Name first, flag last, so the browser's native type-ahead matches the
+        // country name (open and closed) - a leading flag emoji would capture it.
+        op.value = o.cc; op.textContent = o.nm + '  ' + flagEmoji(o.cc);
         countrySel.appendChild(op);
       });
       countrySel.addEventListener('change', function () {
         setActiveRegion(countrySel.value ? null : '');
         fitToSelection();
-      });
-      // Native <select> typeahead matches the option's leading character, but
-      // our labels lead with a flag emoji, so typing "P" never reached Poland.
-      // Restore name-based typeahead: accumulate within a short window; a
-      // repeated single letter cycles through the matches.
-      var taBuf = '', taAt = 0;
-      countrySel.addEventListener('keydown', function (e) {
-        if (e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
-        var now = Date.now(), ch = e.key.toLowerCase();
-        taBuf = (now - taAt < 900 ? taBuf : '') + ch; taAt = now;
-        // A buffer of one repeated letter cycles the matches; otherwise it is a
-        // multi-letter prefix. (No regex/anchors here, to keep string.Template happy.)
-        var cycle = taBuf.split('').every(function (c) { return c === ch; });
-        var q = cycle ? ch : taBuf;
-        var cur = -1;
-        for (var j = 0; j < opts.length; j++)
-          if (opts[j].cc === countrySel.value) { cur = j; break; }
-        var n = opts.length;
-        for (var k = 1; k <= n; k++) {
-          var idx = cycle ? (cur + k) % n : (k - 1);
-          if (opts[idx].nm.toLowerCase().indexOf(q) === 0) {
-            countrySel.value = opts[idx].cc;
-            countrySel.dispatchEvent(new Event('change'));
-            break;
-          }
-        }
-        e.preventDefault();
       });
     }
 
