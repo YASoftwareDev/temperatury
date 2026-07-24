@@ -1348,10 +1348,10 @@ ${chart_js}
     <button type="button" id="grid-toggle" class="grid-toggle" aria-pressed="false">
       ${grid_toggle}</button>
     <div id="map-basemap" class="basemap-switch" role="group" aria-label="${basemap_label}">
-      <button type="button" data-base="map" class="active">${basemap_map}</button>
-      <button type="button" data-base="terrain">${basemap_terrain}</button>
-      <button type="button" data-base="atlas">${basemap_atlas}</button>
-      <button type="button" data-base="sat">${basemap_sat}</button>
+      <button type="button" data-base="map" class="active" aria-pressed="true">${basemap_map}</button>
+      <button type="button" data-base="terrain" aria-pressed="false">${basemap_terrain}</button>
+      <button type="button" data-base="atlas" aria-pressed="false">${basemap_atlas}</button>
+      <button type="button" data-base="sat" aria-pressed="false">${basemap_sat}</button>
     </div>
   </div>
   <div id="map"></div>
@@ -1900,7 +1900,9 @@ ${chart_js}
     function setActiveRegion(key) {
       activeRegion = key || '';
       Array.prototype.forEach.call(regionBtns, function (b) {
-        b.classList.toggle('active', key !== null && b.getAttribute('data-region') === key);
+        var on = key !== null && b.getAttribute('data-region') === key;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
     }
     Array.prototype.forEach.call(regionBtns, function (b) {
@@ -1966,7 +1968,10 @@ ${chart_js}
           if (map.getLayer('base-' + r.key))
             map.setLayoutProperty('base-' + r.key, 'visibility', r.key === kind ? 'visible' : 'none');
         });
-        Array.prototype.forEach.call(bmBtns, function (x) { x.classList.toggle('active', x === b); });
+        Array.prototype.forEach.call(bmBtns, function (x) {
+          x.classList.toggle('active', x === b);
+          x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+        });
       });
     });
   })();
@@ -2681,7 +2686,9 @@ def build_map_page(
         if active:
             extra.append("active")
         cls = f' class="{" ".join(extra)}"' if extra else ""
-        return f'<button type="button" data-region="{key}"{cls}>{label}</button>'
+        pressed = "true" if active else "false"
+        return (f'<button type="button" data-region="{key}" '
+                f'aria-pressed="{pressed}"{cls}>{label}</button>')
 
     _mbtns = [_map_region_btn("", tr["region_world"], active=True),
               '<span class="zonebtns-sep" aria-hidden="true"></span>']

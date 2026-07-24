@@ -851,6 +851,7 @@
     function oclose() {
       box.hidden = true; box.innerHTML = ""; shown = []; cur = -1;
       input.setAttribute("aria-expanded", "false");
+      input.removeAttribute("aria-activedescendant");
     }
     function scrollTo(id) {
       var el = document.getElementById(id);
@@ -878,9 +879,18 @@
     }
     function omark(k) {
       var els = box.querySelectorAll(".omni-opt");
-      Array.prototype.forEach.call(els, function (li, i) { li.classList.toggle("on", i === k); });
+      Array.prototype.forEach.call(els, function (li, i) {
+        var on = i === k;
+        li.classList.toggle("on", on);
+        li.setAttribute("aria-selected", on ? "true" : "false");
+      });
       cur = k;
-      if (k >= 0 && els[k]) els[k].scrollIntoView({ block: "nearest" });
+      if (k >= 0 && els[k]) {
+        els[k].scrollIntoView({ block: "nearest" });
+        input.setAttribute("aria-activedescendant", els[k].id);   // AT follows the marked option
+      } else {
+        input.removeAttribute("aria-activedescendant");
+      }
     }
     function ohead(text) {
       var h = document.createElement("li");
@@ -898,6 +908,8 @@
         li.appendChild(s);
       }
       var idx = shown.length; shown.push(it);
+      li.id = "omni-opt-" + idx;                 // referenced by aria-activedescendant
+      li.setAttribute("aria-selected", "false");
       li.addEventListener("mousedown", function (e) { e.preventDefault(); act(it); });
       li.addEventListener("mousemove", function () { omark(idx); });
       box.appendChild(li);
@@ -1547,15 +1559,21 @@
     var cur = -1, shown = [];
     function close() {
       box.hidden = true; inp.setAttribute("aria-expanded", "false"); cur = -1;
+      inp.removeAttribute("aria-activedescendant");
     }
     function go(i) { var c = C.c[i]; if (c) location.href = c[1]; }
     function mark(k) {
       [].forEach.call(box.children, function (li, i) {
-        li.classList.toggle("on", i === k);
+        var on = i === k;
+        li.classList.toggle("on", on);
+        li.setAttribute("aria-selected", on ? "true" : "false");
       });
       cur = k;
       if (k >= 0 && box.children[k]) {
         box.children[k].scrollIntoView({ block: "nearest" });
+        inp.setAttribute("aria-activedescendant", box.children[k].id);
+      } else {
+        inp.removeAttribute("aria-activedescendant");
       }
     }
     function render(q) {
@@ -1565,10 +1583,12 @@
         if (N[i].indexOf(nq) >= 0) shown.push(i);
       }
       if (!shown.length) { close(); return; }
-      shown.forEach(function (idx) {
+      shown.forEach(function (idx, pos) {
         var c = C.c[idx];
         var li = document.createElement("li");
         li.setAttribute("role", "option");
+        li.id = "cp-opt-" + pos;                 // referenced by aria-activedescendant
+        li.setAttribute("aria-selected", "false");
         var n = document.createElement("span"); n.textContent = c[0];
         var s = document.createElement("span");
         s.className = "cp-sub"; s.textContent = c[2];
