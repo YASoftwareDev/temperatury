@@ -1423,6 +1423,14 @@ ${topbar}
   </section>
     </section><!-- /tp-ranking -->
     <section class="tabpanel" role="tabpanel" id="tp-dashboard" aria-labelledby="tab-dashboard" tabindex="0" hidden>
+  <!-- "Did you know" rotating fact card: filled by charts.js from the loaded
+       ranking (window.__gd) - every figure is computed from real data, never
+       fabricated; the card stays hidden until at least one fact is available. -->
+  <div class="dyk" id="dyk" data-i18n='${dyk_i18n}' hidden>
+    <p class="dyk-label">${dyk_label}</p>
+    <p class="dyk-fact" id="dyk-fact" aria-live="polite"></p>
+    <div class="dyk-dots" id="dyk-dots" role="group" aria-label="${dyk_label}"></div>
+  </div>
   <section class="cstat" id="country-stat"
            data-tmpl="${cstat_tmpl}" data-tmpl-cool="${cstat_tmpl_cool}"
            data-default="${cstat_default}">
@@ -1480,6 +1488,9 @@ ${topbar}
     </figure>
   </section>
     </section><!-- /tp-compare -->
+    <section class="tabpanel" role="tabpanel" id="tp-about" aria-labelledby="tab-about" tabindex="0" hidden>
+      ${about_html}
+    </section><!-- /tp-about -->
   </div><!-- /.tabs -->
 </main>
 <footer>${footer} · <a href="../embed.html">${widget_label}</a></footer>
@@ -2407,23 +2418,144 @@ def _hero_str(lang: str, key: str) -> str:
 # eyebrow so the tab and the hero say the same thing.
 _TAB_I18N = {
     "en": {"famous": "Famous cities", "map": "Map", "ranking": "Ranking",
-           "dashboard": "Dashboard", "compare": "Compare"},
+           "dashboard": "Dashboard", "compare": "Compare", "about": "About"},
     "pl": {"famous": "Znane miasta", "map": "Mapa", "ranking": "Ranking",
-           "dashboard": "Panel", "compare": "Porównaj"},
+           "dashboard": "Panel", "compare": "Porównaj", "about": "O danych"},
     "de": {"famous": "Berühmte Städte", "map": "Karte", "ranking": "Rangliste",
-           "dashboard": "Dashboard", "compare": "Vergleich"},
+           "dashboard": "Dashboard", "compare": "Vergleich", "about": "Info"},
     "fr": {"famous": "Villes emblématiques", "map": "Carte", "ranking": "Classement",
-           "dashboard": "Tableau de bord", "compare": "Comparer"},
+           "dashboard": "Tableau de bord", "compare": "Comparer", "about": "À propos"},
     "es": {"famous": "Ciudades famosas", "map": "Mapa", "ranking": "Ranking",
-           "dashboard": "Panel", "compare": "Comparar"},
+           "dashboard": "Panel", "compare": "Comparar", "about": "Acerca de"},
     "uk": {"famous": "Відомі міста", "map": "Мапа", "ranking": "Рейтинг",
-           "dashboard": "Панель", "compare": "Порівняти"},
+           "dashboard": "Панель", "compare": "Порівняти", "about": "Про дані"},
 }
 
 
 def _tab_str(lang: str, key: str) -> str:
     """A landing tab label localised to ``lang``, English per-key fallback."""
     return (_TAB_I18N.get(lang) or {}).get(key) or _TAB_I18N["en"][key]
+
+
+# The "About" tab's Q&A: how the site works and how the data were gathered. The
+# methodology is the same in every language, so the body is English (matching the
+# English-fallback policy for the long tail); only the tab label is localised.
+_ABOUT_QA = [
+    ("What does this site show?",
+     "How the world's major cities have warmed since 1940. Every city gets its "
+     "long-term temperature trend, its warming since 1940, its decade-by-decade "
+     "pattern, and its rank among all covered cities."),
+    ("Where does the data come from?",
+     "The <a href=\"https://open-meteo.com/\" rel=\"noopener\">Open-Meteo</a> "
+     "historical weather API, which serves the <strong>ERA5 climate "
+     "reanalysis</strong> produced by ECMWF and Copernicus. It is free and "
+     "key-less. Each city uses the daily mean 2&#8202;m air temperature for its "
+     "location, from 1&nbsp;January&nbsp;1940 to the last complete calendar year."),
+    ("What is a \"reanalysis\"?",
+     "A physically consistent reconstruction of past weather: a weather model is "
+     "constrained by the historical observations (stations, ships, balloons, "
+     "satellites) to produce temperatures everywhere on a regular grid (about "
+     "25&nbsp;km), even where no station ever stood. It is the standard way "
+     "climate scientists study long-term change."),
+    ("What does the °C&nbsp;/&nbsp;decade trend mean?",
+     "The slope of a straight-line fit through each year's average temperature "
+     "from 1940 to today, expressed as degrees Celsius of warming per decade. "
+     "A city at +0.3&nbsp;°C/decade has warmed about 2.5&nbsp;°C over "
+     "the ~85-year record."),
+    ("What are the decade anomalies and warming stripes?",
+     "Each decade's average temperature compared with the <strong>1961–1990 "
+     "baseline</strong> — the standard 30-year climate normal. A positive "
+     "anomaly means that decade was warmer than the baseline. The stripes and the "
+     "area charts draw these anomalies: cool blue below the baseline, warm red "
+     "above it."),
+    ("How is the ranking built?",
+     "Cities are ordered by their warming rate (°C/decade). \"Warming faster "
+     "than N%\" is a city's percentile among all covered cities. The country view "
+     "aggregates each country's cities. Rank is fixed and global, so filtering or "
+     "sorting never changes \"you are #123 worldwide.\""),
+    ("What is \"check any place on Earth\"?",
+     "The search box geocodes any place you type and pulls its own 1940– "
+     "record straight from Open-Meteo, computing the trend in your browser — "
+     "so even towns too small for the prebuilt set get a real, freshly computed "
+     "answer."),
+    ("What are the limits of this?",
+     "Reanalysis is not the same as a single weather station: it is a grid-cell "
+     "average, so very local effects (a specific valley, an urban heat island "
+     "smaller than the cell) are smoothed out. Trends over 85 years are robust, "
+     "but any single year should not be read too closely. The figures describe "
+     "warming, which is one part of a changing climate."),
+    ("Is it open source?",
+     "Yes. The full pipeline — data fetching, trend computation and page "
+     "generation — is on "
+     "<a href=\"https://github.com/YASoftwareDev/temperatury\" rel=\"noopener\">"
+     "GitHub</a>."),
+]
+
+
+def _about_html(tr: dict, lang: str) -> str:
+    """The About/Q&A tab body: static methodology, localised heading + label."""
+    heading = tr.get("about_heading", "How this works")
+    intro = tr.get("about_intro",
+                   "How the data behind these charts were gathered, and what the "
+                   "numbers mean.")
+    items = "".join(
+        f'<div class="qa"><h3 class="qa-q">{q}</h3>'
+        f'<p class="qa-a">{a}</p></div>'
+        for q, a in _ABOUT_QA)
+    return (f'<div class="about-wrap"><h2 class="dash-h2">{_esc(heading)}</h2>'
+            f'<p class="section-sub">{_esc(intro)}</p>{items}</div>')
+
+
+# "Did you know" fact templates. charts.js computes each number from the loaded
+# ranking (window.__gd) and fills the {placeholders}; every figure is real data.
+# {city}/{country} are localised client-side; {b}/{/b} bracket the emphasised
+# number (charts.js turns them into <b> nodes, so no markup is ever injected).
+_DYK_I18N = {
+    "en": {"label": "Did you know?",
+           "fastest_city": "{city} is warming fastest of all — {b}{v} °C{/b} per decade.",
+           "over2": "{b}{n}{/b} of {total} cities have warmed more than {b}2 °C{/b} since 1940.",
+           "avg_since": "The average city has warmed {b}{v} °C{/b} since 1940.",
+           "faster_world": "{b}{pct}%{/b} of cities warm faster than the world-city average.",
+           "fastest_country": "{country} is the fastest-warming country — {b}{v} °C{/b} per decade."},
+    "pl": {"label": "Czy wiesz, że?",
+           "fastest_city": "{city} ociepla się najszybciej ze wszystkich — {b}{v} °C{/b} na dekadę.",
+           "over2": "{b}{n}{/b} z {total} miast ociepliło się o ponad {b}2 °C{/b} od 1940.",
+           "avg_since": "Przeciętne miasto ociepliło się o {b}{v} °C{/b} od 1940.",
+           "faster_world": "{b}{pct}%{/b} miast ociepla się szybciej niż średnia światowa.",
+           "fastest_country": "{country} to najszybciej ocieplający się kraj — {b}{v} °C{/b} na dekadę."},
+    "de": {"label": "Wusstest du?",
+           "fastest_city": "{city} erwärmt sich am schnellsten — {b}{v} °C{/b} pro Jahrzehnt.",
+           "over2": "{b}{n}{/b} von {total} Städten haben sich seit 1940 um mehr als {b}2 °C{/b} erwärmt.",
+           "avg_since": "Die durchschnittliche Stadt hat sich seit 1940 um {b}{v} °C{/b} erwärmt.",
+           "faster_world": "{b}{pct}%{/b} der Städte erwärmen sich schneller als der Weltstädte-Schnitt.",
+           "fastest_country": "{country} ist das Land mit der schnellsten Erwärmung — {b}{v} °C{/b} pro Jahrzehnt."},
+    "fr": {"label": "Le saviez-vous ?",
+           "fastest_city": "{city} se réchauffe le plus vite de toutes — {b}{v} °C{/b} par décennie.",
+           "over2": "{b}{n}{/b} villes sur {total} se sont réchauffées de plus de {b}2 °C{/b} depuis 1940.",
+           "avg_since": "La ville moyenne s'est réchauffée de {b}{v} °C{/b} depuis 1940.",
+           "faster_world": "{b}{pct}%{/b} des villes se réchauffent plus vite que la moyenne mondiale.",
+           "fastest_country": "{country} est le pays qui se réchauffe le plus vite — {b}{v} °C{/b} par décennie."},
+    "es": {"label": "¿Sabías que?",
+           "fastest_city": "{city} es la que más rápido se calienta — {b}{v} °C{/b} por década.",
+           "over2": "{b}{n}{/b} de {total} ciudades se han calentado más de {b}2 °C{/b} desde 1940.",
+           "avg_since": "La ciudad media se ha calentado {b}{v} °C{/b} desde 1940.",
+           "faster_world": "El {b}{pct}%{/b} de las ciudades se calienta más rápido que la media mundial.",
+           "fastest_country": "{country} es el país que más rápido se calienta — {b}{v} °C{/b} por década."},
+    "uk": {"label": "Чи знаєте ви?",
+           "fastest_city": "{city} теплішає найшвидше з усіх — {b}{v} °C{/b} за десятиліття.",
+           "over2": "{b}{n}{/b} з {total} міст потепліли більш ніж на {b}2 °C{/b} від 1940.",
+           "avg_since": "Пересічне місто потеплішало на {b}{v} °C{/b} від 1940.",
+           "faster_world": "{b}{pct}%{/b} міст теплішають швидше за середню по світу.",
+           "fastest_country": "{country} — країна, що теплішає найшвидше — {b}{v} °C{/b} за десятиліття."},
+}
+
+
+def _dyk_dict(lang: str) -> dict:
+    """The 'Did you know' label + fact templates for ``lang``, English per-key
+    fallback (so a partially-translated language still shows complete facts)."""
+    base = dict(_DYK_I18N["en"])
+    base.update({k: v for k, v in (_DYK_I18N.get(lang) or {}).items() if v})
+    return base
 
 
 def _stripe_rgb(v: float | None) -> tuple[int, int, int]:
@@ -2567,7 +2699,7 @@ def build_map_page(
     _tabs = [("region", hero_eyebrow), ("famous", tab_famous),
              ("map", _tab_str(lang, "map")), ("ranking", _tab_str(lang, "ranking")),
              ("dashboard", _tab_str(lang, "dashboard")),
-             ("compare", _tab_str(lang, "compare"))]
+             ("compare", _tab_str(lang, "compare")), ("about", _tab_str(lang, "about"))]
     tabstrip = "".join(
         f'<button type="button" class="tabbtn{" active" if i == 0 else ""}" '
         f'role="tab" id="tab-{k}" data-tab="{k}" aria-controls="tp-{k}" '
@@ -2898,6 +3030,9 @@ def build_map_page(
         tabstrip=tabstrip,
         tabs_label=tabs_label,
         tab_famous=tab_famous,
+        about_html=_about_html(tr, lang),
+        dyk_label=_esc(_dyk_dict(lang)["label"]),
+        dyk_i18n=_esc(json.dumps(_dyk_dict(lang), ensure_ascii=False), quote=True),
         hero_unit=hero_unit,
         hero_cta=hero_cta,
         hero_bg=hero_bg,

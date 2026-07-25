@@ -377,6 +377,29 @@
   .cstat-line { max-width:60ch; margin:0 auto; font-size:1.15rem; color:var(--ink);
     line-height:1.5; }
   .cstat-line b { color:var(--accent); }
+  /* About / Q&A tab: a readable single column of question/answer pairs. */
+  .about-wrap { max-width:50rem; margin:0 auto; }
+  .about-wrap .qa { margin:0 0 1.5rem; }
+  .about-wrap .qa-q { font-size:1.02rem; font-weight:700; margin:0 0 .35rem; color:var(--ink); }
+  .about-wrap .qa-a { margin:0; color:var(--ink-2); line-height:1.62; }
+  .about-wrap .qa-a a { color:var(--accent); text-decoration:none; }
+  .about-wrap .qa-a a:hover { text-decoration:underline; }
+  /* "Did you know" rotating fact card (top of the Dashboard tab). */
+  .dyk { max-width:44rem; margin:0 auto 1.6rem; padding:1rem 1.2rem; text-align:center;
+    border:1px solid var(--line); border-radius:var(--radius);
+    background:color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+  .dyk-label { font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+    font-weight:700; color:var(--accent); margin:0 0 .3rem; }
+  /* Plain block (not flex): a flex container would turn each text node + <b> into
+     a flex item and collapse the whitespace around the emphasised number. */
+  .dyk-fact { margin:0; font-size:1.12rem; line-height:1.5; color:var(--ink); min-height:3em; }
+  .dyk-fact b { color:var(--accent); font-variant-numeric:tabular-nums; }
+  .dyk[hidden] { display:none; }
+  .dyk-dots { display:flex; gap:.35rem; justify-content:center; margin:.7rem 0 0; }
+  .dyk-dots button { width:7px; height:7px; padding:0; border:0; border-radius:50%;
+    background:var(--line-2); cursor:pointer; }
+  .dyk-dots button.on { background:var(--accent); }
+  @media (prefers-reduced-motion: reduce) { .dyk-fact { transition:none; } }
   @media (max-width:480px){ .rank-cty { display:none; } }
   /* Omni search: one box that finds a city, country, region or any place. */
   .omni { max-width:min(94vw,640px); margin:1.4rem auto .4rem; }

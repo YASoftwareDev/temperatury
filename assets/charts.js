@@ -600,6 +600,123 @@
     // Draw the dashboard now if the visitor already opened its tab before the
     // data arrived; otherwise this no-ops until they do.
     if (window.renderDashboard) window.renderDashboard();
+    if (window.initDidYouKnow) window.initDidYouKnow();
+  };
+
+  // "Did you know" rotating facts (top of the Dashboard tab), each computed from
+  // the loaded ranking - never fabricated. A fact is only added when its inputs
+  // are present; the card stays hidden if nothing is computable. Numbers are put
+  // in <b> nodes via textContent, so no data string is ever parsed as markup.
+  window.initDidYouKnow = function () {
+    var card = document.getElementById("dyk");
+    if (!card || card.__wired) return;
+    var d = window.__gd;
+    if (!d || !d.ranking || !d.ranking.length) return;
+    card.__wired = true;
+    var lang = (document.documentElement.lang || "en").split("-")[0];
+    var T = {};
+    try { T = JSON.parse(card.getAttribute("data-i18n") || "{}"); } catch (e) {}
+    var rank = d.ranking, gt = d.gt || 0;
+    function cityName(r) {
+      var m = window.__names && window.__names[r.s];
+      return (m && (m[lang] || m.en)) || r.n;
+    }
+    var regionNames = null;
+    try { regionNames = new Intl.DisplayNames([lang], { type: "region" }); } catch (e) {}
+    function countryName(cc) {
+      var up = (cc || "").toUpperCase();
+      if (regionNames) { try { return regionNames.of(up) || up; } catch (e) {} }
+      return up;
+    }
+    var facts = [], fc = null, over = 0, sumDt = 0, nDt = 0, fw = 0, nt = 0;
+    for (var i = 0; i < rank.length; i++) {
+      var r = rank[i];
+      if (typeof r.t === "number") {
+        if (fc == null || r.t > rank[fc].t) fc = i;
+        nt++; if (gt && r.t > gt) fw++;
+      }
+      if (typeof r.dt === "number") { sumDt += r.dt; nDt++; if (r.dt > 2) over++; }
+    }
+    // Each fact keeps its (trusted) template + computed values separately, so the
+    // marker split happens on the template and a value that happens to contain a
+    // "{b}" token is substituted as plain text, never treated as a marker.
+    var fcn = fc != null ? cityName(rank[fc]) : null;
+    if (fcn && T.fastest_city)   // needs both a trend and a resolvable name
+      facts.push({ t: T.fastest_city, v: { city: fcn, v: fmtSigned(rank[fc].t, 2) } });
+    // Denominator is the cities that HAVE a since-1940 figure (nDt), not every row,
+    // so "N of M" is never inflated by rows missing that number.
+    if (over > 0 && nDt > 0 && T.over2)
+      facts.push({ t: T.over2, v: { n: over, total: nDt } });
+    if (nDt > 0 && T.avg_since)
+      facts.push({ t: T.avg_since, v: { v: fmtSigned(sumDt / nDt, 1) } });
+    if (gt && nt > 0 && T.faster_world)
+      facts.push({ t: T.faster_world, v: { pct: Math.round(100 * fw / nt) } });
+    if (d.countries && d.countries.length && T.fastest_country) {
+      var qc = null;
+      for (var q = 0; q < d.countries.length; q++)
+        if (typeof d.countries[q].t === "number" && d.countries[q].cc &&
+            (qc == null || d.countries[q].t > d.countries[qc].t)) qc = q;
+      var qcn = qc != null ? countryName(d.countries[qc].cc) : null;
+      if (qcn)
+        facts.push({ t: T.fastest_country,
+          v: { country: qcn, v: fmtSigned(d.countries[qc].t, 2) } });
+    }
+    if (!facts.length) return;
+    var factEl = document.getElementById("dyk-fact");
+    var dotsEl = document.getElementById("dyk-dots");
+    var idx = 0, timer = null;
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Split the {b}..{/b} bold markers on the TEMPLATE, then fill the {key} value
+    // placeholders as text - so bolding follows the template, never a value's text.
+    function fillSeg(seg, vals) {
+      return seg.replace(/\{(city|country|v|n|total|pct)\}/g, function (m, k) {
+        return vals[k] != null ? String(vals[k]) : m;
+      });
+    }
+    function factFrag(f) {
+      var frag = document.createDocumentFragment(), re = /\{b\}([\s\S]*?)\{\/b\}/g, last = 0, m;
+      while ((m = re.exec(f.t))) {
+        if (m.index > last)
+          frag.appendChild(document.createTextNode(fillSeg(f.t.slice(last, m.index), f.v)));
+        var b = document.createElement("b"); b.textContent = fillSeg(m[1], f.v);
+        frag.appendChild(b);
+        last = re.lastIndex;
+      }
+      if (last < f.t.length)
+        frag.appendChild(document.createTextNode(fillSeg(f.t.slice(last), f.v)));
+      return frag;
+    }
+    // Pagination dots - deliberately NOT role="tab" (they live inside a landing
+    // tabpanel and must not be mistaken for a landing tab).
+    var dots = facts.map(function (_, k) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", (k + 1) + " / " + facts.length);
+      b.addEventListener("click", function () { show(k); rest(); });
+      dotsEl.appendChild(b);
+      return b;
+    });
+    function show(i) {
+      idx = (i + facts.length) % facts.length;
+      factEl.innerHTML = ""; factEl.appendChild(factFrag(facts[idx]));
+      dots.forEach(function (b, k) {
+        b.classList.toggle("on", k === idx);
+        b.setAttribute("aria-current", k === idx ? "true" : "false");
+      });
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function rest() {
+      stop();
+      if (!reduce && facts.length > 1) timer = setInterval(function () { show(idx + 1); }, 7000);
+    }
+    if (facts.length > 1) {
+      card.addEventListener("mouseenter", stop);
+      card.addEventListener("mouseleave", rest);
+      card.addEventListener("focusin", stop);
+      card.addEventListener("focusout", rest);
+    } else if (dotsEl) { dotsEl.style.display = "none"; }
+    show(0); rest();
+    card.hidden = false;
   };
 
   // --- "Check any place on Earth" -------------------------------------------
@@ -2129,7 +2246,10 @@
     var root = document.getElementById("landing-tabs");
     if (!root || root.__wired) return;
     var strip = root.querySelector('[role="tablist"]');
-    var tabs = [].slice.call(root.querySelectorAll('[role="tab"]'));
+    if (!strip) return;
+    // Only the strip's own tabs - NOT any role=tab a panel might contain (e.g. the
+    // "did you know" dots), which would otherwise be captured as landing tabs.
+    var tabs = [].slice.call(strip.querySelectorAll('[role="tab"]'));
     if (!strip || !tabs.length) return;
     root.__wired = true;
     var ids = tabs.map(function (t) { return t.getAttribute("data-tab"); });
