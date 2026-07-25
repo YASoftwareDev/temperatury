@@ -1300,7 +1300,23 @@ ${topbar}
   <p class="intro">${intro}</p>
   <p>${sub}</p>
 </header>
+<div class="searchbar" role="search">
+  <section class="omni" id="omni" data-i18n='${omni_i18n}'>
+    <div class="omni-combo">
+      <input type="search" id="omni-input" class="omni-input" role="combobox"
+             autocomplete="off" aria-autocomplete="list" aria-expanded="false"
+             aria-controls="omni-results" placeholder="${omni_ph}" aria-label="${omni_ph}">
+      <ul id="omni-results" class="omni-results" role="listbox" hidden></ul>
+    </div>
+    <p class="lookup-status" id="lookup-status" role="status"></p>
+    <div class="lookup-result" id="lookup-result" hidden></div>
+  </section>
+  <script>window.__omniData=${omni_data};</script>
+</div>
 <main>
+  <div class="tabs" id="landing-tabs">
+    <div class="tabstrip" role="tablist" aria-label="${tabs_label}">${tabstrip}</div>
+    <section class="tabpanel" role="tabpanel" id="tp-region" aria-labelledby="tab-region" tabindex="0">
   <!-- "Your region" hero: opens the page on the visitor's nearest covered city.
        Server-rendered with the default city + its stat so it is populated on
        first paint; charts.js (initHero) enhances it from the visitor's
@@ -1332,17 +1348,14 @@ ${topbar}
       <p class="rh-hint" id="rh-hint">${hero_default_note}</p>
     </div>
   </section>
-  <section class="omni" id="omni" data-i18n='${omni_i18n}'>
-    <div class="omni-combo">
-      <input type="search" id="omni-input" class="omni-input" role="combobox"
-             autocomplete="off" aria-autocomplete="list" aria-expanded="false"
-             aria-controls="omni-results" placeholder="${omni_ph}" aria-label="${omni_ph}">
-      <ul id="omni-results" class="omni-results" role="listbox" hidden></ul>
-    </div>
-    <p class="lookup-status" id="lookup-status" role="status"></p>
-    <div class="lookup-result" id="lookup-result" hidden></div>
-  </section>
-  <script>window.__omniData=${omni_data};</script>
+    </section><!-- /tp-region -->
+    <section class="tabpanel famous" role="tabpanel" id="tp-famous" aria-labelledby="tab-famous" tabindex="0" hidden>
+      <div class="carousel" id="famous-carousel" data-autoplay="6000"
+           aria-roledescription="carousel" aria-label="${tab_famous}">
+        <!-- charts.js initCarousel fills this with iconic-city hero slides (phase 4) -->
+      </div>
+    </section><!-- /tp-famous -->
+    <section class="tabpanel" role="tabpanel" id="tp-map" aria-labelledby="tab-map" tabindex="0" hidden>
   <div class="map-filter" role="group" aria-label="${map_filter_label}">
     <div id="map-region" class="zonebtns">${map_region_buttons}</div>
     <select id="map-country" class="lang-select" aria-label="${rank_country}">
@@ -1366,7 +1379,8 @@ ${topbar}
   </div>
   ${coverage_note}
   ${kpi_band}
-
+    </section><!-- /tp-map -->
+    <section class="tabpanel" role="tabpanel" id="tp-ranking" aria-labelledby="tab-ranking" tabindex="0" hidden>
   <section class="ranking" id="ranking">
     <h2 class="dash-h2">${rank_title}</h2>
     <p class="section-sub">${rank_intro}</p>
@@ -1403,23 +1417,8 @@ ${topbar}
       </div>
     </div>
   </section>
-
-  <section class="compare" id="compare">
-    <h2 class="dash-h2">${cmp_title}</h2>
-    <p class="section-sub">${cmp_hint}</p>
-    <div class="cmp-controls">
-      <input id="cmp-a" class="rank-search" list="cmp-cities" autocomplete="off"
-             placeholder="${cmp_city_a}" aria-label="${cmp_city_a}">
-      <input id="cmp-b" class="rank-search" list="cmp-cities" autocomplete="off"
-             placeholder="${cmp_city_b}" aria-label="${cmp_city_b}">
-      <datalist id="cmp-cities"></datalist>
-    </div>
-    <figure class="cmp-figure" id="cmp-figure" hidden>
-      <div class="chart-wrap"><canvas id="c-cmp"></canvas></div>
-      <figcaption id="cmp-stats"></figcaption>
-    </figure>
-  </section>
-
+    </section><!-- /tp-ranking -->
+    <section class="tabpanel" role="tabpanel" id="tp-dashboard" aria-labelledby="tab-dashboard" tabindex="0" hidden>
   <section class="cstat" id="country-stat"
            data-tmpl="${cstat_tmpl}" data-tmpl-cool="${cstat_tmpl_cool}"
            data-default="${cstat_default}">
@@ -1459,6 +1458,25 @@ ${topbar}
       </figure>
     </section>
   </section>
+    </section><!-- /tp-dashboard -->
+    <section class="tabpanel" role="tabpanel" id="tp-compare" aria-labelledby="tab-compare" tabindex="0" hidden>
+  <section class="compare" id="compare">
+    <h2 class="dash-h2">${cmp_title}</h2>
+    <p class="section-sub">${cmp_hint}</p>
+    <div class="cmp-controls">
+      <input id="cmp-a" class="rank-search" list="cmp-cities" autocomplete="off"
+             placeholder="${cmp_city_a}" aria-label="${cmp_city_a}">
+      <input id="cmp-b" class="rank-search" list="cmp-cities" autocomplete="off"
+             placeholder="${cmp_city_b}" aria-label="${cmp_city_b}">
+      <datalist id="cmp-cities"></datalist>
+    </div>
+    <figure class="cmp-figure" id="cmp-figure" hidden>
+      <div class="chart-wrap"><canvas id="c-cmp"></canvas></div>
+      <figcaption id="cmp-stats"></figcaption>
+    </figure>
+  </section>
+    </section><!-- /tp-compare -->
+  </div><!-- /.tabs -->
 </main>
 <footer>${footer} · <a href="../embed.html">${widget_label}</a></footer>
 <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css" rel="stylesheet">
@@ -1470,12 +1488,18 @@ ${topbar}
   var ZONE_COLOR = ${zone_color_json};
   var ZONE_BANDS = ${zone_bands_json};
   var GRID_TIP = ${grid_tip_js};      // "{n} of {m} cities with data" (localized)
+  // Real (analysed) cities, shared by the compare pickers and the map. Set here so
+  // Compare works even before the Map tab is opened (the map now inits lazily).
+  window.__mapCities = cities.filter(function (c) { return c.k !== 'region' && c.k !== 'ocean'; });
   // Tiled Web-Mercator basemap (MapLibre GL). Mercator inflates the high
   // latitudes, but the overlays are all lon/lat so they register correctly, and
   // GPU rendering keeps the 4600-cell coverage grid smooth. Two keyless raster
   // sources: a clean street map (CARTO Voyager) and satellite (Esri imagery).
-  (function () {
-    if (!window.maplibregl) return;
+  // Lazy: the tab controller (charts.js) calls this only when the Map tab is first
+  // shown, so first paint isn't blocked on MapLibre + the coverage grid fetch.
+  window.__initMap = function () {
+    if (window.__mapReady || !window.maplibregl) return;
+    window.__mapReady = true;
     // The "Map" basemap is a keyless VECTOR style (OpenFreeMap): its labels are
     // data, so we re-render them in the site's language after load - raster tiles
     // can't be localised because the labels are baked into the image. The terrain/
@@ -1558,7 +1582,6 @@ ${topbar}
                                        className: 'mappop', offset: 8 });
     var gridMode = false, activeRegion = '';
     var realCities = cities.filter(function (c) { return !isRef(c); });
-    window.__mapCities = realCities;   // the compare pickers reuse this list
 
     // --- continent/country picker: pure zoom -----------------------------------
     // Picking a region or country only fit-zooms the view. Nothing is filtered
@@ -1977,7 +2000,11 @@ ${topbar}
         });
       });
     });
-  })();
+
+    // The tab controller calls this when the Map tab is re-shown, in case the
+    // GL canvas needs to reflow to the panel's current size.
+    window.__mapResize = function () { try { map.resize(); } catch (e) {} };
+  };
 </script>
 <script>
   window.__ci18n = ${chart_i18n};
@@ -2345,6 +2372,30 @@ def _hero_str(lang: str, key: str) -> str:
     return (_HERO_I18N.get(lang) or {}).get(key) or _HERO_I18N["en"][key]
 
 
+# Landing tab-strip labels. Same inline-6-languages + English-fallback pattern as
+# _HERO_I18N (kept here, not in the 32 i18n tables). "region" reuses the hero
+# eyebrow so the tab and the hero say the same thing.
+_TAB_I18N = {
+    "en": {"famous": "Famous cities", "map": "Map", "ranking": "Ranking",
+           "dashboard": "Dashboard", "compare": "Compare"},
+    "pl": {"famous": "Znane miasta", "map": "Mapa", "ranking": "Ranking",
+           "dashboard": "Panel", "compare": "Porównaj"},
+    "de": {"famous": "Berühmte Städte", "map": "Karte", "ranking": "Rangliste",
+           "dashboard": "Dashboard", "compare": "Vergleich"},
+    "fr": {"famous": "Villes emblématiques", "map": "Carte", "ranking": "Classement",
+           "dashboard": "Tableau de bord", "compare": "Comparer"},
+    "es": {"famous": "Ciudades famosas", "map": "Mapa", "ranking": "Ranking",
+           "dashboard": "Panel", "compare": "Comparar"},
+    "uk": {"famous": "Відомі міста", "map": "Мапа", "ranking": "Рейтинг",
+           "dashboard": "Панель", "compare": "Порівняти"},
+}
+
+
+def _tab_str(lang: str, key: str) -> str:
+    """A landing tab label localised to ``lang``, English per-key fallback."""
+    return (_TAB_I18N.get(lang) or {}).get(key) or _TAB_I18N["en"][key]
+
+
 def _stripe_rgb(v: float | None) -> tuple[int, int, int]:
     """Anomaly (degC) -> warming-stripe colour, matching charts.js luStripeColor:
     blue (-1.0) through white (0) to deep red (+1.5)."""
@@ -2479,6 +2530,21 @@ def build_map_page(
     # renders populated with no JS, geolocation, or network request; charts.js
     # then swaps in the visitor's nearest covered city if geolocation succeeds.
     hero_eyebrow = _hero_str(lang, "eyebrow")
+    # Landing tab strip: "Your region" reuses the hero eyebrow; the rest come from
+    # _tab_str. The server default selects the first tab (region); charts.js
+    # re-selects from the URL hash / localStorage on load.
+    tab_famous = _tab_str(lang, "famous")
+    _tabs = [("region", hero_eyebrow), ("famous", tab_famous),
+             ("map", _tab_str(lang, "map")), ("ranking", _tab_str(lang, "ranking")),
+             ("dashboard", _tab_str(lang, "dashboard")),
+             ("compare", _tab_str(lang, "compare"))]
+    tabstrip = "".join(
+        f'<button type="button" class="tabbtn{" active" if i == 0 else ""}" '
+        f'role="tab" id="tab-{k}" data-tab="{k}" aria-controls="tp-{k}" '
+        f'aria-selected="{"true" if i == 0 else "false"}" '
+        f'tabindex="{"0" if i == 0 else "-1"}">{_esc(lbl)}</button>'
+        for i, (k, lbl) in enumerate(_tabs))
+    tabs_label = tr.get("nav_sections", "Sections")
     hero_unit = tr["per_decade_c"]
     hero_cta = _hero_str(lang, "cta")
     hero_since_tmpl = _hero_str(lang, "since")
@@ -2799,6 +2865,9 @@ def build_map_page(
         # "Your region" hero (seeded with the default city; JS swaps in the
         # visitor's nearest covered city on geolocation).
         hero_eyebrow=hero_eyebrow,
+        tabstrip=tabstrip,
+        tabs_label=tabs_label,
+        tab_famous=tab_famous,
         hero_unit=hero_unit,
         hero_cta=hero_cta,
         hero_bg=hero_bg,
@@ -2827,9 +2896,9 @@ def build_map_page(
         lang_nav=_lang_nav(lang, languages, "index", in_place=False),
         topbar=_topbar(
             "index.html", _lang_nav(lang, languages, "index", in_place=False),
-            nav_html=('<a class="tb-link" href="#ranking">'
+            nav_html=('<a class="tb-link" href="#tab=ranking">'
                       + _esc(tr.get("nav_ranking", "Ranking")) + '</a>'
-                      '<a class="tb-link" href="#global">'
+                      '<a class="tb-link" href="#tab=dashboard">'
                       + _esc(tr.get("nav_dashboard", "Climate dashboard")) + '</a>')),
         map_region_buttons=map_region_buttons,
         map_filter_label=tr.get("map_filter", "Continent or country"),

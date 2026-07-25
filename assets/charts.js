@@ -523,7 +523,15 @@
   // three per-zone charts whenever the zone <select> changes. Chart instances
   // are tracked and destroyed before each redraw so switching zones doesn't leak
   // canvases. Reuses the same archetype builders as the per-city charts.
-  window.renderGlobal = function (data) {
+  // The dashboard's canvas charts (comparison + the zone anomaly/stripes/heatmap)
+  // are drawn lazily - only once the Dashboard tab is first shown - so a hidden
+  // 0x0 panel never yields a broken canvas and first paint isn't spent on charts
+  // the visitor may never open. Idempotent; a no-op until both the data has
+  // loaded (__globalData) and the tab has been requested (__dashWanted).
+  window.renderDashboard = function () {
+    var data = window.__globalData;
+    if (!data || window.__dashDone || !window.__dashWanted) return;
+    window.__dashDone = true;
     var live = {};
     function draw(cid, payload) {
       if (live[cid]) { live[cid].destroy(); live[cid] = null; }
@@ -559,6 +567,13 @@
       (btns[0] && btns[0].getAttribute("data-zone")) ||
       (data.order && data.order[0]) || "world";
     drawZone(initial);
+  };
+
+  window.renderGlobal = function (data) {
+    // The DOM-only surfaces (ranking table, country stat, omni, hero) render on
+    // load - they are size-independent, so they work while their panels are
+    // hidden. The dashboard canvases wait for renderDashboard (above).
+    window.__globalData = data;
     if (data.ranking) renderRanking(data.ranking, data.countries || [], data.gt || 0);
     if (data.countries) renderCountryStat(data.countries, data.tzcc || {});
     // Sorted trend distribution + world-city average power the "check any place"
@@ -577,6 +592,9 @@
     window.__countries = data.countries || [];
     if (window.initOmni) window.initOmni();
     if (window.applyHero) window.applyHero();
+    // Draw the dashboard now if the visitor already opened its tab before the
+    // data arrived; otherwise this no-ops until they do.
+    if (window.renderDashboard) window.renderDashboard();
   };
 
   // --- "Check any place on Earth" -------------------------------------------
@@ -864,10 +882,14 @@
       oclose();
       if (it.t === "city") { location.href = it.url; return; }
       if (it.t === "region") {
+        // Open the Map tab first: it lazily inits the map AND wires the region
+        // pills, so the click below has a live handler to act on.
+        if (window.showTab) window.showTab("map");
         var btn = document.querySelector('#map-region button[data-region="' + it.key + '"]');
         if (btn) btn.click();
         scrollTo("map");
       } else if (it.t === "country") {
+        if (window.showTab) window.showTab("ranking");
         var rc = document.getElementById("rank-country-filter");
         if (rc) { rc.value = it.cc; rc.dispatchEvent(new Event("change")); }
         scrollTo("ranking");
@@ -1914,9 +1936,112 @@
         nav.appendChild(b);
       }).catch(function () {});
   }
+  // --- landing tab controller (WAI-ARIA tabs) --------------------------------
+  // Six panels in one view: deep-linkable (#tab=map), remembered (localStorage),
+  // keyboard-navigable (ArrowLeft/Right + Home/End over a roving tabindex). The
+  // heavy panels init lazily on first show (map, dashboard charts); every panel
+  // reflows its Chart.js canvases on show so one laid out while hidden (0x0) is
+  // corrected. No-op on pages without the tab strip (i.e. every city page).
+  window.initTabs = function () {
+    var root = document.getElementById("landing-tabs");
+    if (!root || root.__wired) return;
+    var strip = root.querySelector('[role="tablist"]');
+    var tabs = [].slice.call(root.querySelectorAll('[role="tab"]'));
+    if (!strip || !tabs.length) return;
+    root.__wired = true;
+    var ids = tabs.map(function (t) { return t.getAttribute("data-tab"); });
+    function panel(id) { return document.getElementById("tp-" + id); }
+
+    function onShow(id) {
+      if (id === "map") {
+        if (window.__initMap) window.__initMap();
+        if (window.__mapResize) window.__mapResize();
+      } else if (id === "dashboard") {
+        window.__dashWanted = true;
+        if (window.renderDashboard) window.renderDashboard();
+      } else if (id === "famous" && window.initCarousel) {
+        window.initCarousel();
+      }
+      // Reflow any Chart.js canvases that were sized while their panel was hidden.
+      var p = panel(id);
+      if (p && window.Chart && window.Chart.getChart) {
+        [].forEach.call(p.querySelectorAll("canvas"), function (c) {
+          var ch = window.Chart.getChart(c);
+          if (ch) { try { ch.resize(); } catch (e) {} }
+        });
+      }
+    }
+    function select(id, focusTab, push) {
+      if (ids.indexOf(id) < 0) id = ids[0];
+      tabs.forEach(function (t) {
+        var on = t.getAttribute("data-tab") === id;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.classList.toggle("active", on);
+        t.tabIndex = on ? 0 : -1;
+        var p = panel(t.getAttribute("data-tab"));
+        if (p) p.hidden = !on;
+        if (on && focusTab) t.focus();
+      });
+      try { localStorage.setItem("temperatury:tab", id); } catch (e) {}
+      if (push && window.history && history.replaceState)
+        history.replaceState(null, "", "#tab=" + id);
+      onShow(id);
+    }
+    strip.addEventListener("keydown", function (e) {
+      var act = document.activeElement;
+      var i = act && act.getAttribute ? ids.indexOf(act.getAttribute("data-tab")) : -1;
+      if (i < 0) return;
+      var n = null;
+      if (e.key === "ArrowRight") n = (i + 1) % ids.length;
+      else if (e.key === "ArrowLeft") n = (i - 1 + ids.length) % ids.length;
+      else if (e.key === "Home") n = 0;
+      else if (e.key === "End") n = ids.length - 1;
+      if (n === null) return;
+      e.preventDefault();
+      select(ids[n], true, true);
+    });
+    tabs.forEach(function (t) {
+      t.addEventListener("click", function () {
+        select(t.getAttribute("data-tab"), false, true);
+      });
+    });
+    // Which tab a hash asks for: explicit #tab=, a shared #cmp=a,b (Compare), the
+    // legacy city-page links #cities / #countries (Ranking, honoured by
+    // renderRanking), or a bookmark to a section that used to be a scroll anchor
+    // (#ranking, #global, #compare, #map, #region-hero, #country-stat) now living
+    // inside a panel. Returns null when the hash names no tab.
+    var SECTION_TAB = { "#ranking": "ranking", "#cities": "ranking",
+      "#countries": "ranking", "#global": "dashboard", "#country-stat": "dashboard",
+      "#compare": "compare", "#map": "map", "#region-hero": "region" };
+    function tabForHash() {
+      var h = location.hash || "";
+      var m = h.match(/tab=([a-z]+)/);
+      if (m && ids.indexOf(m[1]) >= 0) return m[1];
+      if (/(^|#|&)cmp=/.test(h)) return "compare";
+      return SECTION_TAB[h] || null;
+    }
+    window.addEventListener("hashchange", function () {
+      var t = tabForHash();
+      if (!t) return;
+      select(t, false, false);
+      // A hashchange is a topbar nav link (#tab=ranking) or back/forward - unlike
+      // a tab-button click (already in view), the viewport may be scrolled away,
+      // so bring the tabs into view the way the old #ranking/#global anchors did.
+      root.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    var stored = null;
+    try { stored = localStorage.getItem("temperatury:tab"); } catch (e) {}
+    var initial = tabForHash() || (ids.indexOf(stored) >= 0 ? stored : ids[0]);
+    select(initial, false, false);
+    // Let cross-tab actions (the omni search jumping to the map/ranking) bring
+    // the target panel into view before they touch its now-hidden controls.
+    window.showTab = function (id) { select(id, false, true); };
+  };
+
   function initPage() {
     initFullscreen(); initAliasHeading(); initCityPicker(); initHero();
     initCityHeroOutline(); initHeatBadge();
+    if (window.initTabs) window.initTabs();
   }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initPage);
