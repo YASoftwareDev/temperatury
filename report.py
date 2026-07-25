@@ -1335,16 +1335,16 @@ ${topbar}
         <svg class="rh-pin" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>
         </svg>
-        <span id="rh-name">${hero_default_name}</span>
+        <span id="rh-name" class="rh-name">${hero_default_name}</span>
       </p>
       <div class="rh-figure">
-        <span id="rh-trend">${hero_default_trend}</span>
+        <span id="rh-trend" class="rh-trend">${hero_default_trend}</span>
         <span class="rh-unit">${hero_unit}</span>
       </div>
       <p class="rh-meta" id="rh-meta">${hero_default_meta}</p>
       ${hero_default_spark}
-      <div id="rh-analog"></div>
-      <p class="rh-cta"><a id="rh-link" href="${hero_default_slug}"><span id="rh-cta-label">${hero_default_cta}</span> <span aria-hidden="true">&rarr;</span></a></p>
+      <div id="rh-analog" class="rh-analog"></div>
+      <p class="rh-cta"><a id="rh-link" class="rh-link" href="${hero_default_slug}"><span id="rh-cta-label" class="rh-cta-label">${hero_default_cta}</span> <span aria-hidden="true">&rarr;</span></a></p>
       <p class="rh-hint" id="rh-hint">${hero_default_note}</p>
     </div>
   </section>
@@ -1354,9 +1354,39 @@ ${topbar}
   <script>window.applyHeroCache&&window.applyHeroCache();</script>
     </section><!-- /tp-region -->
     <section class="tabpanel famous" role="tabpanel" id="tp-famous" aria-labelledby="tab-famous" tabindex="0" hidden>
+      <!-- Famous-cities carousel: charts.js initCarousel cycles a set of iconic /
+           most-populous cities through this single hero card via renderHeroEntry
+           (the same card view as "Your region"). The card carries the shared
+           localised template attributes so renderHeroEntry can read them. -->
       <div class="carousel" id="famous-carousel" data-autoplay="6000"
            aria-roledescription="carousel" aria-label="${tab_famous}">
-        <!-- charts.js initCarousel fills this with iconic-city hero slides (phase 4) -->
+        <div class="carousel-stage">
+          <button type="button" class="carousel-nav carousel-prev" aria-label="${carousel_prev}">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+                 stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <div class="carousel-card" data-cta="${hero_cta}" data-since="${hero_since_tmpl}"
+               data-faster="${hero_faster_tmpl}" data-chart-alt="${hero_chart_alt}"
+               data-analog-past="${hero_analog_past}" data-analog-future="${hero_analog_future}"
+               aria-roledescription="slide" aria-live="polite">
+            <div class="rh-inner">
+              <p class="rh-eyebrow">${tab_famous}</p>
+              <p class="rh-place"><span class="rh-name"></span></p>
+              <div class="rh-figure"><span class="rh-trend"></span><span class="rh-unit">${hero_unit}</span></div>
+              <p class="rh-meta"></p>
+              <div class="rh-spark-wrap"><div class="rh-spark"></div>
+                <div class="rh-spark-axis" hidden><span class="rh-axis-lo"></span><span class="rh-axis-hi"></span></div>
+              </div>
+              <div class="rh-analog"></div>
+              <p class="rh-cta"><a class="rh-link" href="#"><span class="rh-cta-label"></span> <span aria-hidden="true">&rarr;</span></a></p>
+            </div>
+          </div>
+          <button type="button" class="carousel-nav carousel-next" aria-label="${carousel_next}">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+                 stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <div class="carousel-dots" id="carousel-dots" role="group" aria-label="${tab_famous}"></div>
       </div>
     </section><!-- /tp-famous -->
     <section class="tabpanel" role="tabpanel" id="tp-map" aria-labelledby="tab-map" tabindex="0" hidden>
@@ -2848,10 +2878,10 @@ def build_map_page(
     _ax_lo = 1940 + 10 * _def_idx[0] if _def_idx else 1940
     _ax_hi = 1940 + 10 * _def_idx[-1] if _def_idx else 2020
     hero_default_spark = (
-        '<div class="rh-spark-wrap"><div id="rh-spark">' + _def_spark + '</div>'
+        '<div class="rh-spark-wrap"><div id="rh-spark" class="rh-spark">' + _def_spark + '</div>'
         f'<div class="rh-spark-axis" id="rh-spark-axis"{"" if _def_spark else " hidden"}>'
-        f'<span id="rh-axis-lo">{_ax_lo}</span>'
-        f'<span id="rh-axis-hi">{_ax_hi}</span></div></div>'
+        f'<span id="rh-axis-lo" class="rh-axis-lo">{_ax_lo}</span>'
+        f'<span id="rh-axis-hi" class="rh-axis-hi">{_ax_hi}</span></div></div>'
     )
 
     def _title(key: str) -> str:  # per-city chart title minus its ", {name}" tail
@@ -3030,6 +3060,8 @@ def build_map_page(
         tabstrip=tabstrip,
         tabs_label=tabs_label,
         tab_famous=tab_famous,
+        carousel_prev=_esc(tr.get("carousel_prev", "Previous city")),
+        carousel_next=_esc(tr.get("carousel_next", "Next city")),
         about_html=_about_html(tr, lang),
         dyk_label=_esc(_dyk_dict(lang)["label"]),
         dyk_i18n=_esc(json.dumps(_dyk_dict(lang), ensure_ascii=False), quote=True),

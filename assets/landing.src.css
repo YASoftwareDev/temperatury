@@ -400,6 +400,64 @@
     background:var(--line-2); cursor:pointer; }
   .dyk-dots button.on { background:var(--accent); }
   @media (prefers-reduced-motion: reduce) { .dyk-fact { transition:none; } }
+  /* Famous-cities carousel: one hero card cycling through iconic/populous cities,
+     with prev/next arrows either side and position dots below. The card reuses the
+     rh-* hooks (renderHeroEntry), styled compactly here (scoped, not the full-bleed
+     .region-hero). Its spark gradient id is rhg-fc so it never collides with the
+     region hero's #rhg. */
+  .carousel { max-width:62rem; margin:0 auto; }
+  .carousel-stage { display:flex; align-items:center; gap:.5rem; }
+  .carousel-nav { flex:0 0 auto; width:2.6rem; height:2.6rem; display:inline-flex;
+    align-items:center; justify-content:center; cursor:pointer; color:var(--ink);
+    background:var(--panel); border:1px solid var(--line); border-radius:50%; }
+  .carousel-nav:hover { border-color:var(--accent); color:var(--accent); }
+  .carousel-nav svg { width:1.3rem; height:1.3rem; }
+  .carousel-card { flex:1 1 auto; min-width:0; text-align:center; overflow:hidden;
+    border:1px solid var(--line); border-radius:calc(var(--radius) + 6px);
+    background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 8%, var(--panel)), var(--panel)); }
+  /* Same as the region hero: the country silhouette (white-stroked, for the old
+     dark treatment) is hidden so the card stays compact and readable. */
+  .carousel-card .rh-silho { display:none; }
+  .carousel-card .rh-inner { padding:clamp(1.4rem,4vw,2.4rem) clamp(1rem,4vw,2.2rem); }
+  .carousel-card .rh-eyebrow { font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+    font-weight:700; color:var(--accent); margin:0 0 .5rem; }
+  .carousel-card .rh-place { display:flex; justify-content:center; margin:0;
+    font-family:var(--hdr); font-weight:600; letter-spacing:-.01em;
+    font-size:clamp(1.5rem,4vw,2.3rem); color:var(--ink); }
+  .carousel-card .rh-figure { display:flex; justify-content:center; align-items:baseline;
+    gap:.2em; font-family:var(--hdr); font-weight:600; line-height:.95; color:var(--accent);
+    letter-spacing:-.03em; font-size:clamp(2.8rem,9vw,5rem); margin:.25rem 0 .1rem; }
+  .carousel-card .rh-unit { font-family:var(--sans); font-weight:600; font-size:.22em; color:var(--muted); }
+  .carousel-card .rh-meta { font-size:clamp(.9rem,1.8vw,1.05rem); line-height:1.5;
+    color:var(--muted); margin:.15rem auto 0; max-width:46ch; }
+  .carousel-card .rh-meta b { font-weight:700; color:var(--ink); }
+  .carousel-card .rh-spark-wrap { margin:1rem auto 0; max-width:40rem; }
+  .carousel-card .rh-spark { display:block; width:100%; height:auto; }
+  .carousel-card .rh-spark.warm { color:var(--warm); }
+  .carousel-card .rh-spark.cool { color:var(--cool); }
+  .carousel-card .rh-spark-base { stroke:var(--line); stroke-width:1.4; stroke-dasharray:3 4; }
+  .carousel-card .rh-spark-line { fill:none; stroke:currentColor; stroke-width:2.4;
+    stroke-linejoin:round; stroke-linecap:round; }
+  .carousel-card .rh-spark-fill { fill:url(#rhg-fc); }
+  .carousel-card .rh-spark-g0 { stop-color:currentColor; stop-opacity:.26; }
+  .carousel-card .rh-spark-g1 { stop-color:currentColor; stop-opacity:0; }
+  .carousel-card .rh-spark-dot { fill:currentColor; }
+  .carousel-card .rh-spark-axis { display:flex; justify-content:space-between;
+    max-width:40rem; margin:.2rem auto 0; font-size:.72rem; color:var(--muted); }
+  .carousel-card .rh-analog.analog { display:flex; justify-content:center; gap:.5rem;
+    margin:.9rem auto 0; max-width:46ch; text-align:start; }
+  .carousel-card .analog-line { margin:0; font-size:.9rem; color:var(--muted); line-height:1.45; }
+  .carousel-card .analog-emoji { font-size:1.1rem; }
+  .carousel-card .rh-cta { margin:1.1rem 0 0; }
+  .carousel-card .rh-link { display:inline-flex; align-items:center; gap:.3rem; font-weight:600;
+    color:var(--on-accent); background:var(--accent); padding:.5rem 1rem;
+    border-radius:var(--radius); text-decoration:none; }
+  .carousel-card .rh-link:hover { background:color-mix(in srgb, var(--accent) 85%, #000); }
+  .carousel-dots { display:flex; gap:.4rem; justify-content:center; margin:.9rem 0 0; flex-wrap:wrap; }
+  .carousel-dots button { width:8px; height:8px; padding:0; border:0; border-radius:50%;
+    background:var(--line-2); cursor:pointer; }
+  .carousel-dots button.on { background:var(--accent); }
+  @media (max-width:560px){ .carousel-nav { width:2.1rem; height:2.1rem; } }
   @media (max-width:480px){ .rank-cty { display:none; } }
   /* Omni search: one box that finds a city, country, region or any place. */
   .omni { max-width:min(94vw,640px); margin:1.4rem auto .4rem; }

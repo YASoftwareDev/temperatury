@@ -601,6 +601,7 @@
     // data arrived; otherwise this no-ops until they do.
     if (window.renderDashboard) window.renderDashboard();
     if (window.initDidYouKnow) window.initDidYouKnow();
+    if (window.initCarousel) window.initCarousel();
   };
 
   // "Did you know" rotating facts (top of the Dashboard tab), each computed from
@@ -717,6 +718,83 @@
     } else if (dotsEl) { dotsEl.style.display = "none"; }
     show(0); rest();
     card.hidden = false;
+  };
+
+  // Famous-cities carousel: cycles iconic + most-populous cities through one hero
+  // card (renderHeroEntry into the .carousel-card root - the same view as "Your
+  // region"). prev/next buttons, position dots, ArrowLeft/Right keys, and ~6s
+  // autoplay that pauses on hover/focus and is off under prefers-reduced-motion.
+  // Every city shown is a real ranking row - none are invented.
+  window.initCarousel = function () {
+    var root = document.getElementById("famous-carousel");
+    if (!root || root.__wired) return;
+    var rank = window.__ranking;
+    if (!rank || !rank.length) return;   // no data yet; renderGlobal calls again
+    var card = root.querySelector(".carousel-card");
+    if (!card) return;
+    var bySlug = {};
+    for (var i = 0; i < rank.length; i++) bySlug[rank[i].s] = rank[i];
+    // Recognizable names first, then fill with the most-populous covered cities.
+    var ICONIC = ["new-york", "tokyo", "london", "paris", "beijing", "shanghai",
+      "dubai", "singapore", "sydney", "moscow", "istanbul", "rio-de-janeiro",
+      "sao-paulo", "mexico-city", "mumbai", "delhi", "cairo", "berlin",
+      "los-angeles", "bangkok", "hong-kong", "rome"];
+    var picks = [], seen = {};
+    function add(r) {
+      if (r && !seen[r.s] && typeof r.t === "number" && typeof r.dt === "number") {
+        seen[r.s] = 1; picks.push(r);
+      }
+    }
+    ICONIC.forEach(function (s) { add(bySlug[s]); });
+    rank.slice().filter(function (r) { return typeof r.pop === "number"; })
+      .sort(function (a, b) { return b.pop - a.pop; })
+      .forEach(function (r) { if (picks.length < 16) add(r); });
+    if (!picks.length) return;
+    root.__wired = true;
+
+    var dotsEl = document.getElementById("carousel-dots");
+    var prev = root.querySelector(".carousel-prev"), next = root.querySelector(".carousel-next");
+    var idx = 0, timer = null;
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var interval = +root.getAttribute("data-autoplay") || 6000;
+    var dots = picks.map(function (_, k) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", (k + 1) + " / " + picks.length);
+      b.addEventListener("click", function () { show(k); restart(); });
+      dotsEl.appendChild(b);
+      return b;
+    });
+    function show(i) {
+      idx = (i + picks.length) % picks.length;
+      renderHeroEntry(picks[idx], picks[idx].s, "data-none", card);
+      dots.forEach(function (b, k) {
+        b.classList.toggle("on", k === idx);
+        b.setAttribute("aria-current", k === idx ? "true" : "false");
+      });
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function restart() {
+      stop();
+      if (!reduce && picks.length > 1) timer = setInterval(function () { show(idx + 1); }, interval);
+    }
+    if (prev) prev.addEventListener("click", function () { show(idx - 1); restart(); });
+    if (next) next.addEventListener("click", function () { show(idx + 1); restart(); });
+    root.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") { e.preventDefault(); show(idx - 1); restart(); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); show(idx + 1); restart(); }
+    });
+    if (picks.length > 1) {
+      root.addEventListener("mouseenter", stop);
+      root.addEventListener("mouseleave", restart);
+      root.addEventListener("focusin", stop);
+      root.addEventListener("focusout", restart);
+    } else {
+      if (prev) prev.style.display = "none";
+      if (next) next.style.display = "none";
+      if (dotsEl) dotsEl.style.display = "none";
+    }
+    show(0); restart();
   };
 
   // --- "Check any place on Earth" -------------------------------------------
@@ -1833,7 +1911,8 @@
   // the same idiom as the map card and the city-page hero (_hero_spark_svg in
   // report.py). Colour flows from --warm/--cool via the .warm/.cool class +
   // currentColor, so a theme switch re-tints it; nulls skipped; "" if < 2 decades.
-  function heroSpark(st, alt) {
+  function heroSpark(st, alt, gid) {
+    gid = gid || "rhg";   // unique per card so two sparks don't share a gradient
     if (!st || !st.length) return "";
     var pts = [];
     for (var i = 0; i < st.length; i++) if (st[i] != null) pts.push([i, st[i]]);
@@ -1852,9 +1931,10 @@
     return '<svg class="rh-spark ' + cls + '" viewBox="0 0 ' + W + ' ' + H
       + '" role="img" aria-label="' + (alt || "") + '">'
       + '<line class="rh-spark-base" x1="' + padX + '" y1="' + zero + '" x2="' + (W - padX) + '" y2="' + zero + '"/>'
-      + '<defs><linearGradient id="rhg" x1="0" y1="0" x2="0" y2="1">'
+      + '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">'
       + '<stop class="rh-spark-g0" offset="0"/><stop class="rh-spark-g1" offset="1"/></linearGradient></defs>'
-      + '<polygon class="rh-spark-fill" points="' + x0 + ',' + zero + ' ' + poly + ' ' + xn + ',' + zero + '"/>'
+      + '<polygon class="rh-spark-fill" fill="url(#' + gid + ')" points="'
+      + x0 + ',' + zero + ' ' + poly + ' ' + xn + ',' + zero + '"/>'
       + '<polyline class="rh-spark-line" points="' + poly + '"/>'
       + '<circle class="rh-spark-dot" cx="' + xn + '" cy="' + Y(lv).toFixed(1) + '" r="4"/></svg>';
   }
@@ -1954,25 +2034,33 @@
       heroShown = false;
     }
   }
-  function renderHeroEntry(entry, slug, hintAttr) {
-    var host = document.getElementById("region-hero");
+  // Render a hero card for `entry` into `root` (the "Your region" hero by default,
+  // or a Famous-cities carousel slide). Elements are matched by class WITHIN root,
+  // and the localised template attributes are read from root, so multiple cards
+  // coexist. Only the region hero participates in the snapshot/restore + heroShown
+  // machinery - a carousel slide is a separate, throwaway render.
+  function renderHeroEntry(entry, slug, hintAttr, root) {
+    var host = root || document.getElementById("region-hero");
     if (!host || !entry) return null;
     // Never render from a partial row: pairing a new city name with a stale
     // number reads worse than keeping the coherent server-rendered default.
     if (typeof entry.t !== "number" || typeof entry.dt !== "number") return null;
-    heroSnapshotDefault();   // capture the pristine default once, before mutating
+    function el(cls) { return host.querySelector("." + cls); }
+    function set(cls, txt) { var e = el(cls); if (e) e.textContent = txt; }
+    var isRegion = host.id === "region-hero";
+    if (isRegion) heroSnapshotDefault();   // capture the pristine default once
     slug = slug || entry.s;
     // Current-language name first (heroCityName reads the inline __omniData, so it
     // is right even on an early cache render); the cached dn is only a fallback for
     // a city with no same-language shell, then the raw ranking name.
     var name = heroCityName(slug) || entry.dn || entry.n;
-    heroSet("rh-name", name);
-    heroSet("rh-trend", fmtSigned(entry.t, 2));
-    heroSet("rh-cta-label", (host.getAttribute("data-cta") || "{name}")
+    set("rh-name", name);
+    set("rh-trend", fmtSigned(entry.t, 2));
+    set("rh-cta-label", (host.getAttribute("data-cta") || "{name}")
       .replace("{name}", name));
-    var link = document.getElementById("rh-link");
+    var link = el("rh-link");
     if (link) link.setAttribute("href", heroCityUrl(slug));
-    heroSet("rh-hint", host.getAttribute(hintAttr || "data-near") || "");
+    set("rh-hint", host.getAttribute(hintAttr || "data-near") || "");
     // Swap the ribbon to this city's own warming stripes (the base gradient is
     // fixed; --rh-stripes drives the bottom data ribbon, see .region-hero::before).
     var bg = heroStripeBg(entry.st);
@@ -1980,18 +2068,18 @@
     // Swap the decade area chart to this city (same idiom as the city page),
     // and move the axis ends to this city's actual data extent, or hide the axis
     // when there is no chart.
-    var sp = document.getElementById("rh-spark");
+    var sp = el("rh-spark");
     if (sp) {
       var est = entry.st || [];
-      var svg = heroSpark(est, host.getAttribute("data-chart-alt") || "");
+      var svg = heroSpark(est, host.getAttribute("data-chart-alt") || "",
+                          isRegion ? "rhg" : "rhg-fc");
       sp.innerHTML = svg;
-      var axis = document.getElementById("rh-spark-axis");
+      var axis = el("rh-spark-axis");
       if (axis) {
         var ix = [];
         for (var si = 0; si < est.length; si++) if (est[si] != null) ix.push(si);
         if (svg && ix.length) {
-          var alo = document.getElementById("rh-axis-lo");
-          var ahi = document.getElementById("rh-axis-hi");
+          var alo = el("rh-axis-lo"), ahi = el("rh-axis-hi");
           if (alo) alo.textContent = 1940 + 10 * ix[0];
           if (ahi) ahi.textContent = 1940 + 10 * ix[ix.length - 1];
           axis.hidden = false;
@@ -2005,7 +2093,7 @@
     // Rebuild the secondary line: total warming since 1940 + rate percentile.
     var since = (host.getAttribute("data-since") || "{v}")
       .replace("{v}", fmtSigned(entry.dt, 1) + " °C");
-    var meta = document.getElementById("rh-meta");
+    var meta = el("rh-meta");
     if (meta) {
       var pct = heroPercentile(entry.t);
       var faster = (pct != null)
@@ -2018,7 +2106,7 @@
     // Climate analog ("in 1940 it felt like X; by 2050, like Y") for this city,
     // from the shared per-city analogs. Localise the look-alike city's name via
     // the shared names table; templates come from the hero's data attributes.
-    var box = document.getElementById("rh-analog");
+    var box = el("rh-analog");
     if (box) {
       var lang = (document.documentElement.lang || "en").split("-")[0];
       var ana = (window.__analogs || {})[slug] || {};
@@ -2036,8 +2124,9 @@
       if (ana.past && pT) lines.push(fill(pT, ana.past));
       if (ana.future && fT) lines.push(fill(fT, ana.future));
       box.innerHTML = "";
+      // classList (not className) so the .rh-analog hook survives the toggle.
       if (lines.length) {
-        box.className = "analog";
+        box.classList.add("analog");
         var em = document.createElement("span");
         em.className = "analog-emoji"; em.setAttribute("aria-hidden", "true");
         em.textContent = "🌡️";
@@ -2047,9 +2136,9 @@
           p.textContent = l; wrap.appendChild(p);
         });
         box.appendChild(em); box.appendChild(wrap);
-      } else { box.className = ""; }
+      } else { box.classList.remove("analog"); }
     }
-    heroShown = true;
+    if (isRegion) heroShown = true;
     return name;
   }
   window.renderHeroEntry = renderHeroEntry;
