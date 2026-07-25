@@ -529,6 +529,14 @@
             gap:1.5rem; width:min(96vw,1760px);
             margin-inline:calc((100% - min(96vw,1760px)) / 2); }
   .charts.hero { grid-template-columns:1fr; margin-bottom:.5rem; }
+  /* "Selected region" tab: the chosen city's full page inline. The frame fills
+     the space under the top bar + search + tab strip; the city page scrolls
+     inside it. The hint shows only until the frame's first source is set. */
+  .region-embed { position:relative; }
+  .region-embed-hint { text-align:center; color:var(--muted); padding:2.5rem 1rem; margin:0; }
+  .region-frame { display:block; width:100%; height:calc(100vh - 210px);
+    min-height:560px; border:0; border-radius:var(--radius);
+    background:var(--bg); color-scheme:light dark; }
   /* "Your region" featured hero: a clean, light full-bleed band that opens the
      page on the visitor's nearest covered city - place name, its warming figure
      and a link on the page ground. Full-bleed width is kept, but the previous

@@ -238,7 +238,7 @@ _PAGE = Template(
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 ${seo_head}
-<script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);}catch(e){}})();</script>
+<script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);if(/[?&]embed=1/.test(location.search))d.setAttribute("data-embed","1");}catch(e){}})();</script>
 <script>window.__tpref = ${tpref_i18n};</script>
 <link rel="stylesheet" href="../page.css">
 <script defer src="../appearance.js"></script>
@@ -1316,41 +1316,19 @@ ${topbar}
   <div class="tabs" id="landing-tabs">
     <div class="tabstrip" role="tablist" aria-label="${tabs_label}">${tabstrip}</div>
     <section class="tabpanel" role="tabpanel" id="tp-region" aria-labelledby="tab-region" tabindex="0">
-  <!-- "Your region" hero: opens the page on the visitor's nearest covered city.
-       Server-rendered with the default city + its stat so it is populated on
-       first paint; charts.js (initHero) enhances it from the visitor's
-       geolocation, snapping read-only to the nearest city that has records. -->
-  <section class="region-hero" id="region-hero"
-           style="--rh-stripes:${hero_bg}"
-           data-cta="${hero_cta}" data-since="${hero_since_tmpl}"
-           data-faster="${hero_faster_tmpl}" data-locating="${hero_locating}"
-           data-near="${hero_near_note}" data-default-note="${hero_default_note}"
-           data-chart-alt="${hero_chart_alt}"
-           data-analog-past="${hero_analog_past}" data-analog-future="${hero_analog_future}">
-    <div class="rh-scrim" aria-hidden="true"></div>
-    <div class="rh-inner">
-      <p class="rh-eyebrow">${hero_eyebrow}</p>
-      <p class="rh-place">
-        <svg class="rh-pin" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>
-        </svg>
-        <span id="rh-name" class="rh-name">${hero_default_name}</span>
-      </p>
-      <div class="rh-figure">
-        <span id="rh-trend" class="rh-trend">${hero_default_trend}</span>
-        <span class="rh-unit">${hero_unit}</span>
-      </div>
-      <p class="rh-meta" id="rh-meta">${hero_default_meta}</p>
-      ${hero_default_spark}
-      <div id="rh-analog" class="rh-analog"></div>
-      <p class="rh-cta"><a id="rh-link" class="rh-link" href="${hero_default_slug}"><span id="rh-cta-label" class="rh-cta-label">${hero_default_cta}</span> <span aria-hidden="true">&rarr;</span></a></p>
-      <p class="rh-hint" id="rh-hint">${hero_default_note}</p>
-    </div>
-  </section>
-  <!-- Paint the remembered region as soon as the hero is parsed (charts.js is
-       already loaded above), so the visitor's own city shows before geolocation
-       and without the default->geolocated flash. -->
-  <script>window.applyHeroCache&&window.applyHeroCache();</script>
+  <!-- "Selected region": the chosen city's full page shown inline in a frame
+       (the city page's ?embed=1 mode hides its own top bar). charts.js
+       (initRegionEmbed) sets the frame from the remembered selection or the
+       server default, then the visitor's geolocated nearest city; the top
+       search routes a picked city here instead of navigating away. -->
+  <div class="region-embed" id="region-embed" data-default="${hero_default_slug}">
+    <p class="region-embed-hint" id="region-embed-hint">${region_hint}</p>
+    <iframe class="region-frame" id="region-frame" title="${region_frame_title}"
+            loading="lazy" referrerpolicy="no-referrer"></iframe>
+  </div>
+  <!-- Load the remembered/default city at once (charts.js is already loaded
+       above), so the tab opens on a city without waiting for geolocation. -->
+  <script>window.initRegionEmbed&&window.initRegionEmbed();</script>
     </section><!-- /tp-region -->
     <section class="tabpanel famous" role="tabpanel" id="tp-famous" aria-labelledby="tab-famous" tabindex="0" hidden>
       <!-- Famous-cities carousel: charts.js initCarousel cycles a set of iconic /
@@ -2467,22 +2445,28 @@ def _hero_str(lang: str, key: str) -> str:
 # _HERO_I18N (kept here, not in the 32 i18n tables). "region" reuses the hero
 # eyebrow so the tab and the hero say the same thing.
 _TAB_I18N = {
-    "en": {"famous": "Famous cities", "map": "Map", "ranking": "Ranking",
+    "en": {"region": "Selected region", "famous": "Famous cities", "map": "Map",
+           "ranking": "Ranking",
            "ranking_cities": "City ranking", "ranking_countries": "Country ranking",
            "dashboard": "Dashboard", "compare": "Compare", "about": "About"},
-    "pl": {"famous": "Znane miasta", "map": "Mapa", "ranking": "Ranking",
+    "pl": {"region": "Wybrany region", "famous": "Znane miasta", "map": "Mapa",
+           "ranking": "Ranking",
            "ranking_cities": "Ranking miast", "ranking_countries": "Ranking krajów",
            "dashboard": "Panel", "compare": "Porównaj", "about": "O danych"},
-    "de": {"famous": "Berühmte Städte", "map": "Karte", "ranking": "Rangliste",
+    "de": {"region": "Ausgewählte Region", "famous": "Berühmte Städte", "map": "Karte",
+           "ranking": "Rangliste",
            "ranking_cities": "Städte-Rangliste", "ranking_countries": "Länder-Rangliste",
            "dashboard": "Dashboard", "compare": "Vergleich", "about": "Info"},
-    "fr": {"famous": "Villes emblématiques", "map": "Carte", "ranking": "Classement",
+    "fr": {"region": "Région choisie", "famous": "Villes emblématiques", "map": "Carte",
+           "ranking": "Classement",
            "ranking_cities": "Classement des villes", "ranking_countries": "Classement des pays",
            "dashboard": "Tableau de bord", "compare": "Comparer", "about": "À propos"},
-    "es": {"famous": "Ciudades famosas", "map": "Mapa", "ranking": "Ranking",
+    "es": {"region": "Región elegida", "famous": "Ciudades famosas", "map": "Mapa",
+           "ranking": "Ranking",
            "ranking_cities": "Ranking de ciudades", "ranking_countries": "Ranking de países",
            "dashboard": "Panel", "compare": "Comparar", "about": "Acerca de"},
-    "uk": {"famous": "Відомі міста", "map": "Мапа", "ranking": "Рейтинг",
+    "uk": {"region": "Обраний регіон", "famous": "Відомі міста", "map": "Мапа",
+           "ranking": "Рейтинг",
            "ranking_cities": "Рейтинг міст", "ranking_countries": "Рейтинг країн",
            "dashboard": "Панель", "compare": "Порівняти", "about": "Про дані"},
 }
@@ -2765,7 +2749,7 @@ def build_map_page(
     # _tab_str. The server default selects the first tab (region); charts.js
     # re-selects from the URL hash / localStorage on load.
     tab_famous = _tab_str(lang, "famous")
-    _tabs = [("region", hero_eyebrow), ("famous", tab_famous),
+    _tabs = [("region", _tab_str(lang, "region")), ("famous", tab_famous),
              ("map", _tab_str(lang, "map")),
              ("ranking-cities", _tab_str(lang, "ranking_cities")),
              ("ranking-countries", _tab_str(lang, "ranking_countries")),
@@ -3109,6 +3093,8 @@ def build_map_page(
         hero_unit=hero_unit,
         hero_cta=hero_cta,
         hero_bg=hero_bg,
+        region_hint=tr.get("choose_city", "Choose a city..."),
+        region_frame_title=_tab_str(lang, "region"),
         hero_since_tmpl=hero_since_tmpl,
         hero_faster_tmpl=hero_faster_tmpl,
         hero_locating=hero_locating,

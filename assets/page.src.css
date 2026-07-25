@@ -477,3 +477,9 @@
 .sec-link.ok { color:var(--good); opacity:1; }
 /* Anchored scrolls land below the sticky top bar. */
 figure[id^="sec-"] { scroll-margin-top:4.5rem; }
+/* Embedded city view (?embed=1): the page is shown inside the landing's
+   "Wybrany region" tab, which already carries the site top bar, so hide the
+   nested bar and the footer link and let the city content fill the frame. */
+:root[data-embed] .topbar,
+:root[data-embed] footer { display:none !important; }
+:root[data-embed] .region-hero { margin-top:0; }

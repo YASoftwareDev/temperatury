@@ -1107,7 +1107,18 @@
     // ranking actions reuse the page's own controls so behaviour stays in one place.
     function act(it) {
       oclose();
-      if (it.t === "city") { location.href = it.url; return; }
+      if (it.t === "city") {
+        // Show the city inline in the "Selected region" tab instead of leaving
+        // the landing; fall back to navigation where there is no embed (unused
+        // on city pages, but keeps act() self-contained).
+        if (window.__regionShow && document.getElementById("region-embed")) {
+          window.__regionShow(it.url);
+          if (window.showTab) window.showTab("region");
+          scrollTo("region-embed");
+          return;
+        }
+        location.href = it.url; return;
+      }
       if (it.t === "region") {
         // Open the Map tab first: it lazily inits the map AND wires the region
         // pills, so the click below has a live handler to act on.
@@ -2172,6 +2183,42 @@
   }
   window.renderHeroEntry = renderHeroEntry;
 
+  // --- "Selected region" tab: the chosen city's full page inline in a frame ---
+  // The city page's ?embed=1 mode hides its own top bar. Selection priority:
+  // a manually picked city (persisted) wins; otherwise the geolocated/remembered
+  // home city; otherwise the server default. Geolocation still resolves the home
+  // country (window.__myCC) for the ranking highlight + Compare prefill.
+  var REGION_KEY = "temperatury:region";
+  window.__regionManual = false;
+  function regionSetUrl(url, manual) {
+    var f = document.getElementById("region-frame");
+    if (!f || !url) return;
+    var full = url + (url.indexOf("?") >= 0 ? "&" : "?") + "embed=1";
+    if (f.getAttribute("src") !== full) f.src = full;
+    var hint = document.getElementById("region-embed-hint");
+    if (hint) hint.hidden = true;
+    f.hidden = false;
+    if (manual) {
+      window.__regionManual = true;
+      try { localStorage.setItem(REGION_KEY, url); } catch (e) {}
+    }
+  }
+  // Home (geolocated/remembered) city view - only if the visitor has not manually
+  // picked a city (that pick wins and persists across visits).
+  function regionSetHome(url) { if (!window.__regionManual && url) regionSetUrl(url, false); }
+  // A manually chosen city (from the top search); persists and switches here.
+  window.__regionShow = function (url) { if (url) regionSetUrl(url, true); };
+  function initRegionEmbed() {
+    var host = document.getElementById("region-embed");
+    if (!host || host.__wired) return;
+    host.__wired = true;
+    var manual = null;
+    try { manual = localStorage.getItem(REGION_KEY); } catch (e) {}
+    if (manual) { window.__regionManual = true; regionSetUrl(manual, false); }
+    else { var d = host.getAttribute("data-default"); if (d) regionSetUrl(d, false); }
+  }
+  window.initRegionEmbed = initRegionEmbed;
+
   // Remember the resolved region across visits so the panel opens on it with no
   // visible default->geolocated swap. Only the small render payload is stored.
   var HERO_CACHE = "temperatury:hero", HERO_TTL = 180 * 864e5;  // ~6 months
@@ -2219,28 +2266,23 @@
   // refreshes the cache), so a stale trend/since/stripes can't outlive a data
   // regeneration; before it loads, the stored payload drives the early paint.
   function applyHeroCache() {
-    // A poisoned cache must never break page init (this runs synchronously in
-    // initPage before initTabs), so the whole read+render is guarded.
+    // A poisoned cache must never break page init, so the whole read is guarded.
     try {
       var c = heroCacheLoad();
       if (!c) return false;
+      var slug = c.s, cc = c.cc;
       var rank = window.__ranking;
       if (rank && rank.length) {
-        // Ranking is authoritative once loaded: render the fresh row for the cached
-        // slug and refresh the cache. If the slug is gone from the ranking or its
-        // row is now partial, drop the cache rather than let a stale card linger
-        // here or resurface next visit.
+        // Ranking is authoritative once loaded: confirm the cached slug is still
+        // present (else drop the cache rather than resurface a dropped city).
         var fresh = null;
         for (var i = 0; i < rank.length; i++) if (rank[i].s === c.s) { fresh = rank[i]; break; }
-        var nm = fresh ? renderHeroEntry(fresh, c.s) : null;
-        if (nm) { heroCacheSave(fresh, c.s, nm); heroSetVisitor(c.s, fresh.cc); return true; }
-        try { localStorage.removeItem(HERO_CACHE); } catch (e) {}
-        heroRestoreDefault();   // undo the early stale render -> coherent default
-        return false;
+        if (!fresh) { try { localStorage.removeItem(HERO_CACHE); } catch (e) {} return false; }
+        cc = fresh.cc; heroCacheSave(fresh, c.s, fresh.dn || c.dn || fresh.n);
       }
-      var early = renderHeroEntry(c, c.s);   // early paint, before the ranking loaded
-      if (early) heroSetVisitor(c.s, c.cc);
-      return !!early;
+      heroSetVisitor(slug, cc);              // home country for ranking + compare
+      regionSetHome(heroCityUrl(slug));      // show the remembered home city
+      return true;
     } catch (e) { return false; }
   }
   window.applyHeroCache = applyHeroCache;
@@ -2261,50 +2303,37 @@
   // it. Runs once both the ranking (window.__ranking) and a position
   // (window.__heroPos) are available.
   function applyHero() {
-    var host = document.getElementById("region-hero");
-    if (!host || !window.__heroPos) return;
+    if (!window.__heroPos) return;
     var rank = window.__ranking;
     if (!rank || !rank.length) return;
     var slug = heroNearestSlug(window.__heroPos.lat, window.__heroPos.lon);
-    if (!slug) {
-      // Position resolved but nothing covered nearby: keep a remembered city's own
-      // hint rather than stamping the server-default note over a city on screen.
-      heroSet("rh-hint", host.getAttribute(heroShown ? "data-near" : "data-default-note") || "");
-      return;
-    }
+    if (!slug) return;   // position resolved but nothing covered nearby
     var entry = null;
     for (var i = 0; i < rank.length; i++) {
       if (rank[i].s === slug) { entry = rank[i]; break; }
     }
     if (!entry) return;
-    var name = renderHeroEntry(entry, slug);
-    if (name) { heroCacheSave(entry, slug, name); heroSetVisitor(slug, entry.cc); }
+    heroCacheSave(entry, slug, entry.dn || entry.n);
+    heroSetVisitor(slug, entry.cc);          // home country for ranking + compare
+    regionSetHome(heroCityUrl(slug));        // show the geolocated home city
   }
   window.applyHero = applyHero;
   function initHero() {
-    var host = document.getElementById("region-hero");
+    var host = document.getElementById("region-embed");
     if (!host || host.getAttribute("data-geo") === "1") return;
     host.setAttribute("data-geo", "1");
-    applyHeroCache();   // show the remembered region at once (no default flash)
-    applyHero();   // in case the ranking + a cached position are already present
+    initRegionEmbed();  // ensure the frame is seeded (manual/default) before home
+    applyHeroCache();   // resolve remembered home city + country at once
+    applyHero();        // in case the ranking + a cached position are already here
     // Graceful fallback: no Geolocation API, or an insecure context (file://,
-    // plain http) where it is blocked - keep the server-rendered default city.
+    // plain http) where it is blocked - keep the remembered/default city.
     if (!navigator.geolocation || window.isSecureContext === false) return;
-    // Only show "finding the nearest city..." when nothing is on screen yet;
-    // over an already-remembered city it would be a misleading transient.
-    if (!heroShown)
-      heroSet("rh-hint", host.getAttribute("data-locating")
-        || (document.getElementById("rh-hint") || {}).textContent || "");
     navigator.geolocation.getCurrentPosition(
       function (pos) {
         window.__heroPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         applyHero();
       },
-      function () {   // denied/unavailable: keep the shown city's own "nearest" hint;
-                      // only fall back to the default note when nothing is on screen
-        heroSet("rh-hint",
-          host.getAttribute(heroShown ? "data-near" : "data-default-note") || "");
-      },
+      function () {},   // denied/unavailable: keep the remembered/default city
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 6 * 3600e3 }
     );
   }
