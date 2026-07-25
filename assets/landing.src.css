@@ -413,6 +413,7 @@
   .carousel-nav:hover { border-color:var(--accent); color:var(--accent); }
   .carousel-nav svg { width:1.3rem; height:1.3rem; }
   .carousel-card { flex:1 1 auto; min-width:0; text-align:center; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:center;
     border:1px solid var(--line); border-radius:calc(var(--radius) + 6px);
     background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 8%, var(--panel)), var(--panel)); }
   /* Same as the region hero: the country silhouette (white-stroked, for the old
@@ -453,10 +454,17 @@
     color:var(--on-accent); background:var(--accent); padding:.5rem 1rem;
     border-radius:var(--radius); text-decoration:none; }
   .carousel-card .rh-link:hover { background:color-mix(in srgb, var(--accent) 85%, #000); }
-  .carousel-dots { display:flex; gap:.4rem; justify-content:center; margin:.9rem 0 0; flex-wrap:wrap; }
-  .carousel-dots button { width:8px; height:8px; padding:0; border:0; border-radius:50%;
-    background:var(--line-2); cursor:pointer; }
-  .carousel-dots button.on { background:var(--accent); }
+  /* Named city pills: a single scrollable row (safe center = centered when it
+     fits, left-aligned with no cut-off start when it overflows). */
+  .carousel-dots { display:flex; gap:.4rem; justify-content:safe center; margin:.9rem 0 0;
+    flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-bottom:.2rem; }
+  .carousel-dots::-webkit-scrollbar { display:none; }
+  .carousel-dot { flex:0 0 auto; padding:.32rem .7rem; border:1px solid var(--line);
+    border-radius:999px; background:var(--panel); color:var(--muted); cursor:pointer;
+    font-family:var(--sans); font-size:.8rem; line-height:1; white-space:nowrap;
+    transition:color .12s ease, border-color .12s ease, background .12s ease; }
+  .carousel-dot:hover { color:var(--ink); border-color:var(--accent); }
+  .carousel-dot.on { color:var(--on-accent); background:var(--accent); border-color:var(--accent); }
   @media (max-width:560px){ .carousel-nav { width:2.1rem; height:2.1rem; } }
   @media (max-width:480px){ .rank-cty { display:none; } }
   /* Omni search: one box that finds a city, country, region or any place. */

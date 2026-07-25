@@ -1298,7 +1298,6 @@ ${topbar}
 <header>
   <h1>${heading}</h1>
   <p class="intro">${intro}</p>
-  <p>${sub}</p>
 </header>
 <div class="searchbar" role="search">
   <section class="omni" id="omni" data-i18n='${omni_i18n}'>
@@ -3082,21 +3081,16 @@ def build_map_page(
         hero_default_spark=hero_default_spark,
         hero_chart_alt=hero_chart_alt,
         hero_default_cta=hero_default_cta,
-        nav_ranking=tr.get("nav_ranking", "Ranking"),
-        nav_dashboard=tr.get("nav_dashboard", "Climate dashboard"),
         heading=tr["map_heading"],
         intro=tr.get("intro", ""),
-        sub=tr["map_sub"],
         # The landing map/dashboard is still rendered per-language and loads no
         # client-i18n runtime, so its switcher navigates to sibling index pages
         # (all languages exist) rather than calling window.__setLang.
         lang_nav=_lang_nav(lang, languages, "index", in_place=False),
+        # No nav links in the bar: the tabs below are the primary navigation, so
+        # Ranking/Dashboard links (and the warming badge) would only duplicate them.
         topbar=_topbar(
-            "index.html", _lang_nav(lang, languages, "index", in_place=False),
-            nav_html=('<a class="tb-link" href="#tab=ranking">'
-                      + _esc(tr.get("nav_ranking", "Ranking")) + '</a>'
-                      '<a class="tb-link" href="#tab=dashboard">'
-                      + _esc(tr.get("nav_dashboard", "Climate dashboard")) + '</a>')),
+            "index.html", _lang_nav(lang, languages, "index", in_place=False)),
         map_region_buttons=map_region_buttons,
         map_filter_label=tr.get("map_filter", "Continent or country"),
         markers=json.dumps(markers, ensure_ascii=False),

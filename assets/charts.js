@@ -750,6 +750,9 @@
       .sort(function (a, b) { return b.pop - a.pop; })
       .forEach(function (r) { if (picks.length < 16) add(r); });
     if (!picks.length) return;
+    // One clear order for the whole set: most-populous first (iconic + populous
+    // merged into a single sorted sequence), so it never reads as arbitrary.
+    picks.sort(function (a, b) { return (b.pop || 0) - (a.pop || 0); });
     root.__wired = true;
 
     var dotsEl = document.getElementById("carousel-dots");
@@ -757,10 +760,14 @@
     var idx = 0, timer = null;
     var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     var interval = +root.getAttribute("data-autoplay") || 6000;
-    var dots = picks.map(function (_, k) {
+    // Named position "dots": a scrollable strip of city-name pills so a visitor
+    // can jump straight to a recognizable city, not guess at a numbered dot.
+    var dots = picks.map(function (p, k) {
       var b = document.createElement("button");
       b.type = "button";
-      b.setAttribute("aria-label", (k + 1) + " / " + picks.length);
+      b.className = "carousel-dot";
+      b.textContent = heroCityName(p.s) || p.dn || p.n || String(k + 1);
+      b.setAttribute("aria-label", b.textContent);
       b.addEventListener("click", function () { show(k); restart(); });
       dotsEl.appendChild(b);
       return b;
@@ -772,7 +779,27 @@
         b.classList.toggle("on", k === idx);
         b.setAttribute("aria-current", k === idx ? "true" : "false");
       });
+      // Keep the active name pill in view within the scrollable strip.
+      if (dots[idx] && dots[idx].scrollIntoView)
+        dots[idx].scrollIntoView({ block: "nearest", inline: "nearest" });
     }
+    // Lock the card to the tallest slide's height (measured up front, re-measured
+    // on resize) so the flanking prev/next arrows sit at a fixed height instead of
+    // hopping as each city's content length changes.
+    function remeasure() {
+      card.style.minHeight = "0px";
+      var mh = 0;
+      for (var k = 0; k < picks.length; k++) {
+        renderHeroEntry(picks[k], picks[k].s, "data-none", card);
+        if (card.offsetHeight > mh) mh = card.offsetHeight;
+      }
+      card.style.minHeight = mh + "px";
+      show(idx);
+    }
+    var rzTimer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(rzTimer); rzTimer = setTimeout(remeasure, 200);
+    });
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
     function restart() {
       stop();
@@ -794,7 +821,7 @@
       if (next) next.style.display = "none";
       if (dotsEl) dotsEl.style.display = "none";
     }
-    show(0); restart();
+    remeasure(); restart();
   };
 
   // --- "Check any place on Earth" -------------------------------------------
@@ -2280,51 +2307,6 @@
     );
   }
 
-  // Localized client-side UI strings baked per page as window.__tpref by
-  // report.py (_tpref_i18n); the inline English stays as the fallback.
-  function TP(k, fb) {
-    try { return (window.__tpref && window.__tpref[k]) || fb; }
-    catch (e) { return fb; }
-  }
-
-  // Warming badge in the topbar: the REAL world-city average warming since 1940,
-  // computed from this site's data (charts/_world.json). Never fabricated - if
-  // the figure is unavailable, no badge is shown at all.
-  function initHeatBadge() {
-    var nav = document.querySelector(".topbar .tb-nav")
-      || document.querySelector(".topbar-in");
-    if (!nav || nav.querySelector(".heat-badge")) return;
-    fetch("../charts/_world.json").then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (w) {
-        if (!w || typeof w.gdt !== "number" || nav.querySelector(".heat-badge")) return;
-        var b = document.createElement("span");
-        b.className = "heat-badge";
-        // Focusable + labelled so the explanation is reachable by keyboard and
-        // announced by screen readers, not just on mouse hover.
-        b.tabIndex = 0;
-        b.title = TP("hb_title",
-          "Average warming of the world's major cities since 1940, "
-          + "equal-weighted, computed from this site's data");
-        // Built as nodes (not innerHTML) so a localized string is never parsed
-        // as markup. Reads: [dot] World cities +1.1 °C since 1940
-        var dot = document.createElement("span"); dot.className = "hb-dot";
-        var lab = document.createElement("span"); lab.className = "hb-lab";
-        // "(2194)" is appended parenthetically: it answers "averaged over what?"
-        // and needs no grammar, so it works in every language with no new string.
-        // Omitted entirely when the count is absent - never invent one.
-        lab.textContent = TP("hb_world", "World cities")
-          + (typeof w.gn === "number" && w.gn > 0 ? " (" + w.gn.toLocaleString() + ")" : "");
-        var since = document.createElement("span"); since.className = "hb-since";
-        since.textContent = TP("hb_since", "since 1940");
-        b.appendChild(dot);
-        b.appendChild(lab);
-        b.appendChild(document.createTextNode(" " + fmtSigned(w.gdt, 1) + " °C "));
-        b.appendChild(since);
-        b.setAttribute("aria-label",
-          b.textContent.replace(/\s+/g, " ").trim() + ". " + b.title);
-        nav.appendChild(b);
-      }).catch(function () {});
-  }
   // --- landing tab controller (WAI-ARIA tabs) --------------------------------
   // Six panels in one view: deep-linkable (#tab=map), remembered (localStorage),
   // keyboard-navigable (ArrowLeft/Right + Home/End over a roving tabindex). The
@@ -2434,7 +2416,7 @@
 
   function initPage() {
     initFullscreen(); initAliasHeading(); initCityPicker(); initHero();
-    initCityHeroOutline(); initHeatBadge();
+    initCityHeroOutline();
     if (window.initTabs) window.initTabs();
   }
   if (document.readyState === "loading") {
