@@ -465,7 +465,7 @@
   /* Data-forward hero: the decade area chart (same idiom as the map card and the
      city page). Colour flows from --warm/--cool via `color` + currentColor, so a
      theme switch re-tints it with no JS. */
-  .region-hero .rh-spark-wrap { margin:1.25rem 0 0; max-width:640px; }
+  .region-hero .rh-spark-wrap { margin:1.25rem 0 0; }
   .region-hero .rh-spark { display:block; width:100%; height:auto; }
   .region-hero .rh-spark.warm { color:var(--warm); }
   .region-hero .rh-spark.cool { color:var(--cool); }
@@ -478,7 +478,7 @@
   .region-hero .rh-spark-dot { fill:currentColor; }
   .region-hero .rh-spark-axis { display:flex; justify-content:space-between;
     font-family:var(--mono); font-size:.7rem; color:var(--muted); margin-top:.2rem;
-    max-width:640px; font-variant-numeric:tabular-nums; }
+    font-variant-numeric:tabular-nums; }
   /* The author display:flex above outranks the UA [hidden] rule, so hiding the
      axis (empty chart) needs this explicit guard. */
   .region-hero .rh-spark-axis[hidden] { display:none; }
