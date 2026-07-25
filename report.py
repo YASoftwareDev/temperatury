@@ -2142,6 +2142,32 @@ ${topbar}
       b.value = bySlug[m[2]].val;
       draw();
     }
+    // The Compare tab opens on YOUR city vs a randomly chosen notable city, so it
+    // is useful before you pick anything. Reuses window.__heroSlug (the hero's
+    // geolocated region); skipped when a #cmp= link, a prior pick, or a previous
+    // prefill already filled it. Only fires while the Compare tab is visible so it
+    // never fetches two city files the visitor may never look at.
+    var ICONIC = ['tokyo', 'london', 'paris', 'beijing', 'shanghai', 'dubai',
+      'singapore', 'sydney', 'moscow', 'istanbul', 'mumbai', 'delhi', 'cairo',
+      'berlin', 'new-york', 'los-angeles', 'sao-paulo', 'rio-de-janeiro',
+      'mexico-city', 'bangkok', 'jakarta', 'seoul', 'madrid', 'rome', 'toronto',
+      'cape-town', 'nairobi', 'lagos', 'buenos-aires', 'hong-kong'];
+    var cmpPrefilled = !!(m && bySlug[m[1]] && bySlug[m[2]]);
+    window.__cmpPrefill = function () {
+      if (cmpPrefilled) return;
+      var panel = document.getElementById('tp-compare');
+      if (!panel || panel.hidden) return;
+      if (a.value || b.value) return;
+      var mine = window.__heroSlug;
+      if (!mine || !bySlug[mine]) return;
+      var pool = ICONIC.filter(function (s) { return bySlug[s] && s !== mine; });
+      if (!pool.length) return;
+      var pick = pool[Math.floor(Math.random() * pool.length)];
+      a.value = bySlug[mine].val;
+      b.value = bySlug[pick].val;
+      cmpPrefilled = true;
+      draw();
+    };
   })();
   // Auto-hide the sticky top bar on scroll - mobile only (desktop keeps it
   // pinned). Hide when scrolling down past the bar, reveal on any scroll up.

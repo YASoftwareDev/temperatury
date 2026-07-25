@@ -1291,7 +1291,10 @@
           (!q || it.nn.indexOf(q) >= 0);
       });
       sel.sort(cmp);
-      var shown = Math.min(limit, sel.length);
+      // Country mode lists every country (there are ~200, not thousands like the
+      // cities), so it is never paginated - the visitor sees the whole ranking.
+      var lim = (mode === "country") ? sel.length : limit;
+      var shown = Math.min(lim, sel.length);
       // When a filter narrows the list, number it 1..N locally (keeping the fixed
       // global rank as a small "#123" beside it); unfiltered, the number IS the
       // global rank.
@@ -1308,6 +1311,10 @@
         } else {
           it.num.textContent = String(it.rank);
         }
+        // Mark the visitor's own country row (cc resolved from geolocation in
+        // phase 3, window.__myCC) so they can spot themselves in the ranking.
+        it.el.classList.toggle("rank-mine",
+          mode === "country" && !!window.__myCC && it.cc === window.__myCC);
         frag.appendChild(it.el);
       }
       body.innerHTML = "";
@@ -1322,6 +1329,9 @@
         more.textContent = more.getAttribute("data-label") || "Show more";
       }
     }
+    // Let the hero's geolocation re-apply the "your country" highlight once it
+    // resolves (renderRanking usually runs before geolocation completes).
+    window.__rankRender = render;
     // Switch to city mode, filtered to one country (from a clicked country row).
     function focusCountry(cc) {
       mode = "city";
@@ -1988,15 +1998,29 @@
         var fresh = null;
         for (var i = 0; i < rank.length; i++) if (rank[i].s === c.s) { fresh = rank[i]; break; }
         var nm = fresh ? renderHeroEntry(fresh, c.s) : null;
-        if (nm) { heroCacheSave(fresh, c.s, nm); return true; }
+        if (nm) { heroCacheSave(fresh, c.s, nm); heroSetVisitor(c.s, fresh.cc); return true; }
         try { localStorage.removeItem(HERO_CACHE); } catch (e) {}
         heroRestoreDefault();   // undo the early stale render -> coherent default
         return false;
       }
-      return !!renderHeroEntry(c, c.s);   // early paint, before the ranking loaded
+      var early = renderHeroEntry(c, c.s);   // early paint, before the ranking loaded
+      if (early) heroSetVisitor(c.s, c.cc);
+      return !!early;
     } catch (e) { return false; }
   }
   window.applyHeroCache = applyHeroCache;
+  // The visitor's own city slug + country code (from the remembered/geolocated
+  // region). Drives the ranking "your country" highlight and the Compare tab's
+  // "your city vs a notable city" prefill. Re-applies both when it changes.
+  function heroSetVisitor(slug, cc) {
+    var changed = false;
+    if (slug && slug !== window.__heroSlug) { window.__heroSlug = slug; changed = true; }
+    if (cc && cc !== window.__myCC) { window.__myCC = cc; changed = true; }
+    if (changed) {
+      if (window.__rankRender) window.__rankRender();
+      if (window.__cmpPrefill) window.__cmpPrefill();
+    }
+  }
 
   // Geolocation path: resolve the nearest covered city, render it, and remember
   // it. Runs once both the ranking (window.__ranking) and a position
@@ -2019,7 +2043,7 @@
     }
     if (!entry) return;
     var name = renderHeroEntry(entry, slug);
-    if (name) heroCacheSave(entry, slug, name);
+    if (name) { heroCacheSave(entry, slug, name); heroSetVisitor(slug, entry.cc); }
   }
   window.applyHero = applyHero;
   function initHero() {
@@ -2120,6 +2144,8 @@
         if (window.renderDashboard) window.renderDashboard();
       } else if (id === "famous" && window.initCarousel) {
         window.initCarousel();
+      } else if (id === "compare" && window.__cmpPrefill) {
+        window.__cmpPrefill();   // your city vs a notable city, if geo has resolved
       }
       // Reflow any Chart.js canvases that were sized while their panel was hidden.
       var p = panel(id);
