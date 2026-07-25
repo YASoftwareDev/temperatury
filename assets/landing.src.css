@@ -440,9 +440,11 @@
   @media (prefers-reduced-motion: reduce) {
     .heat-badge .hb-dot { animation:none; }
   }
+  /* Content column matches <main> (max-width 1200 + 1.5rem side padding) so the
+     hero aligns with the ranking/KPIs below it instead of sitting inset. */
   .region-hero .rh-inner { position:relative; z-index:3; width:100%;
-    max-width:1160px; margin:0 auto; color:var(--ink);
-    padding:clamp(1.6rem,5vw,3.2rem) clamp(1.3rem,5vw,3.4rem) clamp(1.9rem,5vw,3rem);
+    max-width:1200px; margin:0 auto; color:var(--ink);
+    padding:clamp(1.6rem,5vw,3.2rem) 1.5rem clamp(1.9rem,5vw,3rem);
     text-shadow:none; }
   .region-hero .rh-eyebrow { font-size:.74rem; letter-spacing:.18em;
     text-transform:uppercase; font-weight:700; color:var(--accent);
@@ -477,6 +479,9 @@
   .region-hero .rh-spark-axis { display:flex; justify-content:space-between;
     font-family:var(--mono); font-size:.7rem; color:var(--muted); margin-top:.2rem;
     max-width:640px; font-variant-numeric:tabular-nums; }
+  /* The author display:flex above outranks the UA [hidden] rule, so hiding the
+     axis (empty chart) needs this explicit guard. */
+  .region-hero .rh-spark-axis[hidden] { display:none; }
   /* City-page percentile badge: a quieter second line under the warming figure. */
   .region-hero .rh-pct { font-size:clamp(.85rem,1.8vw,1rem); opacity:.85;
                          margin-top:.1rem; }

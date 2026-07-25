@@ -2605,15 +2605,23 @@ def build_map_page(
     else:
         hero_default_meta = ""
     # Data-forward hero (same idiom as the city page + the map card): the default
-    # city's decade area chart on first paint; charts.js re-renders it for the
-    # geolocated city. Wrapper + axis stay static; only the <svg> in #rh-spark swaps.
+    # city's decade area chart on first paint; charts.js re-renders it (and the
+    # axis labels) for the geolocated city. Axis ends are the actual data extent
+    # (first/last decade with data), matching the city page; it hides when there
+    # is no chart to sit under.
     hero_chart_alt = tr.get("qv_chart_alt",
                             "Decade-by-decade warming, filled area chart")
-    _def_spark = _hero_spark_svg(_def_rank["st"], hero_chart_alt) if _def_rank else ""
+    _def_st = _def_rank["st"] if _def_rank else None
+    _def_spark = _hero_spark_svg(_def_st, hero_chart_alt) if _def_st else ""
+    _def_idx = [i for i, v in enumerate(_def_st or []) if v is not None]
+    _ax_lo = 1940 + 10 * _def_idx[0] if _def_idx else 1940
+    _ax_hi = 1940 + 10 * _def_idx[-1] if _def_idx else 2020
     hero_default_spark = (
-        f'<div class="rh-spark-wrap"><div id="rh-spark">{_def_spark}</div>'
-        f'<div class="rh-spark-axis"><span>1940</span><span>2020</span></div></div>'
-    ) if _def_spark else '<div class="rh-spark-wrap"><div id="rh-spark"></div></div>'
+        '<div class="rh-spark-wrap"><div id="rh-spark">' + _def_spark + '</div>'
+        f'<div class="rh-spark-axis" id="rh-spark-axis"{"" if _def_spark else " hidden"}>'
+        f'<span id="rh-axis-lo">{_ax_lo}</span>'
+        f'<span id="rh-axis-hi">{_ax_hi}</span></div></div>'
+    )
 
     def _title(key: str) -> str:  # per-city chart title minus its ", {name}" tail
         # Strip whatever separator precedes {name} (dash, colon, comma, ...).

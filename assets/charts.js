@@ -1773,9 +1773,29 @@
     // fixed; --rh-stripes drives the bottom data ribbon, see .region-hero::before).
     var bg = heroStripeBg(entry.st);
     if (bg) host.style.setProperty("--rh-stripes", bg);
-    // Swap the decade area chart to this city (same idiom as the city page).
+    // Swap the decade area chart to this city (same idiom as the city page),
+    // and move the axis ends to this city's actual data extent, or hide the axis
+    // when there is no chart.
     var sp = document.getElementById("rh-spark");
-    if (sp) sp.innerHTML = heroSpark(entry.st, host.getAttribute("data-chart-alt") || "");
+    if (sp) {
+      var est = entry.st || [];
+      var svg = heroSpark(est, host.getAttribute("data-chart-alt") || "");
+      sp.innerHTML = svg;
+      var axis = document.getElementById("rh-spark-axis");
+      if (axis) {
+        var ix = [];
+        for (var si = 0; si < est.length; si++) if (est[si] != null) ix.push(si);
+        if (svg && ix.length) {
+          var alo = document.getElementById("rh-axis-lo");
+          var ahi = document.getElementById("rh-axis-hi");
+          if (alo) alo.textContent = 1940 + 10 * ix[0];
+          if (ahi) ahi.textContent = 1940 + 10 * ix[ix.length - 1];
+          axis.hidden = false;
+        } else {
+          axis.hidden = true;
+        }
+      }
+    }
     // Draw this city's country border silhouette behind the hero.
     injectHeroOutline(host, entry.cc);
     // Rebuild the secondary line: total warming since 1940 + rate percentile.
