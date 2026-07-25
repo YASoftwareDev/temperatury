@@ -591,6 +591,11 @@
     // Country list for the omni search (localized client-side from the codes).
     window.__countries = data.countries || [];
     if (window.initOmni) window.initOmni();
+    // Re-render the hero now the shared data (__trends/__analogs) has arrived: the
+    // remembered-region render done at parse time omitted the "faster than N%" and
+    // analog lines, so fill them in. applyHero then overrides with the geolocated
+    // city if a position has resolved (it re-caches too).
+    if (window.applyHeroCache) window.applyHeroCache();
     if (window.applyHero) window.applyHero();
     // Draw the dashboard now if the visitor already opened its tab before the
     // data arrived; otherwise this no-ops until they do.
@@ -1665,12 +1670,23 @@
     }
     return bestD <= HERO_NEAR_DEG * HERO_NEAR_DEG ? best : null;
   }
-  function heroCityName(slug) {
+  // The omni city row for a slug, matched by URL basename so a city with only a
+  // cross-folder shell (tiered languages, e.g. Tokyo has no pl page) is still
+  // found - its row carries the correct tier-aware URL ("../en/tokyo.html").
+  function heroCityEntry(slug) {
     var c = (window.__omniData && window.__omniData.c) || [];
-    var url = slug + ".html";
-    for (var i = 0; i < c.length; i++) if (c[i][1] === url) return c[i][0];
+    var same = slug + ".html", suffix = "/" + same;
+    for (var i = 0; i < c.length; i++) {
+      var u = c[i][1];
+      if (u === same || (u && u.length >= suffix.length && u.slice(-suffix.length) === suffix))
+        return c[i];
+    }
     return null;
   }
+  function heroCityName(slug) { var e = heroCityEntry(slug); return e ? e[0] : null; }
+  // Tier-aware page URL for the CTA, so a remembered/geolocated city with no shell
+  // in this language links cross-folder instead of to a pruned same-folder 404.
+  function heroCityUrl(slug) { var e = heroCityEntry(slug); return e ? e[1] : slug + ".html"; }
   function heroSet(id, txt) {
     var el = document.getElementById(id);
     if (el) el.textContent = txt;
@@ -1743,8 +1759,12 @@
   function injectHeroOutline(host, cc) {
     cc = (cc || "").toLowerCase();
     if (!host || !/^[a-z]{2}$/.test(cc)) return;
-    if (host.getAttribute("data-outline") === cc) return;  // already drawn
+    if (host.getAttribute("data-outline") === cc) return;  // already drawn/queued
+    // Claim the intent now, before the async fetch, so a hero restore that clears
+    // data-outline can revoke a still-pending injection in the callback below.
+    host.setAttribute("data-outline", cc);
     heroOutlines().then(function (map) {
+      if (host.getAttribute("data-outline") !== cc) return;  // superseded / restored
       var o = map[cc], box = host.querySelector(".rh-silho");
       if (!o) { if (box) box.parentNode.removeChild(box);
                 host.removeAttribute("data-outline"); return; }
@@ -1767,30 +1787,65 @@
     if (h) injectHeroOutline(h, h.getAttribute("data-cc"));
   }
 
-  function applyHero() {
+  // Render the hero for a specific ranking-style entry {s,n,t,dt,st,cc} (plus an
+  // optional dn = pre-resolved display name). Shared by geolocation (applyHero),
+  // the remembered-city cache, and the famous-cities carousel. The "faster than
+  // N%" percentile and the analog line need shared data (window.__trends /
+  // window.__analogs); before that has loaded (an early cache-driven render) they
+  // are simply omitted, so the card degrades gracefully. Returns the display name,
+  // or null when the entry is partial (missing trend/since) - in which case
+  // nothing is rendered and the current card is left intact.
+  // True once any real region (remembered or geolocated) has been rendered, so the
+  // geolocation callbacks keep that city's "nearest" hint instead of reverting to
+  // the server-default note over a city that is still on screen.
+  var heroShown = false;
+  // Snapshot the pristine server-default hero (the whole .rh-inner + the stripe
+  // var) before the first render, so a remembered card that fresh data later
+  // invalidates can be undone to the coherent default instead of lingering stale.
+  var heroDefaultHTML = null, heroDefaultStripes = null;
+  function heroSnapshotDefault() {
+    if (heroDefaultHTML !== null) return;
     var host = document.getElementById("region-hero");
-    if (!host || !window.__heroPos) return;
-    var rank = window.__ranking;
-    if (!rank || !rank.length) return;
-    var slug = heroNearestSlug(window.__heroPos.lat, window.__heroPos.lon);
-    if (!slug) { heroSet("rh-hint", host.getAttribute("data-default-note") || ""); return; }
-    var entry = null;
-    for (var i = 0; i < rank.length; i++) {
-      if (rank[i].s === slug) { entry = rank[i]; break; }
+    var inner = host && host.querySelector(".rh-inner");
+    if (inner) {
+      heroDefaultHTML = inner.innerHTML;
+      heroDefaultStripes = host.style.getPropertyValue("--rh-stripes");
     }
-    if (!entry) return;
-    // Never update the hero from a partial row: if the trend/since numbers are
-    // missing, keep the coherent server-rendered default rather than pairing a
-    // new city name with a stale number.
-    if (typeof entry.t !== "number" || typeof entry.dt !== "number") return;
-    var name = heroCityName(slug) || entry.n;
+  }
+  function heroRestoreDefault() {
+    var host = document.getElementById("region-hero");
+    var inner = host && host.querySelector(".rh-inner");
+    if (inner && heroDefaultHTML !== null) {
+      inner.innerHTML = heroDefaultHTML;   // display-only markup, no listeners lost
+      if (heroDefaultStripes) host.style.setProperty("--rh-stripes", heroDefaultStripes);
+      else host.style.removeProperty("--rh-stripes");
+      // The country silhouette lives outside .rh-inner: drop it and revoke any
+      // still-pending outline fetch (injectHeroOutline re-checks data-outline).
+      var silho = host.querySelector(".rh-silho");
+      if (silho) silho.parentNode.removeChild(silho);
+      host.removeAttribute("data-outline");
+      heroShown = false;
+    }
+  }
+  function renderHeroEntry(entry, slug, hintAttr) {
+    var host = document.getElementById("region-hero");
+    if (!host || !entry) return null;
+    // Never render from a partial row: pairing a new city name with a stale
+    // number reads worse than keeping the coherent server-rendered default.
+    if (typeof entry.t !== "number" || typeof entry.dt !== "number") return null;
+    heroSnapshotDefault();   // capture the pristine default once, before mutating
+    slug = slug || entry.s;
+    // Current-language name first (heroCityName reads the inline __omniData, so it
+    // is right even on an early cache render); the cached dn is only a fallback for
+    // a city with no same-language shell, then the raw ranking name.
+    var name = heroCityName(slug) || entry.dn || entry.n;
     heroSet("rh-name", name);
     heroSet("rh-trend", fmtSigned(entry.t, 2));
     heroSet("rh-cta-label", (host.getAttribute("data-cta") || "{name}")
       .replace("{name}", name));
     var link = document.getElementById("rh-link");
-    if (link) link.setAttribute("href", slug + ".html");
-    heroSet("rh-hint", host.getAttribute("data-near") || "");
+    if (link) link.setAttribute("href", heroCityUrl(slug));
+    heroSet("rh-hint", host.getAttribute(hintAttr || "data-near") || "");
     // Swap the ribbon to this city's own warming stripes (the base gradient is
     // fixed; --rh-stripes drives the bottom data ribbon, see .region-hero::before).
     var bg = heroStripeBg(entry.st);
@@ -1867,25 +1922,129 @@
         box.appendChild(em); box.appendChild(wrap);
       } else { box.className = ""; }
     }
+    heroShown = true;
+    return name;
+  }
+  window.renderHeroEntry = renderHeroEntry;
+
+  // Remember the resolved region across visits so the panel opens on it with no
+  // visible default->geolocated swap. Only the small render payload is stored.
+  var HERO_CACHE = "temperatury:hero", HERO_TTL = 180 * 864e5;  // ~6 months
+  function heroCacheSave(entry, slug, dn) {
+    try {
+      localStorage.setItem(HERO_CACHE, JSON.stringify(
+        { s: slug, dn: dn, t: entry.t, dt: entry.dt, st: entry.st, cc: entry.cc,
+          at: Date.now() }));   // stamped so a long-stale payload can expire
+    } catch (e) {}
+  }
+  // Still-covered? Data updates can drop a city, so a stale cached slug must be
+  // rejected rather than render a hero whose rh-link 404s. Checked against the
+  // same geo list heroNearestSlug resolves from (window.__omniData.g).
+  function heroSlugCovered(slug) {
+    var g = (window.__omniData && window.__omniData.g) || [];
+    for (var i = 0; i < g.length; i++) if (g[i][2] === slug) return true;
+    return false;
+  }
+  function heroFinite(x) { return typeof x === "number" && isFinite(x); }
+  function heroStOk(st) {   // a NON-EMPTY array of finite numbers and/or nulls -
+    // empty would leave the server-default stripes under a new city name.
+    if (!Array.isArray(st) || !st.length) return false;
+    for (var i = 0; i < st.length; i++)
+      if (st[i] !== null && !heroFinite(st[i])) return false;
+    return true;
+  }
+  function heroCacheLoad() {
+    try {
+      var o = JSON.parse(localStorage.getItem(HERO_CACHE) || "null");
+      // Reject poisoned/stale caches: finite numbers (JSON's 1e309 -> Infinity is
+      // not), a non-empty st of finite-or-null decades (so the spark can't draw NaN
+      // and the stripes aren't left stale under a new name), a string-or-absent cc
+      // (injectHeroOutline lowercases it), an age within the TTL (so a payload can't
+      // stay stale forever if _global.json keeps failing), and a still-covered slug.
+      if (o && typeof o.s === "string" && heroFinite(o.t) && heroFinite(o.dt)
+          && heroStOk(o.st) && (o.cc == null || typeof o.cc === "string")
+          && (o.at == null || Date.now() - o.at < HERO_TTL)
+          && heroSlugCovered(o.s)) return o;
+    } catch (e) {}
+    return null;
+  }
+  // Apply the remembered region so first paint shows the visitor's own city, not
+  // the server default. Returns true when a remembered region was rendered. Once
+  // the fresh ranking has loaded it renders THAT row for the cached slug (and
+  // refreshes the cache), so a stale trend/since/stripes can't outlive a data
+  // regeneration; before it loads, the stored payload drives the early paint.
+  function applyHeroCache() {
+    // A poisoned cache must never break page init (this runs synchronously in
+    // initPage before initTabs), so the whole read+render is guarded.
+    try {
+      var c = heroCacheLoad();
+      if (!c) return false;
+      var rank = window.__ranking;
+      if (rank && rank.length) {
+        // Ranking is authoritative once loaded: render the fresh row for the cached
+        // slug and refresh the cache. If the slug is gone from the ranking or its
+        // row is now partial, drop the cache rather than let a stale card linger
+        // here or resurface next visit.
+        var fresh = null;
+        for (var i = 0; i < rank.length; i++) if (rank[i].s === c.s) { fresh = rank[i]; break; }
+        var nm = fresh ? renderHeroEntry(fresh, c.s) : null;
+        if (nm) { heroCacheSave(fresh, c.s, nm); return true; }
+        try { localStorage.removeItem(HERO_CACHE); } catch (e) {}
+        heroRestoreDefault();   // undo the early stale render -> coherent default
+        return false;
+      }
+      return !!renderHeroEntry(c, c.s);   // early paint, before the ranking loaded
+    } catch (e) { return false; }
+  }
+  window.applyHeroCache = applyHeroCache;
+
+  // Geolocation path: resolve the nearest covered city, render it, and remember
+  // it. Runs once both the ranking (window.__ranking) and a position
+  // (window.__heroPos) are available.
+  function applyHero() {
+    var host = document.getElementById("region-hero");
+    if (!host || !window.__heroPos) return;
+    var rank = window.__ranking;
+    if (!rank || !rank.length) return;
+    var slug = heroNearestSlug(window.__heroPos.lat, window.__heroPos.lon);
+    if (!slug) {
+      // Position resolved but nothing covered nearby: keep a remembered city's own
+      // hint rather than stamping the server-default note over a city on screen.
+      heroSet("rh-hint", host.getAttribute(heroShown ? "data-near" : "data-default-note") || "");
+      return;
+    }
+    var entry = null;
+    for (var i = 0; i < rank.length; i++) {
+      if (rank[i].s === slug) { entry = rank[i]; break; }
+    }
+    if (!entry) return;
+    var name = renderHeroEntry(entry, slug);
+    if (name) heroCacheSave(entry, slug, name);
   }
   window.applyHero = applyHero;
   function initHero() {
     var host = document.getElementById("region-hero");
     if (!host || host.getAttribute("data-geo") === "1") return;
     host.setAttribute("data-geo", "1");
+    applyHeroCache();   // show the remembered region at once (no default flash)
     applyHero();   // in case the ranking + a cached position are already present
     // Graceful fallback: no Geolocation API, or an insecure context (file://,
     // plain http) where it is blocked - keep the server-rendered default city.
     if (!navigator.geolocation || window.isSecureContext === false) return;
-    heroSet("rh-hint", host.getAttribute("data-locating")
-      || (document.getElementById("rh-hint") || {}).textContent || "");
+    // Only show "finding the nearest city..." when nothing is on screen yet;
+    // over an already-remembered city it would be a misleading transient.
+    if (!heroShown)
+      heroSet("rh-hint", host.getAttribute("data-locating")
+        || (document.getElementById("rh-hint") || {}).textContent || "");
     navigator.geolocation.getCurrentPosition(
       function (pos) {
         window.__heroPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         applyHero();
       },
-      function () {   // denied or unavailable: restore the default note, keep city
-        heroSet("rh-hint", host.getAttribute("data-default-note") || "");
+      function () {   // denied/unavailable: keep the shown city's own "nearest" hint;
+                      // only fall back to the default note when nothing is on screen
+        heroSet("rh-hint",
+          host.getAttribute(heroShown ? "data-near" : "data-default-note") || "");
       },
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 6 * 3600e3 }
     );

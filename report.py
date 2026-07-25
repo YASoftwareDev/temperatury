@@ -1348,6 +1348,10 @@ ${topbar}
       <p class="rh-hint" id="rh-hint">${hero_default_note}</p>
     </div>
   </section>
+  <!-- Paint the remembered region as soon as the hero is parsed (charts.js is
+       already loaded above), so the visitor's own city shows before geolocation
+       and without the default->geolocated flash. -->
+  <script>window.applyHeroCache&&window.applyHeroCache();</script>
     </section><!-- /tp-region -->
     <section class="tabpanel famous" role="tabpanel" id="tp-famous" aria-labelledby="tab-famous" tabindex="0" hidden>
       <div class="carousel" id="famous-carousel" data-autoplay="6000"
