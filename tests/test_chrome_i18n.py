@@ -18,7 +18,6 @@ _CHROME_JS = """() => {
   const q = s => document.querySelector(s);
   const el = q('#cp-search');
   return {
-    map: (q('.tb-link') ? q('.tb-link').textContent : '').replace(/\\s+/g, ' ').trim(),
     ph: el ? el.getAttribute('placeholder') : null,
     aria: el ? el.getAttribute('aria-label') : null,
     footer: (q('footer') ? q('footer').textContent : '').replace(/\\s+/g, ' ').trim(),
@@ -49,15 +48,16 @@ def _chrome(uri, switch_to=None):
 @pytest.mark.parity
 @pytest.mark.slow
 def test_chrome_follows_switch():
-    """Topbar map link, city-search placeholder+aria, and footer localise on an
-    EN-shell -> PL switch, matching the server-rendered PL page."""
+    """Topbar city-search placeholder+aria and footer localise on an
+    EN-shell -> PL switch, matching the server-rendered PL page. (The unified
+    top bar's home affordance is now the brand link, not a localised 'Map' text,
+    so the map-label check was retired with that redesign.)"""
     build("krakow", "en,pl", client_i18n=True)
     client = _chrome((ROOT / "output/en/krakow.html").as_uri(), switch_to="pl")
     build("krakow", "pl", client_i18n=False)
     server = _chrome((ROOT / "output/pl/krakow.html").as_uri())
 
     pl = i18ndict.merged_table("pl")
-    assert client["map"] == server["map"] == pl["map_label"]
     assert client["ph"] == server["ph"] == pl["choose_city"]
     assert client["aria"] == server["aria"] == pl["choose_city"]
     # footer carries a {date} and the source links; whole textContent must match.

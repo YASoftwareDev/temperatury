@@ -206,6 +206,23 @@ def _map_label(tr: dict) -> str:
             .replace("🗺️", "").replace("🗺", "").strip())
 
 
+def _topbar(home_href: str, lang_nav: str,
+            nav_html: str = "", search_html: str = "") -> str:
+    """The shared site top bar, identical on the landing page and every city page:
+    a globe/brand home link, page-specific nav, an optional search slot, and the
+    language picker. The appearance button (appearance.js) and the warming badge
+    (charts.js, landing only) inject themselves into .topbar-in."""
+    return (
+        '<div class="topbar" id="topbar"><div class="topbar-in">'
+        f'<a class="tb-home" href="{home_href}">{_GLOBE_SVG}'
+        '<span class="tb-brand">temperatury</span></a>'
+        f'<div class="tb-nav">{nav_html}</div>'
+        f'<div class="tb-search">{search_html}</div>'
+        f'<nav class="langs">{lang_nav}</nav>'
+        '</div></div>'
+    )
+
+
 _PAGE = Template(
     """<!DOCTYPE html>
 <html lang="${html_lang}" dir="${html_dir}">
@@ -228,15 +245,7 @@ ${seo_head}
 </head>
 <body>
 ${chart_js}
-<div class="topbar" id="topbar">
-  <div class="topbar-in">
-    <div class="tb-nav">
-      <a class="tb-link" href="index.html">${map_icon}<span${map_label_attr}>${map_label}</span></a>
-    </div>
-    <div class="tb-search">${picker}</div>
-    <nav class="langs">${lang_nav}</nav>
-  </div>
-</div>
+${topbar}
 <header class="region-hero" data-name="${place_name}" data-gridnote="${grid_note}"
         data-cc="${hero_cc}" style="--rh-stripes:${hero_bg}">
   <div class="rh-scrim"></div>
@@ -1191,6 +1200,8 @@ def build_site(
         map_icon=_MAP_ICON,
         picker=_city_picker(tr, lang),
         lang_nav=_lang_nav(lang, _switch_langs, slug),
+        topbar=_topbar("index.html", _lang_nav(lang, _switch_langs, slug),
+                       search_html=_city_picker(tr, lang)),
         trend=_signed(stats['trend_per_decade'], 2),
         trend_unit=tr["per_decade_c"],
         trend_unit_attr=_i18n_attr("per_decade_c"),
@@ -1283,15 +1294,7 @@ ${seo_head}
 </head>
 <body>
 ${chart_js}
-<div class="topbar" id="topbar">
-  <div class="topbar-in">
-    <div class="tb-nav">
-      <a class="tb-link" href="#ranking">${nav_ranking}</a>
-      <a class="tb-link" href="#global">${nav_dashboard}</a>
-    </div>
-    <nav class="langs">${lang_nav}</nav>
-  </div>
-</div>
+${topbar}
 <header>
   <h1>${heading}</h1>
   <p class="intro">${intro}</p>
@@ -2822,6 +2825,12 @@ def build_map_page(
         # client-i18n runtime, so its switcher navigates to sibling index pages
         # (all languages exist) rather than calling window.__setLang.
         lang_nav=_lang_nav(lang, languages, "index", in_place=False),
+        topbar=_topbar(
+            "index.html", _lang_nav(lang, languages, "index", in_place=False),
+            nav_html=('<a class="tb-link" href="#ranking">'
+                      + _esc(tr.get("nav_ranking", "Ranking")) + '</a>'
+                      '<a class="tb-link" href="#global">'
+                      + _esc(tr.get("nav_dashboard", "Climate dashboard")) + '</a>')),
         map_region_buttons=map_region_buttons,
         map_filter_label=tr.get("map_filter", "Continent or country"),
         markers=json.dumps(markers, ensure_ascii=False),

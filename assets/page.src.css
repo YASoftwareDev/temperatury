@@ -217,6 +217,13 @@
     display: inline-flex; align-items: center; gap: .25rem; padding: .3rem .55rem;
     border-radius: 6px; white-space: nowrap; }
   .tb-link:hover { background: var(--line); }
+  /* Shared brand/home link - the left anchor of the unified top bar (site-wide). */
+  .tb-home { display: inline-flex; align-items: center; text-decoration: none;
+    color: var(--ink); font-weight: 700; font-size: .92rem; letter-spacing: -.01em;
+    margin-inline-end: .3rem; }
+  .tb-home:hover { color: var(--accent); }
+  .tb-brand { white-space: nowrap; }
+  .tb-search:empty { display: none; }
   .tb-search { flex: 1 1 220px; display: flex; justify-content: center; min-width: 0; }
   .tb-search .citypick { width: 100%; }
   .tb-search .cp-combo { width: min(92vw, 340px); }
