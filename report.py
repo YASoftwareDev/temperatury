@@ -1413,15 +1413,10 @@ ${topbar}
   ${coverage_note}
   ${kpi_band}
     </section><!-- /tp-map -->
-    <section class="tabpanel" role="tabpanel" id="tp-ranking" aria-labelledby="tab-ranking" tabindex="0" hidden>
-  <section class="ranking" id="ranking">
-    <h2 class="dash-h2">${rank_title}</h2>
+    <section class="tabpanel" role="tabpanel" id="tp-ranking-cities" aria-labelledby="tab-ranking-cities" tabindex="0" hidden>
+  <section class="ranking" id="ranking-cities">
+    <h2 class="dash-h2">${rank_cities_head}</h2>
     <p class="section-sub">${rank_intro}</p>
-    <div class="rank-toggle" id="rank-toggle" role="group"
-         aria-label="${rank_cities} / ${rank_countries}">
-      <button type="button" data-mode="city" aria-pressed="false">${rank_cities}</button>
-      <button type="button" data-mode="country" class="active" aria-pressed="true">${rank_countries}</button>
-    </div>
     <p class="rank-legend">${rank_legend}</p>
     <div class="rank-controls">
       <input type="search" id="rank-search" class="rank-search"
@@ -1450,7 +1445,33 @@ ${topbar}
       </div>
     </div>
   </section>
-    </section><!-- /tp-ranking -->
+    </section><!-- /tp-ranking-cities -->
+    <section class="tabpanel" role="tabpanel" id="tp-ranking-countries" aria-labelledby="tab-ranking-countries" tabindex="0" hidden>
+  <section class="ranking" id="ranking-countries">
+    <h2 class="dash-h2">${rank_countries_head}</h2>
+    <p class="section-sub">${rank_intro}</p>
+    <p class="rank-legend">${rank_legend}</p>
+    <div class="rank-controls">
+      <input type="search" id="crank-search" class="rank-search"
+             autocomplete="off" placeholder="${rank_search}" aria-label="${rank_search}">
+    </div>
+    <div class="rank-table-wrap">
+      <table class="rank-table">
+        <thead><tr>
+          <th class="rank-num crank-sort" data-key="rank" aria-sort="ascending">#</th>
+          <th class="rank-city crank-sort" data-key="city">${rank_country}</th>
+          <th class="rank-cty crank-sort" data-key="country">${rank_cities}</th>
+          <th class="rank-val crank-sort" data-key="trend">${rank_trend}</th>
+        </tr></thead>
+        <tbody id="crank-body"></tbody>
+      </table>
+      <p class="rank-empty" id="crank-empty" hidden>${rank_empty}</p>
+      <div class="rank-foot">
+        <p class="rank-count" id="crank-count"></p>
+      </div>
+    </div>
+  </section>
+    </section><!-- /tp-ranking-countries -->
     <section class="tabpanel" role="tabpanel" id="tp-dashboard" aria-labelledby="tab-dashboard" tabindex="0" hidden>
   <!-- "Did you know" rotating fact card: filled by charts.js from the loaded
        ranking (window.__gd) - every figure is computed from real data, never
@@ -2447,16 +2468,22 @@ def _hero_str(lang: str, key: str) -> str:
 # eyebrow so the tab and the hero say the same thing.
 _TAB_I18N = {
     "en": {"famous": "Famous cities", "map": "Map", "ranking": "Ranking",
+           "ranking_cities": "City ranking", "ranking_countries": "Country ranking",
            "dashboard": "Dashboard", "compare": "Compare", "about": "About"},
     "pl": {"famous": "Znane miasta", "map": "Mapa", "ranking": "Ranking",
+           "ranking_cities": "Ranking miast", "ranking_countries": "Ranking krajów",
            "dashboard": "Panel", "compare": "Porównaj", "about": "O danych"},
     "de": {"famous": "Berühmte Städte", "map": "Karte", "ranking": "Rangliste",
+           "ranking_cities": "Städte-Rangliste", "ranking_countries": "Länder-Rangliste",
            "dashboard": "Dashboard", "compare": "Vergleich", "about": "Info"},
     "fr": {"famous": "Villes emblématiques", "map": "Carte", "ranking": "Classement",
+           "ranking_cities": "Classement des villes", "ranking_countries": "Classement des pays",
            "dashboard": "Tableau de bord", "compare": "Comparer", "about": "À propos"},
     "es": {"famous": "Ciudades famosas", "map": "Mapa", "ranking": "Ranking",
+           "ranking_cities": "Ranking de ciudades", "ranking_countries": "Ranking de países",
            "dashboard": "Panel", "compare": "Comparar", "about": "Acerca de"},
     "uk": {"famous": "Відомі міста", "map": "Мапа", "ranking": "Рейтинг",
+           "ranking_cities": "Рейтинг міст", "ranking_countries": "Рейтинг країн",
            "dashboard": "Панель", "compare": "Порівняти", "about": "Про дані"},
 }
 
@@ -2469,6 +2496,9 @@ def _tab_str(lang: str, key: str) -> str:
 # The "About" tab's Q&A: how the site works and how the data were gathered. The
 # methodology is the same in every language, so the body is English (matching the
 # English-fallback policy for the long tail); only the tab label is localised.
+_ABOUT_HEADING_EN = "How this works"
+_ABOUT_INTRO_EN = ("How the data behind these charts were gathered, and what the "
+                   "numbers mean.")
 _ABOUT_QA = [
     ("What does this site show?",
      "How the world's major cities have warmed since 1940. Every city gets its "
@@ -2521,16 +2551,26 @@ _ABOUT_QA = [
 ]
 
 
+# Machine-translated About Q&A for every language (tools/gen_about.py):
+# {lang: {"heading","intro","q0","a0",...}}. Layered under the English source
+# with per-item fallback, so a missing language or key just shows English.
+_ABOUT_MT: dict[str, dict] = {}
+_about_mt_path = os.path.join(os.path.dirname(__file__), "i18n_data", "_about.json")
+if os.path.exists(_about_mt_path):
+    with open(_about_mt_path, encoding="utf-8") as _f:
+        _ABOUT_MT = json.load(_f)
+
+
 def _about_html(tr: dict, lang: str) -> str:
-    """The About/Q&A tab body: static methodology, localised heading + label."""
-    heading = tr.get("about_heading", "How this works")
-    intro = tr.get("about_intro",
-                   "How the data behind these charts were gathered, and what the "
-                   "numbers mean.")
+    """The About/Q&A tab body: methodology localised via the machine-translated
+    _about.json (English per-item fallback)."""
+    block = _ABOUT_MT.get(lang) or {}
+    heading = block.get("heading") or tr.get("about_heading", _ABOUT_HEADING_EN)
+    intro = block.get("intro") or tr.get("about_intro", _ABOUT_INTRO_EN)
     items = "".join(
-        f'<div class="qa"><h3 class="qa-q">{q}</h3>'
-        f'<p class="qa-a">{a}</p></div>'
-        for q, a in _ABOUT_QA)
+        f'<div class="qa"><h3 class="qa-q">{block.get(f"q{i}") or q}</h3>'
+        f'<p class="qa-a">{block.get(f"a{i}") or a}</p></div>'
+        for i, (q, a) in enumerate(_ABOUT_QA))
     return (f'<div class="about-wrap"><h2 class="dash-h2">{_esc(heading)}</h2>'
             f'<p class="section-sub">{_esc(intro)}</p>{items}</div>')
 
@@ -2726,7 +2766,9 @@ def build_map_page(
     # re-selects from the URL hash / localStorage on load.
     tab_famous = _tab_str(lang, "famous")
     _tabs = [("region", hero_eyebrow), ("famous", tab_famous),
-             ("map", _tab_str(lang, "map")), ("ranking", _tab_str(lang, "ranking")),
+             ("map", _tab_str(lang, "map")),
+             ("ranking-cities", _tab_str(lang, "ranking_cities")),
+             ("ranking-countries", _tab_str(lang, "ranking_countries")),
              ("dashboard", _tab_str(lang, "dashboard")),
              ("compare", _tab_str(lang, "compare")), ("about", _tab_str(lang, "about"))]
     tabstrip = "".join(
@@ -3136,6 +3178,8 @@ def build_map_page(
         heatmap_title=_title("anom_heatmap_title"),
         heatmap_cap=tr["cap_anom_heatmap"].format(**fmt),
         rank_title=tr["rank_title"],
+        rank_cities_head=_tab_str(lang, "ranking_cities"),
+        rank_countries_head=_tab_str(lang, "ranking_countries"),
         rank_intro=tr["rank_intro"],
         rank_legend=tr.get("rank_legend",
             "In each row: total warming since 1940, and how many times the "

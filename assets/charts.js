@@ -1116,10 +1116,10 @@
         if (btn) btn.click();
         scrollTo("map");
       } else if (it.t === "country") {
-        if (window.showTab) window.showTab("ranking");
+        if (window.showTab) window.showTab("ranking-cities");
         var rc = document.getElementById("rank-country-filter");
         if (rc) { rc.value = it.cc; rc.dispatchEvent(new Event("change")); }
-        scrollTo("ranking");
+        scrollTo("ranking-cities");
       } else if (it.t === "place") {           // a geocoded world place (lat/lon known)
         input.blur(); scrollTo("omni"); lookupResolved(it.place);
       } else if (it.t === "anywhere") {
@@ -1471,55 +1471,36 @@
     var count = document.getElementById("rank-count");
     var empty = document.getElementById("rank-empty");
     var more = document.getElementById("rank-more");
-    var heads = [].slice.call(document.querySelectorAll(".rank-sort"));
-    // Column header labels: city mode shows City|Country, country mode Country|Cities.
-    var toggle = document.getElementById("rank-toggle");
-    var tbtns = toggle ? [].slice.call(toggle.querySelectorAll("button")) : [];
-    var L_city = heads[1] ? heads[1].textContent : "";
-    var L_country = heads[2] ? heads[2].textContent : "";
-    var L_cities = tbtns[0] ? tbtns[0].textContent : L_city;
-    if (!countryItems.length && toggle) toggle.style.display = "none";
-
+    var cityHeads = [].slice.call(document.querySelectorAll("#ranking-cities .rank-sort"));
     var LIMIT = 100;
-    // Default mode follows whichever toggle button ships pre-marked .active in
-    // the HTML (country by default - the country ranking is the headline view).
-    var mode = "city";
-    tbtns.forEach(function (x) { if (x.classList.contains("active")) mode = x.getAttribute("data-mode"); });
-    var sortKey = "trend", sortDir = "desc", limit = LIMIT;
     function keyOf(h) { var k = h.getAttribute("data-key"); return k === "rank" ? "trend" : k; }
-    function cmp(a, b) {
+    // ---- Cities table: searchable, continent/country filterable, paginated ----
+    var citySort = "trend", cityDir = "desc", cityLimit = LIMIT;
+    function cityCmp(a, b) {
       var d;
-      if (sortKey === "city") d = a.nn.localeCompare(b.nn, lang);
-      else if (sortKey === "country")
-        d = (mode === "country") ? (a.sec - b.sec) : a.ccn.localeCompare(b.ccn, lang);
+      if (citySort === "city") d = a.nn.localeCompare(b.nn, lang);
+      else if (citySort === "country") d = a.ccn.localeCompare(b.ccn, lang);
       else d = a.t - b.t;
-      d = sortDir === "asc" ? d : -d;      // direction applies to the primary key
+      d = cityDir === "asc" ? d : -d;
       if (d === 0) d = a.rank - b.rank;    // ties always keep global-rank order
       return d;
     }
-    function render() {
-      var active = mode === "country" ? countryItems : cityItems;
-      if (heads[1]) heads[1].textContent = (mode === "country" ? L_country : L_city);
-      if (heads[2]) heads[2].textContent = (mode === "country" ? L_cities : L_country);
-      heads.forEach(function (h) {
-        h.setAttribute("aria-sort", keyOf(h) === sortKey
-          ? (sortDir === "asc" ? "ascending" : "descending") : "none");
+    function renderCities() {
+      cityHeads.forEach(function (h) {
+        h.setAttribute("aria-sort", keyOf(h) === citySort
+          ? (cityDir === "asc" ? "ascending" : "descending") : "none");
       });
       var q = search ? norm(search.value) : "";
-      var reg = (mode === "city" && regionSel) ? regionSel.value : "";
-      var ctry = (mode === "city" && countrySel) ? countrySel.value : "";
-      var sel = active.filter(function (it) {
+      var reg = regionSel ? regionSel.value : "";
+      var ctry = countrySel ? countrySel.value : "";
+      var sel = cityItems.filter(function (it) {
         return (!reg || it.region === reg) && (!ctry || it.cc === ctry) &&
           (!q || it.nn.indexOf(q) >= 0);
       });
-      sel.sort(cmp);
-      // Country mode lists every country (there are ~200, not thousands like the
-      // cities), so it is never paginated - the visitor sees the whole ranking.
-      var lim = (mode === "country") ? sel.length : limit;
-      var shown = Math.min(lim, sel.length);
+      sel.sort(cityCmp);
+      var shown = Math.min(cityLimit, sel.length);
       // When a filter narrows the list, number it 1..N locally (keeping the fixed
-      // global rank as a small "#123" beside it); unfiltered, the number IS the
-      // global rank.
+      // global rank as a small "#123" beside it); unfiltered, the number IS rank.
       var filtered = !!(reg || ctry || q);
       var frag = document.createDocumentFragment();
       for (var i = 0; i < shown; i++) {
@@ -1533,10 +1514,6 @@
         } else {
           it.num.textContent = String(it.rank);
         }
-        // Mark the visitor's own country row (cc resolved from geolocation in
-        // phase 3, window.__myCC) so they can spot themselves in the ranking.
-        it.el.classList.toggle("rank-mine",
-          mode === "country" && !!window.__myCC && it.cc === window.__myCC);
         frag.appendChild(it.el);
       }
       body.innerHTML = "";
@@ -1544,85 +1521,110 @@
       if (count) count.textContent = shown + " / " + sel.length;
       if (empty) empty.hidden = sel.length > 0;
       if (more) {
-        // Just the label - the running "shown / total" count (above) already
-        // conveys progress; a "(NNN remaining)" here misreads as "clicking loads
-        // all NNN", but each click only adds the next page.
         more.hidden = sel.length - shown <= 0;
         more.textContent = more.getAttribute("data-label") || "Show more";
       }
     }
-    // Let the hero's geolocation re-apply the "your country" highlight once it
-    // resolves (renderRanking usually runs before geolocation completes).
-    window.__rankRender = render;
-    // Switch to city mode, filtered to one country (from a clicked country row).
-    function focusCountry(cc) {
-      mode = "city";
-      tbtns.forEach(function (x) {
-        var on = x.getAttribute("data-mode") === "city";
-        x.classList.toggle("active", on);
-        x.setAttribute("aria-pressed", on ? "true" : "false");
-      });
-      if (regionSel) { regionSel.style.display = ""; regionSel.value = ""; }
-      if (countrySel) { countrySel.style.display = ""; countrySel.value = cc; }
-      if (search) search.value = "";
-      sortKey = "trend"; sortDir = "desc"; limit = LIMIT; render();
-    }
-    heads.forEach(function (h) {
+    cityHeads.forEach(function (h) {
       h.addEventListener("click", function () {
         var k = keyOf(h);
-        if (k === sortKey) sortDir = sortDir === "asc" ? "desc" : "asc";
-        else { sortKey = k; sortDir = (k === "trend") ? "desc" : "asc"; }
-        limit = LIMIT; render();
+        if (k === citySort) cityDir = cityDir === "asc" ? "desc" : "asc";
+        else { citySort = k; cityDir = (k === "trend") ? "desc" : "asc"; }
+        cityLimit = LIMIT; renderCities();
       });
     });
-    if (search) search.addEventListener("input", function () { limit = LIMIT; render(); });
+    if (search) search.addEventListener("input", function () { cityLimit = LIMIT; renderCities(); });
     // Region and country are two granularities of the same "narrow it down"
     // gesture, so picking one clears the other (avoids empty intersections).
     if (regionSel) regionSel.addEventListener("change", function () {
       if (regionSel.value && countrySel) countrySel.value = "";
-      limit = LIMIT; render();
+      cityLimit = LIMIT; renderCities();
     });
     if (countrySel) countrySel.addEventListener("change", function () {
       if (countrySel.value && regionSel) regionSel.value = "";
-      limit = LIMIT; render();
+      cityLimit = LIMIT; renderCities();
     });
-    if (more) more.addEventListener("click", function () { limit += LIMIT; render(); });
-    // Cities / Countries toggle: swaps the dataset; the continent + country
-    // filters only make sense for cities, so they hide in country mode.
-    tbtns.forEach(function (b) {
-      b.addEventListener("click", function () {
-        mode = b.getAttribute("data-mode");
-        tbtns.forEach(function (x) {
-          x.classList.toggle("active", x === b);
-          x.setAttribute("aria-pressed", x === b ? "true" : "false");
-        });
-        var cityOnly = mode === "country" ? "none" : "";
-        if (regionSel) { regionSel.style.display = cityOnly; regionSel.value = ""; }
-        if (countrySel) { countrySel.style.display = cityOnly; countrySel.value = ""; }
-        if (search) search.value = "";
-        sortKey = "trend"; sortDir = "desc"; limit = LIMIT; render();
+    if (more) more.addEventListener("click", function () { cityLimit += LIMIT; renderCities(); });
+    // Clicking a country row (in the Countries tab) opens the Cities tab filtered
+    // to that country. Hoisted, so the row handler set up above can call it.
+    function focusCountry(cc) {
+      if (regionSel) regionSel.value = "";
+      if (countrySel) countrySel.value = cc;
+      if (search) search.value = "";
+      citySort = "trend"; cityDir = "desc"; cityLimit = LIMIT;
+      renderCities();
+      if (window.showTab) window.showTab("ranking-cities");
+    }
+
+    // ---- Countries table: the whole list, searchable + sortable, never paged --
+    var cbody = document.getElementById("crank-body");
+    var csearch = document.getElementById("crank-search");
+    var ccount = document.getElementById("crank-count");
+    var cempty = document.getElementById("crank-empty");
+    var ctryHeads = [].slice.call(document.querySelectorAll("#ranking-countries .crank-sort"));
+    // Country columns are rank | country-name | #cities | trend, so the shared
+    // data-key names map to name/cities/trend here.
+    function ctryKeyOf(h) {
+      var k = h.getAttribute("data-key");
+      return k === "rank" ? "trend" : k === "city" ? "name" : k === "country" ? "cities" : k;
+    }
+    var ctrySort = "trend", ctryDir = "desc";
+    function ctryCmp(a, b) {
+      var d;
+      if (ctrySort === "name") d = a.nn.localeCompare(b.nn, lang);
+      else if (ctrySort === "cities") d = a.sec - b.sec;
+      else d = a.t - b.t;
+      d = ctryDir === "asc" ? d : -d;
+      if (d === 0) d = a.rank - b.rank;
+      return d;
+    }
+    function renderCountries() {
+      if (!cbody) return;
+      ctryHeads.forEach(function (h) {
+        h.setAttribute("aria-sort", ctryKeyOf(h) === ctrySort
+          ? (ctryDir === "asc" ? "ascending" : "descending") : "none");
+      });
+      var q = csearch ? norm(csearch.value) : "";
+      var sel = countryItems.filter(function (it) { return !q || it.nn.indexOf(q) >= 0; });
+      sel.sort(ctryCmp);
+      var filtered = !!q;
+      var frag = document.createDocumentFragment();
+      for (var i = 0; i < sel.length; i++) {
+        var it = sel[i];
+        if (filtered) {
+          it.num.innerHTML = "";
+          it.num.appendChild(document.createTextNode(String(i + 1)));
+          var gr = document.createElement("span");
+          gr.className = "rank-grank"; gr.textContent = "#" + it.rank;
+          it.num.appendChild(gr);
+        } else {
+          it.num.textContent = String(it.rank);
+        }
+        // Mark the visitor's own country row (window.__myCC, from geolocation).
+        it.el.classList.toggle("rank-mine",
+          !!window.__myCC && it.cc === window.__myCC);
+        frag.appendChild(it.el);
+      }
+      cbody.innerHTML = "";
+      cbody.appendChild(frag);
+      if (ccount) ccount.textContent = sel.length + " / " + countryItems.length;
+      if (cempty) cempty.hidden = sel.length > 0;
+    }
+    ctryHeads.forEach(function (h) {
+      h.addEventListener("click", function () {
+        var k = ctryKeyOf(h);
+        if (k === ctrySort) ctryDir = ctryDir === "asc" ? "desc" : "asc";
+        else { ctrySort = k; ctryDir = (k === "trend") ? "desc" : "asc"; }
+        renderCountries();
       });
     });
-    // A link from a city page (index.html#cities / #countries) opens that mode.
-    var hash = (location.hash || "").replace("#", "");
-    if (hash === "cities" || hash === "countries") {
-      mode = hash === "countries" ? "country" : "city";
-      tbtns.forEach(function (x) {
-        var on = x.getAttribute("data-mode") === mode;
-        x.classList.toggle("active", on);
-        x.setAttribute("aria-pressed", on ? "true" : "false");
-      });
-    }
-    // Apply the initial mode's filter visibility (country mode hides city-only filters).
-    if (mode === "country") {
-      if (regionSel) regionSel.style.display = "none";
-      if (countrySel) countrySel.style.display = "none";
-    }
-    render();
-    if (hash === "cities" || hash === "countries") {
-      var rsec = document.getElementById("ranking");
-      if (rsec) rsec.scrollIntoView();
-    }
+    if (csearch) csearch.addEventListener("input", renderCountries);
+    // The hero's geolocation re-applies the "your country" highlight once myCC
+    // resolves (renderRanking usually runs before geolocation completes).
+    window.__rankRender = renderCountries;
+
+    renderCities();
+    renderCountries();
   }
 
   // Called when the shared chart JSON fails to load: mark every not-yet-drawn
@@ -2386,12 +2388,12 @@
     // renderRanking), or a bookmark to a section that used to be a scroll anchor
     // (#ranking, #global, #compare, #map, #region-hero, #country-stat) now living
     // inside a panel. Returns null when the hash names no tab.
-    var SECTION_TAB = { "#ranking": "ranking", "#cities": "ranking",
-      "#countries": "ranking", "#global": "dashboard", "#country-stat": "dashboard",
+    var SECTION_TAB = { "#ranking": "ranking-cities", "#cities": "ranking-cities",
+      "#countries": "ranking-countries", "#global": "dashboard", "#country-stat": "dashboard",
       "#compare": "compare", "#map": "map", "#region-hero": "region" };
     function tabForHash() {
       var h = location.hash || "";
-      var m = h.match(/tab=([a-z]+)/);
+      var m = h.match(/tab=([a-z-]+)/);
       if (m && ids.indexOf(m[1]) >= 0) return m[1];
       if (/(^|#|&)cmp=/.test(h)) return "compare";
       return SECTION_TAB[h] || null;
