@@ -617,7 +617,7 @@
     var lang = (document.documentElement.lang || "en").split("-")[0];
     var T = {};
     try { T = JSON.parse(card.getAttribute("data-i18n") || "{}"); } catch (e) {}
-    var rank = d.ranking, gt = d.gt || 0;
+    var rank = d.ranking;
     function cityName(r) {
       var m = window.__names && window.__names[r.s];
       return (m && (m[lang] || m.en)) || r.n;
@@ -629,13 +629,10 @@
       if (regionNames) { try { return regionNames.of(up) || up; } catch (e) {} }
       return up;
     }
-    var facts = [], fc = null, over = 0, sumDt = 0, nDt = 0, fw = 0, nt = 0;
+    var facts = [], fc = null, over = 0, sumDt = 0, nDt = 0;
     for (var i = 0; i < rank.length; i++) {
       var r = rank[i];
-      if (typeof r.t === "number") {
-        if (fc == null || r.t > rank[fc].t) fc = i;
-        nt++; if (gt && r.t > gt) fw++;
-      }
+      if (typeof r.t === "number" && (fc == null || r.t > rank[fc].t)) fc = i;
       if (typeof r.dt === "number") { sumDt += r.dt; nDt++; if (r.dt > 2) over++; }
     }
     // Each fact keeps its (trusted) template + computed values separately, so the
@@ -651,8 +648,6 @@
       facts.push({ t: T.over2, v: { n: over, total: nDt } });
     if (nDt > 0 && T.avg_since)
       facts.push({ t: T.avg_since, v: { v: fmtSigned(sumDt / nDt, 1) } });
-    if (gt && nt > 0 && T.faster_world)
-      facts.push({ t: T.faster_world, v: { pct: Math.round(100 * fw / nt) } });
     if (d.countries && d.countries.length && T.fastest_country) {
       var qc = null;
       for (var q = 0; q < d.countries.length; q++)

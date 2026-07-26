@@ -20,6 +20,7 @@ _TEXT: dict[str, dict[str, str]] = {
         "rank_city": "City",
         "rank_country": "Country",
         "rank_search": "Find a city…",
+        "rank_search_countries": "Find a country…",
         "rank_empty": "No city matches that search.",
         "cstat_title": "How is your country warming?",
         "cstat_line": "{country}: {trend}°C per decade since 1940, faster than "
@@ -40,6 +41,7 @@ _TEXT: dict[str, dict[str, str]] = {
         "rank_city": "Miasto",
         "rank_country": "Kraj",
         "rank_search": "Znajdź miasto…",
+        "rank_search_countries": "Znajdź kraj…",
         "rank_empty": "Żadne miasto nie pasuje do wyszukiwania.",
         "cstat_title": "Jak ociepla się twój kraj?",
         "cstat_line": "{country}: {trend}°C na dekadę od 1940 roku, szybciej niż "

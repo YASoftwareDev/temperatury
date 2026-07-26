@@ -1437,7 +1437,7 @@ ${topbar}
     <p class="rank-legend">${rank_legend}</p>
     <div class="rank-controls">
       <input type="search" id="crank-search" class="rank-search"
-             autocomplete="off" placeholder="${rank_search}" aria-label="${rank_search}">
+             autocomplete="off" placeholder="${rank_search_countries}" aria-label="${rank_search_countries}">
     </div>
     <div class="rank-table-wrap">
       <table class="rank-table">
@@ -3290,6 +3290,7 @@ def build_map_page(
         rank_city=tr["rank_city"],
         rank_country=tr["rank_country"],
         rank_search=tr["rank_search"],
+        rank_search_countries=tr.get("rank_search_countries", "Find a country…"),
         rank_empty=tr["rank_empty"],
         rank_trend=tr["per_decade_c"],
         rank_regions=rank_regions,
