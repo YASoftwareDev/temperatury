@@ -315,6 +315,19 @@
     });
   }
 
+  /* The landing shows a city page in an iframe ("Selected region"), which is a
+     separate document with its own copy of this script - so it reads the saved
+     prefs once at load and would otherwise stay on the old theme and the old
+     unit while the panel next to it says something else. `storage` fires in
+     every OTHER same-origin document when localStorage changes, so the frame
+     follows the parent on every axis, not just units. */
+  window.addEventListener("storage", function (e) {
+    if (e.key && e.key !== KEY) return;
+    prefs = load();
+    apply();
+    sync();
+  });
+
   apply();  /* re-affirm attrs + fire themechange once charts may exist */
   if (document.readyState === "loading")
     document.addEventListener("DOMContentLoaded", build);
