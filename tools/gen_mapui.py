@@ -9,7 +9,12 @@ language, and writes `i18n_data/_mapui.json` = `{lang: {key: value}}` with an
 `en` block. i18n.get() layers this in, so `tr.get(...)` then finds the localized
 string with no call-site change.
 
-Usage: .venv/bin/python tools/gen_mapui.py
+Usage: .venv/bin/python tools/gen_mapui.py           # regenerate everything
+       .venv/bin/python tools/gen_mapui.py --missing  # translate only new keys
+
+``--missing`` keeps every existing translation untouched and fills in just the
+keys a language is missing - what you want after adding a key or two, since a
+full run re-translates 132 languages and churns strings nobody changed.
 """
 from __future__ import annotations
 
@@ -40,6 +45,7 @@ _KEYS = [
     "pref_style_product", "pref_style_atlas", "pref_accent", "pref_headline",
     "pref_sans", "pref_serif", "pref_density", "pref_comfortable",
     "pref_compact", "pref_header", "pref_plain", "pref_tint",
+    "pref_unit", "pref_unit_c", "pref_unit_f",
     "pref_acc_cobalt", "pref_acc_red", "pref_acc_teal", "pref_acc_forest",
     "pref_acc_amber", "pref_acc_slate",
     # topbar warming badge (assets/charts.js, via window.__tpref)
@@ -86,19 +92,32 @@ def _translate(g_code: str, en: dict) -> dict:
 
 
 def main():
+    only_missing = "--missing" in sys.argv
     en = _extract_english()
+    prev = {}
+    if only_missing and OUT.exists():
+        prev = json.loads(OUT.read_text(encoding="utf-8"))
     result = {"en": en}
     targets = [lg for lg in i18n.LANGUAGES if lg != "en"]
-    print(f"{len(targets)} languages x {len(en)} map-UI keys")
+    print(f"{len(targets)} languages x {len(en)} map-UI keys"
+          + (" (missing only)" if only_missing else ""))
     for i, lg in enumerate(targets, 1):
+        have = dict(prev.get(lg, {}))
+        # Missing or empty: an empty string is a failed translation, not a choice.
+        todo = {k: v for k, v in en.items() if not have.get(k)}
+        if only_missing and not todo:
+            result[lg] = {k: have.get(k, en[k]) for k in _KEYS}
+            continue
+        want = todo if only_missing else en
         for attempt in range(3):
             try:
-                result[lg] = _translate(GCODE.get(lg, lg), en)
+                have.update(_translate(GCODE.get(lg, lg), want))
                 break
             except Exception as e:
                 print(f"  {lg}: attempt {attempt+1} failed: {e}")
         else:
-            result[lg] = dict(en)
+            have.update({k: en[k] for k in want})
+        result[lg] = {k: have.get(k, en[k]) for k in _KEYS}
         if i % 20 == 0 or i == len(targets):
             print(f"  {i}/{len(targets)} ({lg})")
     OUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n",
