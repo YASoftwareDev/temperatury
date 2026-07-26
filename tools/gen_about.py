@@ -11,11 +11,17 @@ The answers contain HTML (<a>, <strong>) and entities (&nbsp;, &#8202;); these
 are protected exactly as in gen_mt_langs, and an item that loses a tag keeps its
 English source (never a broken string).
 
-Usage: .venv/bin/python tools/gen_about.py
+Usage: .venv/bin/python tools/gen_about.py              # regenerate everything
+       .venv/bin/python tools/gen_about.py --keys a5   # re-translate one item
+
+``--keys`` merges into the existing file and re-translates only the items named,
+which is what an edit to a single answer needs - a full run re-translates 130+
+languages and rewrites strings nobody changed.
 """
 from __future__ import annotations
 
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -42,6 +48,26 @@ def _en_items() -> list[tuple[str, str]]:
     return items
 
 
+_ENTITY_FIXES = [
+    # Machine translation mangles HTML entities in predictable ways, and a broken
+    # one renders as literal text ("& nbsp;") on the page. Repair the shapes seen
+    # across the 130+ outputs rather than shipping visible markup.
+    (re.compile(r"&\s*#\s*(\d+)\s*;"), r"&#\1;"),      # "& # 8211;"
+    (re.compile(r"&(\d{3,5});"), r"&#\1;"),              # "&8211;" - lost the #
+    (re.compile(r"&\s*nbsp\s*;", re.I), "&nbsp;"),       # "& nbsp;"
+    (re.compile(r"&\u043d\u0431\u0441\u043f;"), "&nbsp;"),  # Cyrillic-transliterated &nbsp;
+    (re.compile(r"(\d{4})\s*&\s*(\d{4})"), r"\1&#8211;\2"),  # "1961&1990": the en dash was eaten
+]
+
+
+def fix_entities(s: str) -> str:
+    """Repair entities the translator broke. Idempotent, so it is safe to run
+    over an already-clean string (and over the stored file, to heal old runs)."""
+    for rx, rep in _ENTITY_FIXES:
+        s = rx.sub(rep, s)
+    return s
+
+
 def _translate_items(g_code: str, en_items: list[tuple[str, str]]) -> dict:
     tr = GoogleTranslator(source="en", target=g_code)
     protected, tokmaps = [], []
@@ -52,7 +78,7 @@ def _translate_items(g_code: str, en_items: list[tuple[str, str]]) -> dict:
     out: dict[str, str] = {}
     for (k, v), tr_s, toks in zip(en_items, translated, tokmaps):
         r = _restore(tr_s, toks) if tr_s is not None else None
-        out[k] = r if r else v          # tag/placeholder-safe: broken -> English
+        out[k] = fix_entities(r) if r else v   # tag/placeholder-safe: broken -> English
     return out
 
 
@@ -68,11 +94,23 @@ def _with_retry(g_code, en_items, label):
 
 def main() -> int:
     en_items = _en_items()
-    result: dict[str, dict] = {"en": {k: v for k, v in en_items}}
+    only = None
+    if "--keys" in sys.argv:
+        only = set(sys.argv[sys.argv.index("--keys") + 1].split(","))
+        en_items = [(k, v) for k, v in en_items if k in only]
+        if not en_items:
+            raise SystemExit(f"no About items match {sorted(only)}")
+    prev: dict = {}
+    if only and OUT.exists():
+        prev = json.loads(OUT.read_text(encoding="utf-8"))
+    result: dict[str, dict] = {**prev}
+    result["en"] = {**result.get("en", {}), **{k: v for k, v in en_items}}
     targets = [lg for lg in i18n.LANGUAGES if lg != "en"]
-    print(f"Translating {len(en_items)} About strings into {len(targets)} languages ...")
+    print(f"Translating {len(en_items)} About strings into {len(targets)} languages "
+          + (f"(keys: {sorted(only)})" if only else "..."))
     for n, lg in enumerate(targets, 1):
-        result[lg] = _with_retry(GCODE.get(lg, lg), en_items, lg)
+        got = _with_retry(GCODE.get(lg, lg), en_items, lg)
+        result[lg] = {**result.get(lg, {}), **got} if only else got
         if n % 10 == 0 or n == len(targets):
             print(f"  {n}/{len(targets)} done ({lg})")
     OUT.write_text(json.dumps(result, ensure_ascii=False, indent=0), encoding="utf-8")
