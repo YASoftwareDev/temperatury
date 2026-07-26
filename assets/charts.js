@@ -1464,7 +1464,7 @@
       var c2 = document.createElement("td"); c2.className = "rank-cty"; c2.textContent = cty;
       tr.appendChild(num); tr.appendChild(c1); tr.appendChild(c2); tr.appendChild(valTd(r.t));
       // Search matches the localized AND the default name, so either works.
-      return { rank: i + 1, num: num, nn: norm(dn + " " + r.n), cc: r.cc, ccn: norm(cty),
+      return { rank: i + 1, num: num, s: r.s, nn: norm(dn + " " + r.n), cc: r.cc, ccn: norm(cty),
                region: r.r || "", sec: 0, t: r.t, el: tr };
     });
     // COUNTRY rows: rank, flag + country name, city count, mean trend.
@@ -1546,6 +1546,10 @@
         } else {
           it.num.textContent = String(it.rank);
         }
+        // Highlight the visitor's own city (the one shown in "Selected region",
+        // window.__heroSlug), the row-level parallel of the country highlight.
+        it.el.classList.toggle("rank-mine",
+          !!window.__heroSlug && it.s === window.__heroSlug);
         frag.appendChild(it.el);
       }
       body.innerHTML = "";
@@ -1651,9 +1655,10 @@
       });
     });
     if (csearch) csearch.addEventListener("input", renderCountries);
-    // The hero's geolocation re-applies the "your country" highlight once myCC
-    // resolves (renderRanking usually runs before geolocation completes).
-    window.__rankRender = renderCountries;
+    // The hero's geolocation re-applies both "your city" (cities table) and "your
+    // country" (countries table) highlights once __heroSlug / __myCC resolve
+    // (renderRanking usually runs before geolocation completes).
+    window.__rankRender = function () { renderCities(); renderCountries(); };
 
     renderCities();
     renderCountries();
@@ -2240,6 +2245,33 @@
   }
   window.initRegionEmbed = initRegionEmbed;
 
+  // "Report an issue" tab: build a prefilled GitHub new-issue URL from the form
+  // and open it in a new tab (a public static page cannot hold a token to post
+  // directly, so the reporter finishes on GitHub). The repo URL is read from the
+  // form's data-repo, never hardcoded here.
+  window.initReportForm = function () {
+    var form = document.getElementById("report-form");
+    if (!form || form.__wired) return;
+    form.__wired = true;
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var ti = document.getElementById("report-title");
+      var de = document.getElementById("report-desc");
+      var t = ((ti && ti.value) || "").trim();
+      if (!t) { if (ti) ti.focus(); return; }   // a summary is required
+      var d = ((de && de.value) || "").trim();
+      var body = (d ? d + "\n\n" : "") + "---\nPage: " + location.href;
+      var base = form.getAttribute("data-repo");
+      if (!base) return;
+      var url = base + "?labels=" + encodeURIComponent("feedback")
+        + "&title=" + encodeURIComponent(t)
+        + "&body=" + encodeURIComponent(body);
+      window.open(url, "_blank", "noopener");
+      var th = document.getElementById("report-thanks");
+      if (th) th.hidden = false;
+    });
+  };
+
   // Remember the resolved region across visits so the panel opens on it with no
   // visible default->geolocated swap. Only the small render payload is stored.
   var HERO_CACHE = "temperatury:hero", HERO_TTL = 180 * 864e5;  // ~6 months
@@ -2389,6 +2421,8 @@
         window.initCarousel();
       } else if (id === "compare" && window.__cmpPrefill) {
         window.__cmpPrefill();   // your city vs a notable city, if geo has resolved
+      } else if (id === "report" && window.initReportForm) {
+        window.initReportForm();
       }
       // Reflow any Chart.js canvases that were sized while their panel was hidden.
       var p = panel(id);

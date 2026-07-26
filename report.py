@@ -1517,6 +1517,27 @@ ${topbar}
     <section class="tabpanel" role="tabpanel" id="tp-about" aria-labelledby="tab-about" tabindex="0" hidden>
       ${about_html}
     </section><!-- /tp-about -->
+    <section class="tabpanel" role="tabpanel" id="tp-report" aria-labelledby="tab-report" tabindex="0" hidden>
+  <!-- Feedback form: opens a prefilled GitHub new-issue page (charts.js
+       initReportForm). A public static page cannot hold a token to post an issue
+       directly, so submission is completed by the reporter on GitHub. -->
+  <div class="report-wrap">
+    <h2 class="dash-h2">${report_heading}</h2>
+    <p class="section-sub">${report_intro}</p>
+    <form class="report-form" id="report-form"
+          data-repo="https://github.com/YASoftwareDev/temperatury/issues/new">
+      <label class="report-lbl" for="report-title">${report_title_lbl}</label>
+      <input type="text" id="report-title" class="report-input" maxlength="140"
+             autocomplete="off" placeholder="${report_title_ph}">
+      <label class="report-lbl" for="report-desc">${report_desc_lbl}</label>
+      <textarea id="report-desc" class="report-textarea" rows="6" maxlength="4000"
+                placeholder="${report_desc_ph}"></textarea>
+      <button type="submit" class="report-submit">${report_submit}</button>
+      <p class="report-note">${report_note}</p>
+      <p class="report-thanks" id="report-thanks" role="status" hidden>${report_thanks}</p>
+    </form>
+  </div>
+    </section><!-- /tp-report -->
   </div><!-- /.tabs -->
 </main>
 <footer>${footer} · <a href="../embed.html">${widget_label}</a></footer>
@@ -2446,33 +2467,104 @@ _TAB_I18N = {
     "en": {"region": "Selected region", "famous": "Famous cities", "map": "Map",
            "ranking": "Ranking",
            "ranking_cities": "City ranking", "ranking_countries": "Country ranking",
-           "dashboard": "Global", "compare": "Compare", "about": "About"},
+           "dashboard": "Global", "compare": "Compare", "about": "About", "report": "Report an issue"},
     "pl": {"region": "Wybrany region", "famous": "Znane miasta", "map": "Mapa",
            "ranking": "Ranking",
            "ranking_cities": "Ranking miast", "ranking_countries": "Ranking krajów",
-           "dashboard": "Globalnie", "compare": "Porównaj", "about": "O danych"},
+           "dashboard": "Globalnie", "compare": "Porównaj", "about": "O danych", "report": "Zgłoś uwagę"},
     "de": {"region": "Ausgewählte Region", "famous": "Berühmte Städte", "map": "Karte",
            "ranking": "Rangliste",
            "ranking_cities": "Städte-Rangliste", "ranking_countries": "Länder-Rangliste",
-           "dashboard": "Global", "compare": "Vergleich", "about": "Info"},
+           "dashboard": "Global", "compare": "Vergleich", "about": "Info", "report": "Fehler melden"},
     "fr": {"region": "Région choisie", "famous": "Villes emblématiques", "map": "Carte",
            "ranking": "Classement",
            "ranking_cities": "Classement des villes", "ranking_countries": "Classement des pays",
-           "dashboard": "Global", "compare": "Comparer", "about": "À propos"},
+           "dashboard": "Global", "compare": "Comparer", "about": "À propos", "report": "Signaler"},
     "es": {"region": "Región elegida", "famous": "Ciudades famosas", "map": "Mapa",
            "ranking": "Ranking",
            "ranking_cities": "Ranking de ciudades", "ranking_countries": "Ranking de países",
-           "dashboard": "Global", "compare": "Comparar", "about": "Acerca de"},
+           "dashboard": "Global", "compare": "Comparar", "about": "Acerca de", "report": "Reportar"},
     "uk": {"region": "Обраний регіон", "famous": "Відомі міста", "map": "Мапа",
            "ranking": "Рейтинг",
            "ranking_cities": "Рейтинг міст", "ranking_countries": "Рейтинг країн",
-           "dashboard": "Глобально", "compare": "Порівняти", "about": "Про дані"},
+           "dashboard": "Глобально", "compare": "Порівняти", "about": "Про дані", "report": "Повідомити"},
 }
 
 
 def _tab_str(lang: str, key: str) -> str:
     """A landing tab label localised to ``lang``, English per-key fallback."""
     return (_TAB_I18N.get(lang) or {}).get(key) or _TAB_I18N["en"][key]
+
+
+# "Report an issue" tab: a small form that opens a prefilled GitHub new-issue
+# page (a public static site cannot hold a token to post directly). Inline langs
+# + English fallback for the long tail.
+_REPORT_I18N = {
+    "en": {"heading": "Report an error or suggestion",
+           "intro": "Spotted something wrong, or have an idea to improve the site? "
+                    "Send it to us as a GitHub issue.",
+           "title_lbl": "Summary", "title_ph": "e.g. Wrong warming figure for Krakow",
+           "desc_lbl": "Details (optional)",
+           "desc_ph": "What did you find, and where (which city, tab or chart)?",
+           "submit": "Open a GitHub issue",
+           "note": "This opens a prefilled issue on GitHub in a new tab; a free "
+                   "GitHub account is needed to post it.",
+           "thanks": "Thanks! Finish posting on the GitHub tab that just opened."},
+    "pl": {"heading": "Zgłoś błąd lub sugestię",
+           "intro": "Widzisz błąd albo masz pomysł na ulepszenie strony? "
+                    "Wyślij go do nas jako zgłoszenie na GitHub.",
+           "title_lbl": "Krótki opis", "title_ph": "np. Błędna wartość ocieplenia dla Krakowa",
+           "desc_lbl": "Szczegóły (opcjonalnie)",
+           "desc_ph": "Co zauważyłeś i gdzie (które miasto, zakładka lub wykres)?",
+           "submit": "Otwórz zgłoszenie na GitHub",
+           "note": "Otworzy się wstępnie wypełnione zgłoszenie na GitHub w nowej "
+                   "karcie; do wysłania potrzebne jest darmowe konto GitHub.",
+           "thanks": "Dzięki! Dokończ wysyłanie na karcie GitHub, która się otworzyła."},
+    "de": {"heading": "Fehler oder Vorschlag melden",
+           "intro": "Etwas falsch entdeckt oder eine Idee zur Verbesserung? "
+                    "Senden Sie es uns als GitHub-Issue.",
+           "title_lbl": "Zusammenfassung", "title_ph": "z. B. Falscher Erwärmungswert für Krakau",
+           "desc_lbl": "Details (optional)",
+           "desc_ph": "Was haben Sie gefunden, und wo (welche Stadt, welcher Tab oder welches Diagramm)?",
+           "submit": "GitHub-Issue öffnen",
+           "note": "Öffnet ein vorausgefülltes Issue auf GitHub in einem neuen Tab; "
+                   "zum Posten wird ein kostenloses GitHub-Konto benötigt.",
+           "thanks": "Danke! Bitte im soeben geöffneten GitHub-Tab absenden."},
+    "fr": {"heading": "Signaler une erreur ou une suggestion",
+           "intro": "Vous avez repéré une erreur ou avez une idée pour améliorer le site ? "
+                    "Envoyez-la sous forme de ticket GitHub.",
+           "title_lbl": "Résumé", "title_ph": "ex. Valeur de réchauffement erronée pour Cracovie",
+           "desc_lbl": "Détails (facultatif)",
+           "desc_ph": "Qu'avez-vous trouvé, et où (quelle ville, quel onglet ou graphique) ?",
+           "submit": "Ouvrir un ticket GitHub",
+           "note": "Ouvre un ticket prérempli sur GitHub dans un nouvel onglet ; "
+                   "un compte GitHub gratuit est nécessaire pour l'envoyer.",
+           "thanks": "Merci ! Terminez l'envoi dans l'onglet GitHub qui vient de s'ouvrir."},
+    "es": {"heading": "Informar de un error o sugerencia",
+           "intro": "¿Has visto algo incorrecto o tienes una idea para mejorar el sitio? "
+                    "Envíanoslo como incidencia en GitHub.",
+           "title_lbl": "Resumen", "title_ph": "p. ej. Valor de calentamiento incorrecto para Cracovia",
+           "desc_lbl": "Detalles (opcional)",
+           "desc_ph": "¿Qué encontraste y dónde (qué ciudad, pestaña o gráfico)?",
+           "submit": "Abrir una incidencia en GitHub",
+           "note": "Abre una incidencia rellenada previamente en GitHub en una pestaña nueva; "
+                   "se necesita una cuenta gratuita de GitHub para publicarla.",
+           "thanks": "¡Gracias! Termina de publicarla en la pestaña de GitHub que se abrió."},
+    "uk": {"heading": "Повідомити про помилку чи пропозицію",
+           "intro": "Помітили щось не так або маєте ідею для покращення сайту? "
+                    "Надішліть нам як issue на GitHub.",
+           "title_lbl": "Стислий опис", "title_ph": "напр. Хибне значення потепління для Кракова",
+           "desc_lbl": "Деталі (необовʼязково)",
+           "desc_ph": "Що ви знайшли і де (яке місто, вкладка чи графік)?",
+           "submit": "Відкрити issue на GitHub",
+           "note": "Відкриє попередньо заповнене issue на GitHub у новій вкладці; "
+                   "для надсилання потрібен безкоштовний акаунт GitHub.",
+           "thanks": "Дякуємо! Завершіть надсилання у вкладці GitHub, що відкрилася."},
+}
+
+
+def _report_str(lang: str, key: str) -> str:
+    return (_REPORT_I18N.get(lang) or {}).get(key) or _REPORT_I18N["en"][key]
 
 
 # The "About" tab's Q&A: how the site works and how the data were gathered. The
@@ -2765,7 +2857,8 @@ def build_map_page(
              ("ranking-cities", _tab_str(lang, "ranking_cities")),
              ("ranking-countries", _tab_str(lang, "ranking_countries")),
              ("dashboard", _tab_str(lang, "dashboard")),
-             ("compare", _tab_str(lang, "compare")), ("about", _tab_str(lang, "about"))]
+             ("compare", _tab_str(lang, "compare")), ("about", _tab_str(lang, "about")),
+             ("report", _tab_str(lang, "report"))]
     tabstrip = "".join(
         f'<button type="button" class="tabbtn{" active" if i == 0 else ""}" '
         f'role="tab" id="tab-{k}" data-tab="{k}" aria-controls="tp-{k}" '
@@ -3099,6 +3192,15 @@ def build_map_page(
         carousel_prev=_esc(tr.get("carousel_prev", "Previous city")),
         carousel_next=_esc(tr.get("carousel_next", "Next city")),
         about_html=_about_html(tr, lang),
+        report_heading=_report_str(lang, "heading"),
+        report_intro=_report_str(lang, "intro"),
+        report_title_lbl=_report_str(lang, "title_lbl"),
+        report_title_ph=_esc(_report_str(lang, "title_ph"), quote=True),
+        report_desc_lbl=_report_str(lang, "desc_lbl"),
+        report_desc_ph=_esc(_report_str(lang, "desc_ph"), quote=True),
+        report_submit=_report_str(lang, "submit"),
+        report_note=_report_str(lang, "note"),
+        report_thanks=_report_str(lang, "thanks"),
         dyk_label=_esc(_dyk_dict(lang)["label"]),
         dyk_i18n=_esc(json.dumps(_dyk_dict(lang), ensure_ascii=False), quote=True),
         hero_unit=hero_unit,

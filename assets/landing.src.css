@@ -296,6 +296,23 @@
   .rank-note { text-align:center; color:var(--muted); font-size:.74rem;
     margin:.35rem auto 0; max-width:44ch; opacity:.85; }
   /* Cities/Countries segmented toggle. */
+  /* "Report an issue" feedback form. */
+  .report-wrap { max-width:44rem; margin:0 auto; }
+  .report-form { display:flex; flex-direction:column; gap:.4rem; margin-top:1rem; }
+  .report-lbl { font-size:.8rem; font-weight:600; color:var(--muted); margin-top:.5rem; }
+  .report-input, .report-textarea { font:inherit; font-size:.95rem; color:var(--ink);
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:.55rem .7rem; width:100%; box-sizing:border-box; }
+  .report-textarea { resize:vertical; min-height:7rem; line-height:1.5; }
+  .report-input:focus, .report-textarea:focus { outline:2px solid var(--accent);
+    outline-offset:1px; border-color:var(--accent); }
+  .report-submit { align-self:flex-start; margin-top:.9rem; font:inherit; font-weight:600;
+    cursor:pointer; color:var(--on-accent); background:var(--accent); border:1px solid var(--accent);
+    border-radius:var(--radius); padding:.55rem 1.2rem; }
+  .report-submit:hover { background:color-mix(in srgb, var(--accent) 85%, #000); }
+  .report-note { font-size:.8rem; color:var(--muted); margin:.7rem 0 0; line-height:1.45; }
+  .report-thanks { font-size:.92rem; font-weight:600; color:var(--good); margin:.6rem 0 0; }
+  .report-thanks[hidden] { display:none; }
   /* Footer under the table: a "show more" button + the count. */
   .rank-foot { display:flex; flex-direction:column; align-items:center; gap:.5rem;
     margin-top:.9rem; }
