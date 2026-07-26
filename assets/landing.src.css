@@ -107,6 +107,10 @@
   .topbar-in { max-width:1100px; margin:0 auto; display:flex; align-items:center;
     justify-content:space-between; gap:.5rem .7rem; padding:.4rem .9rem; flex-wrap:wrap; }
   .tb-nav { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
+  /* With the nav links removed, the empty div must not consume layout space or
+     it strands the language + appearance controls mid-bar. Hiding it + an auto
+     end-margin on the brand anchors the logo left and clusters the controls right. */
+  .tb-nav:empty { display:none; }
   /* One chip family for the top-bar controls: same height, radius (var(--radius)),
      font-size (.82rem) and padding as .lang-select and #tpref-btn. tb-link carries
      a transparent border so its box height matches the bordered controls. */
@@ -118,7 +122,7 @@
   /* Shared brand/home link - the left anchor of the unified top bar (site-wide). */
   .tb-home { display:inline-flex; align-items:center; text-decoration:none;
     color:var(--ink); font-weight:700; font-size:.92rem; letter-spacing:-.01em;
-    margin-inline-end:.3rem; }
+    margin-inline-end:auto; }
   .tb-home:hover { color:var(--accent); }
   .tb-brand { white-space:nowrap; }
   .tb-search { flex:1 1 220px; display:flex; justify-content:center; min-width:0; }
@@ -376,9 +380,16 @@
   .about-wrap .qa-a a { color:var(--accent); text-decoration:none; }
   .about-wrap .qa-a a:hover { text-decoration:underline; }
   /* "Did you know" rotating fact card (top of the Dashboard tab). */
-  .dyk { max-width:44rem; margin:0 auto 1.6rem; padding:1rem 1.2rem; text-align:center;
+  /* On the main view above the tabs: aligned to <main> and given breathing room. */
+  .dyk-wrap { max-width:1200px; margin:0 auto; padding:1.2rem 1.5rem 0; }
+  .dyk { max-width:44rem; margin:0 auto; padding:1rem 1.2rem; text-align:center;
     border:1px solid var(--line); border-radius:var(--radius);
     background:color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+  /* A fact that links into a tab (fastest city/country): show it is clickable. */
+  .dyk.dyk-link .dyk-fact { cursor:pointer; }
+  .dyk.dyk-link .dyk-fact:hover b { text-decoration:underline; }
+  .dyk.dyk-link .dyk-fact:focus-visible { outline:2px solid var(--accent);
+    outline-offset:3px; border-radius:4px; }
   .dyk-label { font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
     font-weight:700; color:var(--accent); margin:0 0 .3rem; }
   /* Plain block (not flex): a flex container would turn each text node + <b> into

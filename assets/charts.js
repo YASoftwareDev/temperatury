@@ -643,7 +643,8 @@
     // "{b}" token is substituted as plain text, never treated as a marker.
     var fcn = fc != null ? cityName(rank[fc]) : null;
     if (fcn && T.fastest_city)   // needs both a trend and a resolvable name
-      facts.push({ t: T.fastest_city, v: { city: fcn, v: fmtSigned(rank[fc].t, 2) } });
+      facts.push({ t: T.fastest_city, v: { city: fcn, v: fmtSigned(rank[fc].t, 2) },
+        link: { kind: "city", slug: rank[fc].s } });
     // Denominator is the cities that HAVE a since-1940 figure (nDt), not every row,
     // so "N of M" is never inflated by rows missing that number.
     if (over > 0 && nDt > 0 && T.over2)
@@ -660,7 +661,8 @@
       var qcn = qc != null ? countryName(d.countries[qc].cc) : null;
       if (qcn)
         facts.push({ t: T.fastest_country,
-          v: { country: qcn, v: fmtSigned(d.countries[qc].t, 2) } });
+          v: { country: qcn, v: fmtSigned(d.countries[qc].t, 2) },
+          link: { kind: "country", cc: d.countries[qc].cc } });
     }
     if (!facts.length) return;
     var factEl = document.getElementById("dyk-fact");
@@ -697,9 +699,28 @@
       dotsEl.appendChild(b);
       return b;
     });
+    // A city/country fact links into its tab; make the current fact activatable
+    // when it has one (keyboard + click), plain text otherwise.
+    function goFact() {
+      var f = facts[idx]; if (!f || !f.link) return;
+      if (f.link.kind === "city") {
+        if (window.__regionShow) window.__regionShow(heroCityUrl(f.link.slug));
+        if (window.showTab) window.showTab("region");
+      } else if (f.link.kind === "country" && window.showTab) {
+        window.showTab("ranking-countries");
+      }
+    }
+    factEl.addEventListener("click", goFact);
+    factEl.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goFact(); }
+    });
     function show(i) {
       idx = (i + facts.length) % facts.length;
       factEl.innerHTML = ""; factEl.appendChild(factFrag(facts[idx]));
+      var lk = facts[idx].link;
+      card.classList.toggle("dyk-link", !!lk);
+      if (lk) { factEl.setAttribute("role", "link"); factEl.tabIndex = 0; }
+      else { factEl.removeAttribute("role"); factEl.removeAttribute("tabindex"); }
       dots.forEach(function (b, k) {
         b.classList.toggle("on", k === idx);
         b.setAttribute("aria-current", k === idx ? "true" : "false");

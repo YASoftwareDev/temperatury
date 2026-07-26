@@ -1312,6 +1312,15 @@ ${topbar}
   </section>
   <script>window.__omniData=${omni_data};</script>
 </div>
+<!-- "Did you know" hook, on the main view above the tabs so it greets every
+     visitor. Filled by charts.js from the loaded ranking (window.__gd) - every
+     figure is real data, never fabricated; the city/country facts link into the
+     matching tab. Hidden until at least one fact is available. -->
+<div class="dyk-wrap"><div class="dyk" id="dyk" data-i18n='${dyk_i18n}' hidden>
+  <p class="dyk-label">${dyk_label}</p>
+  <p class="dyk-fact" id="dyk-fact" aria-live="polite"></p>
+  <div class="dyk-dots" id="dyk-dots" role="group" aria-label="${dyk_label}"></div>
+</div></div>
 <main>
   <div class="tabs" id="landing-tabs">
     <div class="tabstrip" role="tablist" aria-label="${tabs_label}">${tabstrip}</div>
@@ -1347,7 +1356,6 @@ ${topbar}
                data-analog-past="${hero_analog_past}" data-analog-future="${hero_analog_future}"
                aria-roledescription="slide" aria-live="polite">
             <div class="rh-inner">
-              <p class="rh-eyebrow">${tab_famous}</p>
               <p class="rh-place"><span class="rh-name"></span></p>
               <div class="rh-figure"><span class="rh-trend"></span><span class="rh-unit">${hero_unit}</span></div>
               <p class="rh-meta"></p>
@@ -1393,7 +1401,6 @@ ${topbar}
     </section><!-- /tp-map -->
     <section class="tabpanel" role="tabpanel" id="tp-ranking-cities" aria-labelledby="tab-ranking-cities" tabindex="0" hidden>
   <section class="ranking" id="ranking-cities">
-    <h2 class="dash-h2">${rank_cities_head}</h2>
     <p class="section-sub">${rank_intro}</p>
     <p class="rank-legend">${rank_legend}</p>
     <div class="rank-controls">
@@ -1426,8 +1433,7 @@ ${topbar}
     </section><!-- /tp-ranking-cities -->
     <section class="tabpanel" role="tabpanel" id="tp-ranking-countries" aria-labelledby="tab-ranking-countries" tabindex="0" hidden>
   <section class="ranking" id="ranking-countries">
-    <h2 class="dash-h2">${rank_countries_head}</h2>
-    <p class="section-sub">${rank_intro}</p>
+    <p class="section-sub">${rank_intro_countries}</p>
     <p class="rank-legend">${rank_legend}</p>
     <div class="rank-controls">
       <input type="search" id="crank-search" class="rank-search"
@@ -1451,14 +1457,6 @@ ${topbar}
   </section>
     </section><!-- /tp-ranking-countries -->
     <section class="tabpanel" role="tabpanel" id="tp-dashboard" aria-labelledby="tab-dashboard" tabindex="0" hidden>
-  <!-- "Did you know" rotating fact card: filled by charts.js from the loaded
-       ranking (window.__gd) - every figure is computed from real data, never
-       fabricated; the card stays hidden until at least one fact is available. -->
-  <div class="dyk" id="dyk" data-i18n='${dyk_i18n}' hidden>
-    <p class="dyk-label">${dyk_label}</p>
-    <p class="dyk-fact" id="dyk-fact" aria-live="polite"></p>
-    <div class="dyk-dots" id="dyk-dots" role="group" aria-label="${dyk_label}"></div>
-  </div>
   <section class="cstat" id="country-stat"
            data-tmpl="${cstat_tmpl}" data-tmpl-cool="${cstat_tmpl_cool}"
            data-default="${cstat_default}">
@@ -2448,27 +2446,27 @@ _TAB_I18N = {
     "en": {"region": "Selected region", "famous": "Famous cities", "map": "Map",
            "ranking": "Ranking",
            "ranking_cities": "City ranking", "ranking_countries": "Country ranking",
-           "dashboard": "Dashboard", "compare": "Compare", "about": "About"},
+           "dashboard": "Global", "compare": "Compare", "about": "About"},
     "pl": {"region": "Wybrany region", "famous": "Znane miasta", "map": "Mapa",
            "ranking": "Ranking",
            "ranking_cities": "Ranking miast", "ranking_countries": "Ranking krajów",
-           "dashboard": "Panel", "compare": "Porównaj", "about": "O danych"},
+           "dashboard": "Globalnie", "compare": "Porównaj", "about": "O danych"},
     "de": {"region": "Ausgewählte Region", "famous": "Berühmte Städte", "map": "Karte",
            "ranking": "Rangliste",
            "ranking_cities": "Städte-Rangliste", "ranking_countries": "Länder-Rangliste",
-           "dashboard": "Dashboard", "compare": "Vergleich", "about": "Info"},
+           "dashboard": "Global", "compare": "Vergleich", "about": "Info"},
     "fr": {"region": "Région choisie", "famous": "Villes emblématiques", "map": "Carte",
            "ranking": "Classement",
            "ranking_cities": "Classement des villes", "ranking_countries": "Classement des pays",
-           "dashboard": "Tableau de bord", "compare": "Comparer", "about": "À propos"},
+           "dashboard": "Global", "compare": "Comparer", "about": "À propos"},
     "es": {"region": "Región elegida", "famous": "Ciudades famosas", "map": "Mapa",
            "ranking": "Ranking",
            "ranking_cities": "Ranking de ciudades", "ranking_countries": "Ranking de países",
-           "dashboard": "Panel", "compare": "Comparar", "about": "Acerca de"},
+           "dashboard": "Global", "compare": "Comparar", "about": "Acerca de"},
     "uk": {"region": "Обраний регіон", "famous": "Відомі міста", "map": "Мапа",
            "ranking": "Рейтинг",
            "ranking_cities": "Рейтинг міст", "ranking_countries": "Рейтинг країн",
-           "dashboard": "Панель", "compare": "Порівняти", "about": "Про дані"},
+           "dashboard": "Глобально", "compare": "Порівняти", "about": "Про дані"},
 }
 
 
@@ -2492,14 +2490,27 @@ _ABOUT_QA = [
      "The <a href=\"https://open-meteo.com/\" rel=\"noopener\">Open-Meteo</a> "
      "historical weather API, which serves the <strong>ERA5 climate "
      "reanalysis</strong> produced by ECMWF and Copernicus. It is free and "
-     "key-less. Each city uses the daily mean 2&#8202;m air temperature for its "
-     "location, from 1&nbsp;January&nbsp;1940 to the last complete calendar year."),
+     "key-less. Each city uses the daily mean near-surface air temperature (the "
+     "air about 2 metres above the ground, the meteorological standard height) at "
+     "its location, from 1&nbsp;January&nbsp;1940 to the last complete calendar year."),
     ("What is a \"reanalysis\"?",
      "A physically consistent reconstruction of past weather: a weather model is "
      "constrained by the historical observations (stations, ships, balloons, "
      "satellites) to produce temperatures everywhere on a regular grid (about "
      "25&nbsp;km), even where no station ever stood. It is the standard way "
      "climate scientists study long-term change."),
+    ("Why is there no data before 1940?",
+     "ERA5, the reanalysis this site uses, currently reaches back to 1940 "
+     "(ECMWF is gradually extending it to earlier decades). Starting in 1940 also "
+     "gives every city the same consistent record of about 85 years, which is long "
+     "enough to measure a robust warming trend."),
+    ("How do I read the charts?",
+     "The recurring ones share a simple grammar. The decade area chart and the "
+     "warming stripes show each decade compared with the 1961&#8211;1990 average: "
+     "cool blue below it, warm red above it, so a run of red to the right is recent "
+     "warming. A trend in <strong>°C&nbsp;/&nbsp;decade</strong> is how fast a place "
+     "is warming; the total since 1940 is how much it has warmed overall. Each chart "
+     "also has a short caption under it explaining what it shows."),
     ("What does the °C&nbsp;/&nbsp;decade trend mean?",
      "The slope of a straight-line fit through each year's average temperature "
      "from 1940 to today, expressed as degrees Celsius of warming per decade. "
@@ -3167,6 +3178,9 @@ def build_map_page(
         rank_cities_head=_tab_str(lang, "ranking_cities"),
         rank_countries_head=_tab_str(lang, "ranking_countries"),
         rank_intro=tr["rank_intro"],
+        rank_intro_countries=tr.get("rank_intro_countries",
+            "Every country ranked by how fast its cities are warming on average: "
+            "the trend in °C per decade over 1940-2025. Search for yours."),
         rank_legend=tr.get("rank_legend",
             "In each row: total warming since 1940, and how many times the "
             "world-city average rate a place warms (2x = twice as fast)."),

@@ -14,6 +14,9 @@ _TEXT: dict[str, dict[str, str]] = {
         "rank_title": "World warming ranking",
         "rank_intro": "Every city ranked by how fast it is warming: the trend "
             "in °C per decade over 1940-2025. Search for yours.",
+        "rank_intro_countries": "Every country ranked by how fast its cities are "
+            "warming on average: the trend in °C per decade over 1940-2025. "
+            "Search for yours.",
         "rank_city": "City",
         "rank_country": "Country",
         "rank_search": "Find a city…",
@@ -31,6 +34,9 @@ _TEXT: dict[str, dict[str, str]] = {
         "rank_title": "Światowy ranking ocieplenia",
         "rank_intro": "Każde miasto uszeregowane według tempa ocieplenia: trend "
             "w °C na dekadę w latach 1940-2025. Wyszukaj swoje.",
+        "rank_intro_countries": "Każdy kraj uszeregowany według średniego tempa "
+            "ocieplenia jego miast: trend w °C na dekadę w latach 1940-2025. "
+            "Wyszukaj swój.",
         "rank_city": "Miasto",
         "rank_country": "Kraj",
         "rank_search": "Znajdź miasto…",

@@ -41,7 +41,7 @@
       "region_s_subtropical": "กึ่งเขตร้อนตอนใต้",
       "region_s_temperate": "เขตอบอุ่นทางตอนใต้",
       "global_heading": "แดชบอร์ดสภาพภูมิอากาศระดับโลกและระดับภูมิภาค",
-      "global_intro": "แผนภูมิเดียวกัน ซึ่งรวบรวมทั่วโลกและแยกตามเขตภูมิอากาศละติจูดใน {n} เมือง ค่าต่างๆ คือความผิดปกติของอุณหภูมิ: แต่ละเมืองเทียบกับค่าปกติของเมืองในปี 1961-1990 แล้วจึงนำมาเฉลี่ย",
+      "global_intro": "แผนภูมิเดียวกัน ซึ่งรวบรวมทั่วโลกและแยกตามเขตภูมิอากาศละติจูดใน {n} เมือง ค่าต่างๆ คือความผิดปกติของอุณหภูมิ: แต่ละเมืองเทียบกับค่าปกติของปี 1961-1990 ของเมืองนั้นๆ แล้วจึงนำมาเฉลี่ย",
       "global_choose": "โซนภูมิอากาศ",
       "comparison_title": "แต่ละเขตภูมิอากาศจะร้อนขึ้นเร็วแค่ไหน",
       "comparison_cap": "ความผิดปกติของอุณหภูมิประจำปีที่ปรับให้เรียบของแต่ละโซน เทียบกับปกติในปี 1961-1990 การปีนที่สูงชันหมายถึงการอุ่นขึ้นเร็วขึ้น",
@@ -71,12 +71,12 @@
       "region_n_temperate": "उत्तर समशीतोष्ण",
       "region_n_boreal": "उत्तर बोरियल आणि आर्क्टिक",
       "region_s_subtropical": "दक्षिण उपोष्णकटिबंधीय",
-      "region_s_temperate": "दक्षिणी समशीतोष्ण",
+      "region_s_temperate": "दक्षिण समशीतोष्ण",
       "global_heading": "जागतिक आणि प्रादेशिक हवामान डॅशबोर्ड",
       "global_intro": "समान चार्ट, जगभरातील आणि {n} शहरांमधील अक्षांश हवामान क्षेत्रानुसार एकत्रित केलेले. मूल्ये तापमानातील विसंगती आहेत: प्रत्येक शहर विरुद्ध त्याचे स्वतःचे 1961-1990 सामान्य, नंतर सरासरी.",
       "global_choose": "हवामान क्षेत्र",
       "comparison_title": "प्रत्येक हवामान क्षेत्र किती वेगाने तापमानवाढ करत आहे",
-      "comparison_cap": "प्रत्येक झोनचे 1961-1990 च्या सामान्य तापमानाच्या तुलनेत वार्षिक तापमान विसंगती. एक स्टीपर चढणे म्हणजे जलद तापमानवाढ.",
+      "comparison_cap": "प्रत्येक झोनचे 1961-1990 च्या सामान्य तापमानाच्या तुलनेत smoothed वार्षिक तापमान विसंगती. एक स्टीपर चढणे म्हणजे जलद तापमानवाढ.",
       "extremes_title": "अत्यंत टोकाची शहरे",
       "extremes_cap": "दर दशकाच्या तापमानवाढीनुसार सर्वात जलद तापमान वाढणारी शहरे (लाल) आणि सर्वात मंद किंवा थंड होणारी (निळी)."
     },
@@ -217,7 +217,7 @@
       "region_s_subtropical": "Subtrópicos Sur gotyogua",
       "region_s_temperate": "Templado Sur gotyo",
       "global_heading": "Tabla climática global & regional rehegua",
-      "global_intro": "Umi gráfico peteĩchagua, oñembyatýva opaite tetãme ha zona climática latitudinal rupive {n} táva rupi. Umi valor haꞌehína anomalía temperatura rehegua: peteĩteĩ táva versus imbaꞌeteéva 1961-1990 normal, upéi promedio.",
+      "global_intro": "Umi gráfico peteĩchagua, oñembyatýva opaite tetãme ha zona climática latitudinal rupive {n} táva rupi. Umi valor haꞌehína anomalías temperatura rehegua: peteĩteĩ táva versus imbaꞌeteéva 1961-1990 normal, upéi promedio.",
       "global_choose": "Zona climática rehegua",
       "comparison_title": "Mba’éichapa pya’e oñembopiro’y ohóvo káda zona climática",
       "comparison_cap": "Káda zona anomalía temperatura anual oñemopotĩva versus normal 1961-1990 orekóva. Peteĩ subida empinadavéva he’ise pya’eve oñembopiro’yha.",
@@ -232,13 +232,13 @@
       "region_n_boreal": "Norte de Boreal & Ártico uksankirinaka",
       "region_s_subtropical": "Subtrópicos Sur uksanxa",
       "region_s_temperate": "Sur uksanx Templado ukhamawa",
-      "global_heading": "Uraqpachan & regional climático ukan tabla de mando",
+      "global_heading": "Tabla climática mundial & regional ukax mä jach’a uñacht’äwiwa",
       "global_intro": "Pachpa ch’akhanaka, uraqpachan apthapita ukhamaraki zona climática latitudinal ukarjama {n} markanakan. Valores ukax anomalías de temperatura ukawa: sapa markax versus propio 1961-1990 normal, ukatx promedio.",
       "global_choose": "Zona climática ukaxa",
       "comparison_title": "Kunjams sapa zona climática ukax jank’ak junt’uchaski",
       "comparison_cap": "Sapa zona ukanxa anomalía de temperatura anual suaveda ukaxa normal 1961-1990 ukatxa. Mä jach’a makhatañax juk’amp jank’ak junt’uchasiña sañ muni.",
       "extremes_title": "Jilapart extrema markanaka",
-      "extremes_cap": "Markanakax juk’amp jank’akiw junt’uchasipxi (wila) ukat juk’amp juk’amp jan ukax thayt’ir markanakax (azul), sapa tunka maranakanx tasa de calentamiento ukarjama."
+      "extremes_cap": "Markanakax juk’amp jank’akiw junt’uchasipxi (wila) ukat juk’amp jan ukax thayt’ir markanakax (azul), sapa tunka maranakanx tasa de calentamiento ukarjama."
     },
     "az": {
       "region_world": "Dünya",
@@ -251,7 +251,7 @@
       "global_heading": "Qlobal və regional iqlim tablosu",
       "global_intro": "Dünya üzrə və {n} şəhərlər üzrə enlik iqlim qurşağı üzrə toplanmış eyni qrafiklər. Dəyərlər temperatur anomaliyalarıdır: hər bir şəhər öz 1961-1990-cı illərə nisbətən normal, sonra orta hesabla.",
       "global_choose": "İqlim zonası",
-      "comparison_title": "Hər bir iqlim zonası nə qədər sürətlə istiləşir",
+      "comparison_title": "Hər bir iqlim qurşağı nə qədər sürətlə istiləşir",
       "comparison_cap": "Hər bir zonanın 1961-1990-cı illər normasına qarşı hamarlaşdırılmış illik temperatur anomaliyası. Daha dik dırmaşmaq daha sürətli istiləşmə deməkdir.",
       "extremes_title": "Ən ekstremal şəhərlər",
       "extremes_cap": "Hər onillikdə istiləşmə nisbətinə görə ən sürətli istiləşən şəhərlər (qırmızı) və ən yavaş və ya soyuyan şəhərlər (mavi)."
@@ -376,7 +376,7 @@
       "region_n_boreal": "Northern Boreal & Arctic",
       "region_s_subtropical": "Southern Subtropics",
       "region_s_temperate": "Southern Temperate",
-      "global_heading": "Global & region mamiriro ekunze dashboard",
+      "global_heading": "Global & regional climate dashboard",
       "global_intro": "Iwo machati mamwe chete, akaunganidzwa pasi rese uye nelatitudinal mamiriro ekunze munzvimbo {n} maguta. Values ​​ndeye tembiricha anomalies: guta rega rega richipesana neraro 1961-1990 zvakajairika, uye yakaenzana.",
       "global_choose": "Climate zone",
       "comparison_title": "Inokurumidza sei imwe neimwe nzvimbo yemamiriro ekunze iri kudziya",
@@ -398,12 +398,12 @@
       "comparison_title": "Quantu veloce ogni zona climatica si riscalda",
       "comparison_cap": "L'anomalia di temperatura annuale lisciata di ogni zona versus a so normale 1961-1990. Una salita più ripida significa un riscaldamentu più veloce.",
       "extremes_title": "I cità più estremi",
-      "extremes_cap": "I cità più veloci (russu) è i più lenti o rinfrescanti (blu), per u tassu di riscaldamentu per decenniu."
+      "extremes_cap": "I cità più veloci (russu) è i più lenti o rinfrescanti (blu), da u tassu di riscaldamentu per decenniu."
     },
     "cy": {
       "region_world": "Byd",
       "region_tropical": "Trofannau",
-      "region_n_subtropical": "Is-drofannau'r Gogledd",
+      "region_n_subtropical": "Is-drofannau Gogleddol",
       "region_n_temperate": "Tymherus y Gogledd",
       "region_n_boreal": "Gogledd Boreal ac Arctig",
       "region_s_subtropical": "Is-drofannau Deheuol",
@@ -457,7 +457,7 @@
       "region_s_subtropical": "Lõuna subtroopikas",
       "region_s_temperate": "Lõuna parasvöötme",
       "global_heading": "Globaalne ja piirkondlik kliima armatuurlaud",
-      "global_intro": "Samad diagrammid, mis on koondatud kogu maailmas ja laiuskraadide kliimavööndite kaupa {n} linnas. Väärtused on temperatuuri anomaaliad: iga linn versus oma 1961–1990 normaalne, seejärel keskmine.",
+      "global_intro": "Samad diagrammid, mis on koondatud kogu maailmas ja laiuskraadide kliimavööndite kaupa {n} linna kohta. Väärtused on temperatuuri anomaaliad: iga linn versus oma 1961–1990 normaalne, seejärel keskmine.",
       "global_choose": "Kliimavöönd",
       "comparison_title": "Kui kiiresti iga kliimavöönd soojeneb",
       "comparison_cap": "Iga tsooni tasandatud aastane temperatuurianomaalia võrreldes selle 1961-1990 normaalsega. Järsem tõus tähendab kiiremat soojenemist.",
@@ -469,11 +469,11 @@
       "region_tropical": "Tropikoj",
       "region_n_subtropical": "Nordaj Subtropikoj",
       "region_n_temperate": "Norda Tempera",
-      "region_n_boreal": "Norda Borealo kaj Arkto",
+      "region_n_boreal": "Norda Borealo & Arkto",
       "region_s_subtropical": "Sudaj Subtropikoj",
       "region_s_temperate": "Suda Tempera",
       "global_heading": "Tutmonda kaj regiona klimata panelo",
-      "global_intro": "La samaj furorlisto, agregitaj tutmonde kaj laŭ latitudina klimata zono tra {n} urboj. Valoroj estas temperatur anomalioj: ĉiu urbo kontraŭ sia propra 1961-1990 normala, tiam averaĝe.",
+      "global_intro": "La samaj furorlisto, kunigitaj tutmonde kaj laŭ latitudina klimata zono tra {n} urboj. Valoroj estas temperatur anomalioj: ĉiu urbo kontraŭ sia propra 1961-1990 normala, tiam averaĝe.",
       "global_choose": "Klimata zono",
       "comparison_title": "Kiom rapide varmiĝas ĉiu klimata zono",
       "comparison_cap": "La glatigita ĉiujara temperatura anomalio de ĉiu zono kontraŭ sia 1961-1990 normalo. Pli kruta grimpado signifas pli rapidan varmiĝon.",
@@ -488,13 +488,13 @@
       "region_n_boreal": "Ipar Boreal eta Artikoa",
       "region_s_subtropical": "Hegoaldeko Subtropikalak",
       "region_s_temperate": "Hegoaldeko Epela",
-      "global_heading": "Klimaren aginte globala eta eskualdekoa",
+      "global_heading": "Klima globala eta eskualdeko panela",
       "global_intro": "Grafiko berdinak, mundu osoan eta {n} hirietan zehar latitude klima-eremuaren arabera. Balioak tenperatura anomaliak dira: hiri bakoitza bere 1961-1990 normala eta gero batez bestekoa.",
       "global_choose": "Klima-eremua",
       "comparison_title": "Zein azkar berotzen den klima-eremu bakoitza",
       "comparison_cap": "Zona bakoitzaren urteko tenperatura anomalia leundua 1961-1990 normalaren aldean. Igoera gogorragoak beroketa azkarragoa dakar.",
       "extremes_title": "Muturreko hiri gehienak",
-      "extremes_cap": "Azkarren berotzen diren hiriak (gorriak) eta motelenak edo hozten direnak (urdina), hamarkada bakoitzeko berotze-tasaren arabera."
+      "extremes_cap": "Azkarren berotzen ari diren hiriak (gorriak) eta motelenak edo hozten direnak (urdina), hamarkada bakoitzeko berotze-abiaduraren arabera."
     },
     "ee": {
       "region_world": "Xexeame",
@@ -505,7 +505,7 @@
       "region_s_subtropical": "Anyiehe Subtropics",
       "region_s_temperate": "Anyiehe ƒe Dzoxɔxɔ",
       "global_heading": "Xexeame katã ƒe & nutome yame ƒe nɔnɔme ƒe dashboard",
-      "global_intro": "Tabla mawo ke, siwo woƒo ƒu le xexeame katã kple le yame ƒe nɔnɔme ƒe didime nu le {n} dugãwo me. Asixɔxɔwo nye dzoxɔxɔ ƒe masɔmasɔwo: du ɖesiaɖe tsɔe sɔ kple eya ŋutɔ ƒe 1961-1990 ƒe nɔnɔme si sɔ, emegbe mamã dedie.",
+      "global_intro": "Tabla mawo ke, siwo woƒo ƒu le xexeame katã kple le yame ƒe nɔnɔme ƒe didime nu le {n} dugãwo me. Asixɔxɔwo nye dzoxɔxɔ ƒe masɔmasɔwo: du ɖesiaɖe tsɔe sɔ kple eya ŋutɔ ƒe 1961-1990 ƒe nɔnɔme si sɔ, emegbe le mamã dedie nu.",
       "global_choose": "Yame ƒe nɔnɔme ƒe nuto",
       "comparison_title": "Aleke gbegbe yame ƒe nɔnɔme ƒe akpa ɖesiaɖe le dzo dam kabakabae",
       "comparison_cap": "Nuto ɖesiaɖe ƒe ƒe sia ƒe dzoxɔxɔ ƒe masɔmasɔ si bɔbɔ ɖe anyi ne wotsɔe sɔ kple eƒe ƒe 1961-1990 ƒe dzoxɔxɔ si sɔ. Tolia si le to yim wu fia be dzoxɔxɔ naɖo ame ŋu kabakaba wu.",
@@ -523,7 +523,7 @@
       "global_heading": "Global & regionaal klimaat dashboard",
       "global_intro": "Deselde charts, aggregearre wrâldwiid en troch latitudinale klimaatsône oer {n} stêden. Wearden binne temperatueranomalies: elke stêd tsjin syn eigen 1961-1990 normaal, dan gemiddeld.",
       "global_choose": "Klimaatsône",
-      "comparison_title": "Hoe fluch elke klimaatsône opwaarmt",
+      "comparison_title": "Hoe fluch wurdt elke klimaatsône opwaarming",
       "comparison_cap": "Elke sône is glêdde jierlikse temperatueranomaly tsjin syn normale 1961-1990. In steiler klim betsjut flugger opwaarming.",
       "extremes_title": "Meast ekstreme stêden",
       "extremes_cap": "De stêden dy't it rapst opwaarmje (read) en de stadichste of ôfkuoljende (blau), neffens opwaarmingskoers per desennia."
@@ -617,7 +617,7 @@
       "region_s_subtropical": "Južni suptropici",
       "region_s_temperate": "Južni umjereni pojas",
       "global_heading": "Globalna i regionalna klimatska nadzorna ploča",
-      "global_intro": "Iste karte, agregirane diljem svijeta i po geografskoj širini klimatskih zona u {n} gradovima. Vrijednosti su temperaturne anomalije: svaki grad u odnosu na vlastitu normalu od 1961. do 1990., zatim prosjek.",
+      "global_intro": "Iste karte, agregirane diljem svijeta i po geografskoj širini klimatskih zona u {n} gradovima. Vrijednosti su temperaturne anomalije: svaki grad u odnosu na vlastitu normalu 1961-1990, zatim prosjek.",
       "global_choose": "Klimatska zona",
       "comparison_title": "Koliko brzo se zagrijava svaka klimatska zona",
       "comparison_cap": "Izglađena godišnja temperaturna anomalija svake zone u odnosu na njezinu normalu 1961.-1990. Strmiji uspon znači brže zagrijavanje.",
@@ -643,7 +643,7 @@
     "rw": {
       "region_world": "Isi",
       "region_tropical": "Ubushyuhe",
-      "region_n_subtropical": "Amajyaruguru ya Subtropike",
+      "region_n_subtropical": "Amajyaruguru ya Subtropics",
       "region_n_temperate": "Ubushyuhe bwo mu majyaruguru",
       "region_n_boreal": "Amajyaruguru ya Boreal & Arctique",
       "region_s_subtropical": "Amajyepfo ya Subtropics",
@@ -681,12 +681,12 @@
       "region_s_subtropical": "IiNdawo eziMazantsi",
       "region_s_temperate": "Ubushushu obusezantsi",
       "global_heading": "Ideshibhodi yemozulu yehlabathi neyengingqi",
-      "global_intro": "Iitshathi ezifanayo, ezidityaniswe kwihlabathi liphela kunye nemozulu yendawo yemozulu kwizixeko {n}. Amaxabiso kukudityaniswa kwamaqondo obushushu: isixeko ngasinye xa sithelekisa nesaso i-1961-1990 eqhelekileyo, emva koko i-avareji.",
+      "global_intro": "Iitshathi ezifanayo, ezidityaniswe kwihlabathi liphela nangommandla wemozulu yelatitudinal kuzo zonke {n} izixeko. Amaxabiso kukudityaniswa kwamaqondo obushushu: isixeko ngasinye xa sithelekisa nesaso i-1961-1990 eqhelekileyo, emva koko i-avareji.",
       "global_choose": "Indawo yemozulu",
       "comparison_title": "Ubushushu bommandla ngamnye wemozulu",
       "comparison_cap": "Ubushushu bonyaka bommandla ngamnye bugudisiwe xa buthelekiswa nowe-1961-1990 eqhelekileyo. Ukunyuka umnqantsa kuthetha ukufudumala ngokukhawuleza.",
       "extremes_title": "Izixeko ezininzi kakhulu",
-      "extremes_cap": "Izixeko ezikhawulezayo zokufudumala (ezibomvu) kunye nezona zicothayo okanye ezipholileyo (eziluhlaza okwesibhakabhaka), ngezinga lokufudumala kwishumi leminyaka."
+      "extremes_cap": "Izixeko ezikhawulezayo zokufudumala (obomvu) kunye nezona zicothayo okanye ezipholileyo (eziluhlaza okwesibhakabhaka), ngezinga lokufudumala kwishumi leminyaka."
     },
     "zu": {
       "region_world": "Umhlaba",
@@ -697,7 +697,7 @@
       "region_s_subtropical": "I-Southern Subtropics",
       "region_s_temperate": "I-Southern Temperate",
       "global_heading": "Ideshibhodi yesimo sezulu yomhlaba wonke neyesifunda",
-      "global_intro": "Amashadi afanayo, ahlanganiswe emhlabeni wonke nangendawo yesimo sezulu ye-latitudinal kuwo wonke amadolobha {n}. Amanani anomalies okushisa: idolobha ngalinye uma liqhathaniswa nelalo 1961-1990 elivamile, bese lilinganiswa.",
+      "global_intro": "Amashadi afanayo, ahlanganiswe emhlabeni wonke nangendawo yesimo sezulu ye-latitudinal kuwo wonke amadolobha {n}. Amanani anomaliya okushisa: idolobha ngalinye uma liqhathaniswa nelalo 1961-1990 elivamile, bese lilinganiswa.",
       "global_choose": "Indawo yesimo sezulu",
       "comparison_title": "Ukushesha kangakanani ukufudumala kwendawo ngayinye yesimo sezulu",
       "comparison_cap": "Izinga lokushisa lonyaka lendawo ngayinye elishelelezi uma liqhathaniswa nokwejwayelekile kwalo 1961-1990. Umqansa usho ukufudumala ngokushesha.",
@@ -745,12 +745,12 @@
       "region_s_subtropical": "Sawt Sabtropik dɛn",
       "region_s_temperate": "Sawt tɛmpracha",
       "global_heading": "Global & rijinol klaymat dashbɔd",
-      "global_intro": "Di sem chɛt dɛm, we dɛn gɛda ɔlsay na di wɔl ɛn bay latitudinal klaymat zon akɔdin to {n} siti dɛm. Valyu na tempɔret anomaly: ɛni siti versus in yon 1961-1990 nɔmal, dɔn avɛrej.",
+      "global_intro": "Di sem chɛt dɛm, we dɛn gɛda ɔlsay na di wɔl ɛn bay latitudinal klaymat zon akɔdin to {n} siti dɛm. Valyu na tɛmpracha anomaly: ɛni siti versus in yon 1961-1990 nɔmal, dɔn avɛrej.",
       "global_choose": "Klaymat zon",
       "comparison_title": "Aw fast ɛni klaymat zon de wam",
       "comparison_cap": "Ɛni zon in smol anual tɛmpracha anomaly versus in 1961-1990 nɔmal. If yu klaym stip, dat min se yu go wam kwik kwik wan.",
       "extremes_title": "Mɔs pan di siti dɛn we rili bad",
-      "extremes_cap": "Di siti dɛm we de wam fast pas ɔl (rɛd) ɛn di wan dɛm we de slo ɔ kol (blu), bay we dɛn de wam fɔ ɛvri tɛn ia."
+      "extremes_cap": "Di siti dɛm we de wam fast pas ɔl (rɛd) ɛn di wan dɛm we slo ɔ kol (blu), bay di wam rit fɔ ɛvri tɛn ia."
     },
     "ku": {
       "region_world": "World",
@@ -793,7 +793,7 @@
       "region_s_subtropical": "Pietų subtropikai",
       "region_s_temperate": "Pietų vidutinio klimato",
       "global_heading": "Pasaulinis ir regioninis klimato prietaisų skydelis",
-      "global_intro": "Tos pačios diagramos, suvestos visame pasaulyje ir pagal platumos klimato zoną {n} miestuose. Vertės yra temperatūros anomalijos: kiekvienas miestas palyginti su savo 1961–1990 m. norma, tada apskaičiuojamas vidurkis.",
+      "global_intro": "Tos pačios diagramos, suvestos visame pasaulyje ir pagal platumos klimato zonas {n} miestuose. Vertės yra temperatūros anomalijos: kiekvienas miestas palyginti su savo 1961–1990 m. norma, tada apskaičiuojamas vidurkis.",
       "global_choose": "Klimato zona",
       "comparison_title": "Kaip greitai šyla kiekviena klimato zona",
       "comparison_cap": "Kiekvienos zonos išlyginta metinė temperatūros anomalija, palyginti su 1961–1990 m. normalia. Statesnis kopimas reiškia greitesnį atšilimą.",
@@ -825,10 +825,10 @@
       "region_s_subtropical": "Subtropiques ya Sudi",
       "region_s_temperate": "Température ya Sudi",
       "global_heading": "Tableau de bord ya climat mondial & régional",
-      "global_intro": "Ba tableaux ndenge moko, oyo esangisi na mokili mobimba pe na zone climatique latitude na bingumba {n}. Ba valeurs ezali ba anomalies ya température: ville moko na moko contre normal na yango moko ya 1961-1990, sima moyenne.",
+      "global_intro": "Ba tableaux ndenge moko, oyo esangisi na mokili mobimba pe na zone climatique latitude na kati ya bingumba {n}. Ba valeurs ezali ba anomalies ya température: ville moko na moko contre normal na yango moko ya 1961-1990, sima moyenne.",
       "global_choose": "Zone climatique",
       "comparison_title": "Ndenge nini mbangu moko na moko ya klima ezali kokóma molunge",
-      "comparison_cap": "Anomalie ya température annuelle ya zone moko moko oyo esili ko lisser contre normal na yango ya 1961-1990. Komata na nse mingi elimboli kozongisa molunge nokinoki.",
+      "comparison_cap": "Anomalie ya température annuelle ya zone moko na moko oyo esili ko lisser contre normal na yango ya 1961-1990. Komata na nse mingi elimboli kozongisa molunge nokinoki.",
       "extremes_title": "Bingumba mingi oyo eleki ndelo",
       "extremes_cap": "Bingumba oyo ekómaka molunge nokinoki (motane) mpe oyo ekómaka malili malɛmbɛmalɛmbɛ to oyo ekómaka malili mingi (bleu), na kotalela molunge oyo ekómaka makasi na boumeli ya mbula zomi."
     },
@@ -873,9 +873,9 @@
       "region_s_subtropical": "Déli szubtrópusok",
       "region_s_temperate": "Déli mérsékelt égövi",
       "global_heading": "Globális és regionális klímaműszerfal",
-      "global_intro": "Ugyanazok a diagramok, világszerte és szélességi éghajlati zónák szerint összesítve, {n} városon keresztül. Az értékek hőmérsékleti anomáliák: minden város a saját 1961-1990-es normál értékéhez viszonyítva, majd átlagolva.",
+      "global_intro": "Ugyanazok a diagramok, világszerte és szélességi éghajlati zónák szerint összesítve {n} városon keresztül. Az értékek hőmérsékleti anomáliák: minden város a saját 1961-1990-es normál értékéhez viszonyítva, majd átlagolva.",
       "global_choose": "Klímazóna",
-      "comparison_title": "Milyen gyorsan melegszik fel az egyes éghajlati övezet",
+      "comparison_title": "Milyen gyorsan melegszik az egyes éghajlati övezetek",
       "comparison_cap": "Mindegyik zóna simított éves hőmérsékleti anomáliája az 1961-1990 közötti normálhoz képest. A meredekebb emelkedés gyorsabb felmelegedést jelent.",
       "extremes_title": "A legextrémebb városok",
       "extremes_cap": "A leggyorsabban melegedő városok (piros) és a leglassabban vagy lehűlők (kék), évtizedenkénti felmelegedési ütem szerint."
@@ -905,7 +905,7 @@
       "region_s_subtropical": "Subtropiċi tan-Nofsinhar",
       "region_s_temperate": "Temperat tan-Nofsinhar",
       "global_heading": "Dashboard tal-klima globali u reġjonali",
-      "global_intro": "L-istess mapep, aggregati madwar id-dinja u skond iż-żona tal-klima latitudinal madwar {n} bliet. Il-valuri huma anomaliji fit-temperatura: kull belt versus normali tagħha 1961-1990, imbagħad medja.",
+      "global_intro": "L-istess mapep, aggregati madwar id-dinja u skond iż-żona tal-klima latitudinal madwar {n} bliet. Il-valuri huma anomaliji tat-temperatura: kull belt versus normali tagħha 1961-1990, imbagħad medja.",
       "global_choose": "Żona tal-klima",
       "comparison_title": "Kemm qed tissaħħan malajr kull żona tal-klima",
       "comparison_cap": "L-anomalija tat-temperatura annwali lixxa ta' kull żona kontra n-normal tagħha tal-1961-1990. Tlugħ aktar wieqaf ifisser tisħin aktar mgħaġġel.",
@@ -926,7 +926,7 @@
       "comparison_title": "Climate zone tin hi engtiang chiahin nge a lum chak zel",
       "comparison_cap": "Zone tina kum khata temperature anomaly smoothed leh 1961-1990 normal nena khaikhin chuan. Steeper climb tih awmzia chu a lum chak zawk tihna a ni.",
       "extremes_title": "Khawpui extreme tam zawk",
-      "extremes_cap": "Khawpui lum chak ber (red) leh a slow ber emaw, a lum chak ber (blue), kum sawm chhunga lum chakna rate-in a zirin."
+      "extremes_cap": "Khawpui lum chak ber (red) leh a slow ber emaw, a lum ber emaw (blue), kum sawm chhunga lum chakna rate-in a zirin."
     },
     "mi": {
       "region_world": "Ao",
@@ -955,7 +955,7 @@
       "global_heading": "Globalt og regionalt klimadashbord",
       "global_intro": "De samme diagrammene, aggregert over hele verden og etter breddegradsklimasone på tvers av {n} byer. Verdier er temperaturavvik: hver by versus sin egen 1961-1990 normal, deretter gjennomsnitt.",
       "global_choose": "Klimasone",
-      "comparison_title": "Hvor raskt hver klimasone varmes opp",
+      "comparison_title": "Hvor raskt varmes hver klimasone opp",
       "comparison_cap": "Hver sones utjevnede årlige temperaturavvik i forhold til normalen for 1961-1990. En brattere stigning betyr raskere oppvarming.",
       "extremes_title": "Mest ekstreme byer",
       "extremes_cap": "De raskest oppvarmende byene (røde) og de tregeste eller avkjølende (blå), etter oppvarmingshastighet per tiår."
@@ -1012,7 +1012,7 @@
       "region_world": "Lumea",
       "region_tropical": "Tropicele",
       "region_n_subtropical": "Subtropicele nordice",
-      "region_n_temperate": "Nordul temperat",
+      "region_n_temperate": "Nord temperat",
       "region_n_boreal": "Nordul Boreal și Arctic",
       "region_s_subtropical": "Subtropicalele sudice",
       "region_s_temperate": "Sud temperat",
@@ -1022,7 +1022,7 @@
       "comparison_title": "Cât de repede se încălzește fiecare zonă climatică",
       "comparison_cap": "Anomalia de temperatură anuală netezită a fiecărei zone față de normalul din 1961-1990. O urcare mai abruptă înseamnă o încălzire mai rapidă.",
       "extremes_title": "Cele mai extreme orașe",
-      "extremes_cap": "Orașele cu cea mai rapidă încălzire (roșu) și cele mai lente sau răcoritoare (albastru), după rata de încălzire pe deceniu."
+      "extremes_cap": "Orașele cu cea mai rapidă încălzire (roșu) și cele mai lente sau cu răcire (albastru), după rata de încălzire pe deceniu."
     },
     "qu": {
       "region_world": "Mundo",
@@ -1036,7 +1036,7 @@
       "global_intro": "Chay kikin tablakuna, pachantinpi huñusqa hinallataq zona climática latitudinal nisqaman hina {n} llaqtakunapi. Valores nisqakunaqa anomalías de temperatura nisqa: sapa llaqta versus kikin 1961-1990 normal, chaymanta promedio.",
       "global_choose": "Zona climática nisqamanta",
       "comparison_title": "Mayna utqayllam sapa zona climática nisqa q’uñikuchkan",
-      "comparison_cap": "Sapa zonapa anomalía de temperatura anual suavizado nisqa 1961-1990 normal nisqawan tupachisqa. Aswan qaqa wichayqa aswan utqaylla q’uñikuymi.",
+      "comparison_cap": "Sapa zonapa anomalía de temperatura anual suavizada nisqa 1961-1990 normal nisqawan tupachisqa. Aswan qaqa wichayqa aswan utqaylla q’uñikuymi.",
       "extremes_title": "Yaqa llapan sinchi llaqtakuna",
       "extremes_cap": "Aswan utqaylla q'uñikuq llaqtakuna (puka) chaymanta aswan pisilla icha q'uñichiq llaqtakuna (azul), sapa chunka watamanta q'uñikuypa ritmonwan."
     },
@@ -1110,7 +1110,7 @@
       "region_n_subtropical": "Severné subtrópy",
       "region_n_temperate": "Severná mierna",
       "region_n_boreal": "Severný boreál a Arktída",
-      "region_s_subtropical": "Južné subtrópy",
+      "region_s_subtropical": "Južné subtropy",
       "region_s_temperate": "Južné mierne",
       "global_heading": "Globálny a regionálny klimatický panel",
       "global_intro": "Rovnaké grafy, agregované na celom svete a podľa zemepisnej šírky podnebia v {n} mestách. Hodnoty sú teplotné anomálie: každé mesto oproti svojmu vlastnému normálu z rokov 1961-1990, potom spriemerované.",
@@ -1177,7 +1177,7 @@
       "region_s_subtropical": "Södra subtroperna",
       "region_s_temperate": "Södra tempererat",
       "global_heading": "Global och regional klimatpanel",
-      "global_intro": "Samma diagram, aggregerade över hela världen och efter latitudinell klimatzon över {n} städer. Värdena är temperaturavvikelser: varje stad mot sin egen normala 1961-1990, sedan genomsnitt.",
+      "global_intro": "Samma diagram, aggregerade över hela världen och efter latitudinell klimatzon över {n} städer. Värden är temperaturavvikelser: varje stad mot sin egen normala 1961-1990, sedan medelvärde.",
       "global_choose": "Klimatzon",
       "comparison_title": "Hur snabbt varje klimatzon värms upp",
       "comparison_cap": "Varje zons utjämnade årliga temperaturavvikelse jämfört med dess normala 1961-1990. En brantare stigning innebär snabbare uppvärmning.",
@@ -1355,7 +1355,7 @@
       "global_heading": "Дэлхийн болон бүс нутгийн цаг уурын хяналтын самбар",
       "global_intro": "Дэлхий даяар болон {n} хотуудын өргөрөгийн уур амьсгалын бүсээр нэгтгэсэн ижил графикууд. Утга нь температурын гажиг юм: хот бүр өөрийн гэсэн 1961-1990 оны хэвийн, дараа нь дундаж үзүүлэлттэй харьцуулахад.",
       "global_choose": "Уур амьсгалын бүс",
-      "comparison_title": "Цаг уурын бүс болгон ямар хурдан дулаарч байна вэ",
+      "comparison_title": "Цаг уурын бүс бүр ямар хурдан дулаарч байна вэ",
       "comparison_cap": "Бүс бүрийн жигдэрсэн жилийн температурын гажиг 1961-1990 оныхтой харьцуулахад. Илүү эгц авирна гэдэг нь илүү хурдан дулаарна гэсэн үг.",
       "extremes_title": "Ихэнх экстрим хотууд",
       "extremes_cap": "Арван жилд дулааралтын хурдаар хамгийн хурдан дулаардаг хотууд (улаан) ба хамгийн удаан буюу сэрүүн хотууд (цэнхэр)."
@@ -1401,12 +1401,12 @@
       "region_s_subtropical": "Субтропикҳои ҷанубӣ",
       "region_s_temperate": "Ҳарорати ҷанубӣ",
       "global_heading": "Панели иқлими глобалӣ ва минтақавӣ",
-      "global_intro": "Якхела диаграммаҳо, ки дар саросари ҷаҳон ва аз рӯи минтақаи иқлим дар саросари {n} шаҳрҳо ҷамъ оварда шудаанд. Арзишҳо аномалияҳои ҳарорат мебошанд: ҳар як шаҳр дар муқоиса бо муқаррарии худ дар солҳои 1961-1990, пас ба ҳисоби миёна.",
+      "global_intro": "Якхела диаграммаҳо, ки дар саросари ҷаҳон ва аз рӯи минтақаи иқлим дар {n} шаҳрҳо ҷамъ оварда шудаанд. Арзишҳо аномалияҳои ҳарорат мебошанд: ҳар як шаҳр дар муқоиса бо муқаррарии худ дар солҳои 1961-1990, пас ба ҳисоби миёна.",
       "global_choose": "Минтақаи иқлимӣ",
       "comparison_title": "Ҳар як минтақаи иқлимӣ то чӣ андоза зуд гарм мешавад",
       "comparison_cap": "Аномалияи ҳарорати солонаи ҳар як минтақа нисбат ба муқаррарии солҳои 1961-1990. Баландии нишебтар маънои гармшавии тезтарро дорад.",
       "extremes_title": "Аксари шаҳрҳои шадид",
-      "extremes_cap": "Шаҳрҳои зудтар гармшаванда (сурх) ва шаҳрҳои сусттарин ё сардкунанда (кабуд), бо суръати гармшавӣ дар як даҳсола."
+      "extremes_cap": "Шаҳрҳои зудтар гармшаванда (сурх) ва шаҳрҳои сусттарин ё хунуккунанда (кабуд), бо суръати гармшавӣ дар як даҳсола."
     },
     "kk": {
       "region_world": "Әлем",
@@ -1417,7 +1417,7 @@
       "region_s_subtropical": "Оңтүстік субтропиктер",
       "region_s_temperate": "Оңтүстік қоңыржай",
       "global_heading": "Жаһандық және аймақтық климат бақылау тақтасы",
-      "global_intro": "Дүние жүзі бойынша және {n} қалалардағы ендік климаттық белдеулері бойынша жинақталған бірдей диаграммалар. Мәндер температура ауытқулары болып табылады: әр қала өзінің 1961-1990 жылдардағы нормасымен салыстырғанда, содан кейін орташа.",
+      "global_intro": "Бүкіл әлем бойынша және {n} қалалардағы ендік климаттық белдеулері бойынша жинақталған бірдей диаграммалар. Мәндер температура ауытқулары болып табылады: әр қала өзінің 1961-1990 жылдардағы нормасымен салыстырғанда, содан кейін орташа.",
       "global_choose": "Климаттық аймақ",
       "comparison_title": "Әрбір климаттық белдеу қаншалықты жылдам жылынуда",
       "comparison_cap": "Әрбір аймақтың 1961-1990 жылдардағы қалыптыға қарсы жыл сайынғы тегістелген температура аномалиясы. Тік көтерілу жылдамырақ жылынуды білдіреді.",
@@ -1465,7 +1465,7 @@
       "region_s_subtropical": "סובטרופיות דרומיות",
       "region_s_temperate": "דרומי ממוזג",
       "global_heading": "לוח מחוונים לאקלים גלובלי ואזורי",
-      "global_intro": "אותם תרשימים, מצטברים ברחבי העולם ולפי אזור אקלים רוחב על פני {n} ערים. הערכים הם חריגות בטמפרטורה: כל עיר לעומת הנורמליות שלה בשנים 1961-1990, ואז ממוצעים.",
+      "global_intro": "אותם תרשימים, מצטברים ברחבי העולם ולפי אזור אקלים רוחב על פני {n} ערים. הערכים הם חריגות טמפרטורה: כל עיר לעומת הנורמלי של 1961-1990, ואז ממוצע.",
       "global_choose": "אזור אקלים",
       "comparison_title": "כמה מהר כל אזור אקלים מתחמם",
       "comparison_cap": "חריגת הטמפרטורה השנתית המוחלקת של כל אזור לעומת הרגילה שלו בשנים 1961-1990. עלייה תלולה יותר פירושה התחממות מהירה יותר.",
@@ -1529,7 +1529,7 @@
       "region_s_subtropical": "ناوچە گەرمەکانی باشوور",
       "region_s_temperate": "باشووری مامناوەند",
       "global_heading": "داشبۆردەکەی کەشوهەوای جیهانی و ناوچەیی",
-      "global_intro": "هەمان هێڵکارییەکان، لە سەرانسەری جیهان و بەپێی ناوچەی کەشوهەوای پانی لە سەرانسەری شارەکانی {n} کۆکراونەتەوە. بەهاکان ناتەواوی پلەی گەرمین: هەر شارێک لە بەرامبەر ئاسایی خۆی لە ساڵی ١٩٦١-١٩٩٠، پاشان بە تێکڕا.",
+      "global_intro": "هەمان هێڵکارییەکان، لە سەرانسەری جیهان و بەپێی ناوچەی کەشوهەوای پانی لە سەرانسەری شارەکانی {n} کۆکراونەتەوە. بەهاکان ناتەواوی پلەی گەرمین: هەر شارێک لە بەرامبەر ئاسایی خۆی ساڵی ١٩٦١-١٩٩٠، پاشان بە تێکڕا.",
       "global_choose": "ناوچەی کەشوهەوا",
       "comparison_title": "هەر ناوچەیەکی کەشوهەوا چەند خێرا گەرم دەبێت",
       "comparison_cap": "ناتەواوی پلەی گەرمی ساڵانەی نەرمکراوی هەر ناوچەیەک لە بەرامبەر ئاسایی ساڵی ١٩٦١-١٩٩٠. سەرکەوتنێکی بەرزتر واتە گەرمبوونی خێراتر.",
@@ -1593,12 +1593,12 @@
       "region_s_subtropical": "दक्षिणी उपोष्णकटिबंधीय",
       "region_s_temperate": "दक्षिणी समशीतोष्ण",
       "global_heading": "वैश्विक एवं क्षेत्रीय जलवायु डैशबोर्ड",
-      "global_intro": "वही चार्ट, विश्वव्यापी रूप स॑ एकत्रित आरू {n} शहरऽ म॑ अक्षांशीय जलवायु क्षेत्र के अनुसार । मान तापमान विसंगति अछि: प्रत्येक शहर बनाम अपन 1961-1990 सामान्य, तखन औसतन ।",
+      "global_intro": "वही चार्ट, विश्वव्यापी रूप स॑ एकत्रित आरू {n} शहरऽ भर म॑ अक्षांशीय जलवायु क्षेत्र के अनुसार । मान तापमान विसंगति छै: प्रत्येक शहर बनाम अपनऽ 1961-1990 केरऽ सामान्य, तखन औसतन ।",
       "global_choose": "जलवायु क्षेत्र",
       "comparison_title": "प्रत्येक जलवायु क्षेत्र कतेक तेजी स गरम भ रहल अछि",
       "comparison_cap": "प्रत्येक क्षेत्र केरऽ चिकनी वार्षिक तापमान विसंगति बनाम ओकरऽ १९६१-१९९० केरऽ सामान्य । खड़ा चढ़ाई के मतलब तेजी सं गर्मी बढ़नाय.",
       "extremes_title": "अधिकांश चरम शहर",
-      "extremes_cap": "सबसें तेजी सें गरम होय वाला शहर (लाल) आरू सबसें धीमा या ठंडा होय वाला (नीला), प्रति दशक गरम होय के दर के अनुसार ।"
+      "extremes_cap": "सबसें तेजी सं गर्म होय वाला शहर (लाल) आरू सबसें धीमा या ठंडा होय वाला (नीला), प्रति दशक गर्मी के दर के अनुसार."
     },
     "sa": {
       "region_world": "विश्व",
@@ -1609,12 +1609,12 @@
       "region_s_subtropical": "दक्षिण उपोष्णकटिबंधीय",
       "region_s_temperate": "दक्षिण समशीतोष्ण",
       "global_heading": "वैश्विक एवं क्षेत्रीय जलवायु डैशबोर्ड",
-      "global_intro": "समानानि चार्ट्स्, विश्वव्यापीरूपेण तथा {n} नगरेषु अक्षांशजलवायुक्षेत्रेण समुच्चयितानि। मूल्यानि तापमानविषमताः सन्ति: प्रत्येकं नगरं स्वस्य १९६१-१९९० सामान्यं विरुद्धं, ततः औसतम् ।",
+      "global_intro": "समानानि चार्ट्स्, विश्वव्यापीरूपेण तथा {n} नगरेषु अक्षांशीयजलवायुक्षेत्रेण समुच्चयितानि। मूल्यानि तापमानविषमताः सन्ति: प्रत्येकं नगरं स्वस्य १९६१-१९९० सामान्यं विरुद्धं, ततः औसतम् ।",
       "global_choose": "जलवायु क्षेत्र",
       "comparison_title": "प्रत्येकं जलवायुक्षेत्रं कियत् शीघ्रं तापयति",
-      "comparison_cap": "प्रत्येकस्य क्षेत्रस्य सुचारु वार्षिकतापमानविषमता वर्सेस् तस्य १९६१-१९९० सामान्यम् । तीव्रतरं आरोहणस्य अर्थः द्रुततरं तापनं भवति ।",
+      "comparison_cap": "प्रत्येकस्य क्षेत्रस्य सुचारु वार्षिकतापमानविषमता वर्सेस् तस्य १९६१-१९९० सामान्यम् । तीव्रतर आरोहणस्य अर्थः द्रुततरं तापनं भवति ।",
       "extremes_title": "अधिकांशतः चरमनगराणि",
-      "extremes_cap": "द्रुततम-उष्णतां गच्छन्ति नगराणि (लालानि) मन्दतमानि वा शीतलानि वा (नीलानि), प्रतिदशकं तापन-दरेन ।"
+      "extremes_cap": "द्रुततम-उष्णता-नगराणि (लालानि) मन्दतमानि वा शीतलानि वा (नीलानि), प्रतिदशकं तापन-दरेन ।"
     },
     "as": {
       "region_world": "পৃথিৱী",
@@ -1628,7 +1628,7 @@
       "global_intro": "একেবোৰ চাৰ্ট, বিশ্বজুৰি আৰু {n} চহৰসমূহৰ অক্ষাংশৰ জলবায়ু অঞ্চল অনুসৰি একত্ৰিত কৰা। মানসমূহ হৈছে উষ্ণতাৰ বিজুতি: প্ৰতিখন চহৰ বনাম নিজৰ ১৯৬১-১৯৯০ চনৰ স্বাভাৱিক, তাৰ পিছত গড়।",
       "global_choose": "জলবায়ু অঞ্চল",
       "comparison_title": "প্ৰতিটো জলবায়ু মণ্ডল কিমান দ্ৰুতগতিত উষ্ণতা বৃদ্ধি পাইছে",
-      "comparison_cap": "প্ৰতিটো মণ্ডলৰ মসৃণ বাৰ্ষিক উষ্ণতাৰ বিজুতি বনাম ১৯৬১-১৯৯০ চনৰ স্বাভাৱিক। ঠেক বগাই যোৱাৰ অৰ্থ হ’ল দ্ৰুত উষ্ণতা।",
+      "comparison_cap": "প্ৰতিটো মণ্ডলৰ মসৃণ বাৰ্ষিক উষ্ণতাৰ বিজুতি বনাম ইয়াৰ ১৯৬১-১৯৯০ চনৰ স্বাভাৱিক। ঠেক বগাই যোৱাৰ অৰ্থ হ’ল দ্ৰুত উষ্ণতা।",
       "extremes_title": "বেছিভাগ চৰম চহৰ",
       "extremes_cap": "আটাইতকৈ দ্ৰুত উষ্ণতা বৃদ্ধি পোৱা চহৰ (ৰঙা) আৰু আটাইতকৈ লেহেমীয়া বা শীতল চহৰ (নীলা), প্ৰতি দশকত উষ্ণতাৰ হাৰ অনুসৰি।"
     },
@@ -1657,12 +1657,12 @@
       "region_s_subtropical": "ସାଉଥ୍ ସବଟ୍ରୋପିକ୍ସ |",
       "region_s_temperate": "ଦକ୍ଷିଣ ତାପମାତ୍ରା",
       "global_heading": "ଗ୍ଲୋବାଲ୍ ଏବଂ ଆଞ୍ଚଳିକ ଜଳବାୟୁ ଡ୍ୟାସବୋର୍ଡ |",
-      "global_intro": "ସମାନ ଚାର୍ଟ, ବିଶ୍ worldwide ବ୍ୟାପୀ ଏବଂ {n} ସହରଗୁଡିକରେ ଅକ୍ଷାଂଶ ଜଳବାୟୁ ଜୋନ୍ ଦ୍ୱାରା ଏକତ୍ରିତ | ମୂଲ୍ୟଗୁଡ଼ିକ ହେଉଛି ତାପମାତ୍ରା ଅସନ୍ତୁଷ୍ଟ: ପ୍ରତ୍ୟେକ ସହର ନିଜସ୍ୱ 1961-1990 ସାଧାରଣ, ତା’ପରେ ହାରାହାରି |",
+      "global_intro": "ସମାନ ଚାର୍ଟ, ସମଗ୍ର ବିଶ୍ୱରେ ଏବଂ {n} ସହରଗୁଡିକରେ ଅକ୍ଷାଂଶ ଜଳବାୟୁ ଜୋନ୍ ଦ୍ୱାରା ଏକତ୍ରିତ | ମୂଲ୍ୟଗୁଡ଼ିକ ହେଉଛି ତାପମାତ୍ରା ଅସନ୍ତୁଷ୍ଟ: ପ୍ରତ୍ୟେକ ସହର ନିଜସ୍ୱ 1961-1990 ସାଧାରଣ, ତା’ପରେ ହାରାହାରି |",
       "global_choose": "ଜଳବାୟୁ ଜୋନ୍ |",
       "comparison_title": "ପ୍ରତ୍ୟେକ ଜଳବାୟୁ ଜୋନ୍ କେତେ ଗରମ ହେଉଛି |",
       "comparison_cap": "ପ୍ରତ୍ୟେକ ଜୋନ୍ ର 1961-1990 ସାଧାରଣ ବନାମ ବାର୍ଷିକ ତାପମାତ୍ରା ଅନୋମାଲିୟ | ଏକ ଷ୍ଟିପର ଆରୋହଣର ଅର୍ଥ ହେଉଛି ତୀବ୍ର ଉତ୍ତାପ |",
       "extremes_title": "ଅଧିକାଂଶ ଚରମ ସହର |",
-      "extremes_cap": "ଦ୍ରୁତତମ ଉତ୍ତାପକାରୀ ସହରଗୁଡିକ (ନାଲି) ଏବଂ ଧୀରତମ କିମ୍ବା ଥଣ୍ଡା ସହରଗୁଡିକ (ନୀଳ), ପ୍ରତି ଦଶନ୍ଧିରେ ଉଷ୍ମତା ହାର ଦ୍ୱାରା |"
+      "extremes_cap": "ପ୍ରତି ଦଶନ୍ଧିରେ ଉଷ୍ମତା ହାର ଦ୍ The ାରା ଦ୍ରୁତତମ ଉତ୍ତପ୍ତ ସହରଗୁଡିକ (ନାଲି) ଏବଂ ଧୀର ବା ଥଣ୍ଡା ସହରଗୁଡିକ (ନୀଳ) |"
     },
     "kn": {
       "region_world": "ವಿಶ್ವ",
@@ -1694,7 +1694,7 @@
       "comparison_title": "ഓരോ കാലാവസ്ഥാ മേഖലയും എത്ര വേഗത്തിലാണ് ചൂടാകുന്നത്",
       "comparison_cap": "ഓരോ സോണിൻ്റെയും 1961-1990 ലെ സാധാരണ താപനിലയെ അപേക്ഷിച്ച് സുഗമമായ വാർഷിക താപനില ക്രമക്കേട്. കുത്തനെയുള്ള കയറ്റം എന്നതിനർത്ഥം വേഗത്തിൽ ചൂടാക്കൽ എന്നാണ്.",
       "extremes_title": "ഏറ്റവും തീവ്രമായ നഗരങ്ങൾ",
-      "extremes_cap": "ഏറ്റവും വേഗത്തിൽ ചൂടാകുന്ന നഗരങ്ങളും (ചുവപ്പ്) ഏറ്റവും മന്ദഗതിയിലുള്ളതോ തണുപ്പിക്കുന്നതോ ആയവയും (നീല), ഓരോ ദശാബ്ദത്തിലും ചൂടാകുന്ന നിരക്ക്."
+      "extremes_cap": "ഏറ്റവും വേഗത്തിൽ ചൂടാകുന്ന നഗരങ്ങളും (ചുവപ്പ്) ഏറ്റവും മന്ദഗതിയിലുള്ളതോ തണുപ്പിക്കുന്നതോ ആയവയും (നീല), ഓരോ ദശാബ്ദത്തിലും ചൂട് കൂടുന്ന നിരക്ക്."
     },
     "si": {
       "region_world": "ලෝකය",
@@ -1779,12 +1779,12 @@
   },
   "captions": {
     "sw": {
-      "cap_range": "Kiwango cha juu zaidi cha kila mwezi kwa miaka yote, na mwaka wa hivi majuzi zaidi ukiwa umewekelewa.",
-      "cap_stripes": "Mstari mmoja kwa mwaka, rangi kwa kuondoka kwake kutoka wastani wa 1961-1990: baridi ya bluu, joto nyekundu. Mpito kutoka bluu hadi nyekundu ni ongezeko la joto."
+      "cap_range": "Kiwango cha juu zaidi cha kila mwezi katika miaka yote, na mwaka wa hivi majuzi zaidi ukiwa umewekelewa.",
+      "cap_stripes": "Mstari mmoja kwa mwaka, rangi na kuondoka kwake kutoka wastani wa 1961-1990: baridi ya bluu, joto nyekundu. Mpito kutoka bluu hadi nyekundu ni ongezeko la joto."
     },
     "tl": {
-      "cap_range": "Ang minimum-maximum na hanay ng bawat buwan sa lahat ng taon, na ang pinakahuling taon ay naka-overlay.",
-      "cap_stripes": "Isang guhit bawat taon, na kulayan ng pag-alis nito mula sa average na 1961-1990: mas malamig na asul, mas mainit sa pula. Ang paglipat mula sa asul hanggang pula ay ang pag-init."
+      "cap_range": "Ang minimum-maximum na hanay ng bawat buwan sa lahat ng taon, na ang pinakahuling taon ay na-overlay.",
+      "cap_stripes": "Isang guhit bawat taon, na may kulay sa pamamagitan ng pag-alis nito mula sa average na 1961-1990: mas malamig na asul, mas mainit sa pula. Ang paglipat mula sa asul hanggang pula ay ang pag-init."
     },
     "th": {
       "cap_range": "ช่วงขั้นต่ำ-สูงสุดของแต่ละเดือนตลอดปีทั้งหมด โดยปีล่าสุดซ้อนทับอยู่",
@@ -1835,8 +1835,8 @@
       "cap_stripes": "Peteî raya por año, colorado osêgui promedio 1961-1990-gui: hovy ro'ysãvéva, pytã hakuvéva. Pe transición hovy guive pytãme ha’e pe calentamiento."
     },
     "ay": {
-      "cap_range": "Sapa phaxsix mínimo-máximo ukanx taqi maranakaw utji, ukatx qhipa marax ch’amanchatawa.",
-      "cap_stripes": "Mä raya sapa mara, colores ukax 1961-1990 promedio ukar sarxatapata: ch’uxña thaya, wila junt’u. Ch’iyarat wilaruw mayjt’ayañax junt’uñawa."
+      "cap_range": "Sapa phaxsix mínimo-máximo ukanx taqi maranakanw uñt’ayasi, ukatx qhipa marax uñt’ayatawa.",
+      "cap_stripes": "Mä raya marataki, 1961-1990 maranakan promedio ukar saratapat colores: ch’uxña thaya, wila junt’u. Ch’iyarat wilaruw mayjt’ayañax junt’uñawa."
     },
     "az": {
       "cap_range": "Bütün illər üzrə hər ayın minimum-maksimum diapazonu, ən son il üst-üstə düşür.",
@@ -1847,11 +1847,11 @@
       "cap_stripes": "Satu jalur setiap tahun, diwarnai dengan pemergiannya dari purata 1961-1990: biru lebih sejuk, merah lebih panas. Peralihan dari biru ke merah adalah pemanasan."
     },
     "bm": {
-      "cap_range": "Kalo o kalo, a ka dɔgɔ ni a hakɛ cayalenba ye san bɛɛ kɔnɔ, ni san laban ye min bɛ da ɲɔgɔn kan.",
+      "cap_range": "Kalo o kalo, a dɔgɔyalenba-kɛrɛnkɛrɛnnenya la san bɛɛ kɔnɔ, ni san laban in bɛ da ɲɔgɔn kan.",
       "cap_stripes": "Sɛrɛ kelen san kɔnɔ, a kulɛri bɛ bɔ a bɔli la san 1961-1990 cɛmancɛ la: bulu nɛnɛ, bilen sumaya. Tɛmɛsira min bɛ Bɔ bulu la ka Taa bilen na, o ye sumaya ye."
     },
     "su": {
-      "cap_range": "Rentang minimum-maksimum unggal bulan sapanjang sadaya taun, kalayan taun panganyarna ditindih.",
+      "cap_range": "Rentang minimum-maksimum unggal bulan dina sadaya taun, kalayan taun panganyarna ditindih.",
       "cap_stripes": "Hiji belang per taun, diwarnaan ku miang na ti 1961-1990 rata: bulao cooler, beureum warmer. Transisi tina biru ka beureum nyaéta pemanasan."
     },
     "bs": {
@@ -1860,7 +1860,7 @@
     },
     "ca": {
       "cap_range": "Interval mínim-màxim de cada mes per a tots els anys, amb l'any més recent superposat.",
-      "cap_stripes": "Una franja per any, acolorida per la seva desviació de la mitjana de 1961-1990: blau més fred, vermell més càlid. The transition from blue to red is the warming."
+      "cap_stripes": "Una franja per any, acolorida per la seva desviació de la mitjana de 1961-1990: blau més fred, vermell més càlid. La transició del blau al vermell és l'escalfament."
     },
     "ceb": {
       "cap_range": "Ang matag bulan nga minimum-maximum range sa tanang tuig, nga ang pinakabag-o nga tuig gisapawan.",
@@ -1876,7 +1876,7 @@
     },
     "co": {
       "cap_range": "L'intervallu minimu-massimu di ogni mese in tutti l'anni, cù l'annu più recente sovrapposto.",
-      "cap_stripes": "Una striscia per annu, culurata da a so partenza da a media 1961-1990: blu più fresche, rossa più calda. A transizione da u blu à u rossu hè u riscaldamentu."
+      "cap_stripes": "Una striscia à l'annu, culurita da a so partenza da a media 1961-1990: blu più fresche, rossa più calda. A transizione da u blu à u russu hè u riscaldamentu."
     },
     "cy": {
       "cap_range": "Ystod lleiaf-uchafswm pob mis ar draws yr holl flynyddoedd, gyda'r flwyddyn ddiweddaraf wedi'i gorchuddio.",
@@ -1891,8 +1891,8 @@
       "cap_stripes": "އަހަރަކު އެއް ސްޓްރައިޕް، 1961-1990 ގެ އެވްރެޖުން ވަކިވުމުން ކުލަ ޖައްސާފައި: ބްލޫ ކޫލަރ، ރެޑް ވޯމަރ. ކަޅުކުލައިން ރަތްކުލައަށް ބަދަލުވުމަކީ ހޫނުވުމެވެ."
     },
     "et": {
-      "cap_range": "Iga kuu minimaalne-maksimaalne vahemik kõigi aastate lõikes, kusjuures kattub viimane aasta.",
-      "cap_stripes": "Üks triip aastas, mis on värvitud 1961-1990 keskmisest erinevusest: sinine külmem, punane soojem. Üleminek sinisest punaseks on soojenemine."
+      "cap_range": "Iga kuu minimaalne-maksimaalne vahemik kõikide aastate lõikes, kattudes kõige viimase aastaga.",
+      "cap_stripes": "Üks triip aastas, mis on värvitud 1961-1990 keskmisest erinevusest: sinine jahedam, punane soojem. Üleminek sinisest punaseks on soojenemine."
     },
     "eo": {
       "cap_range": "La minimuma-maksimuma intervalo de ĉiu monato tra ĉiuj jaroj, kun la plej lastatempa jaro supermetita.",
@@ -1903,12 +1903,12 @@
       "cap_stripes": "Marra bat urtean, 1961-1990eko batez bestekotik aldenduta koloreztatua: urdina freskoagoa, gorria beroagoa. Urdinetik gorrirako trantsizioa berotzea da."
     },
     "ee": {
-      "cap_range": "Ɣleti ɖesiaɖe ƒe didime suetɔ-si sɔ gbɔ wu le ƒeawo katã me, eye wotsɔ ƒe si va yi wu la ƒo xlãe.",
+      "cap_range": "Ɣleti ɖesiaɖe ƒe didime suetɔ kple gãtɔ kekeake le ƒeawo katã me, eye wotsɔ ƒe si va yi wu la ƒo xlãe.",
       "cap_stripes": "Fli ɖeka ƒe sia ƒe, si ƒe amadede to vovo tso ƒe 1961-1990 ƒe mamã dedie nu: blɔ fafɛ, dzĩ dzoxɔxɔ. Trɔtrɔ tso blɔ dzi yi dzĩe nye dzoxɔxɔa."
     },
     "fy": {
       "cap_range": "It minimum-maksimum berik fan elke moanne oer alle jierren, mei it meast resinte jier oerlein.",
-      "cap_stripes": "Ien stripe yn it jier, kleurd troch syn ôfwiking fan it gemiddelde fan 1961-1990: blau koeler, read waarmer. De oergong fan blau nei read is de opwaarming."
+      "cap_stripes": "Ien stripe yn it jier, kleure troch syn ôfwiking fan it gemiddelde fan 1961-1990: blau koeler, read waarmer. De oergong fan blau nei read is de opwaarming."
     },
     "ga": {
       "cap_range": "Raon íosta gach mí thar na blianta ar fad, agus an bhliain is déanaí forleagtha.",
@@ -1919,7 +1919,7 @@
       "cap_stripes": "Unha franxa ao ano, coloreada pola súa saída da media de 1961-1990: azul máis frío, vermello máis quente. A transición do azul ao vermello é o quecemento."
     },
     "gom": {
-      "cap_range": "दर म्हयन्याची उण्यांत उणी-चडांत चड व्याप्ती सगळ्या वर्सांनी, सगळ्यांत हालींचें वर्स आच्छादीत केल्लें.",
+      "cap_range": "दर म्हयन्याची उण्यांत उणी-चडांत चड व्याप्ती सगळ्या वर्सांनी, सगळ्यांत हालींचें वर्स आडखळून.",
       "cap_stripes": "वर्साक एक पट्टो, १९६१-१९९० वर्साच्या सरासरींतल्यान भायर सरून रंगयल्लो: निळो थंड, तांबडो उश्ण. निळ्या रंगांतल्यान तांबड्या रंगांत जावपी संक्रमण म्हळ्यार उश्णताय."
     },
     "gd": {
@@ -1964,7 +1964,7 @@
     },
     "kri": {
       "cap_range": "Ɛvri mɔnt in minim-maksim rɛnj akɔdin to ɔl di ia dɛn, wit di ia we dɔn pas pas ɔl we dɛn ɔvalayz.",
-      "cap_stripes": "Wan strɛp pan ia, we gɛt kɔlɔ bay we i kɔmɔt frɔm di 1961-1990 avɛrej: blu kul, rɛd wam. Di chenj frɔm blu to rɛd na di wam."
+      "cap_stripes": "Wan strɛp pan ia, we gɛt kɔlɔ bay we i kɔmɔt frɔm di 1961-1990 avɛrej: blu kul, rɛd wam. The transition from blue to red is the warming."
     },
     "ku": {
       "cap_range": "Rêjeya herî kêm-zêde ya her mehê di nav hemî salan de, digel sala herî dawîn li ser hev.",
@@ -1984,7 +1984,7 @@
     },
     "ln": {
       "cap_range": "Molongo ya moke-maxima ya sanza moko na moko na kati ya bambula nyonso, na mbula oyo euti koleka oyo ezipami.",
-      "cap_stripes": "Molongo moko na mbula, langi na bolongwi na yango na mwayene ya 1961-1990: malili ya bleu, molunge ya motane. Bobongwani uta na bleu kino na motane ezali molunge."
+      "cap_stripes": "Molongo moko na mbula, langi na bolongwi na yango na mwayene ya 1961-1990: bleu cooler, rouge chauffer. Bobongwani uta na bleu kino na motane ezali molunge."
     },
     "lg": {
       "cap_range": "Buli mwezi ekitono-ekisinga obunene mu myaka gyonna, ng’omwaka ogusembyeyo gubikkiddwako.",
@@ -2004,7 +2004,7 @@
     },
     "mt": {
       "cap_range": "Il-firxa minima-massimu ta' kull xahar matul is-snin kollha, bis-sena l-aktar reċenti sovrapposta.",
-      "cap_stripes": "Strixxa waħda fis-sena, ikkulurita bit-tluq tagħha mill-medja tal-1961-1990: blu li jkessaħ, aħmar aktar sħun. It-tranżizzjoni minn blu għal aħmar hija t-tisħin."
+      "cap_stripes": "Strixxa waħda fis-sena, ikkulurita bit-tluq tagħha mill-medja tal-1961-1990: blu li jkessaħ, aħmar sħun. It-tranżizzjoni minn blu għal aħmar hija t-tisħin."
     },
     "lus": {
       "cap_range": "Thla tin kum zawng zawnga minimum-maximum range, kum hnuhnung ber chu overlaid a ni.",
@@ -2015,7 +2015,7 @@
       "cap_stripes": "Kotahi te karaehe i ia tau, ka tae ki tona wehenga mai i te tau toharite o te tau 1961-1990: he mea whakamahana kahurangi, he whakamahana whero. Ko te whakawhitinga mai i te puru ki te whero ko te whakamahana."
     },
     "no": {
-      "cap_range": "Hver måneds minimum-maksimum rekkevidde for alle år, med det siste året lagt over.",
+      "cap_range": "Hver måneds minimum-maksimum rekkevidde over alle år, med det siste året overliggende.",
       "cap_stripes": "En stripe per år, farget av dens avgang fra gjennomsnittet for 1961-1990: blå kjøligere, rød varmere. Overgangen fra blått til rødt er oppvarmingen."
     },
     "ny": {
@@ -2040,7 +2040,7 @@
     },
     "sm": {
       "cap_range": "O masina ta'itasi la'ititi-maualuga fa'asologa i tausaga uma, fa'atasi ai ma le tausaga talu ai nei e fa'apipi'i.",
-      "cap_stripes": "Tasi le ta'i i le tausaga, valivali i lona alu ese mai le 1961-1990 averesi: lanumoana malulu, mumu vevela. O le suiga mai le lanumoana i le mumu o le mafanafana."
+      "cap_stripes": "Tasi le ta'i i le tausaga, e valivali i lona alu'ese mai le 1961-1990 averesi: lanumoana malulu, mumu mumu. O le suiga mai le lanumoana i le mumu o le mafanafana."
     },
     "st": {
       "cap_range": "Bonyane ba khoeli e 'ngoe le e 'ngoe-boholo ba maemo a holimo ho pholletsa le lilemo, le selemo sa morao-rao se koahetsoeng.",
@@ -2056,7 +2056,7 @@
     },
     "sk": {
       "cap_range": "Minimálny a maximálny rozsah každého mesiaca vo všetkých rokoch, pričom sa prekrýva posledný rok.",
-      "cap_stripes": "Jeden prúžok za rok, zafarbený odklonom od priemeru 1961-1990: modrý chladnejší, červený teplejší. Prechod z modrej na červenú je otepľovanie."
+      "cap_stripes": "Jeden pruh za rok, zafarbený odklonom od priemeru 1961-1990: modrý chladnejší, červený teplejší. Prechod z modrej na červenú je otepľovanie."
     },
     "sl": {
       "cap_range": "Najmanjši in največji razpon vsakega meseca v vseh letih, pri čemer je prekrito zadnje leto.",
@@ -2080,7 +2080,7 @@
     },
     "tk": {
       "cap_range": "Her aýyň iň pes ýyl aralygy, iň soňky ýyl örtülendir.",
-      "cap_stripes": "-1ylda bir zolak, 1961-1990-njy ýyllaryň ortaça çykmagy bilen reňklenýär: gök sowadyjy, gyzyl ýyly. Gökden gyzyla geçmek ýylylykdyr."
+      "cap_stripes": "-11ylda bir zolak, 1961-1990-njy ýyllaryň ortaça çykmagy bilen reňklenýär: gök sowadyjy, gyzyl gyzdyryjy. Gökden gyzyla geçmek ýylylykdyr."
     },
     "is": {
       "cap_range": "Lágmarks-hámarksbil hvers mánaðar yfir öll árin, með nýjasta árið lagt yfir.",
@@ -2131,8 +2131,8 @@
       "cap_stripes": "Як рах дар як сол, ки аз ҳисоби миёнаи солҳои 1961-1990 дур ​​шуданаш ранг мешавад: сардтар кабуд, сурх гармтар. Гузариш аз кабуд ба сурх гармшавӣ аст."
     },
     "kk": {
-      "cap_range": "Барлық жылдардағы әр айдың ең төменгі-максималды ауқымы, ең соңғы жыл қабаттастырылған.",
-      "cap_stripes": "Жылына бір жолақ, оның 1961-1990 жылдардағы орташа көрсеткіштен кетуіне байланысты боялған: көк салқын, қызыл жылы. Көк түстен қызылға ауысу - бұл жылыну."
+      "cap_range": "Барлық жылдар бойынша әр айдың ең төменгі-максималды ауқымы, ең соңғы жыл қабаттастырылған.",
+      "cap_stripes": "Жылына бір жолақ, оның 1961-1990 жылдардағы орташа көрсеткіштен кетуі бойынша боялады: көк салқын, қызыл жылы. Көк түстен қызылға ауысу - бұл жылыну."
     },
     "hy": {
       "cap_range": "Ամեն ամսվա նվազագույն-առավելագույն միջակայքը բոլոր տարիների համար՝ ամենավերջին տարվա վրա:",
@@ -2140,15 +2140,15 @@
     },
     "yi": {
       "cap_range": "די מינימום-מאַקסימום קייט פון יעדער חודש איבער אַלע יאָרן, מיט די לעצטע יאָר אָוווערלייד.",
-      "cap_stripes": "איין פּאַס פּער יאָר, קאָלירט דורך זייַן אָפּפאָר פון די 1961-1990 דורכשניטלעך: בלוי קולער, רויט וואָרמער. די יבערגאַנג פון בלוי צו רויט איז די וואָרמינג."
+      "cap_stripes": "איין פּאַס פּער יאָר, קאָלירט דורך זיין אָפּפאָר פון די דורכשניטלעך 1961-1990: בלוי קולער, רויט וואָרמער. די יבערגאַנג פון בלוי צו רויט איז די וואָרמינג."
     },
     "he": {
       "cap_range": "טווח המינימום-המקסימום של כל חודש לאורך כל השנים, עם השנה האחרונה.",
       "cap_stripes": "פס אחד בשנה, נצבע על ידי יציאתו מהממוצע של 1961-1990: כחול קריר, אדום חם יותר. המעבר מכחול לאדום הוא ההתחממות."
     },
     "ug": {
-      "cap_range": "ھەر بىر ئايدىكى ئەڭ تۆۋەن چەكتىكى يىللار، ئەڭ يېقىنقى بىر يىل قاپلانغان.",
-      "cap_stripes": "ھەر يىلى بىر بەلۋاغ، 1961-1990-يىللىرىدىكى ئوتتۇرىچە سىزىقتىن ئايرىلىشى بىلەن رەڭدار: كۆك سوۋۇتقۇچ، قىزىل ئىسسىق. كۆكتىن قىزىلغا ئۆتۈش ئىللىقلىق."
+      "cap_range": "ھەر بىر ئايدىكى ھەر ئايدىكى ئەڭ تۆۋەن چەك دائىرىسى، ئەڭ يېقىنقى بىر يىل قاپلانغان.",
+      "cap_stripes": "ھەر يىلى بىر سىزىق، 1961-1990-يىللىرىدىكى ئوتتۇرىچە سىزىقتىن ئايرىلىشى بىلەن رەڭدار: كۆك سوۋۇتقۇچ، قىزىل ئىسسىق. كۆكتىن قىزىلغا ئۆتۈش ئىللىقلىق."
     },
     "sd": {
       "cap_range": "هر مهيني جي گهٽ ۾ گهٽ-وڌ کان وڌ رينج سڀني سالن ۾، سڀ کان تازو سال مٿان ڍڪيل آهي.",
@@ -2163,8 +2163,8 @@
       "cap_stripes": "ساڵانە یەک هێڵ، ڕەنگەکەی بەهۆی جیابوونەوەی لە تێکڕای ساڵی ١٩٦١-١٩٩٠: فێنککەرەوەی شین، گەرمکەرەوەی سوور. گواستنەوە لە شینەوە بۆ سوور گەرمبوونەوەیە."
     },
     "doi": {
-      "cap_range": "हर म्हीने दी न्यूनतम-अधिकतम सीमा सारें ब’रें च, जिस च सबनें शा हालिया साल ओवरलेड होंदा ऐ।",
-      "cap_stripes": "हर साल इक पट्टी, 1961-1990 औसत थमां इसदे जाने कन्नै रंगे दा: नीला कूलर, लाल गर्म। नीले रंग थमां लाल रंग च संक्रमण गर्मी ऐ।"
+      "cap_range": "हर म्हीने दी न्यूनतम-अधिकतम सीमा सारे ब’रें च, जिस च सबनें शा हालिया साल ओवरलेड होंदा ऐ।",
+      "cap_stripes": "हर साल इक पट्टी, 1961-1990 दी औसत थमां इसदे जाने कन्नै रंगे दा: नीला कूलर, लाल गर्म। नीले रंग थमां लाल रंग च संक्रमण गर्मी ऐ।"
     },
     "ne": {
       "cap_range": "सबै वर्षहरूमा प्रत्येक महिनाको न्यूनतम-अधिकतम दायरा, सबैभन्दा हालैको वर्ष ओभरलेड भएको।",
@@ -2172,7 +2172,7 @@
     },
     "bho": {
       "cap_range": "हर महीना के न्यूनतम-अधिकतम रेंज सभ साल में, सभसे हाल के साल के ओवरलेड कइल जाला।",
-      "cap_stripes": "हर साल एक पट्टी, 1961-1990 के औसत से एकरे बिदाई से रंगल: नीला कूलर, लाल वार्मर। नीला से लाल रंग में संक्रमण गरम होखे के बात ह।"
+      "cap_stripes": "हर साल एक ठो पट्टी, 1961-1990 के औसत से एकरे बिचलन से रंगल: नीला कूलर, लाल वार्मर। नीला से लाल रंग में संक्रमण गरम होखे के बात ह।"
     },
     "mai": {
       "cap_range": "हर महीना कें न्यूनतम-अधिकतम सीमा सब सालक मे, जइ मे सब सं हाल कें साल ओवरलेड कैल गेल छै.",
@@ -2180,7 +2180,7 @@
     },
     "sa": {
       "cap_range": "प्रत्येकमासस्य न्यूनतम-अधिकतम-परिधिः सर्वेषु वर्षेषु, यत्र अद्यतनतमं वर्षं आच्छादितम् अस्ति ।",
-      "cap_stripes": "प्रतिवर्षं एकः पट्टिका, १९६१-१९९० औसतात् तस्य प्रस्थानेन वर्णिता: नीलः शीतलः, रक्तः उष्णः । नीलतः रक्तं प्रति संक्रमणं तापनम् अस्ति ।"
+      "cap_stripes": "प्रतिवर्षं एकः पट्टिका, १९६१-१९९० औसतात् तस्य प्रस्थानेन वर्णिता: नीलः शीतलतरः, रक्तः उष्णतरः । नीलतः रक्तं प्रति संक्रमणं तापनम् अस्ति ।"
     },
     "as": {
       "cap_range": "সকলো বছৰৰ ভিতৰত প্ৰতি মাহৰ নূন্যতম-সৰ্বোচ্চ পৰিসৰ, শেহতীয়া বছৰটো ওপৰত ওপৰত।",
@@ -2208,14 +2208,14 @@
     },
     "lo": {
       "cap_range": "ຊ່ວງເວລາຕໍ່າສຸດ-ສູງສຸດຂອງແຕ່ລະເດືອນໃນທຸກປີ, ໂດຍມີປີຫຼ້າສຸດຊ້ອນກັນ.",
-      "cap_stripes": "ຫນຶ່ງເສັ້ນຕໍ່ປີ, ສີໂດຍການອອກເດີນທາງຈາກ 1961-1990 ໂດຍສະເລ່ຍ: ສີຟ້າ cooler, ສີແດງ warmer. ການຫັນປ່ຽນຈາກສີຟ້າເປັນສີແດງແມ່ນການອົບອຸ່ນ."
+      "cap_stripes": "ຫນຶ່ງເສັ້ນຕໍ່ປີ, ສີໂດຍການອອກຈາກມັນຈາກ 1961-1990 ໂດຍສະເລ່ຍ: ສີຟ້າ cooler, ສີແດງ warmer. ການຫັນປ່ຽນຈາກສີຟ້າເປັນສີແດງແມ່ນການອົບອຸ່ນ."
     },
     "ka": {
       "cap_range": "ყოველი თვის მინიმალური-მაქსიმალური დიაპაზონი ყველა წლის განმავლობაში, უახლესი წლის გადაფარვით.",
       "cap_stripes": "წელიწადში ერთი ზოლი, შეღებილი 1961-1990 წლების საშუალოდან გასვლის მიხედვით: ცისფერი ცივი, წითელი თბილი. ლურჯიდან წითელზე გადასვლა დათბობაა."
     },
     "ti": {
-      "cap_range": "ናይ ነፍሲ ወከፍ ወርሒ ዝተሓተ-ዝለዓለ ደረጃ ኣብ ኩሉ ዓመታት፡ ምስቲ ናይ ቀረባ ዓመት ተደራሪቡ።",
+      "cap_range": "ናይ ነፍሲ ወከፍ ወርሒ ዝተሓተ-ዝለዓለ ደረጃ ኣብ ኩሉ ዓመታት፡ ምስቲ ናይ ቀረባ ዓመት ተደሪቡ።",
       "cap_stripes": "ኣብ ዓመት ሓደ መስመር፡ ካብቲ ኣብ 1961-1990 ዝነበረ ማእከላይ ደረጃ ብምፍናው ሕብሪ ዘለዎ፡ ሰማያዊ ዝሑል፡ ቀይሕ ዝሞቐ። ካብ ሰማያዊ ናብ ቀይሕ ዝግበር ምስግጋር ምውዓይ እዩ።"
     },
     "km": {
@@ -2246,7 +2246,7 @@
     },
     "mr": {
       "deephist_title": "1940 पूर्वीचा डेटा का नाही?",
-      "deephist_body": "<p> चार्ट 1940 मध्ये सुरू होतात कारण ते ERA5 पुनर्विश्लेषण वापरतात, ज्याचा रेकॉर्ड त्या वर्षी सुरू होतो. पूर्वीचा डेटा अस्तित्वात आहे (एनओएए 20व्या-शतकातील पुनर्विश्लेषण 1836 पर्यंत विस्तारित आहे आणि काही स्टेशन्समध्ये बहु-शतकाच्या नोंदी आहेत), परंतु ते विरळ, पूर्व-उपग्रह निरीक्षणांवर अवलंबून आहे आणि मोठ्या अनिश्चितता आहे. हे येथे ERA5 मालिकेत विलीन केलेले नाही, कारण पद्धती आणि त्रुटी श्रेणी भिन्न आहेत.</p>",
+      "deephist_body": "<p> चार्ट 1940 मध्ये सुरू होतात कारण ते ERA5 पुनर्विश्लेषण वापरतात, ज्याचा रेकॉर्ड त्या वर्षी सुरू होतो. पूर्वीचा डेटा अस्तित्वात आहे (एनओएए 20व्या-शतकातील पुनर्विश्लेषण 1836 पर्यंत विस्तारित आहे आणि काही स्टेशन्समध्ये बहु-शतकाच्या नोंदी आहेत), परंतु ते विरळ, पूर्व-उपग्रह निरीक्षणांवर अवलंबून आहे आणि मोठ्या अनिश्चितता आहे. ते येथे ERA5 मालिकेत विलीन केलेले नाही, कारण पद्धती आणि त्रुटी श्रेणी भिन्न आहेत.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> पासून सुरू होणाऱ्या, प्रदीर्घ वाद्य तापमान रेकॉर्डपैकी एक आहे."
     },
     "te": {
@@ -2286,22 +2286,22 @@
     },
     "ak": {
       "deephist_title": "Dɛn nti na data biara nni hɔ ansa na 1940 reba?",
-      "deephist_body": "<p>Charts no fi ase wɔ 1940 mu efisɛ wɔde ERA5 reanalysis di dwuma, a ne kyerɛwtohɔ no fi ase saa afe no. Nsɛm a atwam wɔ hɔ (NOAA 20th-Century Reanalysis no trɛw kodu 1836, na gyinabea kakraa bi kura mfeha pii ho kyerɛwtohɔ), nanso ɛde ne ho to nneɛma a ɛyɛ kakraa bi, ansa na satellite rehwɛ so na ɛde adwenem naayɛ kɛse ba. Ɛnyɛ nea wɔaka abom ne ERA5 series no wɔ ha, efisɛ akwan ne mfomso ahorow no gu ahorow.</p>.",
+      "deephist_body": "<p>Charts no fi ase wɔ 1940 mu efisɛ wɔde ERA5 reanalysis di dwuma, a ne kyerɛwtohɔ no fi ase saa afe no. Nsɛm a atwam wɔ hɔ (NOAA 20th-Century Reanalysis no trɛw kodu 1836, na gyinabea kakraa bi kura mfeha pii ho kyerɛwtohɔ), nanso ɛde ne ho to nneɛma a ɛyɛ kakraa bi a wɔde hwɛɛ nneɛma a wɔadi ansa na satellite so na ɛde adwenem naayɛ kɛse ba. Ɛnyɛ nea wɔaka abom ne ERA5 series wɔ ha, efisɛ akwan ne mfomso ahorow no gu ahorow.</p>.",
       "deephist_record": "<p class=\"dh-here\">{label} kura nnwinnade mu ɔhyew kyerɛwtohɔ a ɛware sen biara no mu biako, efi ase wɔ {year}.</p>."
     },
     "gn": {
       "deephist_title": "Mba'ére ndaipóri dato 1940 mboyve?",
-      "deephist_body": "<p>Umi gráfico oñepyrü 1940-pe oiporúgui reanálisis ERA5, orekóva récord oñepyrüva upe arýpe. Oĩ dato tenondevegua (Reanálisis del Siglo XX NOAA ojepyso 1836 peve, ha mbovymi estación oguereko registro heta siglo rehegua), ha katu ojerovia umi observación escasavéva, presatélite rehe ha ogueraha incertidumbre tuichavéva. Noñembojoajúi serie ERA5 ndive ko’ápe, iñambuégui umi método ha rango de error.</p>",
+      "deephist_body": "<p>Umi gráfico oñepyrü 1940-pe oiporúgui reanálisis ERA5, orekóva récord oñepyrüva upe arýpe. Oĩ umi dato tenondevegua (Reanálisis del Siglo XX NOAA ojepyso 1836 peve, ha mbovymi estación oguereko registro heta siglo rehegua), ha katu ojerovia umi observación escasavéva, presatélite rehe ha ogueraha incertidumbre tuichavéva. Noñembojoajúi serie ERA5 ndive ko’ápe, iñambuégui umi método ha rango de error.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} oguereko peteĩva umi registro temperatura instrumental ipukuvéva, oñepyrũva {year}.</p>."
     },
     "ay": {
-      "deephist_title": "¿Kunatsa 1940 marat nayrajj jan kuna datos utjkänti?",
+      "deephist_title": "¿Kunatsa 1940 mara nayrajj jan kuna datonakajj utjkiti?",
       "deephist_body": "<p>Charts ukax 1940 maran qalltawayi kunatix reanálisis ERA5 ukampiw apnaqapxi, ukax uka maraw registro ukax qalltawayi. Nayra yatiyawinakax utjiwa (Reanálisis del Siglo XX NOAA ukax 1836 marakamaw jilxattawayi, ukatx mä qawqha estaciones ukanakax walja patak maranakan registros ukanakaw utji), ukampis juk’amp jisk’a, pre-satélite uñakipäwinakaruw atinisi ukatx juk’amp jach’a jan yatiñanak apt’ata. Aka chiqanx janiw serie ERA5 ukampix mayachatäkiti, kunatix thakhinakas pantjasiwinakax mayj mayjawa.</p>.",
       "deephist_record": "<p class=\"dh-here\">{label} ukaxa mä jach’a registro de temperatura instrumental ukankiwa, ukaxa qalltasiwa {year}.</p>."
     },
     "az": {
       "deephist_title": "Niyə 1940-cı ildən əvvəl heç bir məlumat yoxdur?",
-      "deephist_body": "<p>Qrafiklər 1940-cı ildə başlayır, çünki onlar ERA5 reanalizindən istifadə edirlər, onun rekordu həmin il başlayır. Əvvəlki məlumatlar mövcuddur (NOAA 20th-Century Reanalysis 1836-cı ilə qədər uzanır və bir neçə stansiya çox əsrlik qeydlərə malikdir), lakin o, daha seyrək, peykdən əvvəlki müşahidələrə əsaslanır və daha böyük qeyri-müəyyənlik daşıyır. Burada ERA5 seriyası ilə birləşdirilməyib, çünki üsullar və xəta diapazonları fərqlidir.</p>",
+      "deephist_body": "<p>Qrafiklər 1940-cı ildə başlayır, çünki onlar ERA5 reanalizindən istifadə edirlər və onun rekordu həmin il başlayır. Əvvəlki məlumatlar mövcuddur (NOAA 20th-Century Reanalysis 1836-cı ilə qədər uzanır və bir neçə stansiya çox əsrlik qeydlərə malikdir), lakin o, daha seyrək, peykdən əvvəlki müşahidələrə əsaslanır və daha böyük qeyri-müəyyənlik daşıyır. Burada ERA5 seriyası ilə birləşdirilməyib, çünki üsullar və xəta diapazonları fərqlidir.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} {year}.</p>-dən başlayaraq ən uzun instrumental temperatur rekordlarından birinə malikdir."
     },
     "ms": {
@@ -2311,7 +2311,7 @@
     },
     "bm": {
       "deephist_title": "Mun na kunnafoni si tɛ yen ka kɔn san 1940 ɲɛ?",
-      "deephist_body": "<p>Taabolow bɛ daminɛ san 1940 bawo u bɛ baara kɛ ni ERA5 sɛgɛsɛgɛli kura ye, min ka jatebɔ bɛ daminɛ o san na. Kunnafoni fɔlɔw bɛ yen (NOAA ka san kɛmɛ 20nan seginkanni bɛ taa fo san 1836, wa telewisɔn damadɔw bɛ san kɛmɛ caman sɛbɛnw mara), nka a bɛ tali kɛ kɔlɔsiliw la minnu ka dɔgɔ, ka kɔn sateliti ɲɛ, wa a bɛ dannayabaliya belebelebaw ta. A ma fara ɲɔgɔn kan ni ERA5 seriyali ye yan, bawo fɛɛrɛw ni filiw hakɛw tɛ kelen ye.</p>",
+      "deephist_body": "<p>Taabolow bɛ daminɛ san 1940 bawo u bɛ baara kɛ ni ERA5 sɛgɛsɛgɛli kura ye, min ka jatebɔ bɛ daminɛ o san na. Kunnafoni fɔlɔw bɛ yen (NOAA ka san kɛmɛ 20nan seginnkanni bɛ taa fo san 1836, wa telewisɔn damadɔw bɛ san kɛmɛ caman sɛbɛnw mara), nka a bɛ tali kɛ kɔlɔsiliw la minnu ka dɔgɔ, ka kɔn sateliti ɲɛ, wa a bɛ dannayabaliya belebelebaw ta. A ma fara ɲɔgɔn kan ni ERA5 seriyali ye yan, bawo fɛɛrɛw ni filiw hakɛw tɛ kelen ye.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} bɛ minɛnw funteni jatebɔ janyalen dɔ minɛ, k’a daminɛ {year}.</p>"
     },
     "su": {
@@ -2341,8 +2341,8 @@
     },
     "sn": {
       "deephist_title": "Nei pasina data pamberi pa1940?",
-      "deephist_body": "<p>Machati anotanga muna 1940 nekuti vanoshandisa ERA5 reanalysis, ane rekodhi rinotanga gore iroro. Pakutanga data iripo (iyo NOAA 20th-Century Reanalysis inosvika 1836, uye zviteshi zvishoma zvine zvinyorwa zvemazana emakore akawanda), asi inotsamira pane sparser, pre-satellite yekutarisa uye inotakura kusava nechokwadi kwakakura. Haina kubatanidzwa neERA5 series pano, nokuti nzira nemhosho dzakasiyana.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} inobata rekodhi retembiricha yakarebesa, kutanga muna {year}.</p>"
+      "deephist_body": "<p>Machati anotanga muna 1940 nekuti vanoshandisa ERA5 reanalysis, ane rekodhi rinotanga gore iroro. Pakutanga data iripo (iyo NOAA 20th-Century Reanalysis inosvika 1836, uye zviteshi zvishoma zvine zvinyorwa zvemazana emakore akawanda), asi inotsamira pane sparser, pre-satellite yekutarisa uye inotakura kusava nechokwadi kwakakura. Haina kusanganiswa neERA5 series pano, nokuti nzira nemhosho dzakasiyana.</p>",
+      "deephist_record": "<p class=\"dh-here\">{label} inobata rekodhi retembiricha refu kwazvo, kutanga muna {year}.</p>"
     },
     "co": {
       "deephist_title": "Perchè ùn ci hè micca dati prima di u 1940?",
@@ -2376,12 +2376,12 @@
     },
     "eu": {
       "deephist_title": "Zergatik ez dago daturik 1940 baino lehen?",
-      "deephist_body": "<p>Taulak 1940an hasten dira, ERA5 berranalisia erabiltzen dutelako, zeinaren erregistroa urte horretan hasten baita. Lehenago datuak existitzen dira (NOAA 20th-Century Reanalysis 1836ra arte luzatzen da, eta geltoki gutxi batzuek mende anitzeko erregistroak dituzte), baina sateliteen aurreko behaketetan oinarritzen da eta ziurgabetasun handiagoa du. Ez da hemen ERA5 seriearekin bateratzen, metodoak eta errore-barrutiak desberdinak direlako.</p>",
+      "deephist_body": "<p>Taulak 1940an hasten dira, ERA5 berranalisia erabiltzen dutelako, zeinaren erregistroa urte horretan hasten baita. Lehenago datuak existitzen dira (NOAA 20th-Century Reanalysis 1836ra arte luzatzen da, eta estazio gutxi batzuek mende anitzeko erregistroak dituzte), baina sateliteen aurreko behaketetan oinarritzen da eta ziurgabetasun handiagoa du. Ez da hemen ERA5 seriearekin bateratzen, metodoak eta errore-barrutiak desberdinak direlako.</p>",
       "deephist_record": "<p class=\"dh-here\">{label}ek tenperatura instrumentalen erregistro luzeenetako bat dauka, {year}.</p>-n hasita"
     },
     "ee": {
       "deephist_title": "Nukatae nyatakaka aɖeke meli do ŋgɔ na ƒe 1940 o?",
-      "deephist_body": "<p>Taɖodzinuawo dze egɔme le ƒe 1940 me elabena wozãa ERA5 ƒe numekuku yeye, si ƒe nuŋlɔɖi dze egɔme le ƒe ma me. Nyatakaka siwo do ŋgɔ li (NOAA ƒe Ƒe Alafa 20 lia me Gbugbɔgawɔ ƒe Numekukua keke ta ɖo ƒe 1836 me, eye ƒe alafa geɖe ƒe nuŋlɔɖiwo le dɔwɔƒe ʋɛ aɖewo si), gake eɖoa ŋu ɖe ŋkuléleɖenuŋu siwo mebɔ o, siwo wokpɔ do ŋgɔ na satelait dzi ŋu eye kakaɖedzimanɔamesi lolo wu le esi. Wometsɔe ƒo ƒu kple ERA5 ƒe xexlẽdzesiwo le afisia o, elabena mɔnuwo kple vodada ƒe didimewo to vovo.</p>",
+      "deephist_body": "<p>Tɔtrɔawo dze egɔme le ƒe 1940 me elabena wozãa ERA5 ƒe numekuku yeye, si ƒe nuŋlɔɖi dze egɔme le ƒe ma me. Nyatakaka siwo do ŋgɔ li (NOAA ƒe Ƒe Alafa 20 lia me Gbugbɔgawɔ ƒe Numekukua keke ta ɖo ƒe 1836 me, eye ƒe alafa geɖe ƒe nuŋlɔɖiwo le dɔwɔƒe ʋɛ aɖewo si), gake eɖoa ŋu ɖe ŋkuléleɖenuŋu siwo mebɔ o, siwo wowɔ do ŋgɔ na satelait dzi ŋu eye kakaɖedzimanɔamesi si lolo wu ɖe asi. Wometsɔe ƒo ƒu kple ERA5 ƒe xexlẽdzesiwo le afisia o, elabena mɔnuwo kple vodada ƒe didimewo to vovo.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} léa dɔwɔnu ƒe dzoxɔxɔ ŋuti nuŋlɔɖi diditɔwo dometɔ ɖeka ɖe asi, si dzea egɔme tso {year}.</p>."
     },
     "fy": {
@@ -2396,13 +2396,13 @@
     },
     "gl": {
       "deephist_title": "Por que non hai datos anteriores a 1940?",
-      "deephist_body": "<p>Os gráficos comezan en 1940 porque usan a reanálise ERA5, cuxo rexistro comeza ese ano. Existen datos anteriores (a reanálise do século XX da NOAA esténdese ata 1836, e algunhas estacións posúen rexistros de varios séculos), pero depende de observacións pre-satélites máis escasas e conleva unha incerteza maior. Non se combina coa serie ERA5 aquí, porque os métodos e os intervalos de erro son diferentes.</p>",
+      "deephist_body": "<p>Os gráficos comezan en 1940 porque usan a reanálise ERA5, cuxo rexistro comeza ese ano. Existen datos anteriores (a reanálise do século XX da NOAA esténdese ata 1836, e algunhas estacións posúen rexistros de varios séculos), pero depende de observacións pre-satélites máis escasas e conleva unha incerteza máis grande. Non se combina coa serie ERA5 aquí, porque os métodos e os intervalos de erro son diferentes.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} posúe un dos rexistros de temperatura instrumentais máis longos, comezando en {year}.</p>"
     },
     "gom": {
       "deephist_title": "१९४० पयलींचो डेटा कित्याक ना?",
       "deephist_body": "<p>चार्ट १९४० वर्सा सुरू जातात कारण तातूंत ईआरए५ पुनर्विश्लेशण वापरतात, जाचो विक्रम त्या वर्सा सुरू जाता. आदलो डेटा अस्तित्वांत आसा (एनओएएच्या विसाव्या शेंकड्यांतलो पुनर्विश्लेशण १८३६ मेरेन पातळ्ळा आनी कांय केंद्रांनी बहुशतकांचे नोंदी आसात), पूण तो उपग्रहापयलींच्या विरळ निरिक्षणांचेर आदारून आसता आनी तातूंत व्हड अनिश्चितताय व्हरता. हांगा तें ERA5 माळेंत विलीन जावंक ना, कारण पद्दती आनी त्रुटी श्रेणी वेगवेगळीं आसतात.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> पासून सुरू जावपी सगळ्यांत लांब वाद्य तापमान विक्रमांतलो एक विक्रम दवरता."
+      "deephist_record": "<p class=\"dh-here\">{label} हातूंत {year}.</p> पासून सुरू जावपी सगळ्यांत लांब वाद्य तापमानाचो एक विक्रम आसा."
     },
     "gd": {
       "deephist_title": "Carson nach eil dàta ann ro 1940?",
@@ -2416,7 +2416,7 @@
     },
     "hr": {
       "deephist_title": "Zašto nema podataka prije 1940. godine?",
-      "deephist_body": "<p>Ljestvice počinju 1940. jer koriste reanalizu ERA5, čija evidencija počinje te godine. Raniji podaci postoje (NOAA Reanaliza 20. stoljeća proteže se do 1836. godine, a nekoliko postaja čuva višestoljetne zapise), ali oslanjaju se na rjeđa, pret-satelitska opažanja i nose veću nesigurnost. Ovdje nije spojen sa serijom ERA5 jer se metode i rasponi pogrešaka razlikuju.</p>",
+      "deephist_body": "<p>Ljestvice počinju 1940. jer koriste reanalizu ERA5, čija evidencija počinje te godine. Postoje raniji podaci (Reanaliza 20. stoljeća NOAA-e proteže se do 1836., a nekoliko postaja čuva višestoljetne zapise), ali se oslanjaju na rjeđa, pret-satelitska opažanja i nose veću nesigurnost. Ovdje nije spojen sa serijom ERA5 jer se metode i rasponi pogrešaka razlikuju.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} drži jedan od najdužih instrumentalnih temperaturnih rekorda, počevši od {year}.</p>"
     },
     "ig": {
@@ -2426,7 +2426,7 @@
     },
     "rw": {
       "deephist_title": "Kuki nta makuru mbere ya 1940?",
-      "deephist_body": "<p>Imbonerahamwe itangira mu 1940 kuko ikoresha isesengura rya ERA5, inyandiko yayo itangira uwo mwaka. Amakuru yambere arahari (NOAA yo mu kinyejana cya 20 Reanalysis igera kuri 1836, kandi sitasiyo nkeya zifite inyandiko zo mu binyejana byinshi), ariko ishingiye kubushakashatsi buke, mbere y’icyogajuru kandi butwara gushidikanya gukomeye. Ntabwo yahujwe nuruhererekane rwa ERA5 hano, kuko uburyo namakosa aringaniye.</p>",
+      "deephist_body": "<p>Imbonerahamwe itangira mu 1940 kuko ikoresha isesengura rya ERA5, inyandiko yayo itangira uwo mwaka. Amakuru yambere arahari (NOAA 20-Century Reanalysis igera kuri 1836, kandi sitasiyo nkeya zifite inyandiko zo mu binyejana byinshi), ariko zishingiye kubushakashatsi buke, mbere y’icyogajuru kandi butwara gushidikanya gukomeye. Ntabwo yahujwe nuruhererekane rwa ERA5 hano, kuko uburyo namakosa aringaniye.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} ifite imwe murwego rurerure rwibikoresho byubushyuhe, guhera muri {year}.</p>"
     },
     "ilo": {
@@ -2441,7 +2441,7 @@
     },
     "zu": {
       "deephist_title": "Kungani ingekho idatha ngaphambi kuka-1940?",
-      "deephist_body": "<p>Amashadi aqala ngo-1940 ngoba asebenzisa i-ERA5 reanalysis, irekhodi layo eliqala ngalowo nyaka. Idatha yangaphambili ikhona (i-NOAA 20th-Century Reanalysis idlulela ku-1836, futhi iziteshi ezimbalwa ziphethe amarekhodi eminyaka eminingi), kodwa incike ekubonweni kwe-sparser, pre-satellite futhi ithwala ukungaqiniseki okukhulu. Ayihlanganiswa nochungechunge lwe-ERA5 lapha, ngoba izindlela nebanga lamaphutha kuyehluka.</p>",
+      "deephist_body": "<p>Amashadi aqala ngo-1940 ngoba asebenzisa i-ERA5 reanalysis, irekhodi layo eliqala ngalowo nyaka. Idatha yangaphambili ikhona (i-NOAA 20th-Century Reanalysis idlulela ku-1836, futhi iziteshi ezimbalwa ziphethe amarekhodi ekhulu leminyaka), kodwa incike ekubonweni kwe-sparser, pre-satellite futhi ithwala ukungaqiniseki okukhulu. Ayihlanganiswa nochungechunge lwe-ERA5 lapha, ngoba izindlela nebanga lamaphutha kuyehluka.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} iphethe irekhodi elide kakhulu lokushisa kwezinsimbi, eliqala ngo-{year}.</p>"
     },
     "jv": {
@@ -2475,7 +2475,7 @@
       "deephist_record": "<p class=\"dh-here\">{label} turi vieną ilgiausių instrumentų temperatūros rekordų, pradedant {year}.</p>"
     },
     "la": {
-      "deephist_title": "Cur data non est ante MCMXL?",
+      "deephist_title": "Cur nulla notitia ante MCMXL est?",
       "deephist_body": "<p> Chartae ab anno 1940 incipiunt quia reanalysi ERA5 utuntur, cuius recordatio eo anno incipit. Antea notitia exstat (Reanalysis NOAA XX-Century usque ad MDCCCXXXVI extenditur, et paucae stationes multi saeculi monumenta tenent), sed rarioribus, prae- satellitis observationibus nititur et incertiorem maiorem fert. Cum serie ERA5 non immiscetur hic, quia rationes et errorum vagationes differunt. </p>",
       "deephist_record": "<p class=\"dh-here\">{label} holds one of the longest instrumental temperature records, beginning in {year}.</p>"
     },
@@ -2486,7 +2486,7 @@
     },
     "lg": {
       "deephist_title": "Lwaki tewali data nga 1940 tannatuuka?",
-      "deephist_body": "<p>Chati zitandika mu 1940 kubanga zikozesa enkola ya ERA5 reanalysis, nga likodi yaayo etandika omwaka ogwo. Ebiwandiiko eby’edda biriwo (NOAA 20th-Century Reanalysis egenda okutuuka mu 1836, era siteegi ntono zirina ebiwandiiko by’ebyasa ebingi), naye zeesigamye ku kwetegereza okutono, nga tekunnabaawo setilayiti era etwala obutali bukakafu obunene. Tekigattibwa na ERA5 series wano, kubanga enkola n’ensobi z’ensengekera zaawukana.</p>",
+      "deephist_body": "<p>Chati zitandika mu 1940 kubanga zikozesa enkola ya ERA5 reanalysis, nga likodi yaayo etandika omwaka ogwo. Data eyasooka eriwo (NOAA 20th-Century Reanalysis egenda okutuuka mu 1836, era siteegi ntono zirina ebiwandiiko by’ebyasa ebingi), naye zeesigamye ku kwetegereza okutono, nga tekunnabaawo setilayiti era etambuza obutali bukakafu obunene. Tekigattibwa na ERA5 series wano, kubanga enkola n'ensobi z'ensengekera zaawukana.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} ekwata emu ku likodi z’ebbugumu ly’ebikozesebwa ezisinga obuwanvu, okutandika ne {year}.</p>"
     },
     "lb": {
@@ -2496,7 +2496,7 @@
     },
     "hu": {
       "deephist_title": "Miért nincsenek 1940 előtti adatok?",
-      "deephist_body": "<p>A slágerlisták 1940-ben kezdődnek, mert az ERA5 újraelemzést használják, amelynek rekordja abban az évben kezdődik. Korábbi adatok is léteznek (a NOAA 20. századi újraanalízise 1836-ig terjed ki, és néhány állomás több évszázados rekordot tart fenn), de ezek ritkább, műhold előtti megfigyelésekre támaszkodnak, és nagyobb bizonytalanságot hordoznak magukban. Itt nincs összevonva az ERA5 sorozattal, mert a módszerek és a hibatartományok eltérőek.</p>",
+      "deephist_body": "<p>A slágerlisták 1940-ben kezdődnek, mert az ERA5 újraelemzést használják, amelynek rekordja abban az évben kezdődik. Korábbi adatok is léteznek (a NOAA 20. századi újraanalízise 1836-ig terjed ki, és néhány állomás több évszázados rekordokat is őriz), de ezek ritkább, műhold előtti megfigyelésekre támaszkodnak, és nagyobb bizonytalanságot hordoznak magukban. Itt nincs összevonva az ERA5 sorozattal, mert a módszerek és a hibatartományok eltérőek.</p>",
       "deephist_record": "A <p class=\"dh-here\">{label} tartja az egyik leghosszabb hangszer-hőmérsékletrekordot, {year}.</p>-től kezdve"
     },
     "mg": {
@@ -2506,7 +2506,7 @@
     },
     "mt": {
       "deephist_title": "Għaliex m'hemm l-ebda data qabel l-1940?",
-      "deephist_body": "<p>Iċ-ċarts jibdew fl-1940 minħabba li jużaw l-analiżi mill-ġdid ERA5, li r-rekord tagħha jibda dik is-sena. Teżisti dejta preċedenti (l-Analiżi mill-ġdid tas-Seklu 20 NOAA testendi għall-1836, u ftit stazzjonijiet għandhom rekords ta 'diversi sekli), iżda tiddependi fuq osservazzjonijiet aktar skarsi, qabel is-satelliti u ġġorr inċertezza akbar. Mhux magħqud mas-serje ERA5 hawnhekk, minħabba li l-metodi u l-firxiet ta' żbalji huma differenti.</p>",
+      "deephist_body": "<p>Iċ-ċarts jibdew fl-1940 minħabba li jużaw l-analiżi mill-ġdid ERA5, li r-rekord tagħha jibda dik is-sena. Teżisti dejta preċedenti (l-Analiżi mill-ġdid tas-Seklu 20 NOAA testendi sal-1836, u ftit stazzjonijiet għandhom rekords ta 'diversi sekli), iżda tiddependi fuq osservazzjonijiet aktar skarsi, qabel is-satelliti u ġġorr inċertezza akbar. Mhux magħqud mas-serje ERA5 hawnhekk, minħabba li l-metodi u l-firxiet ta' żbalji huma differenti.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} għandu wieħed mill-itwal rekords tat-temperatura strumentali, li jibda fi {year}.</p>"
     },
     "lus": {
@@ -2515,7 +2515,7 @@
       "deephist_record": "<p class=\"dh-here\">{label} hian instrumental temperature record rei ber zinga mi a nei a, {year} atanga tan a ni.</p>"
     },
     "mi": {
-      "deephist_title": "He aha te take kaore he raraunga i mua i te tau 1940?",
+      "deephist_title": "He aha te take karekau he raraunga i mua i te tau 1940?",
       "deephist_body": "<p>Ko nga tūtohi ka timata i te tau 1940 na te mea ka whakamahia e ratou te tātaritanga ERA5, ka timata tana rekoata i tera tau. Ko nga raraunga o mua atu (ko te NOAA 20th-Century Reanalysis ka toro atu ki te 1836, me etahi teihana kei te pupuri i nga rekoata mo nga rautau maha), engari ka whakawhirinaki ki nga tirohanga iti, i mua i te satellite me te nui ake o te koretake. Kaore i te hanumi ki te raupapa ERA5 i konei, na te mea he rereke nga tikanga me nga awhe hapa.</p>",
       "deephist_record": "Ko <p class=\"dh-here\">{label} e pupuri ana i tetahi o nga rekoata roa rawa atu o te pāmahana taputapu, timata mai i te {year}.</p>"
     },
@@ -2536,8 +2536,8 @@
     },
     "uz": {
       "deephist_title": "Nima uchun 1940 yilgacha ma'lumotlar yo'q?",
-      "deephist_body": "<p>Chartlar 1940-yilda boshlanadi, chunki ular ERA5 qayta tahlilidan foydalanadi, uning rekordi oʻsha yili boshlanadi. Ilgari ma'lumotlar mavjud (NOAA 20th-Century Reanalysis 1836 yilgacha cho'zilgan va bir nechta stantsiyalar ko'p asrlik rekordlarga ega), ammo u siyrakroq, sun'iy yo'ldoshdan oldingi kuzatuvlarga tayanadi va katta noaniqlikni keltirib chiqaradi. U bu yerda ERA5 seriyasi bilan birlashtirilmagan, chunki usullar va xato diapazonlari farqlanadi.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> dan boshlab eng uzun instrumental harorat rekordlaridan biriga ega."
+      "deephist_body": "<p>Chartlar 1940-yilda boshlanadi, chunki ular ERA5 qayta tahlilidan foydalanadi, uning rekordi oʻsha yili boshlanadi. Ilgari ma'lumotlar mavjud (NOAA 20-asrning qayta tahlili 1836 yilgacha cho'zilgan va bir nechta stantsiyalar ko'p asrlik rekordlarga ega), ammo u kamroq, sun'iy yo'ldoshdan oldingi kuzatuvlarga tayanadi va katta noaniqliklarga ega. U bu yerda ERA5 seriyasi bilan birlashtirilmagan, chunki usullar va xato diapazonlari farqlanadi.</p>",
+      "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> dan boshlangan eng uzun instrumental harorat rekordlaridan biriga ega."
     },
     "ro": {
       "deephist_title": "De ce nu există date înainte de 1940?",
@@ -2551,8 +2551,8 @@
     },
     "sm": {
       "deephist_title": "Aisea e leai ai ni faʻamatalaga aʻo leʻi oʻo i le 1940?",
-      "deephist_body": "<p>O siata e amata i le 1940 ona latou te fa'aogaina le ERA5 toe iloilo, o lona fa'amaumauga e amata i lena tausaga. O lo'o i ai fa'amaumauga muamua (le NOAA 20th-Century Reanalysis e o'o atu i le 1836, ma o nai nofoaga o lo'o umia fa'amaumauga mo le tele o seneturi), ae fa'alagolago i le va'ava'ai, va'ai satelite ma le tele o le le mautonu. E le tu'ufa'atasia ma le fa'asologa o le ERA5 iinei, aua e eseese auala ma mea sese.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} o lo'o umia se tasi o fa'amaumauga o le vevela e sili ona umi, amata mai i le {year}.</p>"
+      "deephist_body": "<p>O siata e amata i le 1940 ona latou te fa'aogaina le ERA5 toe iloilo, o lona fa'amaumauga e amata i lena tausaga. O lo'o i ai fa'amaumauga muamua (le NOAA 20th-Century Reanalysis e o'o atu i le 1836, ma o nai nofoaga o lo'o umia fa'amaumauga mo le tele o seneturi), ae fa'alagolago i le va'ava'ai, va'ai satelite ma le tele o le le mautonu. E le tu'ufa'atasia ma le fa'asologa o le ERA5 iinei, ona e 'ese'ese auala ma mea sese.</p>",
+      "deephist_record": "<p class=\"dh-here\">{label} o lo'o umia se tasi o fa'amaumauga o le vevela e sili ona umi, e amata i le {year}.</p>"
     },
     "st": {
       "deephist_title": "Hobaneng ho se na data pele ho 1940?",
@@ -2571,12 +2571,12 @@
     },
     "sk": {
       "deephist_title": "Prečo neexistujú žiadne údaje pred rokom 1940?",
-      "deephist_body": "<p>Tabuľky začínajú v roku 1940, pretože používajú reanalýzu ERA5, ktorej záznam začína v tom roku. Skoršie údaje existujú (reanalýza NOAA z 20. storočia siaha až do roku 1836 a niekoľko staníc má záznamy za viac storočí), ale spoliehajú sa na redšie pozorovania pred satelitmi a prinášajú väčšiu neistotu. Nie je tu zlúčený so sériou ERA5, pretože metódy a rozsahy chýb sa líšia.</p>",
+      "deephist_body": "<p>Tabuľky začínajú v roku 1940, pretože používajú reanalýzu ERA5, ktorej záznam začína v tom roku. Skoršie údaje existujú (reanalýza NOAA z 20. storočia siaha až do roku 1836 a niekoľko staníc má záznamy za viac storočí), ale spoliehajú sa na redšie pozorovania pred satelitom a prinášajú väčšiu neistotu. Nie je tu zlúčený so sériou ERA5, pretože metódy a rozsahy chýb sa líšia.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} drží jeden z najdlhších prístrojových teplotných rekordov, počnúc rokom {year}.</p>"
     },
     "sl": {
       "deephist_title": "Zakaj ni podatkov pred letom 1940?",
-      "deephist_body": "<p>Lestvice se začnejo leta 1940, ker uporabljajo ponovno analizo ERA5, katere zapis se začne tega leta. Prejšnji podatki obstajajo (ponovna analiza 20. stoletja NOAA sega do leta 1836 in nekaj postaj ima zapise iz več stoletij), vendar se opirajo na redkejša, predsatelitska opazovanja in prinašajo večjo negotovost. Tukaj ni združena s serijo ERA5, ker se metode in razponi napak razlikujejo.</p>",
+      "deephist_body": "<p>Lestvice se začnejo leta 1940, ker uporabljajo ponovno analizo ERA5, katere zapis se začne tega leta. Prejšnji podatki obstajajo (ponovna analiza NOAA iz 20. stoletja sega do leta 1836 in nekaj postaj ima zapise iz več stoletij), vendar se opirajo na redkejša, predsatelitska opazovanja in prinašajo večjo negotovost. Tukaj ni združena s serijo ERA5, ker se metode in razponi napak razlikujejo.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} ima enega najdaljših instrumentalnih temperaturnih rekordov, ki se začne leta {year}.</p>"
     },
     "so": {
@@ -2596,7 +2596,7 @@
     },
     "ts": {
       "deephist_title": "Ha yini ku nga ri na data emahlweni ka 1940?",
-      "deephist_body": "<p>Tichati ti sungula hi 1940 hikuva ti tirhisa ERA5 reanalysis, leyi rhekhodo ya yona yi sungulaka lembe rero. Data ya khale yi kona (NOAA 20th-Century Reanalysis yi anama ku ya fika hi 1836, naswona switichi swi nga ri swingani swi khome tirhekhodo ta malembe xidzana yo tala), kambe yi titshege hi ku langutisisa loku nga nyawuriki, ka le mahlweni ka sathelayiti naswona yi rhwala ku nga tiyiseki lokukulu. A yi hlanganisiwanga na nxaxamelo wa ERA5 laha, hikuva tindlela na swiyenge swa swihoxo swa hambana.</p>.",
+      "deephist_body": "<p>Tichati ti sungula hi 1940 hikuva ti tirhisa ERA5 reanalysis, leyi rhekhodo ya yona yi sungulaka lembe rero. Data ya khale yi kona (NOAA 20th-Century Reanalysis yi anama ku ya fika hi 1836, naswona switichi swi nga ri swingani swi khome tirhekhodo ta malembe xidzana yo tala), kambe yi titshege hi ku langutisisa loku nga nyawuriki, ka le mahlweni ka sathelayiti naswona yi rhwala ku nga tiyiseki lokukulu. A yi hlanganisiwanga na nxaxamelo wa ERA5 laha, hikuva tindlela na swiyenge swa swihoxo swa hambana.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} yi khome yin’wana ya tirhekhodo to leha swinene ta mahiselo ya switirhisiwa, ku sukela eka {year}.</p>."
     },
     "tk": {
@@ -2631,7 +2631,7 @@
     },
     "bg": {
       "deephist_title": "Защо няма данни преди 1940 г.?",
-      "deephist_body": "<p>Диаграмите започват през 1940 г., защото използват реанализа ERA5, чийто запис започва тази година. Съществуват по-ранни данни (реанализът на NOAA от 20-ти век се простира до 1836 г. и няколко станции държат многовековни записи), но те разчитат на по-редки, предсателитни наблюдения и носят по-голяма несигурност. Тук не е обединена със серията ERA5, защото методите и диапазоните на грешки се различават.</p>",
+      "deephist_body": "<p>Диаграмите започват през 1940 г., защото използват реанализа ERA5, чийто запис започва тази година. Съществуват по-ранни данни (Реанализът на NOAA от 20-ти век се простира до 1836 г. и няколко станции държат многовековни записи), но те разчитат на по-редки, предсателитни наблюдения и носят по-голяма несигурност. Тук не е обединена със серията ERA5, защото методите и диапазоните на грешки се различават.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} държи един от най-дългите инструментални температурни рекорди, започвайки през {year}.</p>"
     },
     "ky": {
@@ -2646,12 +2646,12 @@
     },
     "mn": {
       "deephist_title": "Яагаад 1940 оноос өмнөх мэдээлэл байхгүй байна вэ?",
-      "deephist_body": "<p>Графикууд нь 1940 онд эхэлсэн, учир нь тэд ERA5 дахин шинжилгээг ашигладаг бөгөөд тэр жилдээ бичлэг нь эхэлдэг. Өмнөх өгөгдөл байдаг (NOAA 20-р зууны дахин шинжилгээ нь 1836 он хүртэл үргэлжилдэг бөгөөд цөөн хэдэн станцууд олон зууны бүртгэлтэй байдаг), гэхдээ энэ нь илүү сийрэг, хиймэл дагуулын өмнөх ажиглалтад тулгуурладаг бөгөөд илүү том эргэлзээтэй байдаг. Арга болон алдааны хүрээ өөр өөр байдаг тул үүнийг ERA5 цувралтай нэгтгээгүй.</p>",
+      "deephist_body": "<p>Графикууд нь 1940 онд эхэлсэн, учир нь тэд ERA5 дахин шинжилгээг ашигладаг бөгөөд рекорд нь тухайн жилдээ эхэлдэг. Өмнөх өгөгдөл байдаг (NOAA 20-р зууны дахин шинжилгээ нь 1836 он хүртэл үргэлжилдэг бөгөөд цөөн хэдэн станцууд олон зууны бүртгэлтэй байдаг), гэхдээ энэ нь илүү сийрэг, хиймэл дагуулын өмнөх ажиглалтад тулгуурладаг бөгөөд илүү том эргэлзээтэй байдаг. Арга болон алдааны хүрээ өөр өөр байдаг тул үүнийг ERA5 цувралтай нэгтгээгүй.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} нь {year}.</p>-аас эхэлсэн багажийн температурын хамгийн урт рекордуудын нэг юм."
     },
     "sr": {
       "deephist_title": "Зашто нема података пре 1940. године?",
-      "deephist_body": "<p>Табеле почињу 1940. јер користе реанализу ЕРА5, чији запис почиње те године. Ранији подаци постоје (реанализа НОАА из 20. века протеже се до 1836. године, а неколико станица има вишевековне записе), али се ослања на ређа, пре-сателитска посматрања и носи већу несигурност. Овде није спојен са серијом ЕРА5, јер се методе и опсег грешке разликују.</p>",
+      "deephist_body": "<p>Табеле почињу 1940. јер користе реанализу ЕРА5, чији запис почиње те године. Ранији подаци постоје (реанализа НОАА из 20. века протеже се до 1836. године, а неколико станица има вишевековне записе), али се ослања на ређа, пре-сателитска посматрања и носи већу несигурност. Овде није спојен са ЕРА5 серијом, јер се методе и опсег грешке разликују.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} држи један од најдужих рекорда инструменталне температуре, почевши од {year}.</p>"
     },
     "tt": {
@@ -2666,7 +2666,7 @@
     },
     "kk": {
       "deephist_title": "Неліктен 1940 жылға дейінгі деректер жоқ?",
-      "deephist_body": "<p>Диаграммалар 1940 жылы басталады, себебі олар ERA5 қайта талдауын пайдаланады, оның жазбасы сол жылы басталады. Бұрынғы деректер бар (NOAA 20th-Century Reanalysis 1836 жылға дейін созылады және бірнеше станцияда көп ғасырлық жазбалар бар), бірақ ол сирек, жерсерікке дейінгі бақылауларға сүйенеді және үлкен белгісіздік тудырады. Мұнда ол ERA5 сериясымен біріктірілмеген, себебі әдістер мен қателік ауқымдары әртүрлі.</p>",
+      "deephist_body": "<p>Диаграммалар 1940 жылы басталады, себебі олар ERA5 қайта талдауын пайдаланады, оның жазбасы сол жылы басталады. Бұрынғы деректер бар (NOAA 20th-Century Reanalysis 1836 жылға дейін созылады және бірнеше станциялар көп ғасырлық жазбаларға ие), бірақ ол сирек, спутникке дейінгі бақылауларға сүйенеді және үлкен белгісіздік тудырады. Мұнда ол ERA5 сериясымен біріктірілмеген, себебі әдістер мен қателік ауқымдары әртүрлі.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> бастап ең ұзақ аспаптық температура рекордтарының біріне ие."
     },
     "hy": {
@@ -2676,17 +2676,17 @@
     },
     "yi": {
       "deephist_title": "פארוואס איז עס קיין דאַטן איידער 1940?",
-      "deephist_body": "<p> די טשאַרץ אָנהייבן אין 1940 ווייַל זיי נוצן די ERA5 ריאַנאַליסיס, וועמענס רעקאָרד סטאַרץ אַז יאָר. פריער דאַטן עקסיסטירן (די NOAA 20-יאָרהונדערט רעאַנאַליסיס יקסטענדז צו 1836, און עטלעכע סטיישאַנז האַלטן מאַלטי-יאָרהונדערט רעקאָרדס), אָבער עס רילייז אויף שיפּער, פאַר-סאַטעליט אַבזערוויישאַנז און טראגט גרעסערע אַנסערטאַנטי. עס איז נישט צונויפגיסן מיט די ERA5 סעריע דאָ, ווייַל די מעטהאָדס און טעות ריינדזשאַז זענען אַנדערש.</p>",
+      "deephist_body": "<p> די טשאַרץ אָנהייבן אין 1940 ווייַל זיי נוצן די ERA5 ריאַנאַליסיס, וועמענס רעקאָרד סטאַרץ אַז יאָר. פריער דאַטן עקסיסטירן (די NOAA 20th-Century Reanalysis יקסטענדז צו 1836, און עטלעכע סטיישאַנז האַלטן מאַלטי-יאָרהונדערט רעקאָרדס), אָבער עס רילייז אויף שיפּער, פאַר-סאַטעליט אַבזערוויישאַנז און טראגט גרעסערע אַנסערטאַנטי. עס איז נישט צונויפגיסן מיט די ERA5 סעריע דאָ, ווייַל די מעטהאָדס און טעות ריינדזשאַז זענען אַנדערש.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} האלט איינער פון די לאָנגעסט ינסטרומענטאַל טעמפּעראַטור רעקאָרדס, אָנהייב פון {year}.</p>"
     },
     "he": {
       "deephist_title": "מדוע אין נתונים לפני 1940?",
-      "deephist_body": "<p>התרשימים מתחילים ב-1940 מכיוון שהם משתמשים בניתוח מחדש של ERA5, שהרשומה שלו מתחילה באותה שנה. קיימים נתונים מוקדמים יותר (אנליזה מחדש של המאה ה-20 של NOAA משתרעת עד 1836, וכמה תחנות מחזיקות ברשומות של רב-מאה), אך היא מסתמכת על תצפיות דלילות יותר, טרום-לווייניות ונושאות אי ודאות גדולה יותר. זה לא מוזג עם סדרת ERA5 כאן, כי השיטות וטווחי השגיאות שונים.</p>",
+      "deephist_body": "<p>התרשימים מתחילים ב-1940 מכיוון שהם משתמשים בניתוח מחדש של ERA5, שהרשומה שלו מתחילה באותה שנה. קיימים נתונים מוקדמים יותר (אנליזה מחדש של המאה ה-20 של NOAA משתרעת עד 1836, ותחנות בודדות מחזיקות ברישומים מרובי-מאות), אך היא מסתמכת על תצפיות דלילות יותר, טרום-לווייניות ונושאות אי ודאות גדולה יותר. זה לא מוזג עם סדרת ERA5 כאן, כי השיטות וטווחי השגיאות שונים.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} מחזיק באחד משיאי הטמפרטורה האינסטרומנטליים הארוכים ביותר, שמתחיל ב{year}.</p>"
     },
     "ug": {
       "deephist_title": "نېمە ئۈچۈن 1940-يىلدىن بۇرۇن سانلىق مەلۇمات يوق؟",
-      "deephist_body": "<p> بۇ دىئاگراممىلار 1940-يىلى باشلىنىدۇ، چۈنكى ئۇلار ERA5 قايتا ئانالىز ئىشلىتىدۇ، ئۇلارنىڭ خاتىرىسى شۇ يىلى باشلىنىدۇ. ئىلگىرىكى سانلىق مەلۇماتلار مەۋجۇت (NOAA 20-ئەسىرنى قايتا تەھلىل قىلىش 1836-يىلغىچە كېڭىيىدۇ، بىر قانچە بېكەتتە كۆپ ئەسىرلىك خاتىرىلەر بار)، ئەمما ئۇ سىپارس، سۈنئىي ھەمراھتىن بۇرۇنقى كۆزىتىشكە تايىنىپ، تېخىمۇ چوڭ ئېنىقسىزلىقنى كەلتۈرۈپ چىقىرىدۇ. ئۇ بۇ يەردە ERA5 يۈرۈشلۈكى بىلەن بىرلەشتۈرۈلمىگەن، چۈنكى ئۇسۇل ۋە خاتالىق دائىرىسى ئوخشىمايدۇ.</p>",
+      "deephist_body": "<p> بۇ دىئاگراممىلار 1940-يىلى باشلىنىدۇ، چۈنكى ئۇلار ERA5 قايتا ئانالىز ئىشلىتىدۇ، ئۇلارنىڭ خاتىرىسى شۇ يىلى باشلىنىدۇ. ئىلگىرىكى سانلىق مەلۇماتلار مەۋجۇت (NOAA 20-ئەسىرنى قايتا تەھلىل قىلىش 1836-يىلغىچە كېڭىيىدۇ، بىر قانچە بېكەتتە كۆپ ئەسىرلىك خاتىرىلەر بار)، ئەمما ئۇ سىپارسېر، سۈنئىي ھەمراھتىن بۇرۇنقى كۆزىتىشكە تايىنىپ، تېخىمۇ چوڭ ئېنىقسىزلىقنى كەلتۈرۈپ چىقىرىدۇ. ئۇ بۇ يەردە ERA5 يۈرۈشلۈكى بىلەن بىرلەشتۈرۈلمىگەن، چۈنكى ئۇسۇل ۋە خاتالىق دائىرىسى ئوخشىمايدۇ.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} holds one of the longest instrumental temperature records, beginning in {year}.</p>"
     },
     "sd": {
@@ -2706,7 +2706,7 @@
     },
     "doi": {
       "deephist_title": "1940 तों पहलां दा कोई डाटा क्यों नहीं है?",
-      "deephist_body": "<p>चार्ट 1940 च शुरू होंदे न कीजे एह् ईआरए5 पुनर्विश्लेषण दा इस्तेमाल करदे न, जिसदा रिकार्ड उस साल शुरू होंदा ऐ। पैह् ले आंकड़े मौजूद न (एनओएए 20वीं सदी दा पुनर्विश्लेषण 1836 तगर फैले दा ऐ, ते किश स्टेशनें पर बहु-शताब्दी रिकार्ड न), पर एह् विरल, उपग्रह थमां पैह् ले अवलोकनें पर निर्भर करदा ऐ ते बड्डी अनिश्चितता गी लेइयै चलदा ऐ। एह् इत्थै ईआरए5 श्रृंखला कन्नै विलय नेईं कीता गेदा ऐ, की जे तरीके ते त्रुटि सीमाएं च अंतर ऐ।</p>",
+      "deephist_body": "<p>चार्ट 1940 च शुरू होंदे न कीजे एह् ईआरए5 पुनर्विश्लेषण दा इस्तेमाल करदे न, जिसदा रिकार्ड उस साल शुरू होंदा ऐ। पैह् ले आंकड़े मौजूद न (एनओएए 20वीं सदी दा पुनर्विश्लेषण 1836 तगर फैले दा ऐ, ते किश स्टेशनें पर बहु-शताब्दी रिकार्ड न), पर एह् विरल, उपग्रह थमां पैह् ले अवलोकनें पर निर्भर करदा ऐ ते बड्डी अनिश्चितता गी लेइयै चलदा ऐ। एह् इत्थै ईआरए5 श्रृंखला कन्नै विलय नेईं कीता गेदा ऐ, कीजे तरीके ते त्रुटि रेंज बक्ख-बक्ख न।</p>",
       "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> च शुरू होने आह् ले, सारें शा लंबे इंस्ट्रूमेंटल तापमान रिकार्डें च शामल ऐ।"
     },
     "ne": {
@@ -2721,17 +2721,17 @@
     },
     "mai": {
       "deephist_title": "1940 स पहिने के कोनो आंकड़ा किएक नहि अछि?",
-      "deephist_body": "<p>चार्ट 1940 मे शुरू होइत अछि कारण एहि मे ईआरए5 पुनर्विश्लेषण क उपयोग होइत अछि, जकर रिकॉर्ड ओहि साल शुरू होइत अछि | पहिने के आंकड़ा मौजूद छै (एनओएए केरऽ २०वीं सदी के पुनर्विश्लेषण १८३६ तलक फैललऽ छै, आरू कुछ स्टेशनऽ प॑ बहु-शताब्दी के रिकॉर्ड छै), लेकिन ई विरल, उपग्रह स॑ पहल॑ के अवलोकन प॑ निर्भर छै आरू एकरा स॑ बड़ऽ अनिश्चितता छै । एकरा एतय ERA5 श्रृंखला के साथ विलय नै करलऽ गेलऽ छै, कैन्हेंकि विधि आरू त्रुटि सीमा अलग-अलग छै.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> से शुरू होकर सबसे लम्बे वाद्य तापमान रिकॉर्ड में से एक रखता है।"
+      "deephist_body": "<p>चार्ट 1940 मे शुरू होइत अछि कारण एहि मे ईआरए5 पुनर्विश्लेषण के प्रयोग होइत अछि, जकर रिकॉर्ड ओहि साल शुरू होइत अछि | पहिने के आंकड़ा मौजूद छै (एनओएए केरऽ २०वीं सदी के पुनर्विश्लेषण १८३६ तलक फैललऽ छै, आरू कुछ स्टेशनऽ प॑ बहु-शताब्दी के रिकॉर्ड छै), लेकिन ई विरल, उपग्रह स॑ पहल॑ के अवलोकन प॑ निर्भर छै आरू एकरा स॑ बड़ऽ अनिश्चितता छै । एकरा एतय ERA5 श्रृंखला के साथ विलय नै करलऽ गेलऽ छै, कैन्हेंकि विधि आरू त्रुटि सीमा अलग-अलग छै.</p>",
+      "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> स शुरू होइत अछि, सबस लंबा वाद्य तापमान रिकॉर्ड में स एक अछि।"
     },
     "sa": {
       "deephist_title": "१९४० तमे वर्षात् पूर्वं किमर्थं दत्तांशः नास्ति?",
-      "deephist_body": "<p>चार्ट्स् १९४० तमे वर्षे आरभ्यन्ते यतोहि तेषु ERA5 पुनर्विश्लेषणस्य उपयोगः भवति, यस्य अभिलेखः तस्मिन् वर्षे आरभ्यते । पूर्वदत्तांशः विद्यते (एनओएए २० शताब्द्याः पुनर्विश्लेषणं १८३६ पर्यन्तं विस्तृतं भवति, तथा च कतिपयेषु स्टेशनेषु बहुशताब्दस्य अभिलेखाः सन्ति), परन्तु एतत् विरलतरेषु, उपग्रहपूर्वनिरीक्षणेषु अवलम्बते, बृहत्तरं अनिश्चिततां च वहति अत्र ERA5 श्रृङ्खलाया सह न विलीनं भवति, यतः विधिः त्रुटिपरिधिः च भिन्नः भवति।</p>",
+      "deephist_body": "<p>चार्ट्स् १९४० तमे वर्षे आरभ्यन्ते यतोहि तेषु ERA5 पुनर्विश्लेषणस्य उपयोगः भवति, यस्य अभिलेखः तस्मिन् वर्षे आरभ्यते । पूर्वदत्तांशः अस्ति (एनओएए २० शताब्द्याः पुनर्विश्लेषणं १८३६ पर्यन्तं विस्तृतं भवति, तथा च कतिपयेषु स्टेशनेषु बहुशताब्दस्य अभिलेखाः सन्ति), परन्तु एतत् विरलतरेषु, उपग्रहपूर्वनिरीक्षणेषु अवलम्बते, बृहत्तरं अनिश्चिततां च वहति अत्र ERA5 श्रृङ्खलाया सह न विलीनं भवति, यतः विधिः त्रुटिपरिधिः च भिन्नः भवति।</p>",
       "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> तः आरभ्य दीर्घतमानां वाद्यस्य तापमानस्य अभिलेखानां मध्ये एकं धारयति ।"
     },
     "as": {
       "deephist_title": "১৯৪০ চনৰ আগৰ কোনো তথ্য কিয় নাই?",
-      "deephist_body": "<p>চাৰ্টসমূহ ১৯৪০ চনৰ পৰা আৰম্ভ হয় কাৰণ ইয়াত ERA5 পুনৰ বিশ্লেষণ ব্যৱহাৰ কৰা হয়, যাৰ অভিলেখ সেই বছৰৰ পৰা আৰম্ভ হয়। পূৰ্বৰ তথ্য আছে (এন অ' এ এৰ ২০ শতিকাৰ পুনৰ বিশ্লেষণ ১৮৩৬ চনলৈকে বিস্তৃত, আৰু কেইটামান ষ্টেচনত বহু শতিকাৰ অভিলেখ আছে), কিন্তু ই বিৰল, উপগ্ৰহৰ পূৰ্বৰ পৰ্যবেক্ষণৰ ওপৰত নিৰ্ভৰশীল আৰু ই বৃহৎ অনিশ্চয়তা কঢ়িয়াই লৈ ফুৰে। ইয়াত ইয়াক ERA5 শৃংখলাৰ সৈতে একত্ৰিত কৰা হোৱা নাই, কাৰণ পদ্ধতি আৰু ভুলৰ পৰিসৰ পৃথক।</p>",
+      "deephist_body": "<p>চাৰ্টসমূহ ১৯৪০ চনৰ পৰা আৰম্ভ হয় কাৰণ ইয়াত ERA5 পুনৰ বিশ্লেষণ ব্যৱহাৰ কৰা হয়, যাৰ অভিলেখ সেই বছৰৰ পৰা আৰম্ভ হয়। পূৰ্বৰ তথ্য আছে (এন অ' এ এৰ ২০ শতিকাৰ পুনৰ বিশ্লেষণ ১৮৩৬ চনলৈকে বিস্তৃত, আৰু কেইটামান ষ্টেচনত বহু শতিকাৰ অভিলেখ আছে), কিন্তু ই বিৰল, উপগ্ৰহৰ পূৰ্বৰ পৰ্যবেক্ষণৰ ওপৰত নিৰ্ভৰশীল আৰু ই বৃহৎ অনিশ্চয়তা কঢ়িয়াই লৈ ফুৰে। ইয়াত ইয়াক ERA5 ছিৰিজৰ সৈতে একত্ৰিত কৰা হোৱা নাই, কাৰণ পদ্ধতি আৰু ভুলৰ পৰিসৰ পৃথক।</p>",
       "deephist_record": "<p class=\"dh-here\">{label} {year} ৰ পৰা আৰম্ভ কৰি আটাইতকৈ দীঘলীয়া যন্ত্ৰৰ উষ্ণতাৰ অভিলেখ ৰাখে।</p>"
     },
     "gu": {
@@ -2771,7 +2771,7 @@
     },
     "ti": {
       "deephist_title": "ስለምንታይ ቅድሚ 1940 ዳታ የለን?",
-      "deephist_body": "<p>እቶም ቻርትታት ካብ 1940 ይጅምሩ ምኽንያቱ ERA5 reanalysis ስለዝጥቀሙ፣ ክብረወሰኑ ካብታ ዓመት እቲኣ ይጅምር። ቅድሚ ሕጂ ዝነበረ መረዳእታ ኣሎ (ናይ NOAA 20th-Century Reanalysis ክሳብ 1836 ዝዝርጋሕ ኮይኑ፡ ውሑዳት መደበራት ድማ ናይ ብዙሕ ክፍለ ዘመናት መዛግብቲ ዝሓዙ እዮም)፡ እንተኾነ ግን ኣብ ስፍሕ ዝበለ፡ ቅድሚ ሳተላይት ዝነበረ ትዕዝብቲ ዝምርኮስን ዝዓበየ ዘይርጉጽነት ዝሓዘን እዩ። ኣብዚ ምስቲ ERA5 series ኣይተዋሃሃደን፣ ምኽንያቱ ኣገባባትን ደረጃታት ጌጋታትን ይፈላለዩ።</p>",
+      "deephist_body": "<p>እቶም ቻርትታት ካብ 1940 ይጅምሩ ምኽንያቱ ERA5 reanalysis ስለዝጥቀሙ፣ ክብረወሰኑ ካብታ ዓመት እቲኣ እዩ ዝጅምር። ቅድሚ ሕጂ ዝነበረ ዳታ ኣሎ (ናይ NOAA 20th-Century Reanalysis ክሳብ 1836 ዝዝርጋሕ ኮይኑ፡ ውሑዳት ጣብያታት ድማ ናይ ብዙሕ ክፍለ ዘመን መዛግብቲ ይሕዛ)፡ እንተኾነ ግን ኣብ ስሕት ዝበለ፡ ቅድሚ ሳተላይት ዝነበረ ትዕዝብቲ ዝምርኮስን ዝዓበየ ዘይርጉጽነት ዝሓዘን እዩ። ኣብዚ ምስቲ ERA5 series ኣይተዋሃሃደን፣ ምኽንያቱ ኣገባባትን ደረጃታት ጌጋታትን ይፈላለዩ።</p>",
       "deephist_record": "<p class=\"dh-here\">{label} ካብ {year} ጀሚሩ ካብ ዝነውሐ መዛግብቲ ሙቐት መሳርሒ ዝሓዘ እዩ።</p>"
     },
     "km": {
@@ -2782,65 +2782,85 @@
   },
   "ranktext": {
     "de": {
+      "rank_intro_countries": "Jedes Land wird danach eingestuft, wie schnell sich seine Städte im Durchschnitt erwärmen: der Trend in °C pro Jahrzehnt im Zeitraum 1940–2025. Suchen Sie nach Ihrem.",
       "cstat_cool": "{country}: {trend}°C pro Jahrzehnt seit 1940. Abkühlung, entgegen dem globalen Trend. Rang #{rank} von {total}."
     },
     "fr": {
+      "rank_intro_countries": "Chaque pays a été classé selon la vitesse moyenne de réchauffement de ses villes: la tendance en °C par décennie sur la période 1940-2025. Recherchez le vôtre.",
       "cstat_cool": "{country}: {trend}°C par décennie depuis 1940. Refroidissement, à contre-courant de la tendance mondiale. Rang n°{rank} sur {total}."
     },
     "es": {
+      "rank_intro_countries": "Cada país se clasificó según la rapidez con la que sus ciudades se están calentando en promedio: la tendencia en °C por década durante el período 1940-2025. Busca el tuyo.",
       "cstat_cool": "{country}: {trend}°C por década desde 1940. Enfriamiento, en contra de la tendencia global. Puesto #{rank} de {total}."
     },
     "uk": {
+      "rank_intro_countries": "Кожна країна оцінюється за середньою швидкістю нагрівання в містах: тенденція в °C за десятиліття протягом 1940-2025 років. Шукайте свій.",
       "cstat_cool": "{country}: {trend}°C за десятиліття з 1940 року. Похолодання всупереч глобальній тенденції. Рейтинг №{rank} з {total}."
     },
     "zh": {
-      "cstat_cool": "{country}：自 1940 年以来每十年{trend}°C。降温，与全球趋势相反。排名#{rank}/{total}。"
+      "rank_intro_countries": "每个国家都根据其城市平均变暖速度进行排名：1940-2025 年每十年的摄氏度趋势。寻找你的。",
+      "cstat_cool": "{country}：自 1940 年以来每十年{trend}°C。降温，与全球趋势相反。排名#{rank} {total}。"
     },
     "hi": {
+      "rank_intro_countries": "प्रत्येक देश की रैंकिंग इस आधार पर की जाती है कि उसके शहर औसतन कितनी तेजी से गर्म हो रहे हैं: 1940-2025 के दौरान प्रति दशक डिग्री सेल्सियस की प्रवृत्ति। अपने लिए खोजें.",
       "cstat_cool": "{country}: {trend}°C 1940 से प्रति दशक। वैश्विक प्रवृत्ति के विपरीत शीतलन। {total} में से रैंक #{rank}."
     },
     "ar": {
+      "rank_intro_countries": "تم تصنيف كل دولة حسب مدى سرعة ارتفاع درجة حرارة مدنها في المتوسط: الاتجاه بالدرجات المئوية لكل عقد خلال الفترة من 1940 إلى 2025. ابحث عن ملكك.",
       "cstat_cool": "{country}: {trend} درجة مئوية لكل عقد منذ عام 1940. التبريد عكس الاتجاه العالمي. المرتبة رقم {rank} من {total}."
     },
     "pt": {
+      "rank_intro_countries": "Cada país é classificado pela rapidez com que as suas cidades estão a aquecer, em média: a tendência em °C por década entre 1940-2025. Procure o seu.",
       "cstat_cool": "{country}: {trend}°C por década desde 1940. Resfriamento, contra a tendência global. Classificação #{rank} de {total}."
     },
     "bn": {
+      "rank_intro_countries": "প্রতিটি দেশের শহরগুলি গড়ে কত দ্রুত উষ্ণ হচ্ছে তার উপর ভিত্তি করে র‍্যাঙ্ক করা হয়েছে: 1940-2025 সালের মধ্যে প্রতি দশকে °C এর প্রবণতা। আপনার জন্য অনুসন্ধান করুন.",
       "cstat_cool": "{country}: 1940 সাল থেকে প্রতি দশকে {trend}°C। শীতল, বৈশ্বিক প্রবণতার বিরুদ্ধে। র‍্যাঙ্ক #{rank} এর {total}।"
     },
     "ru": {
+      "rank_intro_countries": "Каждая страна ранжирована по тому, насколько быстро в среднем нагреваются ее города: тенденция в °C за десятилетие в период с 1940 по 2025 год. Ищите свой.",
       "cstat_cool": "{country}: {trend}°C за десятилетие с 1940 года. Похолодание вопреки глобальной тенденции. Ранг №{rank} из {total}."
     },
     "id": {
+      "rank_intro_countries": "Setiap negara diberi peringkat berdasarkan seberapa cepat rata-rata kota-kotanya mengalami pemanasan: tren dalam °C per dekade selama tahun 1940-2025. Cari milikmu.",
       "cstat_cool": "{country}: {trend}°C per dekade sejak 1940. Pendinginan berlawanan dengan tren global. Peringkat #{rank} dari {total}."
     },
     "ja": {
+      "rank_intro_countries": "すべての国は、都市の平均温暖化速度、つまり 1940 年から 2025 年の 10 年あたりの℃の傾向によってランク付けされました。あなたのものを探してください。",
       "cstat_cool": "{country}: 1940 年以降、10 年ごとに {trend}°C。世界的な傾向に反して寒冷化。ランク #{rank}/{total}。"
     },
     "ur": {
+      "rank_intro_countries": "ہر ملک کی درجہ بندی کی جاتی ہے کہ اس کے شہر اوسطاً کتنی تیزی سے گرم ہو رہے ہیں: 1940-2025 کے دوران °C فی دہائی میں رجحان۔ اپنی تلاش کریں۔",
       "cstat_cool": "{country}: 1940 سے فی دہائی {trend}°C۔ ٹھنڈک، عالمی رجحان کے خلاف۔ {total} کا #{rank} درجہ۔"
     },
     "it": {
+      "rank_intro_countries": "Ogni paese è stato classificato in base alla velocità media di riscaldamento delle sue città: la tendenza in °C per decennio nel periodo 1940-2025. Cerca il tuo.",
       "cstat_cool": "{country}: {trend}°C per decennio dal 1940. Raffreddamento, contro la tendenza globale. Classifica #{rank} su {total}."
     },
     "tr": {
+      "rank_intro_countries": "Her ülke, şehirlerinin ortalama ne kadar hızlı ısındığına göre sıralanıyor: 1940-2025 yılları arasında on yıl başına °C cinsinden eğilim. Sizinkini arayın.",
       "cstat_cool": "{country}: 1940'tan bu yana her on yılda {trend}°C. Küresel eğilimin aksine soğuma. Sıra #{rank} / {total}."
     },
     "ko": {
-      "cstat_cool": "{country}: 1940년 이후 10년마다 {trend}°C. 글로벌 추세에 비해 냉각됩니다. {total} 중 #{rank} 순위입니다."
+      "rank_intro_countries": "모든 국가는 도시가 평균적으로 얼마나 빨리 따뜻해지고 있는지에 따라 순위가 매겨져 있습니다. 추세는 1940~2025년 동안 10년당 °C입니다. 당신의 것을 검색하십시오.",
+      "cstat_cool": "{country}: 1940년 이후 10년마다 {trend}°C. 세계적인 추세에 반하는 냉각입니다. {total} 중 #{rank} 순위입니다."
     },
     "fa": {
+      "rank_intro_countries": "هر کشور بر اساس سرعت گرم شدن شهرهایش به طور متوسط ​​رتبه بندی می شود: روند درجه سانتی گراد در هر دهه طی سال های 1940-2025. مال خودت را جستجو کن",
       "cstat_cool": "{country}: {trend} درجه سانتی گراد در هر دهه از سال 1940. خنک کننده، برخلاف روند جهانی. رتبه #{rank} از {total}."
     },
     "vi": {
+      "rank_intro_countries": "Mỗi quốc gia được xếp hạng theo tốc độ nóng lên trung bình của các thành phố: xu hướng tính theo °C mỗi thập kỷ trong giai đoạn 1940-2025. Tìm kiếm của bạn.",
       "cstat_cool": "{country}: {trend}°C mỗi thập kỷ kể từ năm 1940. Hạ nhiệt, đi ngược lại xu hướng toàn cầu. Xếp hạng #{rank} trên {total}."
     },
     "nl": {
+      "rank_intro_countries": "Elk land gerangschikt op basis van hoe snel zijn steden gemiddeld opwarmen: de trend in °C per decennium in de periode 1940-2025. Zoek naar de jouwe.",
       "cstat_cool": "{country}: {trend}°C per decennium sinds 1940. Afkoeling, tegen de mondiale trend in. Rang #{rank} van {total}."
     },
     "sw": {
       "rank_title": "Kiwango cha ongezeko la joto duniani",
-      "rank_intro": "Kila jiji limeorodheshwa kulingana na kasi ya ongezeko la joto: mwelekeo wa °C kwa muongo wa 1940-2025. Tafuta yako.",
+      "rank_intro": "Kila jiji limeorodheshwa kulingana na kasi ya ongezeko la joto: mwelekeo wa °C kwa muongo zaidi ya 1940-2025. Tafuta yako.",
+      "rank_intro_countries": "Kila nchi imeorodheshwa kulingana na kasi ya ongezeko la joto katika miji yake kwa wastani: hali ya °C kwa kila muongo zaidi ya 1940-2025. Tafuta yako.",
       "rank_city": "Jiji",
       "rank_country": "Nchi",
       "rank_search": "Tafuta mji...",
@@ -2855,6 +2875,7 @@
     "tl": {
       "rank_title": "Ranggo ng pag-init ng mundo",
       "rank_intro": "Ang bawat lungsod ay niraranggo ayon sa kung gaano kabilis ang pag-init: ang trend sa °C bawat dekada sa paglipas ng 1940-2025. Maghanap para sa iyo.",
+      "rank_intro_countries": "Ang bawat bansa ay niraranggo ayon sa kung gaano kabilis ang pag-init ng mga lungsod nito sa karaniwan: ang trend sa °C bawat dekada sa loob ng 1940-2025. Maghanap para sa iyo.",
       "rank_city": "lungsod",
       "rank_country": "Bansa",
       "rank_search": "Maghanap ng lungsod…",
@@ -2869,6 +2890,7 @@
     "th": {
       "rank_title": "อันดับภาวะโลกร้อน",
       "rank_intro": "ทุกเมืองจัดอันดับตามความเร็วของภาวะโลกร้อน: แนวโน้มเป็น °C ต่อทศวรรษในช่วงปี 1940-2025 ค้นหาของคุณ",
+      "rank_intro_countries": "ทุกประเทศจัดอันดับตามความเร็วของเมืองที่ร้อนขึ้นโดยเฉลี่ย: แนวโน้มเป็น °C ต่อทศวรรษในช่วงปี 1940-2025 ค้นหาของคุณ",
       "rank_city": "เมือง",
       "rank_country": "ประเทศ",
       "rank_search": "ค้นหาเมือง...",
@@ -2883,6 +2905,7 @@
     "ta": {
       "rank_title": "உலக வெப்பமயமாதல் தரவரிசை",
       "rank_intro": "ஒவ்வொரு நகரமும் எவ்வளவு வேகமாக வெப்பமடைகிறது என்பதன் அடிப்படையில் தரவரிசைப்படுத்தப்பட்டுள்ளது: 1940-2025 இல் ஒரு தசாப்தத்திற்கு °C இன் போக்கு. உங்களுடையதைத் தேடுங்கள்.",
+      "rank_intro_countries": "ஒவ்வொரு நாடும் அதன் நகரங்கள் சராசரியாக எவ்வளவு வேகமாக வெப்பமடைகின்றன என்பதன் அடிப்படையில் தரவரிசைப்படுத்தப்பட்டுள்ளன: 1940-2025 இல் ஒரு தசாப்தத்திற்கு °C இன் போக்கு. உங்களுடையதைத் தேடுங்கள்.",
       "rank_city": "நகரம்",
       "rank_country": "நாடு",
       "rank_search": "ஒரு நகரத்தைக் கண்டுபிடி…",
@@ -2897,6 +2920,7 @@
     "mr": {
       "rank_title": "जागतिक तापमानवाढ रँकिंग",
       "rank_intro": "तापमानवाढ किती वेगाने होत आहे यानुसार प्रत्येक शहराची रँक: 1940-2025 मध्ये दर दशकात °C मध्ये कल. तुमचा शोध घ्या.",
+      "rank_intro_countries": "प्रत्येक देशाची शहरे सरासरी किती वेगाने तापमानवाढ होत आहेत यानुसार क्रमवारी लावली आहे: 1940-2025 मध्ये दर दशकात °C मध्ये कल. तुमचा शोध घ्या.",
       "rank_city": "शहर",
       "rank_country": "देश",
       "rank_search": "शहर शोधा...",
@@ -2911,6 +2935,7 @@
     "te": {
       "rank_title": "వరల్డ్ వార్మింగ్ ర్యాంకింగ్",
       "rank_intro": "ప్రతి నగరం వేడెక్కుతున్న వేగాన్ని బట్టి ర్యాంక్ చేయబడింది: 1940-2025లో దశాబ్దానికి °C ట్రెండ్. మీ కోసం వెతకండి.",
+      "rank_intro_countries": "ప్రతి దేశం దాని నగరాలు సగటున ఎంత వేగంగా వేడెక్కుతున్నాయో దాని ఆధారంగా ర్యాంక్ చేయబడింది: 1940-2025లో దశాబ్దానికి °C ట్రెండ్. మీ కోసం వెతకండి.",
       "rank_city": "నగరం",
       "rank_country": "దేశం",
       "rank_search": "నగరాన్ని కనుగొనండి...",
@@ -2925,6 +2950,7 @@
     "ha": {
       "rank_title": "Matsayin dumamar yanayi",
       "rank_intro": "Kowane birni yana da yadda yake saurin ɗumamawa: yanayin yanayin °C a cikin shekaru goma sama da 1940-2025. Nemo naku.",
+      "rank_intro_countries": "Kowace ƙasa tana da saurin yadda biranenta ke ɗumamawa a matsakaici: yanayin yanayin ° C a kowace shekara sama da 1940-2025. Nemo naku.",
       "rank_city": "Garin",
       "rank_country": "Ƙasa",
       "rank_search": "Nemo birni…",
@@ -2939,6 +2965,7 @@
     "pa": {
       "rank_title": "ਵਿਸ਼ਵ ਵਾਰਮਿੰਗ ਦਰਜਾਬੰਦੀ",
       "rank_intro": "ਹਰ ਸ਼ਹਿਰ ਇਸ ਗੱਲ 'ਤੇ ਦਰਜਾਬੰਦੀ ਕਰਦਾ ਹੈ ਕਿ ਇਹ ਕਿੰਨੀ ਤੇਜ਼ੀ ਨਾਲ ਗਰਮ ਹੋ ਰਿਹਾ ਹੈ: 1940-2025 ਵਿੱਚ ਪ੍ਰਤੀ ਦਹਾਕੇ ਵਿੱਚ °C ਦਾ ਰੁਝਾਨ। ਤੁਹਾਡੇ ਲਈ ਖੋਜ ਕਰੋ.",
+      "rank_intro_countries": "ਹਰ ਦੇਸ਼ ਇਸ ਗੱਲ 'ਤੇ ਦਰਜਾਬੰਦੀ ਕਰਦਾ ਹੈ ਕਿ ਇਸ ਦੇ ਸ਼ਹਿਰ ਔਸਤਨ ਕਿੰਨੀ ਤੇਜ਼ੀ ਨਾਲ ਗਰਮ ਹੋ ਰਹੇ ਹਨ: 1940-2025 ਵਿੱਚ ਪ੍ਰਤੀ ਦਹਾਕੇ ਵਿੱਚ °C ਦਾ ਰੁਝਾਨ। ਤੁਹਾਡੇ ਲਈ ਖੋਜ ਕਰੋ.",
       "rank_city": "ਸ਼ਹਿਰ",
       "rank_country": "ਦੇਸ਼",
       "rank_search": "ਇੱਕ ਸ਼ਹਿਰ ਲੱਭੋ...",
@@ -2953,6 +2980,7 @@
     "my": {
       "rank_title": "ကမ္ဘာကြီးပူနွေးလာမှုအဆင့်",
       "rank_intro": "မြို့တိုင်းသည် ပူနွေးလာမှု မည်မျှမြန်သည်ကို အဆင့်သတ်မှတ်သည်- 1940-2025 ကျော်ဆယ်စုနှစ်တစ်ခုလျှင်°C ၏လမ်းကြောင်း။ သင့်အတွက် ရှာဖွေပါ။",
+      "rank_intro_countries": "နိုင်ငံတိုင်းသည် ၎င်း၏မြို့ကြီးများပူနွေးမှု ပျမ်းမျှအားဖြင့် မည်မျှမြန်ဆန်သည်ကို အဆင့်သတ်မှတ်သည်- 1940-2025 ကျော်ဆယ်စုနှစ်တစ်ခုလျှင်°C ၏လမ်းကြောင်း။ သင့်အတွက် ရှာဖွေပါ။",
       "rank_city": "မြို",
       "rank_country": "တိုင်းပြည်",
       "rank_search": "မြို့ကိုရှာပါ...",
@@ -2967,6 +2995,7 @@
     "am": {
       "rank_title": "የአለም ሙቀት መጨመር ደረጃ",
       "rank_intro": "እያንዳንዱ ከተማ በምን ያህል ፍጥነት እየሞቀ እንደሆነ ደረጃ ይዛለች፡ በ1940-2025 በዲግሪ ሴንቲግሬድ ያለው አዝማሚያ። የእርስዎን ይፈልጉ።",
+      "rank_intro_countries": "እያንዳንዱ ሀገር ከተሞቿ በአማካይ በምን ያህል ፍጥነት እየሞቀ እንደሆነ ደረጃ ይዛለች፡ በ1940-2025 በዲግሪ ሴንቲግሬድ ያለው አዝማሚያ። የእርስዎን ይፈልጉ።",
       "rank_city": "ከተማ",
       "rank_country": "ሀገር",
       "rank_search": "ከተማ አግኝ…",
@@ -2981,6 +3010,7 @@
     "yo": {
       "rank_title": "Aye imorusi ranking",
       "rank_intro": "Gbogbo ilu ni ipo nipasẹ bi o ṣe yara ni igbona: aṣa ni °C fun ọdun mẹwa ju 1940-2025. Wa tire.",
+      "rank_intro_countries": "Gbogbo orilẹ-ede ni ipo nipasẹ bii iyara awọn ilu rẹ ti n gbona ni apapọ: aṣa ni °C fun ọdun mẹwa ju 1940-2025 lọ. Wa tire.",
       "rank_city": "Ilu",
       "rank_country": "Orilẹ-ede",
       "rank_search": "Wa ilu kan…",
@@ -2995,6 +3025,7 @@
     "af": {
       "rank_title": "Wêreldverwarming ranglys",
       "rank_intro": "Elke stad word gerangskik volgens hoe vinnig dit opwarm: die neiging in °C per dekade oor 1940-2025. Soek vir joune.",
+      "rank_intro_countries": "Elke land word gerangskik volgens hoe vinnig sy stede gemiddeld opwarm: die neiging in °C per dekade oor 1940-2025. Soek vir joune.",
       "rank_city": "Stad",
       "rank_country": "Land",
       "rank_search": "Soek 'n stad...",
@@ -3008,7 +3039,8 @@
     },
     "ak": {
       "rank_title": "Wiase nyinaa hyew ho nhyehyɛe",
-      "rank_intro": "Kurow biara de sɛnea ɛyɛ hyew ntɛmntɛm no toto ho: sɛnea °C kɔ so wɔ mfe du biara mu wɔ 1940-2025 mu. Hwehwɛ wo de.",
+      "rank_intro": "Kurow biara a wɔde toto sɛnea ɛyɛ hyew ntɛmntɛm no so: sɛnea °C kɔ so wɔ mfe du biara mu wɔ 1940-2025 mu. Hwehwɛ wo de.",
+      "rank_intro_countries": "Ɔman biara de sɛnea ne nkuropɔn mu hyew ntɛmntɛm no toto ho: sɛnea °C kɔ soro wɔ mfe du biara mu wɔ 1940-2025 mu. Hwehwɛ wo de.",
       "rank_city": "Kurow no mu",
       "rank_country": "Ɔman",
       "rank_search": "Hwehwɛ kurow bi...",
@@ -3023,6 +3055,7 @@
     "gn": {
       "rank_title": "Ranking mundial calentamiento rehegua",
       "rank_intro": "Mayma táva oñemohenda mba'éichapa pya'e haku: tendencia °C por década 1940-2025 jave. Eheka nde mba’éva.",
+      "rank_intro_countries": "Mayma tetã oñemohenda mba'éichapa pya'e itavaguasukuéra oñembopiro'y promedio: tendencia °C por década 1940-2025 jave. Eheka nde mba’éva.",
       "rank_city": "Táva",
       "rank_country": "Tetã",
       "rank_search": "Eheka peteĩ táva...",
@@ -3037,6 +3070,7 @@
     "ay": {
       "rank_title": "Uraqpachan junt’uñapatakix ranking ukaw utji",
       "rank_intro": "Sapa markax kunjams jank’ak junt’uchasi ukarjamaw uñt’ayasi: °C tunka maranakanx 1940-2025 maranakanx juk’ampiw jilxattawayi. Jumanak thaqhapxam.",
+      "rank_intro_countries": "Sapa markax kunjams markanakapax promedio ukarjam jank’ak junt’uchasipxi ukarjamaw uñt’ayasi: 1940-2025 maranakanx °C ukharuw tunka maranakanx jilxattawayi. Jumanak thaqhapxam.",
       "rank_city": "Marka",
       "rank_country": "Marka",
       "rank_search": "Mä marka jikxataña...",
@@ -3051,6 +3085,7 @@
     "az": {
       "rank_title": "Dünya istiləşmə reytinqi",
       "rank_intro": "Hər bir şəhər istiləşmə sürətinə görə sıralanır: 1940-2025-ci illər ərzində hər on ildə °C tendensiyası. Özünüzü axtarın.",
+      "rank_intro_countries": "Hər bir ölkə şəhərlərinin orta hesabla nə qədər sürətlə istiləşməsinə görə sıralanır: 1940-2025-ci illər ərzində hər on ildə °C tendensiyası. Özünüzü axtarın.",
       "rank_city": "Şəhər",
       "rank_country": "ölkə",
       "rank_search": "Şəhər tap...",
@@ -3060,11 +3095,12 @@
       "cstat_cool": "{country}: 1940-cı ildən bəri hər on ildə {trend}°C. Qlobal tendensiyaya qarşı soyutma. {total} arasından {rank} dərəcə.",
       "rank_more": "Daha çox göstər",
       "rank_cities": "Şəhərlər",
-      "rank_countries": "Ölkələr"
+      "rank_countries": "ölkələr"
     },
     "ms": {
       "rank_title": "Kedudukan pemanasan dunia",
       "rank_intro": "Setiap bandar diberi kedudukan mengikut kelajuan pemanasan: arah aliran dalam °C setiap dekad sepanjang 1940-2025. Cari milik anda.",
+      "rank_intro_countries": "Setiap negara ditarafkan mengikut kelajuan bandarnya secara purata: arah aliran dalam °C setiap dekad sepanjang 1940-2025. Cari milik anda.",
       "rank_city": "Bandar",
       "rank_country": "Negara",
       "rank_search": "Cari bandar…",
@@ -3079,12 +3115,13 @@
     "bm": {
       "rank_title": "Diɲɛ sumaya jatebɔ",
       "rank_intro": "Dugu bɛɛ bɛ jate ka kɛɲɛ ni a sumaya teliya ye cogo min na: °C hakɛ min bɛ san tan kɔnɔ san 1940-2025 kɔnɔ. Aw ye aw ta ɲini.",
+      "rank_intro_countries": "Jamana bɛɛ bɛ jate ka kɛɲɛ n’a ka duguw bɛ ka sumaya teliya la cogo min na ni u cɛmancɛ ye: °C hakɛ min bɛ san tan kɔnɔ san 1940-2025 kɔnɔ. Aw ye aw ta ɲini.",
       "rank_city": "Dugu",
       "rank_country": "Jamana",
       "rank_search": "Dugu dɔ ɲini...",
       "rank_empty": "Dugu si tɛ bɛn o ɲinini ma.",
       "cstat_title": "Aw ka jamana bɛ ka sumaya cogo di?",
-      "cstat_line": "{country}: {trend}°C san tan kɔnɔ kabini san 1940, o teliya ka tɛmɛ {pct}% kan diɲɛ kɔnɔ. Jateden #{rank} ye {total} ye.",
+      "cstat_line": "{country}: {trend}°C san tan kɔnɔ kabini san 1940, a teliya ka tɛmɛ {pct}% kan diɲɛ kɔnɔ. Jateden #{rank} ye {total} ye.",
       "cstat_cool": "{country}: {trend}°C san tan kɔnɔ kabini san 1940. Nɛnɛ, ka kɛɲɛ ni diɲɛ taabolo ye. Jateden #{rank} ye {total} ye.",
       "rank_more": "Aw ye dɔ wɛrɛw jira",
       "rank_cities": "Dugubaw",
@@ -3093,6 +3130,7 @@
     "su": {
       "rank_title": "Peringkat pemanasan dunya",
       "rank_intro": "Unggal kota rengking ku sabaraha gancang pemanasan: tren dina ° C per dasawarsa leuwih 1940-2025. Pilarian pikeun anjeun.",
+      "rank_intro_countries": "Unggal nagara rengking ku sabaraha gancang kotana rata-rata pamanasan: tren dina °C per dasawarsa leuwih 1940-2025. Pilarian pikeun anjeun.",
       "rank_city": "Kota",
       "rank_country": "Nagara",
       "rank_search": "Manggihan kota…",
@@ -3107,6 +3145,7 @@
     "bs": {
       "rank_title": "Rangiranje za zagrijavanje svijeta",
       "rank_intro": "Svaki grad rangiran prema brzini zagrijavanja: trend u °C po deceniji tokom 1940-2025. Potražite svoje.",
+      "rank_intro_countries": "Svaka zemlja rangirana prema tome koliko se njeni gradovi u prosjeku zagrijavaju: trend u °C po deceniji tokom 1940-2025. Potražite svoje.",
       "rank_city": "Grad",
       "rank_country": "Država",
       "rank_search": "Pronađite grad…",
@@ -3121,6 +3160,7 @@
     "ca": {
       "rank_title": "Rànquing de l'escalfament mundial",
       "rank_intro": "Classificació de totes les ciutats segons la velocitat amb què s'escalfa: la tendència en °C per dècada durant el període 1940-2025. Busca el teu.",
+      "rank_intro_countries": "Classificació de tots els països segons la velocitat amb què s'escalfa de mitjana les seves ciutats: la tendència en °C per dècada durant el període 1940-2025. Busca el teu.",
       "rank_city": "Ciutat",
       "rank_country": "País",
       "rank_search": "Troba una ciutat...",
@@ -3135,6 +3175,7 @@
     "ceb": {
       "rank_title": "Ranggo sa pagpainit sa kalibutan",
       "rank_intro": "Ang matag siyudad giranggo sa kung unsa ka paspas ang pag-init: ang uso sa °C kada dekada sa 1940-2025. Pangitaa ang imoha.",
+      "rank_intro_countries": "Ang matag nasud nga giranggo kung unsa ka paspas ang pag-init sa mga lungsod niini sa aberids: ang uso sa °C matag dekada sa 1940-2025. Pangitaa ang imoha.",
       "rank_city": "Dakbayan",
       "rank_country": "Nasud",
       "rank_search": "Pangitag siyudad…",
@@ -3149,13 +3190,14 @@
     "zh-TW": {
       "rank_title": "世界暖化排名",
       "rank_intro": "每個城市都根據暖化速度進行排名：1940-2025 年每十年的攝氏度趨勢。尋找你的。",
+      "rank_intro_countries": "每個國家都根據其城市平均暖化速度進行排名：1940-2025 年每十年的攝氏度趨勢。尋找你的。",
       "rank_city": "城市",
       "rank_country": "國家",
       "rank_search": "尋找一個城市...",
       "rank_empty": "沒有城市與該搜尋相符。",
       "cstat_title": "你的國家暖化情況如何？",
       "cstat_line": "{country}：自 1940 年以來每十年上升 {trend}°C，比世界上 {pct}% 的速度要快。排名#{rank}/{total}。",
-      "cstat_cool": "{country}：自 1940 年起每十年{trend}°C。降溫，與全球趨勢相反。排名#{rank}/{total}。",
+      "cstat_cool": "{country}：自 1940 年起每十年{trend}°C。降溫，與全球趨勢相反。排名#{rank} {total}。",
       "rank_more": "顯示更多",
       "rank_cities": "城市",
       "rank_countries": "國家"
@@ -3163,6 +3205,7 @@
     "sn": {
       "rank_title": "World warming ranking",
       "rank_intro": "Guta rega rega rakaverengerwa nekukurumidza kwariri kudziya: maitiro mu ° C pamakore gumi pamusoro pe1940-2025. Tsvaga yako.",
+      "rank_intro_countries": "Nyika yega yega yakaverengerwa nekukurumidza maguta ayo ari kudziya paavhareji: maitiro mu ° C pamakore gumi pamusoro pe1940-2025. Tsvaga yako.",
       "rank_city": "Guta",
       "rank_country": "Nyika",
       "rank_search": "Tsvaga guta…",
@@ -3175,15 +3218,16 @@
       "rank_countries": "Nyika"
     },
     "co": {
-      "rank_title": "Classifica di u riscaldamentu mundiale",
-      "rank_intro": "Ogni cità classificata da a rapidità di u riscaldamentu: a tendenza in °C per decenniu annantu à u 1940-2025. Cercate u vostru.",
+      "rank_title": "Classificazione di u riscaldamentu mundiale",
+      "rank_intro": "Ogni cità classificata da a velocità di u riscaldamentu: a tendenza in °C per decenniu annantu à u 1940-2025. Cercate u vostru.",
+      "rank_intro_countries": "Ogni paese classificatu da quantu veloce e so cità si riscaldanu in media: a tendenza in °C per decenniu annantu à 1940-2025. Cercate u vostru.",
       "rank_city": "Cità",
       "rank_country": "Paese",
       "rank_search": "Truvate una cità…",
       "rank_empty": "Nisuna cità currisponde à quella ricerca.",
       "cstat_title": "Cumu si riscalda u vostru paese?",
       "cstat_line": "{country}: {trend}°C per decenniu da u 1940, più veloce di {pct}% di u mondu. Classifica #{rank} di {total}.",
-      "cstat_cool": "{country}: {trend}°C per decenniu da u 1940. Cooling, contru à a tendenza glubale. Classifica #{rank} di {total}.",
+      "cstat_cool": "{country}: {trend}°C per decenniu da 1940. Cooling, contru à a tendenza glubale. Classifica #{rank} di {total}.",
       "rank_more": "Mostra di più",
       "rank_cities": "I cità",
       "rank_countries": "I paesi"
@@ -3191,6 +3235,7 @@
     "cy": {
       "rank_title": "Safle cynhesu byd",
       "rank_intro": "Pob dinas wedi'i rhestru yn ôl pa mor gyflym y mae'n cynhesu: y duedd mewn °C y degawd dros 1940-2025. Chwiliwch am eich un chi.",
+      "rank_intro_countries": "Mae pob gwlad wedi'i rhestru yn ôl pa mor gyflym y mae ei dinasoedd yn cynhesu ar gyfartaledd: y duedd mewn °C y degawd dros 1940-2025. Chwiliwch am eich un chi.",
       "rank_city": "Dinas",
       "rank_country": "Gwlad",
       "rank_search": "Dewch o hyd i ddinas…",
@@ -3205,6 +3250,7 @@
     "da": {
       "rank_title": "Verdensopvarmningsranglisten",
       "rank_intro": "Hver by rangeres efter, hvor hurtigt den opvarmes: tendensen i °C pr. årti over 1940-2025. Søg efter din.",
+      "rank_intro_countries": "Hvert land er rangeret efter, hvor hurtigt dets byer i gennemsnit opvarmes: tendensen i °C pr. årti over 1940-2025. Søg efter din.",
       "rank_city": "By",
       "rank_country": "Land",
       "rank_search": "Find en by...",
@@ -3218,7 +3264,8 @@
     },
     "dv": {
       "rank_title": "ދުނިޔެ ހޫނުވުމުގެ ރޭންކިން",
-      "rank_intro": "ކޮންމެ ސިޓީއެއް ރޭންކް ކުރެވިފައިވަނީ ހޫނުވަމުންދާ ބާރުމިނަށް ބަލައިގެން: 1940-2025 އަށް ދިހަ އަހަރަކަށް ޑިގްރީ ސެލްސިއަސްގެ ޓްރެންޑް. ތިމާގެ އެއްޗެއް ހޯދާށެވެ.",
+      "rank_intro": "ކޮންމެ ސިޓީއެއް ވެސް ރޭންކް ކޮށްފައިވަނީ ހޫނުވަމުންދާ ބާރަށް ބަލައިގެން: 1940-2025 އަށް ދިހަ އަހަރަކަށް ޑިގްރީ ސެލްސިއަސްގެ ޓްރެންޑް. ތިމާގެ އެއްޗެއް ހޯދާށެވެ.",
+      "rank_intro_countries": "ކޮންމެ ގައުމަކުން ވެސް ރޭންކް ކޮށްފައިވަނީ އެގައުމުގެ ސިޓީތައް އެވްރެޖްކޮށް ހޫނުވަމުންދާ މިންވަރަށް ބަލާފައި: 1940-2025 އަށް ދިހަ އަހަރަކަށް ޑިގްރީ ސެލްސިއަސްގެ ޓްރެންޑެވެ. ތިމާގެ އެއްޗެއް ހޯދާށެވެ.",
       "rank_city": "ސިޓީ",
       "rank_country": "ޤައުމު",
       "rank_search": "ސިޓީއެއް ހޯއްދަވާ...",
@@ -3233,6 +3280,7 @@
     "et": {
       "rank_title": "Maailma soojenemise edetabel",
       "rank_intro": "Kõik linnad on järjestatud soojenemise kiiruse järgi: °C trend kümnendi kohta aastatel 1940–2025. Otsige oma.",
+      "rank_intro_countries": "Kõik riigid on järjestatud linnade keskmise soojenemise kiiruse järgi: °C trend kümnendi kohta aastatel 1940–2025. Otsige oma.",
       "rank_city": "Linn",
       "rank_country": "Riik",
       "rank_search": "Leia linn…",
@@ -3246,7 +3294,8 @@
     },
     "eo": {
       "rank_title": "Mondvarmiĝo-rango",
-      "rank_intro": "Ĉiu urbo rangita laŭ kiom rapide ĝi varmiĝas: la tendenco en °C je jardeko dum 1940-2025. Serĉu la vian.",
+      "rank_intro": "Ĉiu urbo vicigita laŭ kiom rapide ĝi varmiĝas: la tendenco en °C je jardeko dum 1940-2025. Serĉu la vian.",
+      "rank_intro_countries": "Ĉiu lando vicigita laŭ kiom rapide ĝiaj urboj varmiĝas averaĝe: la tendenco en °C je jardeko dum 1940-2025. Serĉu la vian.",
       "rank_city": "Urbo",
       "rank_country": "Lando",
       "rank_search": "Trovu urbon...",
@@ -3261,13 +3310,14 @@
     "eu": {
       "rank_title": "Berotze munduaren sailkapena",
       "rank_intro": "Hiri bakoitza berotzen ari den abiaduraren arabera sailkatuta: 1940-2025 bitartean hamarkada bakoitzeko °C-tan izandako joera. Bilatu zurea.",
+      "rank_intro_countries": "Herrialde guztiak, batez beste, hiriak berotzen ari diren abiaduraren arabera sailkatu dira: 1940-2025 bitartean hamarkadako °C-tan izandako joera. Bilatu zurea.",
       "rank_city": "Hiria",
       "rank_country": "Herrialdea",
       "rank_search": "Bilatu hiri bat...",
       "rank_empty": "Ez dago bilaketa horrekin bat datorren hiririk.",
       "cstat_title": "Nola ari da berotzen zure herrialdea?",
       "cstat_line": "{country}: {trend}°C hamarkadako 1940tik, munduaren%{pct} baino azkarrago. {total}-ko {rank} sailkapena.",
-      "cstat_cool": "{country}: {trend}°C hamarkadako 1940tik. Hoztea, joera globalaren aurka. {rank}-ko {total} sailkapena.",
+      "cstat_cool": "{country}: {trend}°C hamarkadako 1940tik. Hoztea, joera globalaren aurka. {total}-ko {rank} sailkapena.",
       "rank_more": "Erakutsi gehiago",
       "rank_cities": "Hiriak",
       "rank_countries": "Herrialdeak"
@@ -3275,6 +3325,7 @@
     "ee": {
       "rank_title": "Xexeame ƒe dzoxɔxɔ ƒe ɖoƒe si woɖo",
       "rank_intro": "Woɖo du ɖesiaɖe ɖe ɖoɖo nu le alesi wòxɔ dzo kabakabae nu: alesi °C le ƒe ewo ɖesiaɖe me le ƒe 1940-2025 me. Di tɔwò.",
+      "rank_intro_countries": "Dukɔ ɖesiaɖe tsɔ alesi eƒe dugãwo le dzo dam kabakabae le mamã dedie nu: alesi °C le ƒe ewo ɖesiaɖe me le ƒe 1940-2025 me. Di tɔwò.",
       "rank_city": "Dugã me",
       "rank_country": "Dukɔa",
       "rank_search": "Di du aɖe si...",
@@ -3289,6 +3340,7 @@
     "fy": {
       "rank_title": "World warming ranglist",
       "rank_intro": "Elke stêd ranglist op hoe fluch it opwaarmt: de trend yn °C per desennium oer 1940-2025. Sykje nei dyn.",
+      "rank_intro_countries": "Elk lân wurdt ranglist op hoe fluch har stêden gemiddeld opwaarme: de trend yn °C per desennium oer 1940-2025. Sykje nei dyn.",
       "rank_city": "Stêd",
       "rank_country": "Lân",
       "rank_search": "Sykje in stêd...",
@@ -3303,6 +3355,7 @@
     "ga": {
       "rank_title": "Rangú téamh domhanda",
       "rank_intro": "Gach cathair rangaithe de réir cé chomh tapa agus atá sí ag téamh: an treocht °C in aghaidh na deich mbliana thar 1940-2025. Cuardaigh do cheannsa.",
+      "rank_intro_countries": "Gach tír rangaithe de réir cé chomh tapa agus atá a cathracha ag téamh ar an meán: an treocht °C in aghaidh na deich mbliana thar 1940-2025. Cuardaigh do cheannsa.",
       "rank_city": "Cathair",
       "rank_country": "Tír",
       "rank_search": "Aimsigh cathair…",
@@ -3317,20 +3370,22 @@
     "gl": {
       "rank_title": "Clasificación do quecemento mundial",
       "rank_intro": "Todas as cidades clasificadas segundo a rapidez con que se está quentando: a tendencia en °C por década durante 1940-2025. Busca o teu.",
+      "rank_intro_countries": "Cada país clasificado pola rapidez con que se quentan as súas cidades en media: a tendencia en °C por década durante 1940-2025. Busca o teu.",
       "rank_city": "Cidade",
       "rank_country": "País",
       "rank_search": "Busca unha cidade...",
       "rank_empty": "Ningunha cidade coincide con esa busca.",
       "cstat_title": "Como se está quentando o teu país?",
       "cstat_line": "{country}: {trend}°C por década desde 1940, máis rápido que o {pct}% do mundo. Rango #{rank} de {total}.",
-      "cstat_cool": "{country}: {trend}°C por década desde 1940. Refrixeración, contra a tendencia global. Rango #{rank} de {total}.",
+      "cstat_cool": "{country}: {trend}°C por década desde 1940. Refrixeración, en contra da tendencia global. Rango #{rank} de {total}.",
       "rank_more": "Mostrar máis",
       "rank_cities": "Cidades",
       "rank_countries": "Países"
     },
     "gom": {
       "rank_title": "संवसारीक उश्णतायेची क्रमवारी",
-      "rank_intro": "दर एका शाराक कितले नेटान उश्णताय वाडटा ताचे प्रमाण क्रमांकीत: १९४०-२०२५ वर्सा दर दशकाक ° से. तुमचो सोद घेयात.",
+      "rank_intro": "दर एका शाराची क्रमवारी कितले नेटान उश्णताय वाडत आसा: १९४०-२०२५ वर्सा दर दशकाक ° से. तुमचो सोद घेयात.",
+      "rank_intro_countries": "दर एका देशाची क्रमवारी ताचीं शारां सरासरी कितले नेटान उश्ण जातात हाचेर: १९४०-२०२५ वर्सा दर दशकाक ° से. तुमचो सोद घेयात.",
       "rank_city": "शार",
       "rank_country": "देश",
       "rank_search": "एक शार सोदून काडात...",
@@ -3345,6 +3400,7 @@
     "gd": {
       "rank_title": "Rangachadh blàthachadh na cruinne",
       "rank_intro": "A h-uile baile-mòr air a rangachadh a rèir cho luath sa tha e a’ blàthachadh: an gluasad ann an ° C gach deichead thairis air 1940-2025. Lorg do chuid fhèin.",
+      "rank_intro_countries": "A h-uile dùthaich air a rangachadh a rèir cho luath sa tha na bailtean-mòra aice a’ blàthachadh gu cuibheasach: an gluasad ann an ° C gach deichead thairis air 1940-2025. Lorg do chuid fhèin.",
       "rank_city": "Cathair-bhaile",
       "rank_country": "Dùthaich",
       "rank_search": "Lorg baile-mòr…",
@@ -3359,6 +3415,7 @@
     "hmn": {
       "rank_title": "Ntiaj teb ua cua sov qeb duas",
       "rank_intro": "Txhua lub nroog tau ntsuas los ntawm qhov nrawm nrawm npaum li cas: qhov sib txawv ntawm ° C ib xyoo caum dhau 1940-2025. Nrhiav koj li.",
+      "rank_intro_countries": "Txhua lub tebchaws tau txheeb xyuas los ntawm qhov ceev ceev nws cov nroog tau sov li cas rau qhov nruab nrab: qhov sib txawv ntawm ° C ib xyoo caum dhau 1940-2025. Nrhiav koj li.",
       "rank_city": "Lub nroog",
       "rank_country": "Lub teb chaws",
       "rank_search": "Nrhiav lub nroog…",
@@ -3373,6 +3430,7 @@
     "hr": {
       "rank_title": "Svjetsko zagrijavanje poredak",
       "rank_intro": "Svaki grad rangiran prema brzini zagrijavanja: trend u °C po desetljeću tijekom 1940.-2025. Potražite svoju.",
+      "rank_intro_countries": "Svaka zemlja rangirana prema tome koliko brzo se njezini gradovi u prosjeku zagrijavaju: trend u °C po desetljeću tijekom 1940.-2025. Potražite svoju.",
       "rank_city": "Grad",
       "rank_country": "Država",
       "rank_search": "Pronađite grad…",
@@ -3387,6 +3445,7 @@
     "ig": {
       "rank_title": "Ọkwa okpomọkụ ụwa",
       "rank_intro": "Obodo ọ bụla kwadoro ka ọ na-agba ọsọ ọsọ: usoro na Celsius C kwa afọ karịa 1940-2025. Chọọ nke gị.",
+      "rank_intro_countries": "Mba ọ bụla na-eji ọsọ ọsọ obodo ya na-ekpo ọkụ na nkezi: usoro na Celsius C kwa afọ karịa 1940-2025. Chọọ nke gị.",
       "rank_city": "Obodo",
       "rank_country": "Obodo",
       "rank_search": "Chọta obodo…",
@@ -3401,6 +3460,7 @@
     "rw": {
       "rank_title": "Urutonde rwubushyuhe bwisi",
       "rank_intro": "Umujyi wose ukurikije uko ubushyuhe bwihuta: icyerekezo cya ° C kumyaka icumi hejuru ya 1940-2025. Shakisha ibyawe.",
+      "rank_intro_countries": "Buri gihugu cyashyizwe ku rutonde n’uburyo imijyi yacyo ishyuha ku kigereranyo: icyerekezo cya ° C ku myaka icumi hejuru ya 1940-2025. Shakisha ibyawe.",
       "rank_city": "Umujyi",
       "rank_country": "Igihugu",
       "rank_search": "Shaka umujyi…",
@@ -3415,6 +3475,7 @@
     "ilo": {
       "rank_title": "Ranggo ti panagbara ti lubong",
       "rank_intro": "Tunggal siudad ket nairanggo babaen no kasano kapartak ti panagbara daytoy: ti uso iti °C iti tunggal maysa a dekada iti las-ud ti 1940-2025. Sapulen ti kukuam.",
+      "rank_intro_countries": "Tunggal pagilian ket nairanggo babaen no kasano kapartak ti panagbara dagiti siudadna iti promedio: ti uso iti °C iti tunggal maysa a dekada iti las-ud ti 1940-2025. Sapulen ti kukuam.",
       "rank_city": "Siudad",
       "rank_country": "Pagilian",
       "rank_search": "Agbirok iti siudad...",
@@ -3429,6 +3490,7 @@
     "xh": {
       "rank_title": "Inqanaba lokufudumala kwehlabathi",
       "rank_intro": "Isixeko ngasinye sibekwe ngokwendlela okukhawuleza ngayo ukufudumala: umkhwa we-°C kwishumi leminyaka ngaphezulu kwe-1940-2025. Khangela eyakho.",
+      "rank_intro_countries": "Ilizwe ngalinye libekwe ngokwendlela izixeko zalo ezifudumala ngokukhawuleza ngayo ngokomndilili: umyinge we-°C ngeshumi leminyaka ngaphezulu kwe-1940-2025. Khangela eyakho.",
       "rank_city": "Isixeko",
       "rank_country": "Ilizwe",
       "rank_search": "Fumana isixeko...",
@@ -3443,6 +3505,7 @@
     "zu": {
       "rank_title": "Izinga lokufudumala komhlaba",
       "rank_intro": "Idolobha ngalinye libalwa ngendlela okufudumala ngayo: ukuthambekela ku-°C ngeshumi leminyaka phakathi kuka-1940-2025. Sesha eyakho.",
+      "rank_intro_countries": "Izwe ngalinye libalwa ngendlela amadolobha alo afudumala ngokushesha ngayo ngokwesilinganiso: inkambiso ku-°C ngeshumi leminyaka phakathi kuka-1940-2025. Sesha eyakho.",
       "rank_city": "Idolobha",
       "rank_country": "Izwe",
       "rank_search": "Thola idolobha...",
@@ -3457,6 +3520,7 @@
     "jv": {
       "rank_title": "Peringkat pemanasan donya",
       "rank_intro": "Saben kutha rangking miturut sepira cepet anget: tren ing °C saben dasawarsa liwat 1940-2025. Nggoleki sampeyan.",
+      "rank_intro_countries": "Saben negara rangking miturut sepira cepet kutha-kuthane dadi panas rata-rata: tren ing °C saben dasawarsa sajrone 1940-2025. Nggoleki sampeyan.",
       "rank_city": "kutha",
       "rank_country": "negara",
       "rank_search": "Golek kutha…",
@@ -3471,6 +3535,7 @@
     "ht": {
       "rank_title": "Klasman rechofman planèt la",
       "rank_intro": "Chak vil klase selon konbyen vit li ap chofe: tandans nan °C pou chak deseni sou 1940-2025. Chèche pou ou.",
+      "rank_intro_countries": "Chak peyi klase dapre jan vit vil li yo ap chofe an mwayèn: tandans nan °C pou chak deseni sou 1940-2025. Chèche pou ou.",
       "rank_city": "Vil",
       "rank_country": "Peyi",
       "rank_search": "Jwenn yon vil...",
@@ -3485,6 +3550,7 @@
     "kri": {
       "rank_title": "Di ranking fɔ di wɔl wam",
       "rank_intro": "Ɛvri siti rank bay aw fast i de wam: di tren in °C fɔ ɛvri tɛn ia ova 1940-2025. Sɔch fɔ yu yon.",
+      "rank_intro_countries": "Ɛvri kɔntri rank bay aw fast in siti dɛm de wam pan avɛj: di tren in °C fɔ ɛvri tɛn ia ova 1940-2025. Sɔch fɔ yu yon.",
       "rank_city": "Siti",
       "rank_country": "Kɔntri",
       "rank_search": "Fɛn wan siti...",
@@ -3499,6 +3565,7 @@
     "ku": {
       "rank_title": "Rêzeya germbûna cîhanê",
       "rank_intro": "Her bajar li gorî ka çiqas zû germ dibe tê rêz kirin: meyla di dehsalan de °C di navbera 1940-2025 de. Li ya xwe bigerin.",
+      "rank_intro_countries": "Her welatek ji hêla navînî germbûna bajarên wî ve hatî rêz kirin: meyla di dehsalan de °C di navbera 1940-2025 de. Li ya xwe bigerin.",
       "rank_city": "City",
       "rank_country": "Welat",
       "rank_search": "Bajarekî bibînin…",
@@ -3513,6 +3580,7 @@
     "lv": {
       "rank_title": "Pasaules sasilšanas reitings",
       "rank_intro": "Katra pilsēta sarindota pēc sasilšanas ātruma: °C tendence desmitgadē laikā no 1940. līdz 2025. gadam. Meklējiet savu.",
+      "rank_intro_countries": "Katra valsts sarindota pēc to pilsētu vidējā sasilšanas ātruma: °C tendence desmitgadē laika posmā no 1940. līdz 2025. gadam. Meklējiet savu.",
       "rank_city": "Pilsēta",
       "rank_country": "Valsts",
       "rank_search": "Atrodi pilsētu…",
@@ -3527,12 +3595,13 @@
     "lt": {
       "rank_title": "Pasaulio atšilimo reitingas",
       "rank_intro": "Kiekvienas miestas reitinguojamas pagal tai, kaip greitai atšilo: °C tendencija per dešimtmetį 1940–2025 m. Ieškokite savo.",
+      "rank_intro_countries": "Kiekviena šalis reitinguojama pagal tai, kaip greitai jos miestai vidutiniškai šyla: °C tendencija per dešimtmetį 1940–2025 m. Ieškokite savo.",
       "rank_city": "Miestas",
       "rank_country": "Šalis",
       "rank_search": "Rasti miestą…",
       "rank_empty": "Nė vienas miestas neatitinka šios paieškos.",
       "cstat_title": "Kaip šyla jūsų šalis?",
-      "cstat_line": "{country}: {trend}°C per dešimtmetį nuo 1940 m., greičiau nei {pct}% pasaulio. #{rank} reitingas iš {total}.",
+      "cstat_line": "{country}: {trend}°C per dešimtmetį nuo 1940 m., greičiau nei {pct}% pasaulio. Reitingas #{rank} iš {total}.",
       "cstat_cool": "{country}: {trend}°C per dešimtmetį nuo 1940 m. Vėsinimas, atsižvelgiant į pasaulines tendencijas. #{rank} reitingas iš {total}.",
       "rank_more": "Rodyti daugiau",
       "rank_cities": "Miestai",
@@ -3541,6 +3610,7 @@
     "la": {
       "rank_title": "Orbis Terrarum calefactio ranking",
       "rank_intro": "Omnis civitas divulgata est quam celeriter calefacit: inclinatio in °C per decennium super 1940-2025. Quaere tua.",
+      "rank_intro_countries": "Omnis terra divulgata est quam celeriter civitates eius in mediocris calefaciunt: inclinatio in °C per decennium super 1940-2025. Quaere tua.",
       "rank_city": "urbs",
       "rank_country": "Patria",
       "rank_search": "Inveniam urbem…",
@@ -3555,13 +3625,14 @@
     "ln": {
       "rank_title": "Classement ya réchauffement mondial",
       "rank_intro": "Engumba nyonso ezwamaki na molɔngɔ na kotalela ndenge oyo ezali kokóma molunge nokinoki: tendance ya °C na mbula zomi na boumeli ya 1940-2025. Luká oyo ya yo.",
+      "rank_intro_countries": "Mboka nyonso ezwamaki na molɔngɔ na ndenge oyo bingumba na yango ezali kokóma molunge nokinoki na mwayene: momeseno ya °C na boumeli ya mbula zomi na boumeli ya 1940-2025. Luká oyo ya yo.",
       "rank_city": "Engumba",
       "rank_country": "Mboka",
       "rank_search": "Boluka engumba moko...",
       "rank_empty": "Engumba moko te ekokani na bolukiluki wana.",
       "cstat_title": "Mboka na bino ezali ko chauffer ndenge nini?",
       "cstat_line": "{country}: {trend}°C na mbula zomi banda 1940, mbangu koleka {pct}% ya mokili. Molongo #{rank} ya {total}.",
-      "cstat_cool": "{country}: {trend}°C na mbula zomi banda 1940. Refroidissement, contre tendance mondiale. Molongo #{rank} ya {total}.",
+      "cstat_cool": "{country}: {trend}°C na mibu zomi banda 1940. Kopelisa, contre tendance mondiale. Molongo #{rank} ya {total}.",
       "rank_more": "Lakisa makambo mosusu",
       "rank_cities": "Bingumba",
       "rank_countries": "Bikólo"
@@ -3569,6 +3640,7 @@
     "lg": {
       "rank_title": "Ensengeka y’ebbugumu ly’ensi",
       "rank_intro": "Buli kibuga kyasengekebwa okusinziira ku sipiidi gye kibuguma: omuze mu °C buli myaka kkumi okuyita mu 1940-2025. Noonya ebibyo.",
+      "rank_intro_countries": "Buli nsi yasengekebwa okusinziira ku sipiidi ebibuga byayo gye bibuguma ku kigero: omuze gwa °C buli myaka kkumi mu 1940-2025. Noonya ebibyo.",
       "rank_city": "Ekibuga",
       "rank_country": "Ensi",
       "rank_search": "Funa ekibuga...",
@@ -3583,13 +3655,14 @@
     "lb": {
       "rank_title": "Welterwiermung Ranking",
       "rank_intro": "All Stad klasséiert no wéi séier et erwiermt: den Trend an °C pro Joerzéngt iwwer 1940-2025. Sich no Ärem.",
+      "rank_intro_countries": "All Land klasséiert no wéi séier seng Stied am Duerchschnëtt erwiermen: den Trend an °C pro Joerzéngt iwwer 1940-2025. Sich no Ärem.",
       "rank_city": "Stad",
       "rank_country": "Land",
       "rank_search": "Fannt eng Stad...",
       "rank_empty": "Keng Stad entsprécht dës Sich.",
       "cstat_title": "Wéi gëtt Äert Land erwiermt?",
       "cstat_line": "{country}: {trend}°C pro Joerzéngt zënter 1940, méi séier wéi {pct}% vun der Welt. Rank #{rank} vun {total}.",
-      "cstat_cool": "{country}: {trend}°C pro Joerzéngt zanter 1940. Ofkillung, géint de weltwäiten Trend. Rank #{rank} vun {total}.",
+      "cstat_cool": "{country}: {trend}°C pro Jorzéngt zënter 1940. Ofkillung, géint de weltwäiten Trend. Rank #{rank} vun {total}.",
       "rank_more": "Méi weisen",
       "rank_cities": "Stied",
       "rank_countries": "Länner"
@@ -3597,6 +3670,7 @@
     "hu": {
       "rank_title": "Felmelegedési világranglista",
       "rank_intro": "Minden város a felmelegedés gyorsasága szerint rangsorolva: a °C-os tendencia évtizedenként 1940 és 2025 között. Keresse meg a tiéd.",
+      "rank_intro_countries": "Minden országot a városok átlagos felmelegedési sebessége alapján rangsorolnak: a °C-os tendencia évtizedenként 1940 és 2025 között. Keresse meg a tiéd.",
       "rank_city": "Város",
       "rank_country": "Ország",
       "rank_search": "Keress egy várost…",
@@ -3604,13 +3678,14 @@
       "cstat_title": "Hogyan melegszik fel az országod?",
       "cstat_line": "{country}: {trend}°C évtizedenként 1940 óta, gyorsabb, mint a világ {pct}%-a. {total}/{rank}. helyezés.",
       "cstat_cool": "{country}: {trend}°C évtizedenként 1940 óta. Lehűlés, a globális trenddel szemben. {total}/{rank}. helyezés.",
-      "rank_more": "Mutass többet",
+      "rank_more": "Mutasson többet",
       "rank_cities": "Városok",
       "rank_countries": "Országok"
     },
     "mg": {
       "rank_title": "Laharana momba ny fiakaran'ny maripana eran-tany",
       "rank_intro": "Ny tanàna tsirairay dia nalahatra araka ny hafainganam-pandehany: ny fironana amin'ny °C isaky ny folo taona nandritra ny 1940-2025. Mitadiava ny anao.",
+      "rank_intro_countries": "Laharan'ny firenena tsirairay araka ny hafainganam-pandehan'ny hafanan'ny tanànany amin'ny antsalany: ny fironana amin'ny °C isaky ny folo taona nandritra ny 1940-2025. Mitadiava ny anao.",
       "rank_city": "Tanàna",
       "rank_country": "Firenena",
       "rank_search": "Mitadiava tanàna…",
@@ -3625,6 +3700,7 @@
     "mt": {
       "rank_title": "Klassifikazzjoni tat-tisħin tad-dinja",
       "rank_intro": "Kull belt ikklassifikata skond kemm qed tissaħħan: it-tendenza f'°C kull għaxar snin matul l-1940-2025. Fittex għal tiegħek.",
+      "rank_intro_countries": "Kull pajjiż ikklassifikat skont kemm il-bliet tiegħu qed jisħnu bħala medja: it-tendenza f'°C għal kull għaxar snin matul l-1940-2025. Fittex għal tiegħek.",
       "rank_city": "Belt",
       "rank_country": "Pajjiż",
       "rank_search": "Sib belt...",
@@ -3639,6 +3715,7 @@
     "lus": {
       "rank_title": "Khawvel lum chhoh zelna ranking",
       "rank_intro": "Khawpui tinte chu a lum chak dan azirin an rank a: kum 1940-2025 chhunga kum sawm chhunga °C a tlahniam dan. I ta zawng rawh.",
+      "rank_intro_countries": "Ram tinte chu an khawpui lum chak zia a vaiin an rank a: kum 1940-2025 chhunga kum sawm chhunga °C a tlahniam dan. I ta zawng rawh.",
       "rank_city": "Khawpui",
       "rank_country": "Ram",
       "rank_search": "Khawpui pakhat zawng rawh...",
@@ -3651,8 +3728,9 @@
       "rank_countries": "Ram hrang hrang"
     },
     "mi": {
-      "rank_title": "Whakataunga whakamahana o te ao",
+      "rank_title": "Te whakamahana o te ao",
       "rank_intro": "Ko ia taone nui e tohu ana i te tere o te mahanatanga: te ia i roto i te °C ia tekau tau i roto i te 1940-2025. Rapua i a koe.",
+      "rank_intro_countries": "Ko ia whenua kua tohua i runga i te tere o te mahanatanga o ona taone i te toharite: ko te ia i te °C ia tekau tau i roto i te 1940-2025. Rapua i a koe.",
       "rank_city": "Taone",
       "rank_country": "Whenua",
       "rank_search": "Kimihia he taone…",
@@ -3667,6 +3745,7 @@
     "no": {
       "rank_title": "Verdensoppvarmingsrangering",
       "rank_intro": "Hver by rangert etter hvor raskt den varmes opp: trenden i °C per tiår over 1940-2025. Søk etter din.",
+      "rank_intro_countries": "Hvert land rangert etter hvor raskt byene i gjennomsnitt varmes opp: trenden i °C per tiår over 1940-2025. Søk etter din.",
       "rank_city": "By",
       "rank_country": "Land",
       "rank_search": "Finn en by...",
@@ -3681,6 +3760,7 @@
     "ny": {
       "rank_title": "Kutentha kwa dziko",
       "rank_intro": "Mzinda uliwonse umakhala ndi kuchuluka kwa kutentha kwanyengo: zomwe zikuchitika mu ° C pazaka khumi kupitilira 1940-2025. Sakani zanu.",
+      "rank_intro_countries": "Dziko lililonse lidakhala ndi kuchuluka kwachangu komwe mizinda yake ikutenthera pafupifupi: zomwe zikuchitika mu ° C pazaka khumi kupitilira 1940-2025. Sakani zanu.",
       "rank_city": "Mzinda",
       "rank_country": "Dziko",
       "rank_search": "Pezani mzinda…",
@@ -3695,13 +3775,14 @@
     "om": {
       "rank_title": "Sadarkaa ho'ina addunyaa",
       "rank_intro": "Magaalaan hundi saffisa hammam akka ho'aa jiruun sadarkaa: adeemsa °C waggoota kurnan keessatti bara 1940-2025. Kan keessan barbaadi.",
+      "rank_intro_countries": "Biyyi hundinuu magaalonni ishee giddu galeessaan saffisaan ho'aa akka jiran sadarkaa: adeemsa °C waggoota kurnan keessatti bara 1940-2025tti. Kan keessan barbaadi.",
       "rank_city": "Magaalaa",
       "rank_country": "Biyya",
       "rank_search": "Magaalaa barbaadi...",
       "rank_empty": "Magaalaan kamiyyuu barbaacha sanaan wal hin simtu.",
       "cstat_title": "Biyyi keessan akkam ho'aa jirti?",
-      "cstat_line": "{country}: {trend}°C kurmaana keessatti bara 1940 irraa eegalee, {pct}% addunyaa caalaa saffisa. Sadarkaa #{rank} {total} keessaa.",
-      "cstat_cool": "{country}: {trend}°C kurmaana keessatti bara 1940 irraa eegalee.Qobbaa’uu, faallaa adeemsa addunyaa. Sadarkaa #{rank} {total} keessaa.",
+      "cstat_line": "{country}: Bara 1940 irraa eegalee kurmaana keessatti {trend}°C, addunyaa {pct}% caalaa saffisa. Sadarkaa #{rank} {total} keessaa.",
+      "cstat_cool": "{country}: {trend}°C kurmaana tokko keessatti bara 1940 irraa eegalee.Qobbaa’uu, faallaa adeemsa addunyaa. Sadarkaa #{rank} {total} keessaa.",
       "rank_more": "Dabalata agarsiisi",
       "rank_cities": "Magaalota",
       "rank_countries": "Biyyoota"
@@ -3709,6 +3790,7 @@
     "uz": {
       "rank_title": "Jahon isishi reytingi",
       "rank_intro": "Har bir shahar qanchalik tez isishi bo'yicha tartiblangan: 1940-2025 yillardagi o'n yillikda °C tendentsiyasi. O'zingiznikini qidiring.",
+      "rank_intro_countries": "Har bir mamlakat shaharlarining o'rtacha qanchalik tez isishi bo'yicha tartiblangan: 1940-2025 yillardagi o'n yillikda °C tendentsiyasi. O'zingiznikini qidiring.",
       "rank_city": "Shahar",
       "rank_country": "Mamlakat",
       "rank_search": "Shahar toping…",
@@ -3723,6 +3805,7 @@
     "ro": {
       "rank_title": "Clasamentul încălzirii mondiale",
       "rank_intro": "Fiecare oraș clasat după cât de repede se încălzește: tendința în °C pe deceniu în perioada 1940-2025. Caută-l pe al tău.",
+      "rank_intro_countries": "Fiecare țară clasată după cât de repede se încălzesc orașele sale în medie: tendința în °C pe deceniu în perioada 1940-2025. Caută-l pe al tău.",
       "rank_city": "Orașul",
       "rank_country": "Țara",
       "rank_search": "Găsiți un oraș...",
@@ -3737,6 +3820,7 @@
     "qu": {
       "rank_title": "Kay pacha q’uñichiy ranking",
       "rank_intro": "Sapa llaqtam rankikurqan may utqaylla q'uñikusqanman hina: °C nisqapi sapa chunka watakunapi 1940-2025 watakunapi. Qampa kaqta maskay.",
+      "rank_intro_countries": "Sapa suyukunam rankikurqaku mayna utqaylla llaqtankuna promediopi q’uñikusqanman hina: chay tendencia °C sapa chunka watakunapi 1940-2025 watakunapi. Qampa kaqta maskay.",
       "rank_city": "Llaqta",
       "rank_country": "Llaqta",
       "rank_search": "Huk llaqtata maskay...",
@@ -3751,6 +3835,7 @@
     "sm": {
       "rank_title": "Fa'avasegaga ole lalolagi",
       "rank_intro": "O aai uma e fa'avasega i le saoasaoa o le mafanafana: o le tulaga i le °C i le sefulu tausaga i luga ole 1940-2025. Su'e lau.",
+      "rank_intro_countries": "O atunuu uma e fa'avasega i le saoasaoa o le mafanafana o ona 'a'ai i le averesi: o le tulaga i le °C i le sefulu tausaga i luga ole 1940-2025. Su'e lau.",
       "rank_city": "Aai",
       "rank_country": "Atunuu",
       "rank_search": "Su'e se taulaga…",
@@ -3765,6 +3850,7 @@
     "st": {
       "rank_title": "Boemo ba ho futhumala ha lefatše",
       "rank_intro": "Toropo e 'ngoe le e 'ngoe e behiloe ho latela hore na ho futhumala ka potlako hakae: mokhoa oa ° C ka lilemo tse leshome ho feta 1940-2025. Batla ea hau.",
+      "rank_intro_countries": "Naha e 'ngoe le e 'ngoe e behiloe ho latela hore na litoropo tsa eona li futhumala kapele hakae ka karolelano: boemo ba ° C ka lilemo tse leshome ho feta 1940-2025. Batla ea hau.",
       "rank_city": "Motse",
       "rank_country": "Naha",
       "rank_search": "Fumana toropo…",
@@ -3779,6 +3865,7 @@
     "nso": {
       "rank_title": "Maemo a go ruthetša ga lefase",
       "rank_intro": "Motse o mongwe le o mongwe o beakantšwe ka gore o ruthetša ka lebelo gakaakang: tshekamelo ya °C ka ngwagasome go feta 1940-2025. Nyaka ya gago.",
+      "rank_intro_countries": "Naga ye nngwe le ye nngwe e beakantšwe ka gore metse ya yona e ruthetša ka lebelo gakaakang ka karolelano: tshekamelo ya °C ka ngwagasome go feta 1940-2025. Nyaka ya gago.",
       "rank_city": "Motse",
       "rank_country": "Naga",
       "rank_search": "Hwetša toropo...",
@@ -3793,6 +3880,7 @@
     "sq": {
       "rank_title": "Renditja e ngrohjes botërore",
       "rank_intro": "Çdo qytet i renditur sipas shpejtësisë së ngrohjes: tendenca në °C për dekadë gjatë viteve 1940-2025. Kërkoni për tuajat.",
+      "rank_intro_countries": "Çdo vend renditet sipas shpejtësisë mesatare të ngrohjes së qyteteve të tij: tendenca në °C për dekadë gjatë viteve 1940-2025. Kërkoni për tuajat.",
       "rank_city": "Qyteti",
       "rank_country": "Vendi",
       "rank_search": "Gjeni një qytet…",
@@ -3807,6 +3895,7 @@
     "sk": {
       "rank_title": "Rebríček svetového otepľovania",
       "rank_intro": "Každé mesto zoradené podľa toho, ako rýchlo sa otepľuje: trend v °C za desaťročie v rokoch 1940 – 2025. Vyhľadajte tú svoju.",
+      "rank_intro_countries": "Každá krajina zoradená podľa toho, ako rýchlo sa jej mestá v priemere otepľujú: trend v °C za desaťročie v rokoch 1940 – 2025. Vyhľadajte tú svoju.",
       "rank_city": "Mesto",
       "rank_country": "Krajina",
       "rank_search": "Nájsť mesto…",
@@ -3821,6 +3910,7 @@
     "sl": {
       "rank_title": "Lestvica svetovnega segrevanja",
       "rank_intro": "Vsako mesto je razvrščeno glede na to, kako hitro se segreva: trend v °C na desetletje v obdobju 1940–2025. Poiščite svojega.",
+      "rank_intro_countries": "Vsaka država je razvrščena glede na to, kako hitro se v povprečju segrevajo njena mesta: trend v °C na desetletje v obdobju 1940–2025. Poiščite svojega.",
       "rank_city": "Mesto",
       "rank_country": "Država",
       "rank_search": "Najdi mesto …",
@@ -3835,6 +3925,7 @@
     "so": {
       "rank_title": "Qiimaynta kulaylka aduunka",
       "rank_intro": "Magaalo kasta waxa lagu qiimeeyaa sida ugu dhakhsaha badan ee ay u kululaanayso: isbeddelka °C tobankii sano ee ka badan 1940-2025. Raadi kaaga.",
+      "rank_intro_countries": "Waddan kasta ayaa lagu qiimeeyay sida ugu dhakhsaha badan ee magaalooyinkiisu u kululaanayaan celcelis ahaan: isbeddelka °C tobankii sano ee ka badan 1940-2025. Raadi kaaga.",
       "rank_city": "Magaalada",
       "rank_country": "Dalka",
       "rank_search": "Hel magaalo…",
@@ -3849,13 +3940,14 @@
     "fi": {
       "rank_title": "Maailman lämpenemisen ranking",
       "rank_intro": "Jokainen kaupunki luokitellaan sen mukaan, kuinka nopeasti se lämpenee: °C:n trendi vuosikymmenessä vuosina 1940–2025. Etsi omasi.",
+      "rank_intro_countries": "Jokainen maa luokitellaan sen mukaan, kuinka nopeasti sen kaupungit lämpenevät keskimäärin: °C:n trendi vuosikymmenessä vuosina 1940–2025. Etsi omasi.",
       "rank_city": "Kaupunki",
       "rank_country": "Maa",
       "rank_search": "Etsi kaupunki…",
       "rank_empty": "Mikään kaupunki ei vastaa hakua.",
       "cstat_title": "Miten maasi lämpenee?",
       "cstat_line": "{country}: {trend}°C vuosikymmenessä vuodesta 1940 lähtien, nopeammin kuin {pct}% maailman lämpötilasta. Sijoitus #{rank}/{total}.",
-      "cstat_cool": "{country}: {trend}°C vuosikymmenessä vuodesta 1940 lähtien. Jäähtyminen, maailmanlaajuista trendiä vastaan. Sijoitus #{rank}/{total}.",
+      "cstat_cool": "{country}: {trend}°C vuosikymmenessä vuodesta 1940 lähtien. Jäähtyminen maailmanlaajuista trendiä vastaan. Sijoitus #{rank}/{total}.",
       "rank_more": "Näytä lisää",
       "rank_cities": "kaupungit",
       "rank_countries": "maat"
@@ -3863,6 +3955,7 @@
     "sv": {
       "rank_title": "Världsuppvärmningsranking",
       "rank_intro": "Varje stad rankas efter hur snabbt den värms upp: trenden i °C per decennium under 1940-2025. Sök efter din.",
+      "rank_intro_countries": "Varje land rankas efter hur snabbt dess städer värms upp i genomsnitt: trenden i °C per decennium under 1940-2025. Sök efter din.",
       "rank_city": "Stad",
       "rank_country": "Land",
       "rank_search": "Hitta en stad...",
@@ -3877,6 +3970,7 @@
     "ts": {
       "rank_title": "Xiyimo xa ku hisa ka misava",
       "rank_intro": "Doroba rin’wana na rin’wana ri vekiwile hi ndlela leyi ri kufumelaka hi rivilo ha yona: ntshamiseko wa °C hi khume ra malembe eka 1940-2025. Lava ya wena.",
+      "rank_intro_countries": "Tiko rin’wana na rin’wana ri vekiwile hi ndlela leyi madoroba ya rona ya kufumelaka hi rivilo ha yona hi xiringaniso: ntshamiseko wa °C hi khume ra malembe eka 1940-2025. Lava ya wena.",
       "rank_city": "Dorobankulu",
       "rank_country": "Tiko",
       "rank_search": "Kuma doroba...",
@@ -3891,6 +3985,7 @@
     "tk": {
       "rank_title": "Dünýä ýylylygynyň reýtingi",
       "rank_intro": "Her şäher näçe çalt gyzýandygyny görkezýär: 1940-2025-nji ýyllar aralygynda on ýylda ° C-de tendensiýa. Özüňizi gözläň.",
+      "rank_intro_countries": "Her ýurt öz şäherleriniň ortaça näçe çalt gyzýandygyny görkezýär: 1940-2025-nji ýyllar aralygynda on ýylda ° C tendensiýa. Özüňizi gözläň.",
       "rank_city": "Şäher",
       "rank_country": "Countryurt",
       "rank_search": "Şäher tap...",
@@ -3905,6 +4000,7 @@
     "is": {
       "rank_title": "Heimshitunarstaða",
       "rank_intro": "Hverri borg raðað eftir því hversu hratt hún hlýnar: þróunin í °C á áratug yfir 1940-2025. Leitaðu að þínum.",
+      "rank_intro_countries": "Hvert land er raðað eftir því hversu hratt borgir þeirra hlýna að meðaltali: þróunin í °C á áratug yfir 1940-2025. Leitaðu að þínum.",
       "rank_city": "Borg",
       "rank_country": "Land",
       "rank_search": "Finndu borg…",
@@ -3918,28 +4014,30 @@
     },
     "cs": {
       "rank_title": "Žebříček světového oteplování",
-      "rank_intro": "Každé město seřazené podle toho, jak rychle se otepluje: trend ve °C za desetiletí v letech 1940–2025. Vyhledejte ten svůj.",
+      "rank_intro": "Každé město seřazené podle toho, jak rychle se otepluje: trend ve °C za desetiletí v letech 1940–2025. Hledejte ten svůj.",
+      "rank_intro_countries": "Každá země seřazená podle toho, jak rychle se její města v průměru oteplují: trend ve °C za desetiletí v letech 1940–2025. Hledejte ten svůj.",
       "rank_city": "město",
       "rank_country": "země",
       "rank_search": "Najít město…",
       "rank_empty": "Tomuto vyhledávání neodpovídá žádné město.",
       "cstat_title": "Jak se vaše země otepluje?",
-      "cstat_line": "{country}: {trend}°C za desetiletí od roku 1940, rychleji než {pct}% světa. Pořadí č. {rank} z {total}.",
-      "cstat_cool": "{country}: {trend}°C za dekádu od roku 1940. Chlazení, proti globálnímu trendu. Pořadí #{rank} z {total}.",
+      "cstat_line": "{country}: {trend}°C za desetiletí od roku 1940, rychleji než {pct}% světa. Pořadí #{rank} z {total}.",
+      "cstat_cool": "{country}: {trend}°C za dekádu od roku 1940. Chlazení, proti globálnímu trendu. Pořadí č. {rank} z {total}.",
       "rank_more": "Zobrazit více",
       "rank_cities": "Města",
       "rank_countries": "země"
     },
     "haw": {
       "rank_title": "Ke kūlana hoʻomehana honua",
-      "rank_intro": "Hoʻonohonoho ʻia kēlā me kēia kūlanakauhale e ka wikiwiki o ka hoʻomehana ʻana: ʻo ke ʻano o ka °C i kēlā me kēia ʻumi makahiki ma luna o 1940-2025. E ʻimi i kāu.",
+      "rank_intro": "Hoʻonohonoho ʻia kēlā me kēia kūlanakauhale ma muli o ka wikiwiki o ka hoʻomehana ʻana: ke ʻano o ka °C i kēlā me kēia ʻumi makahiki ma luna o 1940-2025. Huli i kāu.",
+      "rank_intro_countries": "Hoʻonohonoho ʻia kēlā me kēia ʻāina e ka wikiwiki o ka hoʻomehana ʻana o kona mau kūlanakauhale ma ka awelika: ʻo ke ʻano o ka °C i kēlā me kēia ʻumi makahiki ma luna o 1940-2025. Huli i kāu.",
       "rank_city": "Kulanakauhale",
       "rank_country": "ʻāina",
       "rank_search": "E ʻimi i ke kūlanakauhale…",
       "rank_empty": "ʻAʻohe kūlanakauhale i kūpono i kēlā hulina.",
       "cstat_title": "Pehea kou ʻāina mehana?",
       "cstat_line": "{country}: {trend}°C i kēlā me kēia ʻumi makahiki mai ka makahiki 1940, ʻoi aku ka wikiwiki ma mua o {pct}% o ka honua. Papa #{rank} o {total}.",
-      "cstat_cool": "{country}: {trend}°C i kēlā me kēia ʻumi makahiki mai ka makahiki 1940. ʻO ka hoʻoluʻu ʻana, kūʻē i ke ʻano honua. Papa #{rank} o {total}.",
+      "cstat_cool": "{country}: {trend}°C i kēlā me kēia ʻumi makahiki mai ka makahiki 1940. ʻO ka hoʻolili ʻana, kūʻē i ke ʻano honua. Papa #{rank} o {total}.",
       "rank_more": "Hōʻike hou aku",
       "rank_cities": "Kulanakauhale",
       "rank_countries": "Nā ʻāina"
@@ -3947,6 +4045,7 @@
     "el": {
       "rank_title": "Κατάταξη υπερθέρμανσης του κόσμου",
       "rank_intro": "Κάθε πόλη κατατάσσεται με βάση το πόσο γρήγορα θερμαίνεται: η τάση σε °C ανά δεκαετία την περίοδο 1940-2025. Αναζητήστε το δικό σας.",
+      "rank_intro_countries": "Κάθε χώρα κατατάσσεται με βάση το πόσο γρήγορα θερμαίνονται οι πόλεις της κατά μέσο όρο: η τάση σε °C ανά δεκαετία την περίοδο 1940-2025. Αναζητήστε το δικό σας.",
       "rank_city": "Πόλη",
       "rank_country": "Χώρα",
       "rank_search": "Βρείτε μια πόλη…",
@@ -3961,6 +4060,7 @@
     "be": {
       "rank_title": "Рэйтынг сусветнага пацяплення",
       "rank_intro": "Кожны горад ранжыраваны па хуткасці пацяплення: тэндэнцыя ў °C за дзесяцігоддзе за 1940-2025 гг. Шукайце сваё.",
+      "rank_intro_countries": "Кожная краіна ацэньваецца па сярэдняй хуткасці награвання ў гарадах: тэндэнцыі ў °C за дзесяцігоддзе за 1940-2025 гг. Шукайце сваё.",
       "rank_city": "Горад",
       "rank_country": "Краіна",
       "rank_search": "Знайсці горад…",
@@ -3975,6 +4075,7 @@
     "bg": {
       "rank_title": "Класация на световното затопляне",
       "rank_intro": "Всеки град, класиран според това колко бързо се затопля: тенденцията в °C на десетилетие през 1940-2025 г. Потърсете вашите.",
+      "rank_intro_countries": "Всяка държава е класирана според това колко бързо се затоплят нейните градове средно: тенденцията в °C на десетилетие през 1940-2025 г. Потърсете вашите.",
       "rank_city": "град",
       "rank_country": "държава",
       "rank_search": "Намерете град...",
@@ -3989,6 +4090,7 @@
     "ky": {
       "rank_title": "Дүйнөлүк жылуулуктун рейтинги",
       "rank_intro": "Ар бир шаар канчалык тез жылып жатканы боюнча рейтингде: 1940-2025-жылдардагы он жылдыкта °C тенденциясы. Өзүңдү изде.",
+      "rank_intro_countries": "Ар бир өлкө шаарларынын орточо ылдамдыгы боюнча рейтингде: 1940-2025-жылдардагы он жылдыкта °C тенденциясы. Өзүңдү изде.",
       "rank_city": "City",
       "rank_country": "Өлкө",
       "rank_search": "Шаар табуу…",
@@ -4003,6 +4105,7 @@
     "mk": {
       "rank_title": "Рангирање за затоплување на светот",
       "rank_intro": "Секој град рангиран според тоа колку брзо се загрева: трендот во °C по деценија во периодот 1940-2025 година. Барај го твоето.",
+      "rank_intro_countries": "Секоја земја рангирана според тоа колку брзо се загреваат нејзините градови во просек: трендот во °C по деценија во периодот 1940-2025 година. Барај го твоето.",
       "rank_city": "Градот",
       "rank_country": "Земја",
       "rank_search": "Најдете град…",
@@ -4017,6 +4120,7 @@
     "mn": {
       "rank_title": "Дэлхийн дулаарлын зэрэглэл",
       "rank_intro": "Хот бүр хэр хурдан дулаарч байгаагаар нь эрэмбэлдэг: 1940-2025 оны арван жилд °C-ийн хандлага. Өөрийгөө хай.",
+      "rank_intro_countries": "Улс орон бүр хотуудаа дунджаар хэр хурдан дулаарч байгаагаар нь эрэмбэлдэг: 1940-2025 онуудад 10 жилийн °C-ийн хандлага. Өөрийгөө хай.",
       "rank_city": "Хот",
       "rank_country": "Улс",
       "rank_search": "Хот хайх...",
@@ -4031,6 +4135,7 @@
     "sr": {
       "rank_title": "Рангирање за светско загревање",
       "rank_intro": "Сваки град рангиран према брзини загревања: тренд у °Ц по деценији током 1940-2025. Потражите своје.",
+      "rank_intro_countries": "Свака земља рангирана према томе колико брзо се њени градови у просеку загревају: тренд у °Ц по деценији током 1940-2025. Потражите своје.",
       "rank_city": "Цити",
       "rank_country": "Држава",
       "rank_search": "Пронађите град…",
@@ -4045,6 +4150,7 @@
     "tt": {
       "rank_title": "Дөнья җылыну рейтингы",
       "rank_intro": "Everyәрбер шәһәр ничек тиз җылынуы буенча рейтингы: 1940-2025 еллар эчендә ун ел эчендә ° C тенденциясе. Yoursзегезнекен эзләгез.",
+      "rank_intro_countries": "Everyәрбер ил үз шәһәрләренең уртача тиз җылынуы буенча рейтингы: 1940-2025 елларда дистә ел эчендә ° C тенденциясе. Yoursзегезнекен эзләгез.",
       "rank_city": "Шәһәр",
       "rank_country": "Ил",
       "rank_search": "Шәһәр табыгыз…",
@@ -4058,7 +4164,8 @@
     },
     "tg": {
       "rank_title": "Рейтинги гармшавии ҷаҳон",
-      "rank_intro": "Ҳар як шаҳр аз рӯи суръати гармшавии он гурӯҳбандӣ шудааст: тамоюли °C дар як даҳсола дар тӯли солҳои 1940-2025. Ҷустуҷӯи худ.",
+      "rank_intro": "Ҳар як шаҳр аз рӯи суръати гармшавии он гурӯҳбандӣ шудааст: тамоюли °C дар як даҳсола дар тӯли солҳои 1940-2025. Ҷустуҷӯи худро.",
+      "rank_intro_countries": "Ҳар як кишвар аз рӯи суръати гармшавии шаҳрҳои онҳо ба ҳисоби миёна: тамоюли °C дар як даҳсола дар тӯли солҳои 1940-2025. Ҷустуҷӯи худро.",
       "rank_city": "Шаҳр",
       "rank_country": "кишвар",
       "rank_search": "Як шаҳр пайдо кунед…",
@@ -4073,6 +4180,7 @@
     "kk": {
       "rank_title": "Әлемдік жылыну рейтингі",
       "rank_intro": "Әрбір қаланың жылыну жылдамдығы бойынша рейтингі: 1940-2025 жылдардағы онжылдықта °C үрдісі. Өзіңізді іздеңіз.",
+      "rank_intro_countries": "Әрбір ел қалаларының орташа жылыну жылдамдығына қарай рейтингте: 1940-2025 жылдардағы онжылдықта °C тенденциясы. Өзіңізді іздеңіз.",
       "rank_city": "Қала",
       "rank_country": "Ел",
       "rank_search": "Қаланы табыңыз…",
@@ -4087,6 +4195,7 @@
     "hy": {
       "rank_title": "Աշխարհի տաքացման վարկանիշը",
       "rank_intro": "Յուրաքանչյուր քաղաք դասակարգվում է ըստ տաքացման արագության. 1940-2025 թվականների ընթացքում մեկ տասնամյակում °C-ի միտում: Որոնեք ձերը:",
+      "rank_intro_countries": "Յուրաքանչյուր երկիր դասակարգվում է ըստ միջինում քաղաքների տաքացման աստիճանի. 1940-2025 թվականներին մեկ տասնամյակի ընթացքում աստիճանի աստիճանի միտում: Որոնեք ձերը:",
       "rank_city": "Քաղաք",
       "rank_country": "Երկիր",
       "rank_search": "Գտեք քաղաք…",
@@ -4101,6 +4210,7 @@
     "yi": {
       "rank_title": "וועלט וואָרמינג ראַנגקינג",
       "rank_intro": "יעדער שטאָט ראַנגקט לויט ווי שנעל עס איז וואָרמינג: דער גאַנג אין °C פּער יאָרצענדלינג איבער 1940-2025. זוכן פֿאַר דיין.",
+      "rank_intro_countries": "יעדער מדינה ראַנגקט לויט ווי שנעל זייַן שטעט זענען וואָרמינג אין דורכשניטלעך: דער גאַנג אין °C פּער יאָרצענדלינג איבער 1940-2025. זוכן פֿאַר דיין.",
       "rank_city": "שטאָט",
       "rank_country": "לאַנד",
       "rank_search": "געפֿינען אַ שטאָט...",
@@ -4115,6 +4225,7 @@
     "he": {
       "rank_title": "דירוג ההתחממות העולמי",
       "rank_intro": "כל עיר מדורגת לפי המהירות בה היא מתחממת: המגמה ב-°C לעשור על פני 1940-2025. חפש את שלך.",
+      "rank_intro_countries": "כל מדינה מדורגת לפי מהירות התחממות הערים שלה בממוצע: המגמה ב-°C לעשור במהלך השנים 1940-2025. חפש את שלך.",
       "rank_city": "עיר",
       "rank_country": "מדינה",
       "rank_search": "מצא עיר…",
@@ -4128,7 +4239,8 @@
     },
     "ug": {
       "rank_title": "دۇنيا ئىسسىپ كېتىش دەرىجىسى",
-      "rank_intro": "ھەر بىر شەھەر ئۇنىڭ قانچىلىك ئىسسىپ كېتىشىگە تىزىلغان: 1940-2025-يىللاردىكى ھەر ئون يىلدا ° C نىڭ يۈزلىنىشى. ئۆزىڭىزنى ئىزدەڭ.",
+      "rank_intro": "ھەر بىر شەھەر ئۇنىڭ قانچىلىك تېز ئىسسىپ كەتكەنلىكىنى رەتكە تۇرغۇزدى: 1940-يىلدىن 2025-يىلغىچە بولغان ئون يىلدا ° C نىڭ يۈزلىنىشى. ئۆزىڭىزنى ئىزدەڭ.",
+      "rank_intro_countries": "ھەر قايسى دۆلەتلەر شەھەرلىرىنىڭ ئوتتۇرا ھېساب بىلەن قانچىلىك تېز ئىسسىپ كەتكەنلىكىنى رەتكە تۇرغۇزدى: 1940-2025-يىللاردىكى ھەر ئون يىلدا ° C نىڭ يۈزلىنىشى. ئۆزىڭىزنى ئىزدەڭ.",
       "rank_city": "شەھەر",
       "rank_country": "دۆلەت",
       "rank_search": "شەھەر تېپىش…",
@@ -4143,6 +4255,7 @@
     "sd": {
       "rank_title": "ورلڊ وارمنگ جي درجه بندي",
       "rank_intro": "هر شهر جي درجه بندي ان حساب سان آهي ته گرمي ڪيتري تيز ٿي رهي آهي: 1940-2025 دوران °C في ڏهاڪي ۾ رجحان. توھان جي ڳولا ڪريو.",
+      "rank_intro_countries": "هر ملڪ جي درجه بندي ڪئي وئي آهي ته ان جا شهر ڪيتري تيزيءَ سان گرم ٿي رهيا آهن: 1940-2025 دوران °C في ڏهاڪي ۾ رجحان. توھان جي ڳولا ڪريو.",
       "rank_city": "شهر",
       "rank_country": "ملڪ",
       "rank_search": "شهر ڳوليو…",
@@ -4157,6 +4270,7 @@
     "ps": {
       "rank_title": "د نړۍ د تودوخې درجه بندي",
       "rank_intro": "هر ښار د تودوخې د چټکتیا له مخې درجه بندي کوي: په 1940-2025 کې په هره لسیزه کې د سانتي ګراد رجحان. ستاسو لپاره لټون وکړئ.",
+      "rank_intro_countries": "هر هیواد د دې له مخې درجه بندي کوي چې ښارونه یې په اوسط ډول څومره ګړندي تودوخه کوي: د 1940-2025 په اوږدو کې په هره لسیزه کې د سانتي ګراد رجحان. ستاسو لپاره لټون وکړئ.",
       "rank_city": "ښار",
       "rank_country": "هیواد",
       "rank_search": "یو ښار ومومئ…",
@@ -4171,12 +4285,13 @@
     "ckb": {
       "rank_title": "ڕیزبەندی گەرمبوونی جیهان",
       "rank_intro": "هەموو شارێک بەپێی ئەوەی کە چەندە خێرا گەرم دەبێتەوە ڕیزبەندی کراوە: ڕەوتی پلەی سەدی لە هەر دە ساڵێکدا لە ماوەی ساڵانی ١٩٤٠-٢٠٢٥. بەدوای هی خۆتدا بگەڕێ.",
+      "rank_intro_countries": "هەموو وڵاتێک بەو پێیە ڕیزبەندی کراوە کە شارەکانی بە تێکڕا چەندە خێرا گەرم دەبنەوە: ڕەوتی پلەی سەدی لە هەر دەیەیەکدا لە ماوەی ساڵانی ١٩٤٠-٢٠٢٥. بەدوای هی خۆتدا بگەڕێ.",
       "rank_city": "شار",
       "rank_country": "وڵات",
       "rank_search": "شارێک بدۆزەرەوە...",
       "rank_empty": "هیچ شارێک لەگەڵ ئەو گەڕانەدا ناگونجێت.",
       "cstat_title": "وڵاتەکەت چۆن گەرم دەبێت؟",
-      "cstat_line": "{country}: {trend}°C بۆ هەر دەیەیەک لە ساڵی 1940ەوە، خێراترە لە {pct}%ی جیهان. پلەی #{rank} لە {total}.",
+      "cstat_line": "{country}: {trend} پلەی سەدی بۆ هەر دەیەیەک لە ساڵی 1940ەوە، خێراترە لە {pct}%ی جیهان. پلەی #{rank} لە {total}.",
       "cstat_cool": "{country}: {trend}°C بۆ هەر دەیەیەک لە ساڵی 1940ەوە. ساردبوونەوە، لە بەرامبەر ڕەوتی جیهانی. پلەی #{rank} لە {total}.",
       "rank_more": "زیاتر پیشان بدە",
       "rank_cities": "شارەکان",
@@ -4185,6 +4300,7 @@
     "doi": {
       "rank_title": "वर्ल्ड वार्मिंग रैंकिंग",
       "rank_intro": "हर शहर गी इस गल्लै कन्नै रैंक कीता गेआ जे एह् किन्नी तेजी कन्नै गर्मी होआ करदा ऐ: 1940-2025 दे दौरान प्रति दशक डिग्री सेल्सियस च रुझान। अपनी खोज करो।",
+      "rank_intro_countries": "हर देश दी रैंकिंग इस गल्लै कन्नै कीती गेई जे औसतन उंदे शैह् र किन्नी तेजी कन्नै गर्मी होआ करदे न: 1940-2025 दे दौरान प्रति दशक डिग्री सेल्सियस च रुझान। अपनी खोज करो।",
       "rank_city": "शहर",
       "rank_country": "देश",
       "rank_search": "इक शहर ढूंढो...",
@@ -4199,6 +4315,7 @@
     "ne": {
       "rank_title": "विश्व तापक्रम रैंकिंग",
       "rank_intro": "प्रत्येक सहर कति चाँडो तापक्रम बढिरहेको छ भन्ने आधारमा क्रमबद्ध गरिएको छ: 1940-2025 मा प्रति दशक डिग्री सेल्सियसको प्रवृत्ति। आफ्नो खोज्नुहोस्।",
+      "rank_intro_countries": "प्रत्येक देशका शहरहरू औसतमा कति छिटो न्यानो हुँदैछन् भनेर क्रमबद्ध गरिएको छ: 1940-2025 मा प्रति दशक °C मा प्रवृत्ति। आफ्नो खोज्नुहोस्।",
       "rank_city": "सहर",
       "rank_country": "देश",
       "rank_search": "सहर खोज्नुहोस्...",
@@ -4213,6 +4330,7 @@
     "bho": {
       "rank_title": "वर्ल्ड वार्मिंग के रैंकिंग में दिहल गइल बा",
       "rank_intro": "हर शहर के रैंकिंग एह हिसाब से कइल गइल कि ई केतना तेजी से गरम हो रहल बा: 1940-2025 के दौरान प्रति दशक °C के रुझान। आपन खोजीं।",
+      "rank_intro_countries": "हर देस के रैंकिंग एह हिसाब से कइल गइल कि औसतन ओकर शहर केतना तेजी से गरम हो रहल बा: 1940-2025 के दौरान प्रति दशक °C के रुझान। आपन खोजीं।",
       "rank_city": "शहर के बा",
       "rank_country": "देश के बा",
       "rank_search": "कवनो शहर के खोज करीं...",
@@ -4227,6 +4345,7 @@
     "mai": {
       "rank_title": "विश्व वार्मिंग रैंकिंग",
       "rank_intro": "हर शहर केरऽ रैंकिंग ई आधार प॑ करलऽ गेलऽ छै कि ई कतेक तेजी स॑ गरम होय रहलऽ छै: १९४०-२०२५ के दौरान प्रति दशक °C केरऽ प्रवृत्ति । अपन खोजू।",
+      "rank_intro_countries": "हर देश केरऽ रैंकिंग ई आधार प॑ करलऽ गेलऽ छै कि ओकरऽ शहर औसतन कतेक तेजी स॑ गरम होय रहलऽ छै: १९४०-२०२५ के दौरान प्रति दशक °C के प्रवृत्ति । अपन खोजू।",
       "rank_city": "शहर",
       "rank_country": "देश",
       "rank_search": "कोनो शहर खोजू...",
@@ -4241,13 +4360,14 @@
     "sa": {
       "rank_title": "विश्व तापन श्रेणी",
       "rank_intro": "प्रत्येकं नगरं कियत् शीघ्रं तापयति इति क्रमेण स्थापितं: १९४०-२०२५ यावत् प्रतिदशकं °C इत्यस्य प्रवृत्तिः । भवतः अन्वेषणं कुर्वन्तु।",
+      "rank_intro_countries": "प्रत्येकं देशं तस्य नगराणि औसतेन कियत् शीघ्रं तापयन्ति इति क्रमेण स्थापितं: १९४०-२०२५ यावत् प्रतिदशकं °C इत्यस्य प्रवृत्तिः । भवतः अन्वेषणं कुर्वन्तु।",
       "rank_city": "नगरम्",
       "rank_country": "देश",
       "rank_search": "एकं नगरं अन्वेष्टुम्...",
       "rank_empty": "तस्य अन्वेषणस्य सङ्गतिः कोऽपि नगरः न भवति ।",
       "cstat_title": "भवतः देशः कथं तापयति?",
       "cstat_line": "{country}: १९४० तः प्रतिदशकं {trend}°C, विश्वस्य {pct}% अपेक्षया द्रुततरम् । {total} के #{rank} रैंक।",
-      "cstat_cool": "{country}: {trend}°C प्रति दशक 1940 तः शीतलन, वैश्विक प्रवृत्तेः विरुद्धं। {total} के #{rank} रैंक।",
+      "cstat_cool": "{country}: {trend}°C प्रति दशकं 1940 तः शीतलनं, वैश्विकप्रवृत्तेः विरुद्धं। {total} के #{rank} रैंक।",
       "rank_more": "अधिकं दर्शयतु",
       "rank_cities": "नगराणि",
       "rank_countries": "देशाः"
@@ -4255,6 +4375,7 @@
     "as": {
       "rank_title": "বিশ্ব উষ্ণতা বৃদ্ধিৰ ৰেংকিং",
       "rank_intro": "প্ৰতিখন চহৰৰ স্থান কিমান দ্ৰুতগতিত উষ্ণতা বৃদ্ধি পাইছে: ১৯৪০-২০২৫ চনৰ ভিতৰত প্ৰতি দশকত °C ৰ ধাৰা। আপোনাৰটো বিচাৰিব।",
+      "rank_intro_countries": "প্ৰতিখন দেশৰ স্থান গড়ে কিমান দ্ৰুতগতিত ইয়াৰ চহৰসমূহ উষ্ণতা বৃদ্ধি পাইছে: ১৯৪০-২০২৫ চনৰ ভিতৰত প্ৰতি দশকত °C ৰ ধাৰা। আপোনাৰটো বিচাৰিব।",
       "rank_city": "চহৰ",
       "rank_country": "দেশ",
       "rank_search": "একটি শহর খুঁজুন...",
@@ -4269,6 +4390,7 @@
     "gu": {
       "rank_title": "વર્લ્ડ વોર્મિંગ રેન્કિંગ",
       "rank_intro": "દરેક શહેર કેટલી ઝડપથી ગરમ થઈ રહ્યું છે તેના આધારે ક્રમાંકિત: 1940-2025 દરમિયાન દર દાયકામાં °C માં વલણ. તમારા માટે શોધો.",
+      "rank_intro_countries": "દરેક દેશ તેના શહેરો સરેરાશ કેટલી ઝડપથી ગરમ થઈ રહ્યા છે તેના આધારે ક્રમાંકિત થાય છે: 1940-2025 દરમિયાન દર દાયકામાં °C માં વલણ. તમારા માટે શોધો.",
       "rank_city": "શહેર",
       "rank_country": "દેશ",
       "rank_search": "એક શહેર શોધો...",
@@ -4283,6 +4405,7 @@
     "or": {
       "rank_title": "ୱାର୍ଲ୍ଡ ୱାର୍ମିଂ ର୍ୟାଙ୍କିଙ୍ଗ୍ |",
       "rank_intro": "ପ୍ରତ୍ୟେକ ସହର କେତେ ଗରମ ହେଉଛି ତାହା ଦ୍ ranked ାରା ସ୍ଥାନିତ ହୋଇଛି: 1940-2025 ମଧ୍ୟରେ ଦଶନ୍ଧିରେ ° C ରେ ଧାରା | ତୁମର ସନ୍ଧାନ କର |",
+      "rank_intro_countries": "ପ୍ରତ୍ୟେକ ଦେଶ ହାରାହାରି କେତେ ଶୀଘ୍ର ଗରମ ହେଉଛି ତାହା ଦ୍ ranked ାରା ସ୍ଥାନିତ ହୋଇଛି: 1940-2025 ମଧ୍ୟରେ ଦଶନ୍ଧିରେ ° C ରେ ଧାରା | ତୁମର ସନ୍ଧାନ କର |",
       "rank_city": "ସହର",
       "rank_country": "ଦେଶ",
       "rank_search": "ଏକ ସହର ଖୋଜ…",
@@ -4297,6 +4420,7 @@
     "kn": {
       "rank_title": "ವರ್ಲ್ಡ್ ವಾರ್ಮಿಂಗ್ ಶ್ರೇಯಾಂಕ",
       "rank_intro": "ಪ್ರತಿ ನಗರವು ಎಷ್ಟು ವೇಗವಾಗಿ ಬೆಚ್ಚಗಾಗುತ್ತಿದೆ ಎಂಬುದರ ಮೂಲಕ ಶ್ರೇಣೀಕರಿಸಲ್ಪಟ್ಟಿದೆ: 1940-2025 ಕ್ಕಿಂತ ಪ್ರತಿ ದಶಕದಲ್ಲಿ °C ಪ್ರವೃತ್ತಿ. ನಿಮ್ಮದಕ್ಕಾಗಿ ಹುಡುಕಿ.",
+      "rank_intro_countries": "ಪ್ರತಿ ದೇಶವು ಅದರ ನಗರಗಳು ಸರಾಸರಿ ಎಷ್ಟು ವೇಗವಾಗಿ ಬೆಚ್ಚಗಾಗುತ್ತಿವೆ ಎಂಬುದರ ಮೂಲಕ ಶ್ರೇಣೀಕರಿಸಲಾಗಿದೆ: 1940-2025 ಕ್ಕಿಂತ ಪ್ರತಿ ದಶಕದಲ್ಲಿ °C ಪ್ರವೃತ್ತಿ. ನಿಮ್ಮದಕ್ಕಾಗಿ ಹುಡುಕಿ.",
       "rank_city": "ನಗರ",
       "rank_country": "ದೇಶ",
       "rank_search": "ನಗರವನ್ನು ಹುಡುಕಿ...",
@@ -4311,6 +4435,7 @@
     "ml": {
       "rank_title": "ലോക താപന റാങ്കിംഗ്",
       "rank_intro": "ഓരോ നഗരവും അത് എത്ര വേഗത്തിലാണ് ചൂടാകുന്നത് എന്നതിൻ്റെ അടിസ്ഥാനത്തിൽ റാങ്ക് ചെയ്തിരിക്കുന്നു: 1940-2025 കാലയളവിലെ ഒരു ദശാബ്ദത്തിൽ °C എന്ന പ്രവണത. നിങ്ങളുടേത് തിരയുക.",
+      "rank_intro_countries": "ഓരോ രാജ്യവും അതിൻ്റെ നഗരങ്ങൾ ശരാശരി ചൂടാകുന്ന വേഗതയെ അടിസ്ഥാനമാക്കി റാങ്ക് ചെയ്യുന്നു: 1940-2025 കാലയളവിലെ ഒരു ദശാബ്ദത്തിൽ °C എന്ന പ്രവണത. നിങ്ങളുടേത് തിരയുക.",
       "rank_city": "നഗരം",
       "rank_country": "രാജ്യം",
       "rank_search": "ഒരു നഗരം കണ്ടെത്തുക...",
@@ -4325,6 +4450,7 @@
     "si": {
       "rank_title": "ලෝක උණුසුම ශ්‍රේණිගත කිරීම",
       "rank_intro": "සෑම නගරයක්ම එය කෙතරම් වේගයෙන් උනුසුම් වේද යන්න අනුව ශ්‍රේණිගත කර ඇත: 1940-2025 ට වඩා දශකයකට °C හි ප්‍රවණතාවය. ඔබේ එක සොයන්න.",
+      "rank_intro_countries": "සෑම රටක්ම එහි නගර සාමාන්‍යයෙන් කෙතරම් වේගයෙන් උනුසුම් වේද යන්න අනුව ශ්‍රේණිගත කර ඇත: 1940-2025 ට වඩා දශකයකට °C ප්‍රවණතාව. ඔබේ එක සොයන්න.",
       "rank_city": "නගරය",
       "rank_country": "රට",
       "rank_search": "නගරයක් සොයා…",
@@ -4339,6 +4465,7 @@
     "lo": {
       "rank_title": "ອັນດັບໂລກຮ້ອນ",
       "rank_intro": "ທຸກໆເມືອງຖືກຈັດອັນດັບໂດຍຄວາມອົບອຸ່ນໄວ: ແນວໂນ້ມຂອງ°C ຕໍ່ທົດສະວັດໃນໄລຍະ 1940-2025. ຊອກຫາຂອງທ່ານ.",
+      "rank_intro_countries": "ທຸກໆປະເທດຈັດລໍາດັບໂດຍສະເລ່ຍວ່າເມືອງຂອງຕົນຮ້ອນໄວເທົ່າໃດ: ແນວໂນ້ມຂອງ°C ຕໍ່ທົດສະວັດໃນໄລຍະ 1940-2025. ຊອກຫາຂອງທ່ານ.",
       "rank_city": "ເມືອງ",
       "rank_country": "ປະເທດ",
       "rank_search": "ຊອກຫາເມືອງ...",
@@ -4353,6 +4480,7 @@
     "ka": {
       "rank_title": "მსოფლიო დათბობის რეიტინგი",
       "rank_intro": "ყველა ქალაქი დასახელებულია იმის მიხედვით, თუ რამდენად სწრაფად თბება: ტენდენცია °C ათწლეულში 1940-2025 წლებში. მოძებნე შენი.",
+      "rank_intro_countries": "ყველა ქვეყანა ფასდება იმის მიხედვით, თუ რამდენად სწრაფად თბება მისი ქალაქები: ტენდენცია °C ათწლეულში 1940-2025 წლებში. მოძებნე შენი.",
       "rank_city": "ქალაქი",
       "rank_country": "ქვეყანა",
       "rank_search": "იპოვე ქალაქი…",
@@ -4367,6 +4495,7 @@
     "ti": {
       "rank_title": "ደረጃ ምውሳኽ ሙቐት ዓለም",
       "rank_intro": "ነፍሲ ወከፍ ከተማ ብኽንደይ ፍጥነት ትውዕይ ከምዘላ ተሰሪዓ: ኣብ ዓሰርተ ዓመት ኣብ ልዕሊ 1940-2025 ዝነበረ ኣንፈት ዲግሪ ሰንቲግሬድ። ናትካ ድለ።",
+      "rank_intro_countries": "ኩለን ሃገራት ብማእከላይ ገምጋም ከተማታታ ክሳብ ክንደይ ቅልጣፈ ይውዕያ ከምዘለዋ ተሰሪዓ: ኣብ ዓሰርተ ዓመት ኣብ ልዕሊ 1940-2025 ዝነበረ ኣንፈት °C። ናትካ ድለ።",
       "rank_city": "ከተማ",
       "rank_country": "ሃገር",
       "rank_search": "ከተማ ድለዩ...",
@@ -4381,6 +4510,7 @@
     "km": {
       "rank_title": "ចំណាត់ថ្នាក់នៃកំដៅពិភពលោក",
       "rank_intro": "ទីក្រុងនីមួយៗត្រូវបានចាត់ថ្នាក់ដោយថាតើវាឡើងកំដៅលឿនប៉ុណ្ណា៖ និន្នាការក្នុង°C ក្នុងមួយទសវត្សរ៍ជាង 1940-2025។ ស្វែងរករបស់អ្នក។",
+      "rank_intro_countries": "ប្រទេសនីមួយៗបានចាត់ចំណាត់ថ្នាក់ដោយល្បឿននៃទីក្រុងរបស់ខ្លួនជាមធ្យមក្តៅ: និន្នាការក្នុង°C ក្នុងមួយទសវត្សរ៍ជាង 1940-2025។ ស្វែងរករបស់អ្នក។",
       "rank_city": "ទីក្រុង",
       "rank_country": "ប្រទេស",
       "rank_search": "ស្វែងរកទីក្រុង…",
@@ -4407,10 +4537,10 @@
       "eyebrow": "Jou streek",
       "cta": "Verken {name}",
       "since": "{v} warmer as 1940",
-      "faster": "vinniger opwarm as {pct}% van die wêreld",
+      "faster": "warmer vinniger as {pct}% van die wêreld",
       "locating": "Soek tans die naaste stad aan jou...",
       "near": "Naaste stad met rekords na jou ligging",
-      "default": "'n Uitgesproke streek. Laat ligging toe vir joune."
+      "default": "'n Uitgesproke streek. Laat ligging vir joune toe."
     },
     "ak": {
       "eyebrow": "Wo mantam no",
@@ -4624,7 +4754,7 @@
       "cta": "एक्सप्लोर करचें {name}",
       "since": "{v} १९४० परस उश्ण",
       "faster": "संवसारांतल्या {pct}% परस चड नेटान उश्णताय येवप",
-      "locating": "तुमच्या लागींचें शार सोदप...",
+      "locating": "तुमकां लागींचें शार सोदून काडप...",
       "near": "तुमच्या सुवातेर नोंदी आशिल्लें सगळ्यांत लागींचें शार",
       "default": "एक वैशिश्ट्यपूर्ण प्रदेश. तुमच्या खातीर थळ परवानगी दिवची."
     },
@@ -4715,7 +4845,7 @@
       "since": "{v} pi cho pase 1940",
       "faster": "chofe pi vit pase {pct}% nan mond lan",
       "locating": "Jwenn vil ki pi pre w la...",
-      "near": "Vil ki pi pre ak dosye kote ou ye",
+      "near": "Vil ki pi pre ak dosye kote w ye a",
       "default": "Yon rejyon prezante. Pèmèt kote pou ou."
     },
     "kri": {
@@ -4752,7 +4882,7 @@
       "faster": "atšilimas greičiau nei {pct}% pasaulio",
       "locating": "Ieškote artimiausio miesto...",
       "near": "Artimiausias miestas su įrašais iki jūsų vietos",
-      "default": "Išskirtinis regionas. Leiskite savo vietą."
+      "default": "Išskirtinis regionas. Leiskite vietą savo."
     },
     "la": {
       "eyebrow": "Tua regione",
@@ -4794,7 +4924,7 @@
       "eyebrow": "Az Ön régiója",
       "cta": "{name} felfedezése",
       "since": "{v} melegebb, mint 1940",
-      "faster": "gyorsabban melegszik fel, mint a világ {pct}%-a",
+      "faster": "gyorsabb felmelegedés, mint a világ {pct}%-a",
       "locating": "A hozzád legközelebbi város keresése...",
       "near": "Legközelebbi város rekordokkal az Ön tartózkodási helyéhez",
       "default": "Kiemelt régió. Engedélyezze a helyet a sajátjának."
@@ -4896,7 +5026,7 @@
       "faster": "vevela vave nai lo {pct}% o le lalolagi",
       "locating": "Su'e le taulaga lata ane ia te oe...",
       "near": "A'ai lata ane ma fa'amaumauga i lou nofoaga",
-      "default": "Se itulagi fa'aalia. Fa'ataga le nofoaga mo oe."
+      "default": "O se itulagi iloga. Fa'ataga le nofoaga mo oe."
     },
     "st": {
       "eyebrow": "Sebaka sa heno",
@@ -5028,10 +5158,10 @@
       "eyebrow": "Ваш рэгіён",
       "cta": "Дасьледуйце {name}",
       "since": "На {v} цяплей, чым у 1940 годзе",
-      "faster": "warming faster than {pct}% of the world",
-      "locating": "Finding the nearest city to you...",
-      "near": "Nearest city with records to your location",
-      "default": "Рэкамендаваны рэгіён. Allow location for yours."
+      "faster": "пацяпленне хутчэй, чым {pct}% свету",
+      "locating": "Пошук бліжэйшага да вас горада...",
+      "near": "Бліжэйшы да вашага месцазнаходжання горад з запісамі",
+      "default": "Рэкамендаваны рэгіён. Дазволіць месцазнаходжанне для вашага."
     },
     "bg": {
       "eyebrow": "Вашият регион",
@@ -5173,7 +5303,7 @@
       "cta": "एक्सप्लोर करो {name}",
       "since": "{v} 1940 दी तुलना च गर्म",
       "faster": "दुनिया दे {pct}% कोला बी तेजी कन्नै गर्मी",
-      "locating": "अपने नजदीकी शहर ढूंढना...",
+      "locating": "अपने नजदीकी शहर गी ढूंढना...",
       "near": "अपने स्थान दे रिकार्ड कन्नै नजदीकी शैह् र",
       "default": "इक फीचर क्षेत्र। अपने लेई लोकेशन दी अनुमति देओ।"
     },
@@ -5306,41 +5436,41 @@
   },
   "ranktext_note": {
     "sw": "Ni miji iliyo na rekodi za miaka 10+pekee na nchi inayojulikana ndiyo iliyoorodheshwa, kwa hivyo maeneo machache yenye data chache bado hayajaorodheshwa.",
-    "tl": "Ang mga lungsod lang na may 10+taon ng mga talaan at isang kilalang bansa ang niraranggo, kaya ang ilang mga lugar na may kalat-kalat na data ay hindi pa nakalista.",
-    "th": "มีเพียงเมืองที่มีประวัติยาวนานกว่า 10 ปีและประเทศที่รู้จักเท่านั้นที่จะได้รับการจัดอันดับ ดังนั้นจึงไม่มีรายชื่อสถานที่บางแห่งที่มีข้อมูลกระจัดกระจาย",
+    "tl": "Ang mga lungsod lang na may 10+taon ng mga tala at isang kilalang bansa ang niraranggo, kaya hindi pa nakalista ang ilang lugar na may kalat-kalat na data.",
+    "th": "มีเพียงเมืองที่มีประวัติยาวนานกว่า 10 ปีและประเทศที่รู้จักเท่านั้นที่ได้รับการจัดอันดับ ดังนั้นสถานที่บางแห่งที่มีข้อมูลกระจัดกระจายจึงยังไม่ปรากฏในรายการ",
     "ta": "10+வருட பதிவுகள் மற்றும் அறியப்பட்ட நாடு உள்ள நகரங்கள் மட்டுமே தரவரிசைப்படுத்தப்பட்டுள்ளன, எனவே குறைவான தரவுகளைக் கொண்ட சில இடங்கள் இன்னும் பட்டியலிடப்படவில்லை.",
     "mr": "फक्त 10+वर्षांची नोंद असलेली शहरे आणि ज्ञात देश रँक केला जातो, त्यामुळे विरळ डेटा असलेली काही ठिकाणे अद्याप सूचीबद्ध केलेली नाहीत.",
     "te": "10+సంవత్సరాల రికార్డులు మరియు తెలిసిన దేశం ఉన్న నగరాలు మాత్రమే ర్యాంక్ చేయబడ్డాయి, కాబట్టి తక్కువ డేటా ఉన్న కొన్ని స్థలాలు ఇంకా జాబితా చేయబడలేదు.",
     "ha": "Garuruwan da ke da shekaru 10+na rikodin da sanannen ƙasa ne kawai aka jera su, don haka ba a jera ƴan wuraren da ke da ƙarancin bayanai ba tukuna.",
     "pa": "ਸਿਰਫ਼ 10+ਸਾਲਾਂ ਦੇ ਰਿਕਾਰਡ ਵਾਲੇ ਸ਼ਹਿਰਾਂ ਅਤੇ ਕਿਸੇ ਜਾਣੇ-ਪਛਾਣੇ ਦੇਸ਼ ਨੂੰ ਦਰਜਾ ਦਿੱਤਾ ਗਿਆ ਹੈ, ਇਸਲਈ ਸਪਾਰਸ ਡੇਟਾ ਵਾਲੇ ਕੁਝ ਸਥਾਨਾਂ ਨੂੰ ਅਜੇ ਸੂਚੀਬੱਧ ਨਹੀਂ ਕੀਤਾ ਗਿਆ ਹੈ।",
     "my": "10 နှစ်ကျော် မှတ်တမ်းများ နှင့် လူသိများသော နိုင်ငံ များ ပါသော မြို့များ ကိုသာ အဆင့် သတ်မှတ် ထား သည် ၊ ထို့ကြောင့် ဒေတာ ကျဲသည့် နေရာ အချို့ ကို စာရင်း မသွင်းရသေး ပါ။",
-    "am": "ከ10 ዓመት በላይ መዛግብት ያላቸው እና የሚታወቅ ሀገር ያላቸው ከተሞች ብቻ ናቸው ደረጃቸውን የያዙት፣ ስለዚህ ጥቂት ቦታዎች ገና ያልተዘረዘሩ ናቸው።",
+    "am": "ከ10 ዓመት በላይ መዝገብ ያላቸው እና የሚታወቅ ሀገር ያላቸው ከተሞች ብቻ ናቸው ደረጃቸውን የያዙት፣ ስለዚህ ጥቂት ቦታዎች ገና ያልተዘረዘሩ ናቸው።",
     "yo": "Awọn ilu nikan ti o ni awọn igbasilẹ ọdun 10+ati orilẹ-ede ti a mọ ni o wa ni ipo, nitorinaa awọn aaye diẹ pẹlu data ṣoki ko ni atokọ sibẹsibẹ.",
     "af": "Slegs stede met 10+jaar se rekords en 'n bekende land word gerangskik, so 'n paar plekke met yl data is nog nie gelys nie.",
-    "ak": "Nkurow a wɔde mfe 10+kyerɛwtohɔ ne ɔman a wonim nkutoo na wɔde ahyɛ mu, enti wɔmfaa mmeae kakraa bi a data kakraa bi na ɛwɔ mu no din nsii.",
+    "ak": "Nkurow a wɔde mfe 10+kyerɛwtohɔ ne ɔman a wonim nkutoo na wɔde ato hɔ, enti wɔmfaa mmeae kakraa bi a data kakraa bi na ɛwɔ hɔ no din da.",
     "gn": "Umi táva orekóva 10+ary registro ha tetã ojekuaáva añoite oñemohenda, upévare mbovymi tenda orekóva dato escaso noñemoîri gueteri lista-pe.",
-    "ay": "10+mara registros ukat uñt’at markanakakiw ranking ukankapxi, ukhamax mä qawqha chiqanakax escasos datos ukanakax janiw jichhakamax uñt’ayatakiti.",
+    "ay": "10+mara registros ukat uñt’at markan markanakakiw ranking ukankapxi, ukhamax mä qawqha chiqanakax escasos datos ukanakax janiw jichhakamax uñt’ayatakiti.",
     "az": "Yalnız 10+illik qeydləri olan şəhərlər və məlum ölkə sıralanır, buna görə də seyrək məlumatı olan bir neçə yer hələ siyahıya alınmayıb.",
     "ms": "Hanya bandar yang mempunyai rekod 10+tahun dan negara yang diketahui disenaraikan, jadi beberapa tempat dengan data yang jarang belum disenaraikan lagi.",
     "bm": "Dugu minnu ka san 10+sɛbɛnw bɛ yen ani jamana dɔnnen bɛ minnu na, olu dɔrɔn de bɛ jate, o la, yɔrɔ damadɔ minnu ka kunnafoniw man ca, olu ma jate fɔlɔ.",
     "su": "Ngan kota-kota anu gaduh catetan langkung ti 10 taun sareng nagara anu dikenal anu dikelompokeun, janten sababaraha tempat anu datana jarang henteu didaptarkeun.",
     "bs": "Samo gradovi sa 10+godina rekorda i poznatom zemljom su rangirani, tako da još nije navedeno nekoliko mjesta sa oskudnim podacima.",
     "ca": "Només es classifiquen les ciutats amb més de 10 anys de registres i un país conegut, de manera que encara no es mostren alguns llocs amb dades escasses.",
-    "ceb": "Ang mga lungsod lamang nga adunay 10+ka tuig nga mga rekord ug usa ka nailhan nga nasud ang giranggo, mao nga pipila ka mga lugar nga adunay gamay nga datos wala pa nalista.",
+    "ceb": "Ang mga lungsod lamang nga adunay 10+ka tuig nga mga rekord ug usa ka nailhan nga nasud ang na-ranggo, mao nga pipila ka mga lugar nga adunay gamay nga datos wala pa nalista.",
     "zh-TW": "只對有10年以上記錄和已知國家的城市進行排名，因此一些數據稀疏的地方尚未列出。",
     "sn": "Maguta chete ane 10+makore erekodhi uye nyika inozivikanwa inoiswa, saka nzvimbo shoma dzine data shoma hadzisati dzanyorwa.",
-    "co": "Solu e cità cù più di 10 anni di records è un paese cunnisciutu sò classificate, cusì uni pochi di posti cù dati sparsi ùn sò micca listati ancu.",
+    "co": "Solu e cità cù più di 10 anni di records è un paese cunnisciutu sò classificate, cusì uni pochi di posti cù dati sparse ùn sò micca listati ancu.",
     "cy": "Dim ond dinasoedd â 10+mlynedd o gofnodion a gwlad hysbys sy'n cael eu rhestru, felly nid yw ychydig o leoedd â data prin wedi'u rhestru eto.",
     "da": "Kun byer med 10+års rekorder og et kendt land er rangeret, så nogle få steder med sparsomme data er ikke opført endnu.",
     "dv": "ރޭންކް ކުރެވިފައިވަނީ ހަމައެކަނި 10+އަހަރުގެ ރެކޯޑްތަކެއް ހުރި ސިޓީތަކާއި އެނގޭ ގައުމެއް ކަމުން ސްޕާސް ޑޭޓާ ހުރި މަދު ތަންތަން އަދި ލިސްޓްކޮށްފައެއް ނުވެއެވެ.",
     "et": "Pingereas on vaid 10+aastat rekordeid ja teadaolevat riiki omavad linnad, nii et üksikuid hõredate andmetega kohti pole veel kirjas.",
     "eo": "Nur urboj kun 10+jaroj da rekordoj kaj konata lando estas vicigitaj, do kelkaj lokoj kun malabundaj datumoj ankoraŭ ne estas listigitaj.",
     "eu": "10 urte baino gehiagoko erregistroak eta herrialde ezagun bat dituzten hiriak bakarrik sailkatzen dira, beraz, datu eskasak dituzten toki batzuk oraindik ez dira zerrendatzen.",
-    "ee": "Du siwo me ƒe 10+ƒe nuŋlɔɖiwo le kple dukɔ si wonya koe woɖo ɖe ɖoƒe si woɖo, eyata womeyɔ teƒe ʋɛ aɖewo siwo me nyatakaka ʋɛ aɖewo le haɖe o.",
+    "ee": "Du siwo me ƒe 10+ƒe nuŋlɔɖiwo le kple dukɔ si wonya koe woɖo ɖe ɖoƒe, eyata womeŋlɔ teƒe ʋɛ aɖewo siwo me nyatakaka ʋɛ aɖewo le haɖe o.",
     "fy": "Allinnich stêden mei 10+jier oan records en in bekend lân wurde ranglist, dus in pear plakken mei sparse gegevens binne noch net neamd.",
     "ga": "Ní dhéantar rangú ach ar chathracha le 10+bliain de thaifid agus tír aitheanta, mar sin níl roinnt áiteanna le sonraí gann liostaithe fós.",
     "gl": "Só se clasifican as cidades con máis de 10 anos de rexistros e un país coñecido, polo que aínda non se enumeran algúns lugares con datos escasos.",
-    "gom": "फकत 10+वर्सांचो रेकॉर्ड आशिल्लीं शारां आनी वळखूंक येवपी देशांची क्रमवारी केल्ली आसा, देखून विरळ डेटा आशिल्लीं कांय सुवाती अजून वळेरी करूंक नात.",
+    "gom": "फकत 10+वर्सांचो रेकॉर्ड आनी वळखूंक येवपी देश आशिल्लीं शारां क्रमांकीत केल्यांत, देखून विरळ डेटा आशिल्लीं कांय सुवाती अजून वळेरी करूंक नात.",
     "gd": "Is e dìreach bailtean-mòra le 10+bliadhna de chlàran agus dùthaich aithnichte a tha air an rangachadh, agus mar sin tha beagan àiteachan le dàta gann air an liostadh fhathast.",
     "hmn": "Tsuas yog lub nroog nrog 10+xyoo ntawm cov ntaub ntawv thiab lub teb chaws paub yog nyob rau hauv qeb, yog li ob peb qhov chaw nrog cov ntaub ntawv sib cais tseem tsis tau teev tseg.",
     "hr": "Rangirani su samo gradovi s 10+godina evidencije i poznatom zemljom, tako da nekoliko mjesta s oskudnim podacima još nije navedeno.",
@@ -5349,7 +5479,7 @@
     "ilo": "Dagiti laeng siudad nga addaan iti 10+a tawen a rekord ken ammo a pagilian ti nairanggo, isu a saan pay a nailista ti sumagmamano a lugar nga addaan iti napardas a datos.",
     "xh": "Kuphela izixeko ezineminyaka eyi-10+yeerekhodi kunye nelizwe elaziwayo zibekwe kwinqanaba, ngoko ke iindawo ezimbalwa ezinedatha enqabileyo ayikadweliswa.",
     "zu": "Amadolobha kuphela anamarekhodi eminyaka engu-10+kanye nezwe elaziwayo alinganiswayo, ngakho izindawo ezimbalwa ezinedatha eyingcosana azikafakwa ohlwini okwamanje.",
-    "jv": "Mung kutha kanthi cathetan 10+taun lan negara sing dikenal sing diklasifikasikake, mula sawetara panggonan sing data langka durung kadhaptar.",
+    "jv": "Mung kutha kanthi cathetan 10+taun lan negara sing dikenal sing diklasifikasikake, mula sawetara papan sing duwe data langka durung kadhaptar.",
     "ht": "Se sèlman vil ki gen plis pase 10 ane nan dosye ak yon peyi li te ye yo klase, kidonk kèk kote ki gen done ra pa nan lis ankò.",
     "kri": "Na siti dɛm nɔmɔ we gɛt 10+ia rɛkɔd ɛn kɔntri we dɛn sabi, dɛn dɔn rank, so sɔm ples dɛn we gɛt spays data nɔ de yet.",
     "ku": "Tenê bajarên xwedan tomarên 10+salî û welatek naskirî têne rêz kirin, ji ber vê yekê çend cîhên bi daneya kêm hêj nehatine navnîş kirin.",
@@ -5358,27 +5488,27 @@
     "la": "Solae civitates cum 10+annis monumentorum et locorum notae ponuntur, ut pauca loca cum notitia sparsa adhuc non recensentur.",
     "ln": "Kaka bingumba oyo ezali na ba dossiers ya 10+ans mpe mboka eyebani nde ezali na classement, yango wana mua bisika oyo ezali na ba données sparse ezali nanu na liste te.",
     "lg": "Ebibuga byokka ebirina ebiwandiiko by’emyaka 10+n’ensi emanyiddwa bye biteekeddwa mu nsengeka, kale ebifo ebitonotono ebirina data entono tebinnaba kuwandiikibwa.",
-    "lb": "Nëmme Stied mat 10+Joer Rekorder an engem bekannte Land sinn klasséiert, sou datt e puer Plazen mat spatzen Daten nach net opgelëscht sinn.",
+    "lb": "Nëmme Stied mat 10+Joer Rekorder an engem bekannte Land sinn klasséiert, sou datt e puer Plazen mat spatzen Donnéeën nach net opgelëscht sinn.",
     "hu": "Csak a 10+éves rekordokkal rendelkező városok és egy ismert ország szerepel a rangsorban, így néhány ritka adattal rendelkező hely még nincs felsorolva.",
     "mg": "Tanàna manana firaketana 10+taona sy firenena fantatra ihany no laharana, ka toerana vitsivitsy misy angona vitsy no tsy voatanisa.",
     "mt": "Bliet biss b'10+snin ta' rekords u pajjiż magħruf huma kklassifikati, għalhekk ftit postijiet b'dejta skarsa għadhom mhumiex elenkati.",
     "lus": "Kum 10+record nei leh ram hriat tawh khawpui chauh rank a nih avangin data sparse nei hmun tlemte chu list a la ni lo.",
     "mi": "Ko nga taone anake e 10+nga tau o nga rekoata me tetahi whenua e mohiotia ana ka tohua, na reira kaore ano kia rarangihia etahi waahi iti nei nga raraunga.",
     "no": "Bare byer med 10+år med rekorder og et kjent land er rangert, så noen få steder med sparsomme data er ikke oppført ennå.",
-    "ny": "Mizinda yokhayo yomwe ili ndi zaka 10+zolembedwa ndi dziko lodziwika ndizomwe zili pagulu, kotero malo ochepa omwe ali ndi deta yochepa sanatchulidwebe.",
+    "ny": "Mizinda yokhayo yokhala ndi mbiri yazaka 10+ndi dziko lodziwika ndi yomwe ili pagulu, kotero malo ochepa omwe ali ndi data yochepa sanatchulidwebe.",
     "om": "Magaalonni galmee waggaa 10+qabaniifi biyya beekamtu qofatu sadarkaa qaba, kanaaf bakkeewwan muraasni daataa xiqqaa qaban ammallee hin tarreeffamne.",
     "uz": "Faqat 10+yillik rekordlarga ega boʻlgan shaharlar va maʼlum bir mamlakat reytingga kiritilgan, shuning uchun siyrak maʼlumotlarga ega boʻlgan bir nechta joylar hali roʻyxatga olinmagan.",
     "ro": "Numai orașele cu înregistrări de peste 10 ani și o țară cunoscută sunt clasate, așa că câteva locuri cu date rare nu sunt listate încă.",
     "qu": "10+wata registroyuq llaqtakunalla, riqsisqa suyuyuqllam rankikusqa kachkanku, chaymi pisi datuyuq pisilla sitiokuna manaraq listasqachu kachkan.",
-    "sm": "Na'o 'a'ai e 10+tausaga o fa'amaumauga ma se atunu'u ta'uta'ua o lo'o fa'avasegaina, o lea e le'o lisiina ai ni nai nofoaga e le maua ni fa'amaumauga.",
+    "sm": "Na'o 'a'ai e 10+tausaga o fa'amaumauga ma se atunu'u ta'uta'ua o lo'o fa'avasegaina, o lea e le'i lisiina ai ni nai nofoaga fa'atasi ai ma fa'amaumauga.",
     "st": "Ke litoropo tse nang le lirekoto tsa lilemo tse 10+le naha e tsebahalang feela tse behiloeng maemong, kahoo libaka tse 'maloa tse nang le lintlha tse fokolang ha li so thathamisitsoe.",
     "nso": "Ke metse fela yeo e nago le mengwaga ye 10+ya direkhoto le naga ye e tsebjago yeo e beilwego maemong, ka fao mafelo a mmalwa ao a nago le ya data ye e sego gona ga se a lokeletšwa ga bjale.",
     "sq": "Vetëm qytetet me rekorde mbi 10 vjet dhe një shtet i njohur janë renditur, kështu që disa vende me të dhëna të rralla nuk janë renditur ende.",
     "sk": "Hodnotené sú iba mestá s 10+rokmi záznamov a známou krajinou, takže niekoľko miest s riedkymi údajmi ešte nie je uvedených.",
-    "sl": "Uvrščena so samo mesta z več kot 10-letnimi zapisi in znano državo, tako da nekaj krajev z redkimi podatki še ni navedenih.",
+    "sl": "Uvrščena so samo mesta z več kot 10-letnimi zapisi in znano državo, zato nekaj krajev z redkimi podatki še ni navedenih.",
     "so": "Kaliya magaalooyinka leh diiwaanka 10+sano iyo waddan la yaqaan ayaa la soo koobay, sidaa darteed meelo yar oo xog yar weli lama taxan.",
     "fi": "Ainoastaan ​​kaupungit, joilla on yli 10 vuotta ennätyksiä ja tiedossa oleva maa, ovat paremmuusjärjestykseen, joten muutamia paikkoja, joissa on vähän tietoja, ei ole vielä listattu.",
-    "sv": "Endast städer med 10+års rekord och ett känt land rankas, så några platser med glesa data är inte listade ännu.",
+    "sv": "Endast städer med mer än 10 års rekord och ett känt land rankas, så några platser med sparsam data är inte listade ännu.",
     "ts": "I madoroba ntsena lawa ya nga na tirhekhodo ta malembe ya 10+na tiko leri tivekaka lama vekiweke, hikwalaho tindhawu ti nga ri tingani leti nga na data yo tala a ti si xaxametiwa.",
     "tk": "Diňe 10+ýyllyk ýazgylary we belli bir ýurt bar, şonuň üçin seýrek maglumatlary bolan birnäçe ýer entek sanawda ýok.",
     "is": "Aðeins borgum með 10+ára skráningu og þekkt land er raðað, svo nokkrir staðir með dreifðar gögn eru ekki skráðir ennþá.",
@@ -5392,12 +5522,12 @@
     "mn": "Зөвхөн 10+жилийн бүртгэлтэй хотууд болон мэдэгдэж буй улсыг эрэмбэлсэн тул сийрэг мэдээлэлтэй цөөн хэдэн газрыг хараахан жагсаагүй байна.",
     "sr": "Само градови са 10+година евиденције и познатом земљом су рангирани, тако да неколико места са оскудним подацима још није наведено.",
     "tt": "10+еллык рекордлы шәһәрләр һәм билгеле илләр генә урнашкан, шуңа күрә аз мәгълүматлы берничә урын әлегә күрсәтелмәгән.",
-    "tg": "Танҳо шаҳрҳое, ки зиёда аз 10 сол сабти ном доранд ва як кишвари маълум номбар шудаанд, аз ин рӯ, чанд ҷойе, ки маълумоти кам доранд, ҳанӯз рӯйхат нашудаанд.",
+    "tg": "Танҳо шаҳрҳое, ки зиёда аз 10 сол сабт шудаанд ва як кишвари маълум номбар шудаанд, аз ин рӯ чанд ҷой бо маълумоти камназир дар рӯйхат нестанд.",
     "kk": "10 жылдан астам жазбалары бар қалалар мен белгілі ел ғана рейтингке қойылған, сондықтан деректері сирек бірнеше орындар әлі тізімде жоқ.",
     "hy": "Դասակարգված են միայն 10+տարվա պատմություն ունեցող քաղաքները և հայտնի երկիր, ուստի սակավ տվյալներով մի քանի վայրեր դեռ ցուցակված չեն:",
     "yi": "בלויז שטעט מיט 10+יאָרן פון רעקאָרדס און אַ באַוווסט מדינה זענען ראַנגקט, אַזוי עטלעכע ערטער מיט שיטער דאַטן זענען נישט ליסטעד נאָך.",
     "he": "רק ערים עם 10+שנות שיאים ומדינה ידועה מדורגות, כך שכמה מקומות עם נתונים דלילים עדיין לא רשומים.",
-    "ug": "پەقەت 10+يىللىق تارىخقا ئىگە شەھەرلەر ۋە داڭلىق دۆلەتلا رەتكە تىزىلغان، شۇڭا سانلىق مەلۇماتلىرى ئاز بولغان بىر قانچە جاي تېخى تىزىملىككە كىرمىگەن.",
+    "ug": "پەقەت 10+يىللىق خاتىرىلەنگەن شەھەرلەر ۋە داڭلىق دۆلەتلەرلا رەتكە تىزىلغان، شۇڭا سانلىق مەلۇماتلىرى ئاز بولغان بىر قانچە جاي تېخى تىزىملىككە كىرمىگەن.",
     "sd": "صرف شهرن جي 10+سالن جي رڪارڊ ۽ هڪ سڃاتل ملڪ جي درجه بندي ڪئي وئي آهي، تنهن ڪري ڪجهه جڳهن جي ڊيٽا سان گڏ اڃا تائين درج ٿيل نه آهن.",
     "ps": "یوازې هغه ښارونه چې د 10+کلونو ریکارډونه لري او یو پیژندل شوی هیواد درجه بندي شوي، نو د لږ معلوماتو سره یو څو ځایونه لاهم لیست شوي ندي.",
     "ckb": "تەنها ئەو شارانە ڕیزبەندی کراون کە 10+ساڵ تۆماریان هەیە و وڵاتێکی ناسراویان هەیە، بۆیە چەند شوێنێک کە داتای کەمیان هەیە هێشتا ڕیزبەندی نەکراون.",
@@ -5405,7 +5535,7 @@
     "ne": "10+वर्षको रेकर्ड भएका शहरहरू र एक ज्ञात देशलाई मात्र स्थान दिइएको छ, त्यसैले थोरै डाटा भएका केही ठाउँहरू अझै सूचीबद्ध गरिएका छैनन्।",
     "bho": "खाली 10+साल के रिकार्ड आ ज्ञात देस वाला शहर सभ के रैंकिंग दिहल गइल बा, एह से बिरल डेटा वाला कुछ जगह सभ के लिस्ट अबहिन ले नइखे दिहल गइल।",
     "mai": "केवल 10+साल के रिकॉर्ड वाला शहर आ कोनो ज्ञात देश के रैंकिंग देल गेल अछि, ताहि लेल विरल डाटा वाला किछु जगह एखन धरि सूचीबद्ध नहिं अछि.",
-    "sa": "केवलं १०+वर्षाणां अभिलेखानां नगराणां, ज्ञातदेशस्य च क्रमाङ्कनं भवति, अतः विरलदत्तांशयुक्तानि कतिपयानि स्थानानि अद्यापि सूचीकृतानि न सन्ति ।",
+    "sa": "केवलं १०+वर्षाणां अभिलेखानां नगराणां ज्ञातदेशश्च श्रेणीकृताः सन्ति, अतः विरलदत्तांशयुक्तानि कतिपयानि स्थानानि अद्यापि सूचीकृतानि न सन्ति ।",
     "as": "কেৱল ১০+বছৰৰ অভিলেখ থকা চহৰ আৰু জনা দেশৰ ৰেংকিং কৰা হৈছে, গতিকে বিৰল তথ্য থকা কেইখনমান ঠাই এতিয়াও তালিকাভুক্ত কৰা হোৱা নাই।",
     "gu": "માત્ર 10+વર્ષનાં રેકોર્ડ્સ ધરાવતાં શહેરો અને જાણીતા દેશને જ ક્રમાંક આપવામાં આવ્યો છે, તેથી છૂટાછવાયા ડેટાવાળા થોડાં સ્થાનો હજુ સૂચિબદ્ધ નથી.",
     "or": "କେବଳ 10+ବର୍ଷର ରେକର୍ଡ ଥିବା ସହର ଏବଂ ଏକ ଜଣାଶୁଣା ଦେଶ ମାନ୍ୟତା ପାଇଛି, ତେଣୁ ଅଳ୍ପ ତଥ୍ୟ ସହିତ କିଛି ସ୍ଥାନ ଏପର୍ଯ୍ୟନ୍ତ ତାଲିକାଭୁକ୍ତ ହୋଇନାହିଁ |",
@@ -5414,7 +5544,7 @@
     "si": "වසර 10+වාර්තා ඇති නගර සහ දන්නා රටක් පමණක් ශ්‍රේණිගත කර ඇත, එබැවින් විරල දත්ත සහිත ස්ථාන කිහිපයක් තවමත් ලැයිස්තුගත කර නොමැත.",
     "lo": "ມີພຽງເມືອງທີ່ມີບັນທຶກ 10+ປີ ແລະປະເທດທີ່ຮູ້ຈັກເທົ່ານັ້ນທີ່ຖືກຈັດອັນດັບ, ດັ່ງນັ້ນບາງບ່ອນທີ່ມີຂໍ້ມູນບໍ່ຫຼາຍແມ່ນຍັງບໍ່ທັນມີລາຍຊື່ເທື່ອ.",
     "ka": "რეიტინგშია მხოლოდ 10+წლიანი ჩანაწერების მქონე ქალაქები და ცნობილი ქვეყანა, ამიტომ მწირი მონაცემების მქონე რამდენიმე ადგილი ჯერ არ არის ჩამოთვლილი.",
-    "ti": "10+ዓመት ክብረወሰን ዘለወንን እትፍለጥ ሃገርን ዘለወን ከተማታት ጥራይ እየን ተሰሪዐን ዘለወን፣ ስለዚ ውሑዳት ስፍሕ ዝበለ ዳታ ዘለወን ቦታታት ገና ኣይተዘርዘራን።",
+    "ti": "ናይ 10+ዓመት መዝገብን ትፍለጥ ሃገርን ዘለወን ከተማታት ጥራይ እየን ተሰሪዐን ዘለወን፣ ስለዚ ውሑዳት ስፍሕ ዝበለ ዳታ ዘለወን ቦታታት ገና ኣይተዘርዘራን።",
     "km": "មានតែទីក្រុងដែលមានកំណត់ត្រារយៈពេល 10+ឆ្នាំ និងប្រទេសដែលគេស្គាល់ប៉ុណ្ណោះដែលត្រូវបានចាត់ថ្នាក់ ដូច្នេះកន្លែងមួយចំនួនដែលមានទិន្នន័យតូចតាចមិនត្រូវបានរាយក្នុងបញ្ជីនៅឡើយ។"
   },
   "fs_label": {
@@ -5449,7 +5579,7 @@
     "et": "Täisekraan",
     "eo": "Plenekrana",
     "eu": "Pantaila osoa",
-    "ee": "Fullscreen",
+    "ee": "Screen bliboa",
     "fy": "Folslein skerm",
     "ga": "Lánscáileán",
     "gl": "Pantalla completa",
@@ -5534,7 +5664,7 @@
     "sw": "Weka upya zoom",
     "tl": "I-reset ang zoom",
     "th": "รีเซ็ตการซูม",
-    "ta": "பெரிதாக்கத்தை மீட்டமைக்கவும்",
+    "ta": "பெரிதாக்கு மீட்டமை",
     "mr": "झूम रीसेट करा",
     "te": "జూమ్‌ని రీసెట్ చేయండి",
     "ha": "Sake saita zuƙowa",
@@ -5559,7 +5689,7 @@
     "cy": "Ailosod chwyddo",
     "da": "Nulstil zoom",
     "dv": "ޒޫމް ރީސެޓްކުރުން",
-    "et": "Lähtesta suum",
+    "et": "Lähtestage suum",
     "eo": "Restarigi zomon",
     "eu": "Berrezarri zooma",
     "ee": "Gbugbɔ ɖo zoom ɖe ɖoɖo nu",
@@ -5573,7 +5703,7 @@
     "ig": "Tọgharia mbugharị",
     "rw": "Kugarura zoom",
     "ilo": "I-reset ti zoom",
-    "xh": "Seta kwakhona ukukhulisa",
+    "xh": "Seta kwakhona ukusondeza",
     "zu": "Setha kabusha ukusondeza",
     "jv": "Reset zoom",
     "ht": "Reyajiste rale",
@@ -5598,7 +5728,7 @@
     "qu": "Zoom nisqamanta musuqmanta churay",
     "sm": "Toe seti le zoom",
     "st": "Seta katametso bocha",
-    "nso": "Seta gape go godiša",
+    "nso": "Seta go godiša gape",
     "sq": "Rivendos zmadhimin",
     "sk": "Obnoviť priblíženie",
     "sl": "Ponastavi povečavo",
@@ -5609,7 +5739,7 @@
     "tk": "Omakynlaşdyrma",
     "is": "Endurstilla aðdrátt",
     "cs": "Obnovit přiblížení",
-    "haw": "Hoʻoponopono hou i ka zoom",
+    "haw": "Hoʻonohonoho hou i ka zoom",
     "el": "Επαναφορά ζουμ",
     "be": "Скінуць маштаб",
     "bg": "Нулиране на мащаба",
@@ -5696,7 +5826,7 @@
     "lt": "Įterpti valdiklį",
     "la": "Embed image",
     "ln": "Kokɔtisa widget",
-    "lg": "Teeka ekintu ekiyitibwa widget",
+    "lg": "Teekamu ekintu ekiyitibwa widget",
     "lb": "Embed Widget",
     "hu": "Widget beágyazása",
     "mg": "Ampidiro ny widget",
