@@ -406,10 +406,32 @@ window.__crz = ${rz_label_json};
   }
   function draw(C) {
     ${chart_compose}
-    Object.keys(C).forEach(function (id) {
-      if (id.charAt(0) === '_') return;  // _range/_records: widgets, not charts
+    function paint(id) {
       if (window.renderChart) window.renderChart('c-' + slug + '-' + id, C[id]);
-    });
+    }
+    var ids = Object.keys(C).filter(function (id) { return id.charAt(0) !== '_'; });
+    // Lazy-render: construct each Chart.js canvas only as it nears the viewport,
+    // not all ~19 at once. A synchronous burst of that many canvases on load
+    // spikes memory/CPU - and when this page is the region-embed iframe on the
+    // landing screen it lands on top of the main page's own charts, enough to
+    // crash a memory-constrained browser tab. Above-the-fold figures still draw
+    // immediately; the rest draw on scroll (in the iframe's own viewport).
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          io.unobserve(e.target);
+          paint(e.target.getAttribute('data-cid'));
+        });
+      }, { rootMargin: '300px 0px' });
+      ids.forEach(function (id) {
+        var cv = document.getElementById('c-' + slug + '-' + id);
+        if (cv) { cv.setAttribute('data-cid', id); io.observe(cv); }
+        else paint(id);
+      });
+    } else {
+      ids.forEach(paint);
+    }
     var mo = window.__cmonths;
     if (C._range && window.buildRange && document.getElementById('rng-' + slug)) {
       fillYears('rng-' + slug, C._range.years);
