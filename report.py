@@ -172,7 +172,7 @@ _ZONE_BAND_DEFS = [
     ("s-temperate", -35, -90),
 ]
 from i18n import LANG_NAMES
-from plots import BASELINE, annual_means, summary_stats
+from plots import BASELINE, _signed, annual_means, summary_stats
 
 # Small inline globe (the site uses images/SVG, never flag/emoji glyphs, since
 # emoji don't render on Windows) - marks the link to the world/regional page.
@@ -238,8 +238,8 @@ _PAGE = Template(
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 ${seo_head}
-<script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);if(/[?&]embed=1/.test(location.search))d.setAttribute("data-embed","1");}catch(e){}})();</script>
-<script>window.__tpref = ${tpref_i18n};</script>
+<script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[navigator.language||""];for(var i=0;i<L.length;i++){var m=/-([A-Za-z]{2})(?:$$|-)/.exec(L[i]||"");if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);if(/[?&]embed=1/.test(location.search))d.setAttribute("data-embed","1");}catch(e){}})();</script>
+<script>window.__tpref = ${tpref_i18n};window.__units = ${units_on};</script>
 <link rel="stylesheet" href="../page.css">
 <script defer src="../appearance.js"></script>
 </head>
@@ -262,7 +262,7 @@ ${topbar}
     ${hero_pct}
     ${hero_spark_block}
     <div class="rh-chips">
-      <div class="rh-chip"><span${card_mean_attr}>${card_mean}</span><b>${mean} °C</b></div>
+      <div class="rh-chip"><span${card_mean_attr}>${card_mean}</span><b>${mean}</b></div>
       <div class="rh-chip"><span${card_warmest_attr}>${card_warmest}</span><b>${warmest_year}</b></div>
       <div class="rh-chip"><span${card_coldest_attr}>${card_coldest}</span><b>${coldest_year}</b></div>
     </div>
@@ -791,6 +791,9 @@ def _tpref_i18n(tr: dict) -> str:
         "pref_header": tr.get("pref_header", "Page header"),
         "pref_plain": tr.get("pref_plain", "Plain"),
         "pref_tint": tr.get("pref_tint", "Tint"),
+        "pref_unit": tr.get("pref_unit", "Temperature unit"),
+        "pref_unit_c": tr.get("pref_unit_c", "Celsius"),
+        "pref_unit_f": tr.get("pref_unit_f", "Fahrenheit"),
         "pref_acc_cobalt": tr.get("pref_acc_cobalt", "Cobalt"),
         "pref_acc_red": tr.get("pref_acc_red", "Red"),
         "pref_acc_teal": tr.get("pref_acc_teal", "Teal"),
@@ -894,13 +897,48 @@ def _lang_nav(current_lang: str, languages: list[str], slug: str,
 _EN_TR = i18n.get("en")  # canonical English strings, to detect untranslated keys
 
 
-def _signed(value: float, dp: int) -> str:
-    """Signed fixed-point number, but a value that rounds to zero shows as a bare
-    unsigned "0.00" - never "+0.0" or "-0.00" (negative zero) for a flat city."""
-    s = f"{value:.{dp}f}"
-    if float(s) == 0:
-        return f"{0.0:.{dp}f}"
-    return f"+{s}" if value > 0 else s
+def _t(c: float, kind: str = "abs", dec: int = 1, signed: int = 0,
+       unit: bool = False) -> str:
+    """A server-rendered temperature the reader can flip to °F.
+
+    The Celsius rendering is baked in, so a no-JS reader (and every crawler) sees
+    a real number; alongside it ride the raw Celsius value and its conversion
+    class, which ``charts.js`` uses to rewrite the span in place when the visitor
+    picks °F. ``kind`` is abs / delta / ddays (see charts.js for what each means);
+    ``signed`` 0 = plain, 1 = "+.Nf", 2 = the :func:`_signed` rule. ``unit``
+    appends the unit token as its own span so it follows the same switch.
+
+    Only for figures OUTSIDE a ``data-i18n`` element - a temperature inside a
+    translated sentence goes through ``data-i18n-t`` instead (the runtime rewrites
+    that element's whole text, which would eat a nested span).
+    """
+    if signed == 2:
+        txt = _signed(c, dec)
+    elif signed:
+        txt = f"{c:+.{dec}f}"
+    else:
+        txt = f"{c:.{dec}f}"
+    span = (f'<span class="tval" data-c="{c:.4f}" data-k="{kind}"'
+            f' data-d="{dec}" data-s="{signed}">{txt}</span>')
+    return (span + " " + _u("°C")) if unit else span
+
+
+def _u(text: str) -> str:
+    """A unit phrase that follows the °C/°F switch. charts.js swaps the °C inside
+    it, so this takes the whole translated string ("°C / decade") as well as a
+    bare token."""
+    return f'<span class="tunit">{_esc(text)}</span>'
+
+
+def _t_attr(spec: dict) -> str:
+    """``data-i18n-t`` for temperature vars of a translated string: ``{var:
+    [celsius, kind, decimals, signed]}``. Pairs with :func:`_i18n_attr`'s baked
+    Celsius ``data-i18n-vars`` (the no-JS fallback)."""
+    if not _CLIENT_I18N or not spec:
+        return ""
+    return " data-i18n-t='" + _esc(
+        json.dumps(spec, ensure_ascii=False, separators=(",", ":")),
+        quote=True) + "'"
 
 
 def build_site(
@@ -957,9 +995,9 @@ def build_site(
         f'<span>{_dlast}</span></div></div>'
     ) if hero_spark else ""
     hero_range = f"{stats['start']}-{stats['end']}"
-    hero_meta = _hero_str(lang, "since").format(v=f"<b>{_signed(_dt, 1)} °C</b>")
-    hero_meta_attr = _i18n_attr("hero_since",
-                                {"v": f"<b>{_signed(_dt, 1)} °C</b>"}, html=True)
+    _dt_html = f"<b>{_t(_dt, 'delta', 1, 2, unit=True)}</b>"
+    hero_meta = _hero_str(lang, "since").format(v=_dt_html)
+    hero_meta_attr = _i18n_attr("hero_since", {"v": _dt_html}, html=True)
     # "Warming faster than N% of the world" - the city's place in the ranking,
     # reusing the landing hero's translated sentence. Only for ranked cities.
     hero_pct = ""
@@ -980,7 +1018,8 @@ def build_site(
             # {month} resolves to the switched language's month name client-side.
             _sattr = _i18n_attr("sum_month",
                                 {"month": f"@months.{_skey - 1}",
-                                 "v": _signed(_sval, 2)})
+                                 "v": _signed(_sval, 2)}) + _t_attr(
+                {"v": [round(_sval, 4), "delta", 2, 2]})
         else:
             _stmpl = tr.get("sum_season", "Fastest-warming season here: "
                                           "{season} ({v} °C per decade).")
@@ -988,7 +1027,8 @@ def build_site(
             # {season} resolves to the switched language's season word.
             _sattr = _i18n_attr("sum_season",
                                 {"season": f"@season_{_skey}",
-                                 "v": _signed(_sval, 2)})
+                                 "v": _signed(_sval, 2)}) + _t_attr(
+                {"v": [round(_sval, 4), "delta", 2, 2]})
         hero_pct += (f'<p class="rh-meta rh-pct"{_sattr}>'
                      + _esc(_stmpl.format(season=_slabel, month=_slabel,
                                           v=_signed(_sval, 2)))
@@ -1088,7 +1128,9 @@ def build_site(
             return "", ""
         an = _local_name(a["s"], lang, a["n"])
         line = tmpl.format(city=disp, analog=an, d=a["d"])
-        attr = _i18n_attr(key, {"city": "@name", "analog": an, "d": a["d"]})
+        # {d} is a temperature DIFFERENCE, so °F scales it without the 32 offset.
+        attr = (_i18n_attr(key, {"city": "@name", "analog": an, "d": a["d"]})
+                + _t_attr({"d": [float(a["d"]), "delta", 1, 0]}))
         return line, attr
 
     _af_line, _af_attr = _analog_line(
@@ -1133,10 +1175,14 @@ def build_site(
                 _mnames = tr.get("months") or []
                 _mn = (_mnames[_last.month - 1] if len(_mnames) >= 12
                        else str(_last.month))
+                # One sentence, two classes: {v} is an actual temperature,
+                # {d} the anomaly against the same days of the baseline.
                 _cy_attr = _i18n_attr("cur_so_far", {
                     "year": int(_last.year), "day": int(_last.day),
                     "month": f"@months.{_last.month - 1}",
-                    "v": f"{_cm:.1f}", "d": _signed(_dv, 1)})
+                    "v": f"{_cm:.1f}", "d": _signed(_dv, 1)}) + _t_attr(
+                    {"v": [round(_cm, 4), "abs", 1, 0],
+                     "d": [round(_dv, 4), "delta", 1, 2]})
                 curyear_html = (f'<p class="curyear"{_cy_attr}>' + _esc(_tmpl.format(
                     year=int(_last.year), day=int(_last.day), month=_mn,
                     v=f"{_cm:.1f}", d=_signed(_dv, 1))) + '</p>')
@@ -1216,6 +1262,7 @@ def build_site(
         rz_label_json=json.dumps(_RZ_LABEL.get(lang, _RZ_LABEL["en"]),
                                  ensure_ascii=False),
         tpref_i18n=_tpref_i18n(tr),
+        units_on="1" if _CLIENT_I18N else "0",
         slug_js=json.dumps(slug),
         map_label=_map_label(tr),
         map_label_attr=_i18n_attr("map_label"),
@@ -1224,10 +1271,10 @@ def build_site(
         lang_nav=_lang_nav(lang, _switch_langs, slug),
         topbar=_topbar("index.html", _lang_nav(lang, _switch_langs, slug),
                        search_html=_city_picker(tr, lang)),
-        trend=_signed(stats['trend_per_decade'], 2),
+        trend=_t(stats['trend_per_decade'], "delta", 2, 2),
         trend_unit=tr["per_decade_c"],
         trend_unit_attr=_i18n_attr("per_decade_c"),
-        mean=f"{stats['mean']:.1f}",
+        mean=_t(stats['mean'], "abs", 1, unit=True),
         warmest_year=stats["warmest_year"],
         coldest_year=stats["coldest_year"],
         # Immersive-stripes city hero.
@@ -1309,8 +1356,8 @@ _MAP_PAGE = Template(
 <meta name="twitter:card" content="summary_large_image">
 ${seo_head}
 <!-- world map rendered as SVG with D3 (Equal Earth, an equal-area projection) -->
-<script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);}catch(e){}})();</script>
-<script>window.__tpref = ${tpref_i18n};</script>
+<script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[navigator.language||""];for(var i=0;i<L.length;i++){var m=/-([A-Za-z]{2})(?:$$|-)/.exec(L[i]||"");if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);}catch(e){}})();</script>
+<script>window.__tpref = ${tpref_i18n};window.__units = ${units_on};</script>
 <link rel="stylesheet" href="../landing.css">
 <script defer src="../appearance.js"></script>
 </head>
@@ -1379,7 +1426,7 @@ ${topbar}
                aria-roledescription="slide" aria-live="polite">
             <div class="rh-inner">
               <p class="rh-place"><span class="rh-name"></span></p>
-              <div class="rh-figure"><span class="rh-trend"></span><span class="rh-unit">${hero_unit}</span></div>
+              <div class="rh-figure"><span class="rh-trend"></span><span class="rh-unit tunit">${hero_unit}</span></div>
               <p class="rh-meta"></p>
               <div class="rh-spark-wrap"><div class="rh-spark"></div>
                 <div class="rh-spark-axis" hidden><span class="rh-axis-lo"></span><span class="rh-axis-hi"></span></div>
@@ -1444,7 +1491,7 @@ ${topbar}
           <th class="rank-num rank-sort" data-key="rank" aria-sort="ascending">#</th>
           <th class="rank-city rank-sort" data-key="city">${rank_city}</th>
           <th class="rank-cty rank-sort" data-key="country">${rank_country}</th>
-          <th class="rank-val rank-sort" data-key="trend">${rank_trend}</th>
+          <th class="rank-val rank-sort tunit" data-key="trend">${rank_trend}</th>
         </tr></thead>
         <tbody id="rank-body"></tbody>
       </table>
@@ -1453,7 +1500,9 @@ ${topbar}
         <button type="button" class="rank-more" id="rank-more" hidden
                 data-label="${rank_more}"></button>
         <p class="rank-count" id="rank-count"></p>
-        <p class="rank-note" id="rank-note">${rank_note}</p>
+        <!-- tunit: the note names the unit ("the trend in °C per decade") with no
+           figure in it, so the °C/°F swap can run over the whole sentence -->
+        <p class="rank-note tunit" id="rank-note">${rank_note}</p>
       </div>
     </div>
   </section>
@@ -1477,7 +1526,7 @@ ${topbar}
           <th class="rank-num crank-sort" data-key="rank" aria-sort="ascending">#</th>
           <th class="rank-city crank-sort" data-key="city">${rank_country}</th>
           <th class="rank-cty crank-sort" data-key="country">${rank_cities}</th>
-          <th class="rank-val crank-sort" data-key="trend">${rank_trend}</th>
+          <th class="rank-val crank-sort tunit" data-key="trend">${rank_trend}</th>
         </tr></thead>
         <tbody id="crank-body"></tbody>
       </table>
@@ -1846,6 +1895,10 @@ ${topbar}
       return n;
     }
     function qvSigned(v, dec) { return (v >= 0 ? '+' : '') + v.toFixed(dec); }
+    // °C/°F: charts.js owns the conversion; these read it at call time so the
+    // card re-renders correctly after a switch (the map redraws its own cards).
+    function qvTemp(v, dec) { return window.__tconv.fmt(v, 'delta', dec, 2); }
+    function qvUnit(s) { return window.__tconv.swap(s); }
     function qvCss(name, fb) {   // themed token, light default as fallback
       var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
       return v || fb;
@@ -1896,10 +1949,12 @@ ${topbar}
       var rk = rankOf((p.s || '').split('/').pop().replace(/\\.html$$/, ''));
       if (rk) {
         root.appendChild(qvEl('div', 'qv-trend ' + (rk.row.t >= 0 ? 'qv-warm' : 'qv-cool'),
-                              qvSigned(rk.row.t, 2) + ' ' + QV.perDecade));
+                              qvTemp(rk.row.t, 2) + ' ' + qvUnit(QV.perDecade)));
         if (rk.row.dt != null)
           root.appendChild(qvEl('div', 'qv-line',
-                                QV.since.replace('{v}', qvSigned(rk.row.dt, 1) + ' °C')));
+                                qvUnit(QV.since).replace(
+                                  '{v}', qvTemp(rk.row.dt, 1) + ' '
+                                         + window.__tconv.deg())));
         var pct = Math.floor(100 * (rk.total - rk.pos) / rk.total);
         root.appendChild(qvEl('div', 'qv-line',
                               '#' + rk.pos + ' / ' + rk.total + ' · '
@@ -2123,6 +2178,7 @@ ${topbar}
 </script>
 <script>
   window.__ci18n = ${chart_i18n};
+  window.__ci18nF = ${chart_i18n_f};
   window.__cmonths = ${months_json};
   window.__chartErr = ${chart_err_json};
   window.__cfs = ${fs_label_json};
@@ -2203,8 +2259,11 @@ ${topbar}
       var parts = [bySlug[slug].n];
       if (rk) {
         var unit = (window.__ci18n || {})['°C / decade'] || '°C / decade';
-        parts.push((rk.r.t >= 0 ? '+' : '') + rk.r.t.toFixed(2) + ' ' + unit);
-        if (rk.r.dt != null) parts.push((rk.r.dt >= 0 ? '+' : '') + rk.r.dt.toFixed(1) + ' °C');
+        parts.push(window.__tconv.fmt(rk.r.t, 'delta', 2, 1) + ' '
+                   + window.__tconv.swap(unit));
+        if (rk.r.dt != null)
+          parts.push(window.__tconv.fmt(rk.r.dt, 'delta', 1, 1) + ' '
+                     + window.__tconv.deg());
         parts.push('#' + rk.pos + ' / ' + rk.total);
       }
       row.appendChild(document.createTextNode(' ' + parts.join(' · ')));
@@ -2247,6 +2306,9 @@ ${topbar}
     }
     a.addEventListener('change', draw);
     b.addEventListener('change', draw);
+    // The stat rows under the overlay are built text; redraw on a °C/°F switch
+    // (the chart itself rebuilds from its payload via 'themechange').
+    if (window.__unitHooks) window.__unitHooks.push(draw);
     var m = (location.hash || '').match(/cmp=([a-z0-9'-]+),([a-z0-9'-]+)/);
     if (m && bySlug[m[1]] && bySlug[m[2]]) {
       a.value = bySlug[m[1]].val;
@@ -2868,6 +2930,7 @@ def build_map_page(
     languages: list[str],
     tr: dict,
     chart_i18n: dict,
+    chart_i18n_f: dict,
     meta: dict,
     total_cities: int,
     preview_locs: list | None = None,
@@ -2978,19 +3041,21 @@ def build_map_page(
     kpi_band = ""
     if kpis:
         _unit = tr.get("per_decade_c", "°C / decade")
+        # Values are HTML here (the °C/°F machinery needs its own spans); every
+        # one is a number or a unit string we produced, escaped at the source.
         _cells = [
-            (f"{_signed(kpis['rate'], 2)} {_unit}",
+            (f"{_t(kpis['rate'], 'delta', 2, 2)} {_u(_unit)}",
              tr.get("kpi_rate", "World warming rate")),
-            (f"{_signed(kpis['since'], 1)} °C",
+            (f"{_t(kpis['since'], 'delta', 1, 2, unit=True)}",
              tr.get("kpi_since", "World warming since 1940")),
-            (f"{n_analysed_early} / {target_cities}" if target_cities
-             else str(n_analysed_early),
+            (_esc(f"{n_analysed_early} / {target_cities}") if target_cities
+             else _esc(str(n_analysed_early)),
              tr.get("kpi_cities", "Cities analysed")),
-            (str(kpis["wy"]),
+            (_esc(str(kpis["wy"])),
              tr.get("kpi_warmest", "Warmest year (world average)")),
         ]
         _cells_html = "".join(
-            f'<div class="kpi"><b>{_esc(v)}</b><span>{_esc(l)}</span></div>'
+            f'<div class="kpi"><b>{v}</b><span>{_esc(l)}</span></div>'
             for v, l in _cells)
         _cards = []
         for z in kpis.get("zones", []):
@@ -3002,7 +3067,7 @@ def build_map_page(
                 f'<span class="zc-name">{_esc(tr[_ZONE_NAME_KEY[z["key"]]])}</span>'
                 + _sparkline_svg(z["spark"], _ZONE_COLOR[z["key"]])
                 + f'<b class="zc-trend" style="color:{_col}">'
-                  f'{_esc(_signed(z["t"], 2))} {_esc(_unit)}</b></div>')
+                  f'{_t(z["t"], "delta", 2, 2)} {_u(_unit)}</b></div>')
         kpi_band = ('<div class="kpi-band">' + _cells_html + '</div>'
                     + ('<div class="zone-cards">' + "".join(_cards) + '</div>'
                        if _cards else ''))
@@ -3365,6 +3430,10 @@ def build_map_page(
         rank_cities=tr["rank_cities"],
         rank_countries=tr["rank_countries"],
         chart_i18n=json.dumps(chart_i18n, ensure_ascii=False),
+        # Same keys, rendered for a °F reader. This page is server-composed per
+        # language and ships no client dictionary, so the switch has no recipes
+        # to recompose from - it picks the other baked map instead.
+        chart_i18n_f=json.dumps(chart_i18n_f, ensure_ascii=False),
         months_json=json.dumps(tr["months"], ensure_ascii=False),
         chart_err_json=json.dumps(_CHART_ERR.get(lang, _CHART_ERR["en"]),
                                   ensure_ascii=False),
@@ -3375,6 +3444,7 @@ def build_map_page(
         footer=tr["footer"].format(date=dt.date.today().isoformat()),
         widget_label=_WIDGET_LABEL.get(lang, _WIDGET_LABEL["en"]),
         tpref_i18n=_tpref_i18n(tr),
+        units_on="1" if _CLIENT_I18N else "0",
     )
     path = output_dir / "index.html"
     path.write_text(html, encoding="utf-8")

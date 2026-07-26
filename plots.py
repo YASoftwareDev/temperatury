@@ -20,29 +20,82 @@ import numpy as np
 import pandas as pd
 
 
+def _signed(value: float, dp: int) -> str:
+    """Signed fixed-point number, but a value that rounds to zero shows as a bare
+    unsigned "0.00" - never "+0.0" or "-0.00" (negative zero) for a flat city.
+    Mirrored in JS by charts.js fmtSigned / fmtTemp(signed=2)."""
+    s = f"{value:.{dp}f}"
+    if float(s) == 0:
+        return f"{0.0:.{dp}f}"
+    return f"+{s}" if value > 0 else s
+
+
+def to_f(c: float, kind: str) -> float:
+    """°C -> °F for one conversion class. Mirrors charts.js convTemp: an absolute
+    temperature takes the 32 offset, a difference or a degree-day figure does not."""
+    return c * 9 / 5 + 32 if kind == "abs" else c * 9 / 5
+
+
 # --- chart-text localisation -------------------------------------------------
 # A label is stored as (english, recipe) where recipe is a serialisable list of
-# parts, each either ("t", literal_text) or ("k", dict_key, kwargs). compose_label
-# replays a recipe against a translation table; the browser mirrors it exactly
-# (charts.js composeLabel) so a client-composed label matches the server byte for
-# byte. Numbers are pre-formatted into "t" parts (language-neutral), so the only
-# format specs a recipe leaves for .format/JS are the plain {lo}/{hi}/{base}/{t}
-# in the keyed templates (see _sig_parts and chartdata for the composition).
-def compose_label(recipe: list, tr: dict) -> str:
-    """Replay one label recipe (list of parts) against ``tr``."""
+# parts. compose_label replays a recipe against a translation table; the browser
+# mirrors it exactly (charts.js composeLabel) so a client-composed label matches
+# the server byte for byte. Part kinds:
+#   ("t", literal_text)                  verbatim
+#   ("k", dict_key, kwargs[, kwclasses]) a translated template + its .format args.
+#       kwclasses ({"t": "abs"}) marks which kwargs are TEMPERATURES, so a °F
+#       reader converts the threshold too; the server always renders °C and
+#       ignores it.
+#   ("n", celsius, class, decimals, signed)  a temperature baked into a composite
+#       label (a trend rate, a jump size). Kept as a number rather than
+#       pre-formatted text precisely so the client can re-express it in °F.
+#       signed: 0 plain, 1 Python's "+.Nf", 2 the _signed rule (a value rounding
+#       to zero prints bare).
+#   ("u",)  the bare unit token, "°C" server-side and "°F" for a °F reader. Only
+#       needed where the unit is not already part of a translated template.
+# Everything else numeric stays pre-formatted in a "t" part (language-neutral).
+def compose_label(recipe: list, tr: dict, unit: str = "C") -> str:
+    """Replay one label recipe (list of parts) against ``tr``.
+
+    ``unit="F"`` renders the same label for a Fahrenheit reader: temperatures are
+    converted by their class and the unit token swapped. charts.js composeLabel
+    reproduces this exactly, so a client-composed label matches this one byte for
+    byte - which is what lets the city pages recompose in the browser while the
+    per-language landing bakes its °F map here."""
+    f = unit == "F"
     out = []
     for part in recipe:
         if part[0] == "t":
             out.append(part[1])
+        elif part[0] == "u":
+            out.append("°F" if f else "°C")
+        elif part[0] == "n":
+            c, kind, dec, signed = part[1], part[2], part[3], part[4]
+            if f:
+                c = to_f(c, kind)
+            if signed == 2:
+                out.append(_signed(c, dec))
+            else:
+                out.append(f"{c:+.{dec}f}" if signed else f"{c:.{dec}f}")
         else:
-            _, key, kw = part
-            out.append(tr[key].format(**kw))
+            key, kw = part[1], part[2]
+            cls = part[3] if len(part) > 3 else None
+            tmpl = tr[key]
+            if f:
+                tmpl = tmpl.replace("°C", "°F")
+                if cls:
+                    kw = {**kw, **{k: to_f(float(kw[k]), v)
+                                   for k, v in cls.items() if kw.get(k) is not None}}
+            out.append(tmpl.format(**kw))
     return "".join(out)
 
 
-def localize_specs(specs: list, tr: dict) -> dict:
-    """{english_string: string_in_tr's_language} for one chart's collected texts."""
-    return {s_en: compose_label(recipe, tr) for s_en, recipe in specs}
+def localize_specs(specs: list, tr: dict, unit: str = "C") -> dict:
+    """{english_string: string_in_tr's_language} for one chart's collected texts.
+
+    Keys are always the English CELSIUS label (what the payload carries), so the
+    °F map is a drop-in alternative lookup for the same payload."""
+    return {s_en: compose_label(recipe, tr, unit) for s_en, recipe in specs}
 
 
 def _sig_parts(values: np.ndarray) -> list:

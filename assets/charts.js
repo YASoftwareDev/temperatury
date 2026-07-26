@@ -14,9 +14,14 @@
   "use strict";
 
   // --- localisation helpers -------------------------------------------------
+  // Chart labels are looked up by their English CELSIUS string (what the payload
+  // carries). A °F reader gets them from __ci18nF where the page baked one (the
+  // per-language landing, which has no client dictionary to recompose from);
+  // city pages instead rebuild __ci18n itself in the active unit from the shipped
+  // recipes, so the plain map is already right there.
   function T(s) {
     if (s == null) return s;
-    var m = window.__ci18n || {};
+    var m = (isF() && window.__ci18nF) || window.__ci18n || {};
     return Object.prototype.hasOwnProperty.call(m, s) ? m[s] : s;
   }
   function months() {
@@ -25,6 +30,104 @@
   }
   // A label may carry a "\n" (multi-line axis title) - Chart.js takes an array.
   function lines(s) { return T(s).split("\n"); }
+
+  // --- units (°C / °F) ------------------------------------------------------
+  // The visitor's unit lives on <html data-unit>, written pre-paint by the head
+  // bootstrap (locale default) and flipped from the appearance panel. Read it at
+  // USE time, never cache it: every chart is destroyed and rebuilt on a switch,
+  // so a captured flag would pin a canvas to whichever unit drew it first.
+  //
+  // Three conversion classes, because a temperature and a temperature
+  // DIFFERENCE do not convert the same way:
+  //   abs    an actual temperature       °F      = °C x 9/5 + 32
+  //   delta  a difference or a rate      °F      = °C x 9/5        (no offset)
+  //   ddays  degree-days (°C·days)       °F·days = °C·days x 9/5
+  // Anything counted in days, mm, years or a ratio carries no class and is left
+  // alone - converting those is the classic Fahrenheit bug.
+  // window.__units is 0 on a server-i18n build: there is no client dictionary
+  // there, so chart labels and page sentences could not follow the switch and a
+  // half-converted page would be worse than none. That build stays Celsius.
+  function isF() {
+    try {
+      return window.__units !== 0 &&
+        document.documentElement.getAttribute("data-unit") === "F";
+    } catch (e) { return false; }
+  }
+  function convTemp(c, kind) {
+    if (c == null || !kind || !isF()) return c;
+    return kind === "abs" ? c * 9 / 5 + 32 : c * 9 / 5;
+  }
+  // Keep converted values at the payload's own 2-dp precision so tooltips read
+  // "64.4", not "64.40000000000001".
+  function round2(v) { return v == null ? v : Math.round(v * 100) / 100; }
+  function convArr(a, kind) {
+    if (a == null || !kind || !isF()) return a;
+    return a.map(function (v) { return v == null ? v : round2(convTemp(v, kind)); });
+  }
+  // The unit token as it should read right now.
+  function degU() { return isF() ? "°F" : "°C"; }
+  // Swap the unit inside an already-composed string. Symmetric (°F back to °C as
+  // well) so the pass is idempotent and reversible however often it runs, and it
+  // covers the composite units for free ("°C·days", "°C / decade").
+  function unitSwap(s) {
+    if (s == null) return s;
+    return isF() ? String(s).replace(/°C/g, "°F") : String(s).replace(/°F/g, "°C");
+  }
+  // Format a Celsius figure in the active unit. `signed` picks which of the two
+  // sign conventions already in the codebase applies: 1 = Python's "+.Nf" (a zero
+  // still shows "+0.00", what the chart trend legends use), 2 = report._signed /
+  // fmtSigned (a value rounding to zero prints bare, never "+0.0" or "-0.00").
+  function fmtTemp(c, kind, dec, signed) {
+    if (c == null) return "";
+    dec = dec == null ? 1 : dec;
+    var v = convTemp(Number(c), kind), s = v.toFixed(dec);
+    if (!signed) return s;
+    if (signed === 2 && parseFloat(s) === 0) return (0).toFixed(dec);
+    return (v >= 0 && s.charAt(0) !== "+") ? "+" + s : s;
+  }
+  // A handful of translated sentences quote a FIXED threshold inline, with no
+  // {placeholder} to hook: "days above 18 °C", "(2 °C bands)". Keyed by
+  // dictionary key -> [[celsius, class, decimals], ...], substituted just before
+  // the °C -> °F swap so the number and its unit always move together. Matching
+  // is on the exact "<n> °C" the source uses; a translation that rewrites the
+  // number simply misses and that sentence stays in °C, which reads odd but is
+  // never wrong. Every constant here mirrors one in plots.py.
+  var BAKED_C = {
+    over2:          [[2, "delta", 1]],
+    cap_heatmap:    [[2, "delta", 1]],
+    cap_threshold:  [[18, "abs", 0], [0, "abs", 0]],
+    cap_volatility: [[6, "delta", 0]],
+    cap_season:     [[5, "abs", 0]],
+    cap_degreedays: [[18, "abs", 0], [22, "abs", 0]],
+    cap_tropic:     [[20, "abs", 0]]
+  };
+  function unitizeKeyed(key, s) {
+    if (s == null || !isF()) return unitSwap(s);
+    var t = BAKED_C[key];
+    if (t) {
+      s = String(s);
+      for (var i = 0; i < t.length; i++) {
+        // Leading boundary so "2" never matches inside "22"; the mandatory "°C"
+        // tail keeps it off any other number in the sentence.
+        var re = new RegExp("(^|[^\\d.,])" + t[i][0] + "(\\s*°C)", "g");
+        s = s.replace(re, "$1" + fmtTemp(t[i][0], t[i][1], t[i][2], 0) + "$2");
+      }
+    }
+    return unitSwap(s);
+  }
+  // Write a temperature into an element and leave the SOURCE Celsius value on it
+  // (the same data-* contract report._t bakes server-side), so __unitizeDom can
+  // re-render it on every later switch without re-running whatever built it.
+  function setTemp(el, c, kind, dec, signed) {
+    if (!el) return;
+    el.setAttribute("data-c", c);
+    el.setAttribute("data-k", kind);
+    el.setAttribute("data-d", dec);
+    el.setAttribute("data-s", signed);
+    el.textContent = fmtTemp(c, kind, dec, signed);
+  }
+  window.__tconv = { isF: isF, conv: convTemp, deg: degU, fmt: fmtTemp,
+                     swap: unitSwap, keyed: unitizeKeyed, set: setTemp };
 
   // --- chart-label recipes (client-i18n) ------------------------------------
   // Under client-side i18n one shell serves every language, so __ci18n cannot be
@@ -49,12 +152,36 @@
       return String(v);
     });
   }
+  // Convert the temperature kwargs of a "k" part. `cls` marks which of them are
+  // temperatures and in which class ({"t": "abs"}); the rest (years, counts, mm)
+  // pass through. The template's own format spec then rounds the converted value,
+  // so "hot days (>{t:.0f} °C)" reads "hot days (>64 °F)".
+  function convKw(kw, cls) {
+    if (!cls || !isF()) return kw;
+    var out = {}, k;
+    for (k in kw) out[k] = kw[k];
+    for (k in cls) if (out[k] != null) out[k] = convTemp(Number(out[k]), cls[k]);
+    return out;
+  }
+  // Recipe parts:
+  //   ["t", literal]                      verbatim text
+  //   ["k", key, kwargs, kwclasses?]      dictionary template + str.format kwargs;
+  //                                       kwclasses names the temperature kwargs
+  //   ["n", celsius, class, dec, signed]  a temperature BAKED into a composite
+  //                                       label (a trend rate, a jump size), kept
+  //                                       as a number so °F can reformat it
   function composeLabel(recipe, D) {
     var out = "";
     for (var i = 0; i < recipe.length; i++) {
       var part = recipe[i];
       if (part[0] === "t") { out += part[1]; }
-      else { var t = D[part[1]]; out += (t == null ? part[1] : pyfmt(t, part[2] || {})); }
+      else if (part[0] === "u") { out += degU(); }
+      else if (part[0] === "n") { out += fmtTemp(part[1], part[2], part[3], part[4]); }
+      else {
+        var t = D[part[1]];
+        out += (t == null ? part[1]
+                          : pyfmt(unitSwap(t), convKw(part[2] || {}, part[3])));
+      }
     }
     return out;
   }
@@ -308,7 +435,7 @@
           legend: { display: false },
           zoom: zoomPlugin(),
           tooltip: { callbacks: { label: function (c) {
-            return (c.raw == null ? "" : (c.raw >= 0 ? "+" : "") + c.raw + " °C");
+            return (c.raw == null ? "" : (c.raw >= 0 ? "+" : "") + c.raw + " " + degU());
           } } }
         },
         scales: { x: yearScale(lines(p.xlabel)[0], p.x), y: valScale(lines(p.ylabel)) }
@@ -335,7 +462,7 @@
             title: function (c) { return "" + p.years[c[0].dataIndex]; },
             label: function (c) {
               var v = p.anom[c.dataIndex];
-              return v == null ? "" : (v >= 0 ? "+" : "") + v + " °C";
+              return v == null ? "" : (v >= 0 ? "+" : "") + v + " " + degU();
             } } }
         },
         scales: {
@@ -400,7 +527,7 @@
             title: function (c) { return c[0].raw.x + " " + c[0].raw.y; },
             label: function (c) {
               var v = c.raw.v;
-              return T(p.cbarLabel) + ": " + (v == null ? "-" : v + " °C");
+              return T(p.cbarLabel) + ": " + (v == null ? "-" : v + " " + degU());
             } } }
         },
         scales: {
@@ -468,6 +595,50 @@
   // the chart for its figure at click time (charts render after an async fetch,
   // long after the buttons are wired up). The payload is kept alongside so a
   // language switch can rebuild the chart with freshly-composed labels.
+
+  // A payload's numbers are always °C; `tk` names the conversion class of its
+  // value axis (see convTemp). For a °F reader every value array is mapped onto a
+  // SHALLOW COPY - the stored payload stays Celsius, so the destroy-and-rebuild
+  // that every theme and unit switch does converts from the original each time
+  // and switching back is lossless. Charts whose values are days, mm or a ratio
+  // carry no tk and pass through untouched.
+  function unitizePayload(p) {
+    var k = p && p.tk;
+    if (!k || !isF()) return p;
+    var q = Object.assign({}, p);
+    if (p.kind === "trend") {
+      q.raw = Object.assign({}, p.raw, { data: convArr(p.raw.data, k) });
+      q.loess = Object.assign({}, p.loess, { data: convArr(p.loess.data, k) });
+      q.trend = Object.assign({}, p.trend, { line: convArr(p.trend.line, k) });
+    } else if (p.kind === "multitrend") {
+      q.series = p.series.map(function (s) {
+        return Object.assign({}, s, { raw: convArr(s.raw, k),
+          loess: convArr(s.loess, k), trend: convArr(s.trend, k) });
+      });
+    } else if (p.kind === "anomalybars") {
+      q.values = convArr(p.values, k);
+      q.loess = convArr(p.loess, k);
+    } else if (p.kind === "stripes") {
+      // The colour ramp reads anom/limit as a ratio, so scaling both keeps the
+      // stripes pixel-identical; only the tooltip figure changes.
+      q.anom = convArr(p.anom, k);
+      q.limit = round2(convTemp(p.limit, k));
+    } else if (p.kind === "seasonshift") {
+      q.early = Object.assign({}, p.early, { data: convArr(p.early.data, k) });
+      q.late = Object.assign({}, p.late, { data: convArr(p.late.data, k) });
+    } else if (p.kind === "matrix") {
+      // vmin/vmax/step ride the same affine map as the cells, so every cell lands
+      // in the band it did in °C - the heatmap looks the same, it just reads in °F.
+      q.cells = p.cells.map(function (row) { return convArr(row, k); });
+      q.vmin = round2(convTemp(p.vmin, k));
+      q.vmax = round2(convTemp(p.vmax, k));
+      q.step = convTemp(p.step, "delta");
+    } else if (p.kind === "citybars") {
+      q.values = convArr(p.values, k);
+    }
+    return q;
+  }
+
   window.__charts = {};
   window.__chartPayloads = {};
   window.renderChart = function (canvasId, payload) {
@@ -476,7 +647,7 @@
     var fn = BUILDERS[payload && payload.kind];
     if (!fn) { failNotice(el, canvasId, "unknown chart kind: " + (payload && payload.kind)); return null; }
     try {
-      var inst = fn(el.getContext("2d"), payload);
+      var inst = fn(el.getContext("2d"), unitizePayload(payload));
       if (inst) {
         window.__charts[canvasId] = inst;
         window.__chartPayloads[canvasId] = payload;
@@ -518,6 +689,50 @@
     }
   };
   window.addEventListener('themechange', window.__applyChartTheme);
+
+  // Server-rendered temperatures (report._t): each <span class="tval"> keeps its
+  // Celsius value and conversion class in data-*, so the figure is rewritten from
+  // the SOURCE number on every switch - re-reading its own text would compound
+  // rounding after a few flips.
+  window.__unitizeDom = function (root) {
+    var r = root || document;
+    var v = r.querySelectorAll("[data-c]");
+    for (var i = 0; i < v.length; i++) {
+      var e = v[i], c = parseFloat(e.getAttribute("data-c"));
+      if (isNaN(c)) continue;
+      e.textContent = fmtTemp(c, e.getAttribute("data-k"),
+        parseInt(e.getAttribute("data-d"), 10) || 0,
+        parseInt(e.getAttribute("data-s"), 10) || 0);
+    }
+    // <span class="tunit"> may hold a bare "°C" or a whole phrase ("°C / decade",
+    // already translated). Swapping in place covers both, and the swap is
+    // symmetric, so flipping back and forth never accumulates.
+    var u = r.querySelectorAll(".tunit");
+    for (var j = 0; j < u.length; j++) u[j].textContent = unitSwap(u[j].textContent);
+  };
+
+  // A unit switch has to redo three things, in this order: the chart-label map
+  // (so rebuilt charts get "°F / decade" and converted thresholds), the keyed
+  // page text (i18n runtime), and the server-rendered figures. The chart canvases
+  // themselves are rebuilt by the 'themechange' that appearance.js fires right
+  // after - by then __ci18n is already the °F one.
+  // Widgets whose text is BUILT in JS (ranking rows, the hero card, the
+  // did-you-know ticker, the lookup result) register a re-render here: their
+  // markup carries no recoverable source number, so the cheapest correct answer
+  // is to draw them again from the data they already hold.
+  window.__unitHooks = [];
+  function onUnitChange() {
+    if (window.__composeChartI18n) window.__composeChartI18n();
+    if (window.__applyI18n) window.__applyI18n();
+    window.__unitizeDom();
+    window.__unitHooks.forEach(function (fn) { try { fn(); } catch (e) {} });
+  }
+  window.addEventListener("unitchange", onUnitChange);
+  // First paint: <html data-unit> may already say F (locale default or a saved
+  // choice), while the server text and figures are always Celsius.
+  function bootUnits() { if (isF()) window.__unitizeDom(); }
+  if (document.readyState !== "loading") bootUnits();
+  else document.addEventListener("DOMContentLoaded", bootUnits);
 
   // Global dashboard: draw the region-comparison chart once, then (re)draw the
   // three per-zone charts whenever the zone <select> changes. Chart instances
@@ -645,6 +860,9 @@
       if (regionNames) { try { return regionNames.of(up) || up; } catch (e) {} }
       return up;
     }
+    // Rebuilt (not just relabelled) on a °C/°F switch: the figures are baked into
+    // each fact's value map, so recomputing is both simplest and exact.
+    function buildFacts() {
     var facts = [], fc = null, over = 0, sumDt = 0, nDt = 0;
     for (var i = 0; i < rank.length; i++) {
       var r = rank[i];
@@ -656,14 +874,19 @@
     // "{b}" token is substituted as plain text, never treated as a marker.
     var fcn = fc != null ? cityName(rank[fc]) : null;
     if (fcn && T.fastest_city)   // needs both a trend and a resolvable name
-      facts.push({ t: T.fastest_city, v: { city: fcn, v: fmtSigned(rank[fc].t, 2) },
+      facts.push({ t: unitizeKeyed("fastest_city", T.fastest_city),
+        v: { city: fcn, v: fmtTemp(rank[fc].t, "delta", 2, 2) },
         link: { kind: "city", slug: rank[fc].s } });
     // Denominator is the cities that HAVE a since-1940 figure (nDt), not every row,
     // so "N of M" is never inflated by rows missing that number.
+    // over2's "2 °C" threshold is baked into the sentence in every language, so
+    // it converts through the keyed table. The COUNT is unchanged - the cities
+    // past 2 °C are exactly the cities past 3.6 °F.
     if (over > 0 && nDt > 0 && T.over2)
-      facts.push({ t: T.over2, v: { n: over, total: nDt } });
+      facts.push({ t: unitizeKeyed("over2", T.over2), v: { n: over, total: nDt } });
     if (nDt > 0 && T.avg_since)
-      facts.push({ t: T.avg_since, v: { v: fmtSigned(sumDt / nDt, 1) } });
+      facts.push({ t: unitizeKeyed("avg_since", T.avg_since),
+        v: { v: fmtTemp(sumDt / nDt, "delta", 1, 2) } });
     if (d.countries && d.countries.length && T.fastest_country) {
       var qc = null;
       for (var q = 0; q < d.countries.length; q++)
@@ -671,10 +894,13 @@
             (qc == null || d.countries[q].t > d.countries[qc].t)) qc = q;
       var qcn = qc != null ? countryName(d.countries[qc].cc) : null;
       if (qcn)
-        facts.push({ t: T.fastest_country,
-          v: { country: qcn, v: fmtSigned(d.countries[qc].t, 2) },
+        facts.push({ t: unitizeKeyed("fastest_country", T.fastest_country),
+          v: { country: qcn, v: fmtTemp(d.countries[qc].t, "delta", 2, 2) },
           link: { kind: "country", cc: d.countries[qc].cc } });
     }
+    return facts;
+    }
+    var facts = buildFacts();
     if (!facts.length) return;
     var factEl = document.getElementById("dyk-fact");
     var dotsEl = document.getElementById("dyk-dots");
@@ -737,6 +963,7 @@
         b.setAttribute("aria-current", k === idx ? "true" : "false");
       });
     }
+    window.__unitHooks.push(function () { facts = buildFacts(); show(idx); });
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
     function rest() {
       stop();
@@ -815,6 +1042,9 @@
       if (dots[idx] && dots[idx].scrollIntoView)
         dots[idx].scrollIntoView({ block: "nearest", inline: "nearest" });
     }
+    // The slide's figures are built text (renderHeroEntry), so redraw the active
+    // one when the unit changes.
+    window.__unitHooks.push(function () { show(idx); });
     // Lock the card to the tallest slide's height (measured up front, re-measured
     // on resize) so the flanking prev/next arrows sit at a fixed height instead of
     // hopping as each city's content length changes.
@@ -1069,7 +1299,14 @@
     }
     // Format + inject the card from precomputed stats. The percentile is derived
     // live from window.__trends, so a cached result still ranks against the world.
+    // Keep the last rendered result so a °C/°F switch can redraw the card from
+    // the same (Celsius) statistics instead of re-fetching the place.
+    var luLast = null;
+    window.__unitHooks.push(function () {
+      if (luLast) showResult(luLast[0], luLast[1]);
+    });
     function showResult(place, s) {
+      luLast = [place, s];
       var T = window.__trends || [], pct = null;
       if (T.length) {
         var below = 0;
@@ -1083,8 +1320,8 @@
       var stripesHtml = s.st.map(function (v) {
         return '<i style="background:' + luStripeColor(v) + '"></i>';
       }).join("");
-      var big = fmtSigned(s.total, 1) + "°C";
-      var perDecTxt = fmtSigned(s.perDec, 2) + "°C "
+      var big = fmtTemp(s.total, "delta", 1, 2) + degU();
+      var perDecTxt = fmtTemp(s.perDec, "delta", 2, 2) + degU() + " "
         + (L.perdec || "per decade") + " · "
         + (warm ? (L.warm || "warming trend") : (L.cool || "cooling trend"));
       var faster = (pct == null) ? "" : ('<p class="lu-faster">' + (warm
@@ -1326,9 +1563,9 @@
     function show(cc) {
       var c = byCc[cc];
       if (!c) return;
-      var trend = fmtSigned(c.t, 2);
+      var trend = fmtTemp(c.t, "delta", 2, 2);
       // Cooling countries get a template that doesn't say "warming faster than".
-      line.innerHTML = (c.t >= 0 ? tmpl : tmplCool)
+      line.innerHTML = unitSwap(c.t >= 0 ? tmpl : tmplCool)
         .replace("{country}", "<b>" + name(cc) + "</b>")
         .replace("{trend}", trend)
         .replace("{pct}", c.pct)
@@ -1340,6 +1577,7 @@
       : (byCc[langDefault] ? langDefault : opts[0].cc);
     sel.value = start;
     sel.addEventListener("change", function () { show(sel.value); });
+    window.__unitHooks.push(function () { show(sel.value); });
     show(start);
   }
 
@@ -1399,7 +1637,7 @@
     function valTd(t) {
       var v = document.createElement("td");
       v.className = "rank-val " + (t >= 0 ? "warm" : "cool");
-      v.textContent = fmtSigned(t, 2);
+      setTemp(v, t, "delta", 2, 2);
       return v;
     }
     // Inline warming stripes (Ed-Hawkins style): 9 decade-mean anomalies mapped
@@ -1443,7 +1681,7 @@
       var s = document.createElement("span");
       s.className = "rc-meta";
       var parts = [];
-      if (dt != null) parts.push(fmtSigned(dt, 1) + "°C");
+      if (dt != null) parts.push(fmtTemp(dt, "delta", 1, 2) + degU());
       // "× the world average" only makes sense for a warming place; a negative
       // multiple would be nonsense for the handful of cities that have cooled.
       if (gt && gt > 0 && t != null && t > 0) parts.push((t / gt).toFixed(1) + "×");
@@ -1476,12 +1714,12 @@
       var dt = win === "1975" ? it.dt2 : it.dt;
       var g = win === "1975" ? gt2 : gt;
       if (it.valCell) {
-        it.valCell.textContent = fmtSigned(t, 2);
+        setTemp(it.valCell, t, "delta", 2, 2);
         it.valCell.className = "rank-val " + (t >= 0 ? "warm" : "cool");
       }
       if (it.metaSpan) {
         var parts = [];
-        if (dt != null) parts.push(fmtSigned(dt, 1) + "°C");
+        if (dt != null) parts.push(fmtTemp(dt, "delta", 1, 2) + degU());
         if (g && g > 0 && t != null && t > 0) parts.push((t / g).toFixed(1) + "×");
         var pt = popText(it.pop);
         if (pt) parts.push(pt);
@@ -1746,6 +1984,9 @@
     // country" (countries table) highlights once __heroSlug / __myCC resolve
     // (renderRanking usually runs before geolocation completes).
     window.__rankRender = function () { renderCities(); renderCountries(); };
+    // Row values and the "+2.4°C · 1.6×" meta line are built text, so a unit
+    // switch redraws the visible rows rather than trying to patch them.
+    window.__unitHooks.push(window.__rankRender);
 
     renderCities();
     renderCountries();
@@ -2208,7 +2449,7 @@
     // a city with no same-language shell, then the raw ranking name.
     var name = heroCityName(slug) || entry.dn || entry.n;
     set("rh-name", name);
-    set("rh-trend", fmtSigned(entry.t, 2));
+    setTemp(el("rh-trend"), entry.t, "delta", 2, 2);
     set("rh-cta-label", (host.getAttribute("data-cta") || "{name}")
       .replace("{name}", name));
     var link = el("rh-link");
@@ -2244,8 +2485,8 @@
     // Draw this city's country border silhouette behind the hero.
     injectHeroOutline(host, entry.cc);
     // Rebuild the secondary line: total warming since 1940 + rate percentile.
-    var since = (host.getAttribute("data-since") || "{v}")
-      .replace("{v}", fmtSigned(entry.dt, 1) + " °C");
+    var since = unitSwap(host.getAttribute("data-since") || "{v}")
+      .replace("{v}", fmtTemp(entry.dt, "delta", 1, 2) + " " + degU());
     var meta = el("rh-meta");
     if (meta) {
       var pct = heroPercentile(entry.t);
@@ -2623,6 +2864,15 @@ function _registerExtraChart(base, destroy, rebuild) {
   window.__extraCharts = window.__extraCharts || {};
   window.__extraCharts[base] = {destroy: destroy, rebuild: rebuild};
 }
+// Both widgets plot ABSOLUTE monthly/daily temperatures. Convert on the way into
+// a dataset (never in place: `d` is the shared °C payload, and these widgets are
+// destroyed and rebuilt from it on every theme/unit switch).
+function _abs(arr) {
+  if (!arr || !window.__tconv || !window.__tconv.isF()) return arr;
+  return arr.map(function (v) {
+    return v == null ? v : Math.round(window.__tconv.conv(v, 'abs') * 100) / 100;
+  });
+}
 function _opts(months) {
   var mu = _cssv('--muted', '#475569');
   return {responsive: true, maintainAspectRatio: false,
@@ -2630,7 +2880,7 @@ function _opts(months) {
     plugins: {legend: {labels: {boxWidth: 12, color: mu}}},
     scales: {x: {offset: true, ticks: {color: mu}},
              y: {ticks: {color: mu},
-                 title: {display: true, text: '°C', color: mu}}}};
+                 title: {display: true, text: window.__tconv.deg(), color: mu}}}};
 }
 function buildRange(base, d, months) {
   var years = Object.keys(d.years);
@@ -2642,14 +2892,14 @@ function buildRange(base, d, months) {
     chart = new Chart(document.getElementById(base).getContext('2d'), {
       type: 'line',
       data: {labels: months, datasets: [
-        {label: 'max', data: d.max, borderColor: mu,
+        {label: 'max', data: _abs(d.max), borderColor: mu,
          borderWidth: 1, pointRadius: 0, fill: false},
-        {label: 'min', data: d.min, borderColor: mu,
+        {label: 'min', data: _abs(d.min), borderColor: mu,
          backgroundColor: ln, borderWidth: 1,
          pointRadius: 0, fill: '-1'},
-        {label: 'avg', data: d.avg, borderColor: mu, borderDash: [5, 4],
+        {label: 'avg', data: _abs(d.avg), borderColor: mu, borderDash: [5, 4],
          borderWidth: 1.5, pointRadius: 0},
-        {label: initial, data: d.years[initial], borderColor: _warm(),
+        {label: initial, data: _abs(d.years[initial]), borderColor: _warm(),
          backgroundColor: _warm(), showLine: false, pointRadius: 4,
          spanGaps: true}
       ]}, options: _opts(months)});
@@ -2657,7 +2907,7 @@ function buildRange(base, d, months) {
   build();
   sel.addEventListener('change', function () {
     chart.data.datasets[3].label = sel.value;
-    chart.data.datasets[3].data = d.years[sel.value];
+    chart.data.datasets[3].data = _abs(d.years[sel.value]);
     chart.update();
   });
   _registerExtraChart(base, function () { try { chart.destroy(); } catch (e) {} }, build);
@@ -2672,15 +2922,15 @@ function buildRecords(base, d, months) {
     chart = new Chart(document.getElementById(base).getContext('2d'), {
       type: 'line',
       data: {labels: months, datasets: [
-        {label: 'rec high', data: d.recHigh, borderColor: 'rgba(185,28,28,.5)',
+        {label: 'rec high', data: _abs(d.recHigh), borderColor: 'rgba(185,28,28,.5)',
          borderWidth: 1, pointRadius: 0, fill: false},
-        {label: 'rec low', data: d.recLow, borderColor: 'rgba(29,78,216,.5)',
+        {label: 'rec low', data: _abs(d.recLow), borderColor: 'rgba(29,78,216,.5)',
          backgroundColor: ln, borderWidth: 1,
          pointRadius: 0, fill: '-1'},
-        {label: initial + ' ▲', data: d.years[initial].high,
+        {label: initial + ' ▲', data: _abs(d.years[initial].high),
          borderColor: _warm(), backgroundColor: _warm(), showLine: false,
          pointRadius: 4, spanGaps: true},
-        {label: initial + ' ▼', data: d.years[initial].low,
+        {label: initial + ' ▼', data: _abs(d.years[initial].low),
          borderColor: _cool(), backgroundColor: _cool(), showLine: false,
          pointRadius: 4, spanGaps: true}
       ]}, options: _opts(months)});
@@ -2689,9 +2939,9 @@ function buildRecords(base, d, months) {
   sel.addEventListener('change', function () {
     var y = sel.value;
     chart.data.datasets[2].label = y + ' ▲';
-    chart.data.datasets[2].data = d.years[y].high;
+    chart.data.datasets[2].data = _abs(d.years[y].high);
     chart.data.datasets[3].label = y + ' ▼';
-    chart.data.datasets[3].data = d.years[y].low;
+    chart.data.datasets[3].data = _abs(d.years[y].low);
     chart.update();
   });
   _registerExtraChart(base, function () { try { chart.destroy(); } catch (e) {} }, build);

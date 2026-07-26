@@ -514,10 +514,13 @@ def main() -> None:
     for lang in i18n.LANGUAGES:
         gtr = globaltext.overlay(i18n.get(lang), lang)
         g_i18n: dict[str, str] = {}
+        g_i18n_f: dict[str, str] = {}
         for cs in g_specs.values():
             g_i18n.update(localize_specs(cs, gtr))
+            g_i18n_f.update(localize_specs(cs, gtr, unit="F"))
         build_map_page(OUTPUT_DIR / lang, locations, lang, i18n.LANGUAGES, gtr,
-                       g_i18n, g_meta, len(locations), preview_locs=preview_locs,
+                       g_i18n, g_i18n_f, g_meta, len(locations),
+                       preview_locs=preview_locs,
                        ranking=g_payload.get("ranking"),
                        # Full target roster (every city we intend to cover), so
                        # the map can report real coverage progress.

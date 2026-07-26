@@ -213,7 +213,7 @@ def _anomaly_trend(years, values, tr, L, Lf, color) -> dict:
         raw_color="#94a3b8", raw_style="points",
         raw_label_key=None, raw_label_kw=None,
         loess_color=color, trend_unit_key="per_decade_c", trend_decimals=2,
-        trend_color="#334155")
+        trend_color="#334155", tk="delta")
 
 
 def _stripes(years, values, tr, L) -> dict:
@@ -223,6 +223,7 @@ def _stripes(years, values, tr, L) -> dict:
     limit = float(finite.max()) if finite.size else 1.0
     return {
         "kind": "stripes",
+        "tk": "delta",
         "years": [int(y) for y in years],
         "anom": _floats(values),
         "limit": round(limit or 1.0, 3),
@@ -237,7 +238,8 @@ def _heatmap(years, month_values, tr, L) -> dict:
     pivot = pd.DataFrame(index=[int(y) for y in years])
     return _matrix_chart(pivot, month_values, tr, L,
                          step=0.5, cbar_key="anom_heatmap_cbar",
-                         cbar_kw={"base": f"{lo}-{hi}"}, diverging=True)
+                         cbar_kw={"base": f"{lo}-{hi}"}, diverging=True,
+                         tk="delta")
 
 
 def _city_extremes(stats, tr, L) -> dict:
@@ -253,6 +255,7 @@ def _city_extremes(stats, tr, L) -> dict:
         picked = picked + ordered[-_EXTREME_BOTTOM:]
     return {
         "kind": "citybars",
+        "tk": "delta",
         "labels": [n for n, _ in picked],
         "values": [round(float(t), 3) for _, t in picked],
         "xlabel": L(tr, "per_decade_c"),
@@ -269,7 +272,7 @@ def _comparison(years, zone_series, tr, L, Lf) -> dict:
     ]
     return _multitrend_chart(years, series, tr, L, Lf,
                              xlabel_key="year", ylabel_key="anomaly_ylabel",
-                             show_trend=False)
+                             show_trend=False, tk="delta")
 
 
 # A country needs at least this many cities to enter the country ranking - a
