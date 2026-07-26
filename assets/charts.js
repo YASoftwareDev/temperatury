@@ -574,7 +574,19 @@
     // load - they are size-independent, so they work while their panels are
     // hidden. The dashboard canvases wait for renderDashboard (above).
     window.__globalData = data;
-    if (data.ranking) renderRanking(data.ranking, data.countries || [], data.gt || 0, data.gt2 || 0);
+    // Building the ranking table is ~1s of synchronous DOM work (2000+ city
+    // rows), and its tab is hidden on entry - doing it inline froze the page
+    // long enough for Firefox to show "not responding" on slower machines.
+    // Build it lazily: the first time its tab opens (onShow -> __ensureRanking),
+    // or during idle time after first paint, whichever comes first. The ranking
+    // DATA below (window.__ranking etc.) is still set now, so the map hover,
+    // hero, "did you know" and search that read it work immediately.
+    var rankingDone = false;
+    window.__ensureRanking = function () {
+      if (rankingDone || !data.ranking) return;
+      rankingDone = true;
+      renderRanking(data.ranking, data.countries || [], data.gt || 0, data.gt2 || 0);
+    };
     if (data.countries) renderCountryStat(data.countries, data.tzcc || {});
     // Sorted trend distribution + world-city average power the "check any place"
     // lookup's "faster than N%" line without another network round-trip.
@@ -602,6 +614,10 @@
     if (window.renderDashboard) window.renderDashboard();
     if (window.initDidYouKnow) window.initDidYouKnow();
     if (window.initCarousel) window.initCarousel();
+    // Build the ranking during the first idle gap after paint, so it is ready
+    // by the time the visitor opens its tab without ever blocking entry.
+    var ric = window.requestIdleCallback || function (f) { return setTimeout(f, 1500); };
+    ric(function () { window.__ensureRanking(); });
   };
 
   // "Did you know" rotating facts (top of the Dashboard tab), each computed from
@@ -2486,6 +2502,8 @@
         window.__cmpPrefill();   // your city vs a notable city, if geo has resolved
       } else if (id === "report" && window.initReportForm) {
         window.initReportForm();
+      } else if (id === "ranking-cities" || id === "ranking-countries") {
+        if (window.__ensureRanking) window.__ensureRanking();
       }
       // Reflow any Chart.js canvases that were sized while their panel was hidden.
       var p = panel(id);
