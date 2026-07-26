@@ -3,7 +3,7 @@
 Two static pages are produced under ``output/``:
 
 * ``widget.html`` - a self-contained, iframe-embeddable ranking widget. It reads
-  its options from the URL query (``?n=&country=&theme=&lang=&title=``), fetches
+  its options from the URL query (``?n=&country=&theme=&lang=&unit=&title=``), fetches
   the country ranking from the same-origin ``charts/_global.json`` (so it stays
   current with every build), and renders a compact, branded, theme-aware card
   that links back to the site. No external JS; flags come from flagcdn.
@@ -89,6 +89,26 @@ _WIDGET = """<!DOCTYPE html>
   var site = "SITE_URL";
   // Signed number, but a value rounding to zero shows a bare unsigned zero.
   function fs(v, dp) { var s = v.toFixed(dp); return parseFloat(s) === 0 ? (0).toFixed(dp) : (v > 0 ? "+" : "") + s; }
+  // °C / °F. An embedder can pin it with ?unit=c|f; otherwise it follows the
+  // viewer's own locale, the same rule (and the same country list) the main site
+  // applies. Every figure here is a warming DIFFERENCE or rate, so the offset
+  // never applies - only the 9/5 scale.
+  var FUNIT = ["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"];
+  function autoF() {
+    try {
+      var L = navigator.languages || [navigator.language || ""];
+      for (var i = 0; i < L.length; i++) {
+        var m = /-([A-Za-z]{2})(?:$|-)/.exec(L[i] || "");
+        if (m) return FUNIT.indexOf(m[1].toUpperCase()) >= 0;
+      }
+    } catch (e) {}
+    return false;
+  }
+  var uq = (q.get("unit") || "").toLowerCase();
+  var isF = uq === "f" ? true : uq === "c" ? false : autoF();
+  function dg(v) { return isF ? v * 9 / 5 : v; }
+  var DEG = isF ? "\u00B0F" : "\u00B0C";
+  document.getElementById("cw-sub").textContent = DEG + " / decade, 1940-2025";
   var brand = document.getElementById("cw-brand");
   brand.href = site + "?utm_source=widget";
   var names = null;
@@ -119,7 +139,7 @@ _WIDGET = """<!DOCTYPE html>
       fl.width = 20; fl.height = 15; fl.alt = ""; fl.src = "https://flagcdn.com/20x15/" + c.cc + ".png";
       var nm = document.createElement("span"); nm.className = "cw-name"; nm.textContent = cname(c.cc);
       var vl = document.createElement("span"); vl.className = "cw-val " + (c.t >= 0 ? "warm" : "cool");
-      vl.textContent = fs(c.t, 2);
+      vl.textContent = fs(dg(c.t), 2);
       a.appendChild(rk); a.appendChild(fl); a.appendChild(nm); a.appendChild(vl);
       list.appendChild(a);
     });
@@ -189,6 +209,25 @@ _CITY_WIDGET = """<!DOCTYPE html>
   if (theme === "light" || theme === "dark")
     document.documentElement.setAttribute("data-theme", theme);
   var site = "SITE_URL";
+  // °C / °F. An embedder can pin it with ?unit=c|f; otherwise it follows the
+  // viewer's own locale, the same rule (and the same country list) the main site
+  // applies. Every figure here is a warming DIFFERENCE or rate, so the offset
+  // never applies - only the 9/5 scale.
+  var FUNIT = ["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"];
+  function autoF() {
+    try {
+      var L = navigator.languages || [navigator.language || ""];
+      for (var i = 0; i < L.length; i++) {
+        var m = /-([A-Za-z]{2})(?:$|-)/.exec(L[i] || "");
+        if (m) return FUNIT.indexOf(m[1].toUpperCase()) >= 0;
+      }
+    } catch (e) {}
+    return false;
+  }
+  var uq = (q.get("unit") || "").toLowerCase();
+  var isF = uq === "f" ? true : uq === "c" ? false : autoF();
+  function dg(v) { return isF ? v * 9 / 5 : v; }
+  var DEG = isF ? "\u00B0F" : "\u00B0C";
   var card = document.getElementById("cw"), body = document.getElementById("body"),
       stripes = document.getElementById("stripes");
   function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
@@ -211,9 +250,9 @@ _CITY_WIDGET = """<!DOCTYPE html>
       (e.st || []).forEach(function (v) {
         var s = document.createElement("i"); s.style.background = scol(v); stripes.appendChild(s); });
       body.innerHTML = '<div class="cw-place">' + esc(name) + '</div>'
-        + '<div class="cw-fig' + (warm ? "" : " cool") + '"><b>' + fs(e.t, 2)
-        + '</b><small>\\u00B0C / decade</small></div>'
-        + '<div class="cw-sub">' + fs(e.dt, 1) + ' \\u00B0C since 1940</div>';
+        + '<div class="cw-fig' + (warm ? "" : " cool") + '"><b>' + fs(dg(e.t), 2)
+        + '</b><small>' + DEG + ' / decade</small></div>'
+        + '<div class="cw-sub">' + fs(dg(e.dt), 1) + ' ' + DEG + ' since 1940</div>';
     }).catch(function () { body.innerHTML = '<div class="cw-err">City unavailable</div>'; });
 })();
 </script>
@@ -285,6 +324,9 @@ _EMBED = """<!DOCTYPE html>
           <select id="lang"><option value="en">English</option><option value="pl">Polski</option>
             <option value="de">Deutsch</option><option value="fr">Français</option>
             <option value="es">Español</option></select></div>
+        <div><label for="unit">Units</label>
+          <select id="unit"><option value="auto">Auto (viewer's locale)</option>
+            <option value="c">Celsius</option><option value="f">Fahrenheit</option></select></div>
       </div>
       <div id="countryfield">
         <label for="country">Highlight a country (optional)</label>
@@ -311,6 +353,7 @@ _EMBED = """<!DOCTYPE html>
     var sz = $("size").value.split("|"); var wh = sz[0].split("x");
     var typed = ($("city").value || "").trim();
     return { w: +wh[0], h: +wh[1], n: sz[1], theme: $("theme").value, lang: $("lang").value,
+      unit: $("unit").value,
       country: ($("country").value || "").trim().toLowerCase(),
       city: nameToSlug[typed.toLowerCase()] || typed.toLowerCase() };
   }
@@ -323,6 +366,8 @@ _EMBED = """<!DOCTYPE html>
       if (o.country) p.push("country=" + encodeURIComponent(o.country));
     }
     if (o.theme !== "auto") p.push("theme=" + o.theme);
+    // Left off when auto, so the widget keeps following each viewer's own locale.
+    if (o.unit !== "auto") p.push("unit=" + o.unit);
     return { file: base, q: "?" + p.join("&") };
   }
   function code(o) {
@@ -341,7 +386,7 @@ _EMBED = """<!DOCTYPE html>
     $("prev").src = pr.file + pr.q;   // relative preview, same origin
     $("code").value = code(o);
   }
-  ["mode", "size", "theme", "lang", "country", "city"].forEach(function (id) {
+  ["mode", "size", "theme", "lang", "unit", "country", "city"].forEach(function (id) {
     $(id).addEventListener("input", refresh);
     $(id).addEventListener("change", refresh);
   });

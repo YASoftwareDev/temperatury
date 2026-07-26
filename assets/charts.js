@@ -66,12 +66,22 @@
   }
   // The unit token as it should read right now.
   function degU() { return isF() ? "°F" : "°C"; }
-  // Swap the unit inside an already-composed string. Symmetric (°F back to °C as
-  // well) so the pass is idempotent and reversible however often it runs, and it
-  // covers the composite units for free ("°C·days", "°C / decade").
+  // How the unit actually appears in our 132 machine-translated strings: usually
+  // "°C", but several outputs insert a space ("20 ° C") and a few Cyrillic-script
+  // ones use a look-alike letter ("°Ц", "°С"). Matching those recovers ~15
+  // languages per string. A translation that spells the unit out in words
+  // instead ("20 डिग्री सेल्सियस") matches nothing here - and must not, because
+  // the number substitution below keys off the SAME pattern, so unit and figure
+  // always move together or not at all. Those sentences stay wholly Celsius:
+  // unconverted, never inconsistent.
+  // \s? not \s*: at most ONE space, so the pattern can never run across a line
+  // break and pair a stray degree sign with an unrelated capital further on.
+  var DEG_C = "°\\s?[CСЦ]";
+  var DEG_F = "°\\s?[FФ]";
   function unitSwap(s) {
     if (s == null) return s;
-    return isF() ? String(s).replace(/°C/g, "°F") : String(s).replace(/°F/g, "°C");
+    return isF() ? String(s).replace(new RegExp(DEG_C, "g"), "°F")
+                 : String(s).replace(new RegExp(DEG_F, "g"), "°C");
   }
   // Format a Celsius figure in the active unit. `signed` picks which of the two
   // sign conventions already in the codebase applies: 1 = Python's "+.Nf" (a zero
@@ -99,18 +109,36 @@
     cap_volatility: [[6, "delta", 0]],
     cap_season:     [[5, "abs", 0]],
     cap_degreedays: [[18, "abs", 0], [22, "abs", 0]],
-    cap_tropic:     [[20, "abs", 0]]
+    cap_tropic:     [[20, "abs", 0]],
+    // The About answer that works an example: "+0.3 °C/decade has warmed about
+    // 2.5 °C" - a rate and a total, both DIFFERENCES.
+    about_a5:       [[0.3, "delta", 2], [2.5, "delta", 1]]
   };
   function unitizeKeyed(key, s) {
     if (s == null || !isF()) return unitSwap(s);
     var t = BAKED_C[key];
     if (t) {
       s = String(s);
+      // The gap may be a real space, a non-breaking space, or - when the subject
+      // is innerHTML rather than text - the &nbsp; entity the browser serializes
+      // one back into.
+      // German writes it "2-°C-Stufen", so a hyphen counts as a gap too.
+      var SEP = "(?:\\s|-|&nbsp;|&#160;)*";
       for (var i = 0; i < t.length; i++) {
-        // Leading boundary so "2" never matches inside "22"; the mandatory "°C"
-        // tail keeps it off any other number in the sentence.
-        var re = new RegExp("(^|[^\\d.,])" + t[i][0] + "(\\s*°C)", "g");
-        s = s.replace(re, "$1" + fmtTemp(t[i][0], t[i][1], t[i][2], 0) + "$2");
+        // Half of Europe's translations localise the decimal mark ("0,3"), so
+        // match either and echo back whichever this language used - matching only
+        // "0.3" silently skipped 65 of 132 languages.
+        var num = String(t[i][0]).replace(".", "[.,]");
+        // Leading boundary so "2" never matches inside "22"; the mandatory unit
+        // tail keeps it off any other number in the sentence, and uses the same
+        // DEG_C pattern unitSwap does so the two can never disagree.
+        var re = new RegExp("(^|[^\\d.,])" + num + "(" + SEP + DEG_C + ")", "g");
+        var val = fmtTemp(t[i][0], t[i][1], t[i][2], 0);
+        s = s.replace(re, function (m, pre, tail) {
+          // A comma can only have come from the number: the boundary class
+          // excludes one before it and the tail is spaces plus the unit.
+          return pre + (m.indexOf(",") >= 0 ? val.replace(".", ",") : val) + tail;
+        });
       }
     }
     return unitSwap(s);
@@ -709,6 +737,20 @@
     // symmetric, so flipping back and forth never accumulates.
     var u = r.querySelectorAll(".tunit");
     for (var j = 0; j < u.length; j++) u[j].textContent = unitSwap(u[j].textContent);
+    // Prose that names a unit, and sometimes quotes a fixed threshold, with no
+    // {placeholder} to hook: the About answers and the ranking intros. The
+    // landing is composed per language and ships no i18n runtime, so it cannot
+    // re-fill these from a dictionary the way a city page does. The element
+    // names its dictionary key in data-tprose; the pristine Celsius markup is
+    // snapshotted the first time we see it and every later render derives from
+    // THAT, never from what is currently on screen.
+    var pr = r.querySelectorAll("[data-tprose]");
+    for (var m = 0; m < pr.length; m++) {
+      var e2 = pr[m];
+      if (e2.__cHtml == null) e2.__cHtml = e2.innerHTML;
+      var next = unitizeKeyed(e2.getAttribute("data-tprose"), e2.__cHtml);
+      if (next !== e2.innerHTML) e2.innerHTML = next;
+    }
   };
 
   // A unit switch has to redo three things, in this order: the chart-label map

@@ -1470,7 +1470,7 @@ ${topbar}
     </section><!-- /tp-map -->
     <section class="tabpanel" role="tabpanel" id="tp-ranking-cities" aria-labelledby="tab-ranking-cities" tabindex="0" hidden>
   <section class="ranking" id="ranking-cities">
-    <p class="section-sub">${rank_intro}</p>
+    <p class="section-sub tunit">${rank_intro}</p>
     <p class="rank-legend">${rank_legend}</p>
     <div class="rank-window" role="group" aria-label="${rank_win_label}">
       <button type="button" class="rw-btn is-on" data-win="1940" aria-pressed="true">${rank_win_full}</button>
@@ -1509,7 +1509,7 @@ ${topbar}
     </section><!-- /tp-ranking-cities -->
     <section class="tabpanel" role="tabpanel" id="tp-ranking-countries" aria-labelledby="tab-ranking-countries" tabindex="0" hidden>
   <section class="ranking" id="ranking-countries">
-    <p class="section-sub">${rank_intro_countries}</p>
+    <p class="section-sub tunit">${rank_intro_countries}</p>
     <p class="rank-legend">${rank_legend}</p>
     <div class="rank-window" role="group" aria-label="${rank_win_label}">
       <button type="button" class="rw-btn is-on" data-win="1940" aria-pressed="true">${rank_win_full}</button>
@@ -2720,7 +2720,7 @@ _ABOUT_QA = [
      "also has a short caption under it explaining what it shows."),
     ("What does the °C&nbsp;/&nbsp;decade trend mean?",
      "The slope of a straight-line fit through each year's average temperature "
-     "from 1940 to today, expressed as degrees Celsius of warming per decade. "
+     "from 1940 to today, expressed as degrees of warming per decade. "
      "A city at +0.3&nbsp;°C/decade has warmed about 2.5&nbsp;°C over "
      "the ~85-year record."),
     ("What are the decade anomalies and warming stripes?",
@@ -2769,9 +2769,14 @@ def _about_html(tr: dict, lang: str) -> str:
     block = _ABOUT_MT.get(lang) or {}
     heading = block.get("heading") or tr.get("about_heading", _ABOUT_HEADING_EN)
     intro = block.get("intro") or tr.get("about_intro", _ABOUT_INTRO_EN)
+    # data-tprose: this page ships no i18n runtime, so charts.js re-derives these
+    # answers from their pristine Celsius markup on a °C/°F switch - a unit swap
+    # for all of them, plus the worked example's numbers (see BAKED_C.about_a5).
     items = "".join(
-        f'<div class="qa"><h3 class="qa-q">{block.get(f"q{i}") or q}</h3>'
-        f'<p class="qa-a">{block.get(f"a{i}") or a}</p></div>'
+        f'<div class="qa">'
+        f'<h3 class="qa-q" data-tprose="about_q{i}">{block.get(f"q{i}") or q}</h3>'
+        f'<p class="qa-a" data-tprose="about_a{i}">{block.get(f"a{i}") or a}</p>'
+        f'</div>'
         for i, (q, a) in enumerate(_ABOUT_QA))
     return (f'<div class="about-wrap"><h2 class="dash-h2">{_esc(heading)}</h2>'
             f'<p class="section-sub">{_esc(intro)}</p>{items}</div>')

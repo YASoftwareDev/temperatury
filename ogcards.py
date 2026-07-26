@@ -148,6 +148,19 @@ def _fit_font(draw, text, path, size, max_w):
     return ImageFont.truetype(path, size)
 
 
+def _fahr(c: float, dp: int) -> str:
+    """The same warming figure in °F, signed. Every number on these cards is a
+    warming DIFFERENCE or a rate, so the 32 offset never applies - only the 9/5
+    scale (the site's "delta" class).
+
+    A share card is a static PNG fetched by a social crawler, not by the reader,
+    so it cannot follow anyone's unit preference the way the site does. It prints
+    both instead, which reads correctly for a Celsius and a Fahrenheit audience
+    alike."""
+    v = c * 9 / 5
+    return f"= {'+' if v > 0 else ''}{v:.{dp}f} \u00b0F"
+
+
 def _card(country: str, trend: float, rank: int, total: int, n_cities: int,
           pct: int, subtitle: str) -> Image.Image:
     img = Image.new("RGB", (W, H), _BG)
@@ -165,8 +178,10 @@ def _card(country: str, trend: float, rank: int, total: int, n_cities: int,
     big_font = ImageFont.truetype(_BOLD, 132)
     d.text((66, 258), big, font=big_font, fill=accent)
     bw = d.textlength(big, font=big_font)
-    d.text((66 + bw + 24, 340), "per decade", font=ImageFont.truetype(_REG, 40),
+    d.text((66 + bw + 24, 300), "per decade", font=ImageFont.truetype(_REG, 40),
            fill=_MUTED)
+    d.text((66 + bw + 24, 352), _fahr(trend, 2),
+           font=ImageFont.truetype(_REG, 34), fill=_MUTED)
     d.text((70, 420), "1940-2025 " + ("warming" if warm else "cooling") + " trend",
            font=ImageFont.truetype(_REG, 30), fill=_MUTED)
 
@@ -192,7 +207,10 @@ def _world_card(mean_trend: float, n_cities: int, n_countries: int) -> Image.Ima
     d.text((70, 168), "Temperatures worldwide",
            font=ImageFont.truetype(_BOLD, 72), fill=_INK)
     big = f"+{mean_trend:.2f}°C"
-    d.text((66, 268), big, font=ImageFont.truetype(_BOLD, 132), fill=_WARM)
+    big_font = ImageFont.truetype(_BOLD, 132)
+    d.text((66, 268), big, font=big_font, fill=_WARM)
+    d.text((66 + d.textlength(big, font=big_font) + 24, 350), _fahr(mean_trend, 2),
+           font=ImageFont.truetype(_REG, 38), fill=_MUTED)
     d.text((70, 430), "average warming per decade, 1940-2025",
            font=ImageFont.truetype(_REG, 34), fill=_MUTED)
     d.text((70, 500), f"{n_cities:,} cities across {n_countries} countries",
@@ -222,11 +240,15 @@ def _city_card(name: str, country: str, total: float, trend: float,
     big_font = ImageFont.truetype(_BOLD, 132)
     d.text((66, 258), big, font=big_font, fill=accent)
     bw = d.textlength(big, font=big_font)
-    d.text((66 + bw + 24, 344), "since 1940", font=ImageFont.truetype(_REG, 40),
+    d.text((66 + bw + 24, 300), "since 1940", font=ImageFont.truetype(_REG, 40),
            fill=_MUTED)
-    d.text((70, 420), f"{('+' if trend >= 0 else '')}{trend:.2f}°C per decade  ·  "
-           + ("warming trend" if warm else "cooling trend"),
-           font=ImageFont.truetype(_REG, 30), fill=_MUTED)
+    d.text((66 + bw + 24, 352), _fahr(total, 1),
+           font=ImageFont.truetype(_REG, 34), fill=_MUTED)
+    _rate = (f"{('+' if trend >= 0 else '')}{trend:.2f}\u00b0C "
+             f"({('+' if trend >= 0 else '')}{trend * 9 / 5:.2f}\u00b0F) per decade"
+             "  \u00b7  " + ("warming trend" if warm else "cooling trend"))
+    d.text((70, 420), _rate, font=_fit_font(d, _rate, _REG, 30, W - 140),
+           fill=_MUTED)
 
     line = (f"Warming faster than {pct}% of the world's cities"
             if warm else "Cooling, against the global trend")
