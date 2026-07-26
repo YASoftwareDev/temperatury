@@ -1488,24 +1488,31 @@
         it.metaSpan.textContent = parts.join(" · ");
       }
     }
-    // Each row element is built ONCE; filtering/sorting/paging re-append subsets.
-    // CITY rows: rank, flag + city link, country, trend.
-    var cityItems = rows.map(function (r, i) {
-      var cty = country(r.cc);
+    // CITY rows are VIRTUALIZED: only the ~100 rows actually shown get DOM built
+    // (building all 2000+ <tr> up front was ~150ms here, seconds on a slow laptop -
+    // a main-thread freeze). Sorting/filtering read the plain data fields below;
+    // the <tr> is built lazily by ensureCityRow the first time a row is displayed.
+    function makeCityRow(it) {
       var tr = document.createElement("tr");
-      var num = document.createElement("td");
-      num.className = "rank-num"; num.textContent = String(i + 1);
-      var dn = localName(r.s, r.n);   // localized display name (Munich -> Monachium)
-      var a = document.createElement("a"); a.href = r.s + ".html"; a.textContent = dn;
-      var c1 = cityCell(r.cc, a, wikiLink(dn), r.st, r.dt, r.t, r.pop);
-      var c2 = document.createElement("td"); c2.className = "rank-cty"; c2.textContent = cty;
-      var vcell = valTd(r.t);
+      var num = document.createElement("td"); num.className = "rank-num";
+      var a = document.createElement("a"); a.href = it.s + ".html"; a.textContent = it.dn;
+      var c1 = cityCell(it.cc, a, wikiLink(it.dn), it._st, it.dt, it.t, it.pop);
+      var c2 = document.createElement("td"); c2.className = "rank-cty"; c2.textContent = it.cty;
+      var vcell = valTd(it.t);
       tr.appendChild(num); tr.appendChild(c1); tr.appendChild(c2); tr.appendChild(vcell);
+      it.el = tr; it.num = num; it.valCell = vcell;
+      it.metaSpan = c1.querySelector(".rc-meta");
+    }
+    function ensureCityRow(it) { if (!it.el) makeCityRow(it); }
+    var cityItems = rows.map(function (r, i) {
+      var dn = localName(r.s, r.n);   // localized display name (Munich -> Monachium)
+      var cty = country(r.cc);
       // Search matches the localized AND the default name, so either works.
-      return { rank: i + 1, num: num, s: r.s, nn: norm(dn + " " + r.n), cc: r.cc, ccn: norm(cty),
-               region: r.r || "", sec: 0, t: r.t, t2: (r.t2 != null ? r.t2 : r.t),
-               dt: r.dt, dt2: (r.dt2 != null ? r.dt2 : r.dt), pop: r.pop,
-               valCell: vcell, metaSpan: c1.querySelector(".rc-meta"), el: tr };
+      return { rank: i + 1, s: r.s, dn: dn, cty: cty, nn: norm(dn + " " + r.n),
+               cc: r.cc, ccn: norm(cty), region: r.r || "", sec: 0,
+               t: r.t, t2: (r.t2 != null ? r.t2 : r.t),
+               dt: r.dt, dt2: (r.dt2 != null ? r.dt2 : r.dt), pop: r.pop, _st: r.st,
+               el: null, num: null, valCell: null, metaSpan: null };
     });
     // Modern-window (1975-) identity rank, so the # column stays a real rank when
     // the toggle re-sorts by t2 (built once; ties keep the full-record order).
@@ -1589,6 +1596,7 @@
       var frag = document.createDocumentFragment();
       for (var i = 0; i < shown; i++) {
         var it = sel[i];
+        ensureCityRow(it);          // build this row's DOM on first display
         refreshItem(it, cityWin);   // value cell + meta follow the active window
         var idRank = cityWin === "1975" ? it.rank2 : it.rank;
         if (filtered) {
