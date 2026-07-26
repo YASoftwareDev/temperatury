@@ -52,7 +52,10 @@ def _eval_client_map(en_page_uri, dict_js, labels):
     dictionary, then compose __ci18n from the shipped recipes."""
     with sync_playwright() as p:
         b = p.chromium.launch()
-        pg = b.new_page()
+        # en-GB, not Playwright's default en-US: a US-locale visitor defaults to
+        # Fahrenheit, which would turn every language-parity comparison here into
+        # a °F-vs-°C diff. Units have their own test (test_units.py).
+        pg = b.new_page(locale="en-GB")
         # Block only the network (Chart.js CDN); local file:// scripts still load,
         # and composition needs no Chart instance.
         pg.route("**/*", lambda r: r.abort()
@@ -72,7 +75,10 @@ def _eval_server_map(server_page_uri):
     """The baked {english: localized} chart map a server-rendered page ships."""
     with sync_playwright() as p:
         b = p.chromium.launch()
-        pg = b.new_page()
+        # en-GB, not Playwright's default en-US: a US-locale visitor defaults to
+        # Fahrenheit, which would turn every language-parity comparison here into
+        # a °F-vs-°C diff. Units have their own test (test_units.py).
+        pg = b.new_page(locale="en-GB")
         pg.route("**/*", lambda r: r.abort()
                  if r.request.url.startswith(("http://", "https://"))
                  else r.continue_())
@@ -130,7 +136,10 @@ def test_chart_labels_follow_switch_e2e():
     build("krakow", "en,pl", client_i18n=True)
     with _serve(ROOT / "output") as base, sync_playwright() as p:
         b = p.chromium.launch()
-        pg = b.new_page()
+        # en-GB, not Playwright's default en-US: a US-locale visitor defaults to
+        # Fahrenheit, which would turn every language-parity comparison here into
+        # a °F-vs-°C diff. Units have their own test (test_units.py).
+        pg = b.new_page(locale="en-GB")
         # Allow the loopback origin; block any external (CDN) request.
         pg.route("**/*", lambda r: r.continue_()
                  if "127.0.0.1" in r.request.url else r.abort())

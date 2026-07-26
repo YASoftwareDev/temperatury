@@ -52,24 +52,50 @@
   function osTheme() {
     return window.matchMedia && matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light";
   }
+  /* Countries that use Fahrenheit for everyday temperature (US + territories and
+     a few small nations); everyone else defaults to Celsius. The visitor's
+     region comes from their locale, and a manual choice always overrides it. */
+  var FUNIT = ["US", "PR", "GU", "VI", "AS", "MP", "BS", "BZ", "KY", "PW", "FM", "MH"];
+  function autoUnit() {
+    try {
+      var langs = navigator.languages || [navigator.language || ""];
+      for (var i = 0; i < langs.length; i++) {
+        var m = /-([A-Za-z]{2})(?:$|-)/.exec(langs[i] || "");
+        if (m) return FUNIT.indexOf(m[1].toUpperCase()) >= 0 ? "F" : "C";
+      }
+    } catch (e) {}
+    return "C";
+  }
   function cur(axis, fallback) {
     if (axis === "theme") return prefs.theme || osTheme();
     if (axis === "dir") return prefs.dir || "objective";
     if (axis === "density") return prefs.density || "comfortable";
     if (axis === "hero") return prefs.hero || "tint";
+    if (axis === "unit") return prefs.unit || autoUnit();
     return prefs[axis] || fallback; /* accent/font: may be undefined = default */
   }
+
+  /* The unit at last apply(), seeded from the attribute the head bootstrap wrote,
+     so the page's own first apply() is not mistaken for a switch. */
+  var lastUnit = root.getAttribute("data-unit") || "C";
 
   function apply() {
     root.setAttribute("data-dir", cur("dir"));
     root.setAttribute("data-theme", cur("theme"));
     root.setAttribute("data-density", cur("density"));
     root.setAttribute("data-hero", cur("hero"));
+    root.setAttribute("data-unit", cur("unit"));
     if (prefs.accent) root.setAttribute("data-accent", prefs.accent);
     else root.removeAttribute("data-accent");
     if (prefs.font) root.setAttribute("data-font", prefs.font);
     else root.removeAttribute("data-font");
     save(prefs);
+    /* °C <-> °F: relabel and reconvert the page BEFORE the charts rebuild, so a
+       rebuilt canvas already reads the new unit's label map. */
+    if (cur("unit") !== lastUnit) {
+      lastUnit = cur("unit");
+      window.dispatchEvent(new Event("unitchange"));
+    }
     window.dispatchEvent(new Event("themechange"));
   }
 
@@ -209,6 +235,18 @@
     seg(sHero, [["plain", "pref_plain", "Plain"], ["tint", "pref_tint", "Tint"]], "hero");
     gHero.appendChild(sHero); panel.appendChild(gHero);
 
+    /* No unit control on a server-i18n build - see isF() in charts.js: nothing
+       there could relabel the charts, so the choice would only half-apply. */
+    if (window.__units !== 0) {
+      var gUnit = group(T("pref_unit", "Temperature unit"));
+      var sUnit = document.createElement("div"); sUnit.className = "tpref-seg";
+      /* Fallbacks match report._tpref_i18n's inline English, which is the source
+         tools/gen_mapui.py extracts to machine-translate. */
+      seg(sUnit, [["C", "pref_unit_c", "Celsius"],
+                  ["F", "pref_unit_f", "Fahrenheit"]], "unit");
+      gUnit.appendChild(sUnit); panel.appendChild(gUnit);
+    }
+
     document.body.appendChild(scrim);
     document.body.appendChild(panel);
 
@@ -268,7 +306,8 @@
     var effFont = prefs.font || (cur("dir") === "editorial" ? "serif" : "sans");
     var vals = {
       theme: cur("theme"), dir: cur("dir"), density: cur("density"),
-      hero: cur("hero"), accent: prefs.accent || "cobalt", font: effFont
+      hero: cur("hero"), accent: prefs.accent || "cobalt", font: effFont,
+      unit: cur("unit")
     };
     panel.querySelectorAll("[data-axis]").forEach(function (b) {
       var a = b.dataset.axis, v = b.dataset.val;

@@ -44,6 +44,28 @@
     }
     return vars;
   }
+  // Units (°C / °F). charts.js loads first (blocking head script) and owns the
+  // conversion; this file only has to route the template and its temperature
+  // vars through it. Absent (a page without charts.js) = leave everything in °C.
+  function unitize(key, s) {
+    var U = window.__tconv;
+    return U ? U.keyed(key, s) : s;
+  }
+  // data-i18n-t = {var: [celsius, class, decimals, signed]} for the vars that are
+  // TEMPERATURES. The server also bakes the °C rendering into data-i18n-vars, so
+  // a no-JS reader still gets a correct (Celsius) sentence; here the raw number
+  // is re-formatted in whichever unit is active.
+  function unitVars(el, vars) {
+    var U = window.__tconv, raw = el.getAttribute("data-i18n-t");
+    if (!U || !raw) return vars;
+    var spec;
+    try { spec = JSON.parse(raw); } catch (e) { return vars; }
+    for (var k in spec) {
+      var s = spec[k];
+      vars[k] = U.fmt(s[0], s[1], s[2], s[3]);
+    }
+    return vars;
+  }
   function localize(el, D) {
     var key = el.getAttribute("data-i18n");
     var s = D[key];
@@ -51,6 +73,8 @@
     var vars = {};
     var vraw = el.getAttribute("data-i18n-vars");
     if (vraw) { try { vars = JSON.parse(vraw); } catch (e) {} }
+    vars = unitVars(el, vars);
+    s = unitize(key, s);
     // {name} (the localized city name) is auto-provided so figure titles and
     // widget headings need not bake it per element.
     if (vars.name == null) { var nm = cityName(); if (nm != null) vars.name = nm; }
@@ -81,6 +105,11 @@
     }
     if (window.__lang) document.documentElement.lang = window.__lang;
     if (window.__dir) document.documentElement.dir = window.__dir;
+    // Sentences that carry a temperature as MARKUP (data-i18n-html) put it in a
+    // fresh <span class="tval">, so re-express those in the active unit here -
+    // this runs on boot and on a language switch alike, whichever order the
+    // DOMContentLoaded listeners happen to fire in.
+    if (window.__unitizeDom) window.__unitizeDom(r === document ? null : r);
   }
   window.__applyI18n = applyI18n;
 

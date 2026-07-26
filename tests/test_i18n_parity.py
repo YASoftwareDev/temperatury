@@ -13,7 +13,10 @@ from tests.conftest import ROOT, build
 def _text(url, selector, switch_to=None):
     with sync_playwright() as p:
         b = p.chromium.launch()
-        pg = b.new_page()
+        # en-GB, not Playwright's default en-US: a US-locale visitor defaults to
+        # Fahrenheit, which would turn every language-parity comparison here into
+        # a °F-vs-°C diff. Units have their own test (test_units.py).
+        pg = b.new_page(locale="en-GB")
         pg.route("**/*", lambda r: r.abort()
                  if r.request.url.startswith(("http://", "https://"))
                  else r.continue_())

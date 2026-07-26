@@ -50,6 +50,34 @@ from plots import (
 
 _MONTHS = list(range(1, 13))
 
+# Which unit-conversion class a per-decade rate belongs to, keyed by the unit
+# label it is printed with. Rates counted in days or mm are not temperatures and
+# carry no class, so a °F reader still sees them unchanged. See charts.js for the
+# three classes (abs / delta / ddays).
+_RATE_CLASS = {"per_decade_c": "delta", "per_decade_dd": "ddays"}
+
+# Temperatures that live inside a translated label as a .format kwarg, by
+# dictionary key. Every one is an absolute threshold or mean, so a °F reader
+# reads "hot days (>64 °F)" rather than a Celsius number under a °F unit.
+# Keys absent here have no temperature kwarg (days, mm, years).
+_KW_CLASS = {
+    "threshold_hot": {"t": "abs"},
+    "threshold_freeze": {"t": "abs"},
+    "hdd_label": {"t": "abs"},
+    "cdd_label": {"t": "abs"},
+    "tropic_series": {"t": "abs"},
+    "heat_strong": {"t": "abs"},
+    "heat_danger": {"t": "abs"},
+    "vs_baseline": {"base": "abs"},
+    "vs_full": {"base": "abs"},
+}
+
+
+def _kpart(key: str, kw: dict) -> list:
+    """A "k" recipe part, carrying its temperature-kwarg classes when it has any."""
+    cls = _KW_CLASS.get(key)
+    return ["k", key, kw, cls] if cls else ["k", key, kw]
+
 
 # --- label collector -------------------------------------------------------
 # Each translatable string is recorded as (english, recipe) - a serialisable
@@ -63,7 +91,7 @@ def _mk():
 
     def L(tr: dict, key: str, **kw) -> str:
         s = tr[key].format(**kw)
-        specs.append((s, [["k", key, kw]]))
+        specs.append((s, [_kpart(key, kw)]))
         return s
 
     def Lf(tr: dict, recipe: list) -> str:
@@ -90,9 +118,13 @@ def _trend_meta(years: np.ndarray, values: np.ndarray, tr: dict, Lf,
     slope, line = robust_trend_line(years, values)
     sig = _sig_parts(values)
     per_decade = slope * 10
-    rate = f"{per_decade:+.{decimals}f}"
+    # A temperature rate rides the recipe as a NUMBER part so a °F reader gets it
+    # reconverted and reformatted; a days/mm rate stays pre-formatted text.
+    cls = _RATE_CLASS.get(unit_key)
+    rate = ([["n", round(float(per_decade), 4), cls, decimals, 1]] if cls
+            else [["t", f"{per_decade:+.{decimals}f}"]])
     if label_recipe is None:
-        recipe = [["k", "trend", {}], ["t", f" {rate} "],
+        recipe = [["k", "trend", {}], ["t", " "], *rate, ["t", " "],
                   ["k", unit_key, {}], ["t", " ("], *sig, ["t", ")"]]
     else:
         recipe = label_recipe(rate, sig)
@@ -107,12 +139,13 @@ def _trend_meta(years: np.ndarray, values: np.ndarray, tr: dict, Lf,
 def _trend_chart(years, values, tr, L, Lf, *, xlabel_key, ylabel_key,
                  raw_color, raw_style, raw_label_key, raw_label_kw,
                  loess_color, trend_unit_key, trend_decimals,
-                 trend_label_recipe=None, trend_color="#334155"):
+                 trend_label_recipe=None, trend_color="#334155", tk=None):
     """One series drawn as faint raw points/bars + bold LOESS + dashed trend."""
     yf = np.asarray(values, dtype=float)
     yrs = np.asarray(years, dtype=float)
     return {
         "kind": "trend",
+        "tk": tk,
         "x": [int(y) for y in years],
         "xlabel": L(tr, xlabel_key),
         "ylabel": L(tr, ylabel_key),
@@ -132,7 +165,7 @@ def _trend_chart(years, values, tr, L, Lf, *, xlabel_key, ylabel_key,
 
 
 def _multitrend_chart(years, series, tr, L, Lf, *, xlabel_key, ylabel_key,
-                      show_trend=True):
+                      show_trend=True, tk=None):
     """Two+ series, each faint points + LOESS + (optional) dashed trend line.
 
     ``series`` items: (values, color, label_key, label_kw, unit_key, decimals).
@@ -148,7 +181,7 @@ def _multitrend_chart(years, series, tr, L, Lf, *, xlabel_key, ylabel_key,
 
         def make(rate, sig, lkey=lkey, lkw=lkw, unit_key=unit_key):
             # "<series>: <+rate> <unit>/decade (<sig>)"
-            return [["k", lkey, lkw], ["t", f": {rate} "],
+            return [_kpart(lkey, lkw), ["t", ": "], *rate, ["t", " "],
                     ["k", unit_key, {}], ["t", " ("], *sig, ["t", ")"]]
 
         meta = _trend_meta(yrs, v, tr, Lf, unit_key, dec, label_recipe=make)
@@ -161,6 +194,7 @@ def _multitrend_chart(years, series, tr, L, Lf, *, xlabel_key, ylabel_key,
         })
     return {
         "kind": "multitrend",
+        "tk": tk,
         "x": [int(y) for y in years],
         "xlabel": L(tr, xlabel_key),
         "ylabel": L(tr, ylabel_key),
@@ -168,7 +202,8 @@ def _multitrend_chart(years, series, tr, L, Lf, *, xlabel_key, ylabel_key,
     }
 
 
-def _matrix_chart(pivot, values, tr, L, *, step, cbar_key, cbar_kw, diverging):
+def _matrix_chart(pivot, values, tr, L, *, step, cbar_key, cbar_kw, diverging,
+                  tk):
     """Year×month heatmap: cell rows + the discrete colour-band scale.
 
     The scale bounds mirror ``plots.py`` exactly so the colours match the old
@@ -191,6 +226,7 @@ def _matrix_chart(pivot, values, tr, L, *, step, cbar_key, cbar_kw, diverging):
         vmax = np.ceil(hi / step) * step
     return {
         "kind": "matrix",
+        "tk": tk,
         "years": years,
         "monthsKey": "months",              # client reads tr.months (localised)
         "xlabel": L(tr, "month"),
@@ -212,7 +248,7 @@ def _yearly_trend(df, tr, L, Lf):
         xlabel_key="year", ylabel_key="yearly_ylabel",
         raw_color="#2c7fb8", raw_style="points", raw_label_key="annual_mean",
         raw_label_kw={}, loess_color="#d62728",
-        trend_unit_key="per_decade_c", trend_decimals=2)
+        trend_unit_key="per_decade_c", trend_decimals=2, tk="abs")
 
 
 def _anomalies(df, tr, L, Lf):
@@ -229,14 +265,17 @@ def _anomalies(df, tr, L, Lf):
     # never diverge from Python's :.1f on an exact half; also keeps the recipe a
     # plain, compact JSON float.
     _base = round(float(baseline), 1)
+    # _kpart, not a bare "k": {base} is an ABSOLUTE temperature and has to
+    # convert with the rest of the label ({lo}/{hi} are years and must not).
     if base.empty:
-        tail = ["k", "vs_full", {"base": _base}]
+        tail = _kpart("vs_full", {"base": _base})
     else:
-        tail = ["k", "vs_baseline", {"lo": lo, "hi": hi, "base": _base}]
+        tail = _kpart("vs_baseline", {"lo": lo, "hi": hi, "base": _base})
     ylab_recipe = [["k", "anomaly_ylabel", {}], ["t", "\n"], tail]
 
     return {
         "kind": "anomalybars",
+        "tk": "delta",
         "x": years,
         "xlabel": L(tr, "year"),
         "ylabel": Lf(tr, ylab_recipe),
@@ -256,6 +295,7 @@ def _warming_stripes(df, tr, L, Lf):
     limit = float(np.nanmax(np.abs(anomaly))) or 1.0
     return {
         "kind": "stripes",
+        "tk": "delta",
         "years": [int(y) for y in means.index],
         "anom": _floats(anomaly),
         "limit": round(limit, 3),
@@ -268,7 +308,7 @@ def _monthly_heatmap(df, tr, L, Lf):
     pivot = monthly_pivot(df).reindex(columns=_MONTHS)
     return _matrix_chart(pivot, pivot.to_numpy(), tr, L,
                          step=2, cbar_key="heatmap_cbar", cbar_kw={},
-                         diverging=False)
+                         diverging=False, tk="abs")
 
 
 def _monthly_anomaly(df, tr, L, Lf):
@@ -280,7 +320,8 @@ def _monthly_anomaly(df, tr, L, Lf):
     base_label = f"{lo}-{hi}" if not base_rows.empty else tr["full_period"]
     return _matrix_chart(pivot, data, tr, L,
                          step=0.5, cbar_key="anom_heatmap_cbar",
-                         cbar_kw={"base": base_label}, diverging=True)
+                         cbar_kw={"base": base_label}, diverging=True,
+                         tk="delta")
 
 
 def _threshold_days(df, tr, L, Lf):
@@ -307,9 +348,12 @@ def _volatility(df, tr, L, Lf):
         raw_color="#7c3aed", raw_style="points", raw_label_key=None,
         raw_label_kw=None, loess_color="#7c3aed",
         trend_unit_key="per_decade_days", trend_decimals=1,
+        # "≥6 °C day-to-day jump: +1.2 days / decade (p=...)". The jump size is a
+        # DIFFERENCE, so °F reads ≥11, not ≥43.
         trend_label_recipe=lambda rate, sig: [
-            ["t", f"≥{SWING_C:.0f} °C "], ["k", "volatility_jump", {}],
-            ["t", f": {rate} "], ["k", "per_decade_days", {}],
+            ["t", "≥"], ["n", float(SWING_C), "delta", 0, 0], ["t", " "], ["u"],
+            ["t", " "], ["k", "volatility_jump", {}],
+            ["t", ": "], *rate, ["t", " "], ["k", "per_decade_days", {}],
             ["t", " ("], *sig, ["t", ")"]])
 
 
@@ -345,7 +389,8 @@ def _diurnal_range(df_ext, tr, L, Lf):
         xlabel_key="year", ylabel_key="dtr_ylabel",
         raw_color="#7c3aed", raw_style="points", raw_label_key="dtr_annual",
         raw_label_kw={}, loess_color="#7c3aed",
-        trend_unit_key="per_decade_c", trend_decimals=2, trend_color="#b45309")
+        trend_unit_key="per_decade_c", trend_decimals=2, trend_color="#b45309",
+        tk="delta")
 
 
 def _seasonal_shift(df, tr, L, Lf):
@@ -360,6 +405,7 @@ def _seasonal_shift(df, tr, L, Lf):
     lm = late.groupby(late.index.month).mean().reindex(_MONTHS).to_numpy()
     return {
         "kind": "seasonshift",
+        "tk": "abs",
         "monthsKey": "months",
         "xlabel": L(tr, "month"),
         "ylabel": L(tr, "seasonshift_ylabel"),
@@ -380,7 +426,8 @@ def _degree_days(df, tr, L, Lf):
           "per_decade_dd", 0),
          (cdd.to_numpy(), "#b91c1c", "cdd_label", {"t": CDD_BASE_C},
           "per_decade_dd", 0)],
-        tr, L, Lf, xlabel_key="year", ylabel_key="dd_ylabel", show_trend=False)
+        tr, L, Lf, xlabel_key="year", ylabel_key="dd_ylabel", show_trend=False,
+        tk="ddays")
 
 
 def _count_single(annual, color, series_key, series_kw, tr, L, Lf, ylabel_key):
