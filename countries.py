@@ -375,3 +375,36 @@ _CC_POP: dict[str, int] = {
 def country_population(cc: str) -> int:
     """Population for an ISO-2 country code, or 0 if unknown."""
     return _CC_POP.get((cc or "").lower(), 0)
+
+
+# Approximate nominal GDP per capita (USD, ~2023, rounded), by ISO-2 code. These
+# are public reference figures used ONLY to prioritise the data-download queue
+# (wealthier countries first, since early visitors skew that way) - they are
+# never displayed on the site. Unlisted countries fall back to a low value so
+# they queue after the listed ones. Rounding/approximation is fine for ordering.
+_GDP_PC: dict[str, int] = {
+    "lu": 128000, "ie": 104000, "ch": 93000, "no": 87000, "sg": 85000,
+    "qa": 81000, "us": 81000, "is": 79000, "dk": 68000, "au": 65000,
+    "nl": 64000, "sm": 59000, "il": 55000, "se": 56000, "at": 56000,
+    "fi": 54000, "de": 54000, "be": 54000, "ca": 54000, "ae": 53000,
+    "hk": 51000, "gb": 49000, "nz": 48000, "fr": 46000, "mo": 45000,
+    "ad": 42000, "mt": 38000, "it": 39000, "kr": 35000, "cy": 34000,
+    "jp": 34000, "sa": 33000, "kw": 33000, "es": 33000, "si": 32000,
+    "ee": 31000, "cz": 31000, "bh": 30000, "pt": 28000, "lt": 27000,
+    "sk": 24000, "lv": 24000, "gr": 23000, "uy": 22000, "om": 22000,
+    "pl": 22000, "hu": 22000, "hr": 20000, "pa": 18000, "ro": 18000,
+    "cl": 17000, "cr": 14000, "bg": 15000, "ar": 14000, "mx": 13000,
+    "ru": 13000, "tr": 13000, "cn": 12600, "kz": 13000, "my": 12000,
+    "rs": 12000, "br": 11000, "me": 11000, "bw": 7500, "th": 7500,
+    "za": 6500, "co": 6800, "pe": 7900, "ec": 6500, "id": 5000,
+    "eg": 3500, "ph": 3900, "ma": 3700, "ua": 5000, "vn": 4300,
+    "bd": 2700, "in": 2600, "ke": 2100, "ng": 2200, "gh": 2400,
+    "pk": 1600, "et": 1500, "tz": 1200, "ug": 1000, "af": 400,
+}
+_GDP_DEFAULT = 3000
+
+
+def gdp_per_capita(cc: str | None) -> int:
+    """Approximate nominal GDP per capita (USD) for an ISO-2 code, or a low
+    fallback if unlisted/unknown. For download-queue prioritisation only."""
+    return _GDP_PC.get((cc or "").lower(), _GDP_DEFAULT)

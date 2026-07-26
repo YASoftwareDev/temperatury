@@ -247,7 +247,16 @@ def main() -> None:
         print(f"Restricting to languages: {i18n.LANGUAGES}")
 
     if args.all:
-        locations = [LOCATIONS[key] for key in sorted(LOCATIONS)]
+        # Prioritise the download queue by the city's country GDP per capita
+        # (highest first): early visitors skew toward wealthier countries, so
+        # their cities should be covered first as the backfill fills in. Ties
+        # (and unlisted countries) fall back to slug order for a stable sequence.
+        # Cache-aware fetching means already-downloaded cities are a no-op, so
+        # this only steers which of the still-missing cities are fetched next.
+        locations = sorted(
+            LOCATIONS.values(),
+            key=lambda loc: (-countries.gdp_per_capita(countries.country_code(loc)),
+                             loc.slug))
     else:
         locations = [_resolve_location(args)]
 
