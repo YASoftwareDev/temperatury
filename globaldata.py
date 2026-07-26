@@ -367,8 +367,13 @@ def _country_stats(ranking: list[dict]) -> list[dict]:
             continue
         ts = [r["t"] for r in rs]
         dts = [r["dt"] for r in rs]
+        t2s = [r["t2"] for r in rs]
+        dt2s = [r["dt2"] for r in rs]
         stats.append({"cc": cc, "t": round(sum(ts) / len(ts), 3),
                       "dt": round(sum(dts) / len(dts), 1),
+                      # Modern-window (1975-) mean rate + total, for the toggle.
+                      "t2": round(sum(t2s) / len(t2s), 3),
+                      "dt2": round(sum(dt2s) / len(dt2s), 1),
                       "st": _mean_stripes([r["st"] for r in rs]),
                       "n": len(rs),
                       "pop": countries.country_population(cc)})
@@ -439,6 +444,16 @@ def compute_global(frames: dict, locations: list[Location], tr: dict):
         ok = np.isfinite(vals)
         if int(ok.sum()) >= 10:
             slope, _line = robust_trend_line(yrs[ok], vals[ok])
+            # Modern-era rate (from 1975): the IPCC/WMO window for "how fast is it
+            # warming now", free of the mid-century Northern-Hemisphere aerosol
+            # ("global dimming") dip that a full-record trend anchors back through.
+            # The ranking offers both as a user-switchable window.
+            m75 = ok & (yrs >= 1975)
+            if int(m75.sum()) >= 10:
+                slope2, _l2 = robust_trend_line(yrs[m75], vals[m75])
+                span2 = float(yrs[m75].max() - yrs[m75].min())
+            else:  # guard: every 1940-2025 cache clears this, so a no-op in prod
+                slope2, span2 = slope, float(yrs[ok].max() - yrs[ok].min())
             entry = (loc.name, slope * 10)
             city_stats["world"].append(entry)
             city_stats[z].append(entry)
@@ -457,10 +472,15 @@ def compute_global(frames: dict, locations: list[Location], tr: dict):
                                 # Total warming across the record - more visceral
                                 # than °C/decade - and the stripes.
                                 "dt": round(float(slope) * span, 1),
+                                # Modern-window (1975-) rate + total, for the
+                                # "Last 50 years" ranking toggle.
+                                "t2": round(float(slope2) * 10, 3),
+                                "dt2": round(float(slope2) * span2, 1),
                                 # Unrounded values kept only to aggregate gt/gdt
                                 # from raw (avoids double-rounding); stripped below.
                                 "_traw": float(slope) * 10,
                                 "_dtraw": float(slope) * span,
+                                "_t2raw": float(slope2) * 10,
                                 "st": st})
                 # Recent mean temp + seasonal amplitude (warmest-minus-coldest
                 # month) - the amplitude captures continentality, so a warmer
@@ -492,12 +512,16 @@ def compute_global(frames: dict, locations: list[Location], tr: dict):
     # Averaged from the unrounded per-city values, then rounded once, so a build-up
     # of per-city rounding can't shift the published aggregate's last digit.
     gt = round(sum(r["_traw"] for r in ranking) / len(ranking), 3) if ranking else 0.0
+    # Same world-city average for the modern (1975-) window, so the "× world
+    # average" multiple stays correct when the ranking toggles to "Last 50 years".
+    gt2 = round(sum(r["_t2raw"] for r in ranking) / len(ranking), 3) if ranking else 0.0
     # World-city average warming since 1940 (mean of each city's dt). Same caveat
     # as gt: an equal-weighted land-city average, not the true global mean.
     gdt = round(sum(r["_dtraw"] for r in ranking) / len(ranking), 1) if ranking else 0.0
     for r in ranking:  # drop the raw helpers so they never reach _global.json
         r.pop("_traw", None)
         r.pop("_dtraw", None)
+        r.pop("_t2raw", None)
     country_ranking = _country_stats(ranking)
     analogs = _compute_analogs(analog_src)
 
@@ -510,6 +534,8 @@ def compute_global(frames: dict, locations: list[Location], tr: dict):
                      # World-city average warming rate (°C/decade) - the "× global"
                      # reference used in the ranking table.
                      "gt": gt,
+                     # Same, for the modern (1975-) ranking window.
+                     "gt2": gt2,
                      # World-city average warming since 1940 (°C), for the badge.
                      "gdt": gdt,
                      # How many cities that average is taken over, so the badge can

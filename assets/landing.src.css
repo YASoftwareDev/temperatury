@@ -277,6 +277,20 @@
   .zonebar-label { color:var(--muted); }
   /* World warming-ranking table: every city, fastest-warming first, searchable. */
   .ranking { margin-top:1rem; }
+  /* Warming-window segmented toggle: "Since 1940" | "Last 50 years". */
+  .rank-window { display:flex; width:fit-content; margin:0 auto .35rem; padding:2px;
+    border:1px solid var(--line-2); border-radius:8px; background:var(--panel-2);
+    gap:2px; }
+  .rank-window .rw-btn { font:inherit; font-size:.85rem; font-weight:600;
+    color:var(--muted); background:none; border:0; cursor:pointer;
+    padding:.32rem .8rem; border-radius:6px; transition:background .15s,color .15s; }
+  .rank-window .rw-btn:hover { color:var(--ink); }
+  .rank-window .rw-btn.is-on { color:var(--ink); background:var(--panel);
+    box-shadow:0 1px 2px rgba(0,0,0,.12); }
+  .rank-window .rw-btn:focus-visible { outline:2px solid var(--accent);
+    outline-offset:1px; }
+  .rank-window-note { max-width:38rem; margin:.1rem auto .8rem; color:var(--muted);
+    font-size:.8rem; line-height:1.4; text-align:center; }
   .rank-controls { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center;
     align-items:center; margin:0 0 .8rem; }
   .rank-search { width:min(92vw,300px); box-sizing:border-box; font:inherit;

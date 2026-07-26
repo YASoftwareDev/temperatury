@@ -1403,6 +1403,11 @@ ${topbar}
   <section class="ranking" id="ranking-cities">
     <p class="section-sub">${rank_intro}</p>
     <p class="rank-legend">${rank_legend}</p>
+    <div class="rank-window" role="group" aria-label="${rank_win_label}">
+      <button type="button" class="rw-btn is-on" data-win="1940" aria-pressed="true">${rank_win_full}</button>
+      <button type="button" class="rw-btn" data-win="1975" aria-pressed="false">${rank_win_recent}</button>
+    </div>
+    <p class="rank-window-note">${rank_win_note}</p>
     <div class="rank-controls">
       <input type="search" id="rank-search" class="rank-search"
              autocomplete="off" placeholder="${rank_search}" aria-label="${rank_search}">
@@ -1435,6 +1440,11 @@ ${topbar}
   <section class="ranking" id="ranking-countries">
     <p class="section-sub">${rank_intro_countries}</p>
     <p class="rank-legend">${rank_legend}</p>
+    <div class="rank-window" role="group" aria-label="${rank_win_label}">
+      <button type="button" class="rw-btn is-on" data-win="1940" aria-pressed="true">${rank_win_full}</button>
+      <button type="button" class="rw-btn" data-win="1975" aria-pressed="false">${rank_win_recent}</button>
+    </div>
+    <p class="rank-window-note">${rank_win_note}</p>
     <div class="rank-controls">
       <input type="search" id="crank-search" class="rank-search"
              autocomplete="off" placeholder="${rank_search_countries}" aria-label="${rank_search_countries}">
@@ -3291,6 +3301,13 @@ def build_map_page(
         rank_country=tr["rank_country"],
         rank_search=tr["rank_search"],
         rank_search_countries=tr.get("rank_search_countries", "Find a country…"),
+        rank_win_label=tr.get("rank_win_label", "Warming window"),
+        rank_win_full=tr.get("rank_win_full", "Since 1940"),
+        rank_win_recent=tr.get("rank_win_recent", "Last 50 years"),
+        rank_win_note=tr.get("rank_win_note",
+            "Two views of the same places: warming across the full record, and the "
+            "modern rate (since 1975) that the IPCC and WMO cite - it leaves out the "
+            "cool mid-century aerosol dip that steepens a full-record trend."),
         rank_empty=tr["rank_empty"],
         rank_trend=tr["per_decade_c"],
         rank_regions=rank_regions,

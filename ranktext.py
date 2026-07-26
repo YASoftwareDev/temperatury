@@ -30,6 +30,13 @@ _TEXT: dict[str, dict[str, str]] = {
         "rank_more": "Show more",
         "rank_cities": "Cities",
         "rank_countries": "Countries",
+        "rank_win_label": "Warming window",
+        "rank_win_full": "Since 1940",
+        "rank_win_recent": "Last 50 years",
+        "rank_win_note": "Two views of the same places: warming across the full "
+            "record, and the modern rate (since 1975) that the IPCC and WMO cite - "
+            "it leaves out the cool mid-century aerosol dip that steepens a "
+            "full-record trend.",
     },
     "pl": {
         "rank_title": "Światowy ranking ocieplenia",
@@ -55,6 +62,13 @@ _TEXT: dict[str, dict[str, str]] = {
         "rank_more": "Pokaż więcej",
         "rank_cities": "Miasta",
         "rank_countries": "Kraje",
+        "rank_win_label": "Okres ocieplenia",
+        "rank_win_full": "Od 1940",
+        "rank_win_recent": "Ostatnie 50 lat",
+        "rank_win_note": "Dwa ujęcia tych samych miejsc: ocieplenie w całym "
+            "okresie oraz tempo współczesne (od 1975), które podają IPCC i WMO - "
+            "pomija ono chłodny, aerozolowy epizod z połowy XX wieku, który "
+            "zawyża trend liczony od 1940 roku.",
     },
     "de": {
         "rank_title": "Weltweite Erwärmungsrangliste",

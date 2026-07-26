@@ -574,7 +574,7 @@
     // load - they are size-independent, so they work while their panels are
     // hidden. The dashboard canvases wait for renderDashboard (above).
     window.__globalData = data;
-    if (data.ranking) renderRanking(data.ranking, data.countries || [], data.gt || 0);
+    if (data.ranking) renderRanking(data.ranking, data.countries || [], data.gt || 0, data.gt2 || 0);
     if (data.countries) renderCountryStat(data.countries, data.tzcc || {});
     // Sorted trend distribution + world-city average power the "check any place"
     // lookup's "faster than N%" line without another network round-trip.
@@ -1332,9 +1332,15 @@
   // keeps its FIXED global rank (position by warming rate) so filtering/sorting
   // never changes "you're #123 worldwide". Country names are localized from the
   // ISO code (Intl.DisplayNames), so no name tables ship.
-  function renderRanking(rows, countryRows, gt) {
+  function renderRanking(rows, countryRows, gt, gt2) {
     var body = document.getElementById("rank-body");
     if (!body || !rows || !rows.length) return;
+    // Warming window per table: "1940" = full record (t, dt), "1975" = modern
+    // rate (t2, dt2). The segmented control in each ranking tab flips it; the
+    // value column, the "× world average" reference and the row numbering all
+    // follow. Both default to the full record, matching the site's "since 1940".
+    var cityWin = "1940", ctryWin = "1940";
+    function winT(it, win) { return win === "1975" ? it.t2 : it.t; }
     var lang = (document.documentElement.lang || "en").split("-")[0];
     var regionNames = null;
     try { regionNames = new Intl.DisplayNames([lang], { type: "region" }); }
@@ -1446,6 +1452,26 @@
       td.appendChild(sub);
       return td;
     }
+    // Re-point a built row's value cell + meta line at the active window: the
+    // main figure (t/t2), its warm/cool colour, the total-warming °C (dt/dt2)
+    // and the "× world average" multiple (against the matching gt/gt2).
+    function refreshItem(it, win) {
+      var t = win === "1975" ? it.t2 : it.t;
+      var dt = win === "1975" ? it.dt2 : it.dt;
+      var g = win === "1975" ? gt2 : gt;
+      if (it.valCell) {
+        it.valCell.textContent = fmtSigned(t, 2);
+        it.valCell.className = "rank-val " + (t >= 0 ? "warm" : "cool");
+      }
+      if (it.metaSpan) {
+        var parts = [];
+        if (dt != null) parts.push(fmtSigned(dt, 1) + "°C");
+        if (g && g > 0 && t != null && t > 0) parts.push((t / g).toFixed(1) + "×");
+        var pt = popText(it.pop);
+        if (pt) parts.push(pt);
+        it.metaSpan.textContent = parts.join(" · ");
+      }
+    }
     // Each row element is built ONCE; filtering/sorting/paging re-append subsets.
     // CITY rows: rank, flag + city link, country, trend.
     var cityItems = rows.map(function (r, i) {
@@ -1457,11 +1483,19 @@
       var a = document.createElement("a"); a.href = r.s + ".html"; a.textContent = dn;
       var c1 = cityCell(r.cc, a, wikiLink(dn), r.st, r.dt, r.t, r.pop);
       var c2 = document.createElement("td"); c2.className = "rank-cty"; c2.textContent = cty;
-      tr.appendChild(num); tr.appendChild(c1); tr.appendChild(c2); tr.appendChild(valTd(r.t));
+      var vcell = valTd(r.t);
+      tr.appendChild(num); tr.appendChild(c1); tr.appendChild(c2); tr.appendChild(vcell);
       // Search matches the localized AND the default name, so either works.
       return { rank: i + 1, num: num, s: r.s, nn: norm(dn + " " + r.n), cc: r.cc, ccn: norm(cty),
-               region: r.r || "", sec: 0, t: r.t, el: tr };
+               region: r.r || "", sec: 0, t: r.t, t2: (r.t2 != null ? r.t2 : r.t),
+               dt: r.dt, dt2: (r.dt2 != null ? r.dt2 : r.dt), pop: r.pop,
+               valCell: vcell, metaSpan: c1.querySelector(".rc-meta"), el: tr };
     });
+    // Modern-window (1975-) identity rank, so the # column stays a real rank when
+    // the toggle re-sorts by t2 (built once; ties keep the full-record order).
+    cityItems.slice().sort(function (a, b) {
+      return (b.t2 - a.t2) || (a.rank - b.rank);
+    }).forEach(function (it, i) { it.rank2 = i + 1; });
     // COUNTRY rows: rank, flag + country name, city count, mean trend.
     var countryItems = (countryRows || []).map(function (c, i) {
       var cty = country(c.cc);
@@ -1471,14 +1505,21 @@
       var nm = document.createElement("span"); nm.className = "rc-name"; nm.textContent = cty;
       var c1 = cityCell(c.cc, nm, null, c.st, c.dt, c.t, c.pop);
       var c2 = document.createElement("td"); c2.className = "rank-cty"; c2.textContent = String(c.n);
-      tr.appendChild(num); tr.appendChild(c1); tr.appendChild(c2); tr.appendChild(valTd(c.t));
+      var vcell = valTd(c.t);
+      tr.appendChild(num); tr.appendChild(c1); tr.appendChild(c2); tr.appendChild(vcell);
       // Clicking a country row drops into city mode filtered to that country.
       tr.classList.add("rank-clickable");
       tr.title = country(c.cc);
       tr.addEventListener("click", function () { focusCountry(c.cc); });
       return { rank: c.rank || i + 1, num: num, nn: norm(cty), cc: c.cc, ccn: norm(cty),
-               region: "", sec: c.n, t: c.t, el: tr };
+               region: "", sec: c.n, t: c.t, t2: (c.t2 != null ? c.t2 : c.t),
+               dt: c.dt, dt2: (c.dt2 != null ? c.dt2 : c.dt), pop: c.pop,
+               valCell: vcell, metaSpan: c1.querySelector(".rc-meta"), el: tr };
     });
+    // Modern-window identity rank for the countries table (see cities above).
+    countryItems.slice().sort(function (a, b) {
+      return (b.t2 - a.t2) || (a.rank - b.rank);
+    }).forEach(function (it, i) { it.rank2 = i + 1; });
 
     var search = document.getElementById("rank-search");
     var regionSel = document.getElementById("rank-region");
@@ -1507,7 +1548,7 @@
       var d;
       if (citySort === "city") d = a.nn.localeCompare(b.nn, lang);
       else if (citySort === "country") d = a.ccn.localeCompare(b.ccn, lang);
-      else d = a.t - b.t;
+      else d = winT(a, cityWin) - winT(b, cityWin);
       d = cityDir === "asc" ? d : -d;
       if (d === 0) d = a.rank - b.rank;    // ties always keep global-rank order
       return d;
@@ -1532,14 +1573,16 @@
       var frag = document.createDocumentFragment();
       for (var i = 0; i < shown; i++) {
         var it = sel[i];
+        refreshItem(it, cityWin);   // value cell + meta follow the active window
+        var idRank = cityWin === "1975" ? it.rank2 : it.rank;
         if (filtered) {
           it.num.innerHTML = "";
           it.num.appendChild(document.createTextNode(String(i + 1)));
           var gr = document.createElement("span");
-          gr.className = "rank-grank"; gr.textContent = "#" + it.rank;
+          gr.className = "rank-grank"; gr.textContent = "#" + idRank;
           it.num.appendChild(gr);
         } else {
-          it.num.textContent = String(it.rank);
+          it.num.textContent = String(idRank);
         }
         // Highlight the visitor's own city (the one shown in "Selected region",
         // window.__heroSlug), the row-level parallel of the country highlight.
@@ -1604,7 +1647,7 @@
       var d;
       if (ctrySort === "name") d = a.nn.localeCompare(b.nn, lang);
       else if (ctrySort === "cities") d = a.sec - b.sec;
-      else d = a.t - b.t;
+      else d = winT(a, ctryWin) - winT(b, ctryWin);
       d = ctryDir === "asc" ? d : -d;
       if (d === 0) d = a.rank - b.rank;
       return d;
@@ -1622,14 +1665,16 @@
       var frag = document.createDocumentFragment();
       for (var i = 0; i < sel.length; i++) {
         var it = sel[i];
+        refreshItem(it, ctryWin);   // value cell + meta follow the active window
+        var idRank = ctryWin === "1975" ? it.rank2 : it.rank;
         if (filtered) {
           it.num.innerHTML = "";
           it.num.appendChild(document.createTextNode(String(i + 1)));
           var gr = document.createElement("span");
-          gr.className = "rank-grank"; gr.textContent = "#" + it.rank;
+          gr.className = "rank-grank"; gr.textContent = "#" + idRank;
           it.num.appendChild(gr);
         } else {
-          it.num.textContent = String(it.rank);
+          it.num.textContent = String(idRank);
         }
         // Mark the visitor's own country row (window.__myCC, from geolocation).
         it.el.classList.toggle("rank-mine",
@@ -1650,6 +1695,29 @@
       });
     });
     if (csearch) csearch.addEventListener("input", renderCountries);
+    // ---- Warming-window segmented toggle ("Since 1940" / "Last 50 years") -----
+    // One per ranking tab; flips the table between the full-record rate and the
+    // modern (1975-) rate, then re-renders (which re-sorts, re-numbers and
+    // re-labels via winT/refreshItem/rank2).
+    function wireWindow(sel, getWin, setWin, rerender) {
+      var btns = [].slice.call(document.querySelectorAll(sel + " .rw-btn"));
+      btns.forEach(function (b) {
+        b.addEventListener("click", function () {
+          if (b.getAttribute("data-win") === getWin()) return;
+          setWin(b.getAttribute("data-win"));
+          btns.forEach(function (x) {
+            var on = x === b;
+            x.classList.toggle("is-on", on);
+            x.setAttribute("aria-pressed", on ? "true" : "false");
+          });
+          rerender();
+        });
+      });
+    }
+    wireWindow("#ranking-cities", function () { return cityWin; },
+      function (w) { cityWin = w; cityLimit = LIMIT; }, renderCities);
+    wireWindow("#ranking-countries", function () { return ctryWin; },
+      function (w) { ctryWin = w; }, renderCountries);
     // The hero's geolocation re-applies both "your city" (cities table) and "your
     // country" (countries table) highlights once __heroSlug / __myCC resolve
     // (renderRanking usually runs before geolocation completes).

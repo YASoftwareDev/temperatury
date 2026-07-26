@@ -225,7 +225,7 @@
       "extremes_cap": "Umi táva pya'eve hakuvéva (pytã) ha umi mbeguevéva térã ho'ysãvéva (hovy), tasa de calentamiento por década rupive."
     },
     "ay": {
-      "region_world": "Akapachanxa",
+      "region_world": "Uraqpacha",
       "region_tropical": "Trópicos sat cheqanakanwa",
       "region_n_subtropical": "Subtrópicos Norte uksankirinaka",
       "region_n_temperate": "Norte uksanx Templado ukhamawa",
@@ -403,7 +403,7 @@
     "cy": {
       "region_world": "Byd",
       "region_tropical": "Trofannau",
-      "region_n_subtropical": "Is-drofannau'r Gogledd",
+      "region_n_subtropical": "Is-drofannau Gogleddol",
       "region_n_temperate": "Tymherus y Gogledd",
       "region_n_boreal": "Gogledd Boreal ac Arctig",
       "region_s_subtropical": "Is-drofannau Deheuol",
@@ -617,7 +617,7 @@
       "region_s_subtropical": "Južni suptropici",
       "region_s_temperate": "Južni umjereni pojas",
       "global_heading": "Globalna i regionalna klimatska nadzorna ploča",
-      "global_intro": "Iste karte, agregirane diljem svijeta i po geografskoj širini u {n} gradovima. Vrijednosti su temperaturne anomalije: svaki grad u odnosu na vlastitu normalu 1961.-1990., zatim prosjek.",
+      "global_intro": "Iste karte, agregirane diljem svijeta i po geografskoj širini klimatskih zona u {n} gradovima. Vrijednosti su temperaturne anomalije: svaki grad u odnosu na vlastitu normalu 1961-1990, zatim prosjek.",
       "global_choose": "Klimatska zona",
       "comparison_title": "Koliko brzo se zagrijava svaka klimatska zona",
       "comparison_cap": "Izglađena godišnja temperaturna anomalija svake zone u odnosu na njezinu normalu 1961.-1990. Strmiji uspon znači brže zagrijavanje.",
@@ -643,7 +643,7 @@
     "rw": {
       "region_world": "Isi",
       "region_tropical": "Ubushyuhe",
-      "region_n_subtropical": "Amajyaruguru ya Subtropike",
+      "region_n_subtropical": "Amajyaruguru ya Subtropics",
       "region_n_temperate": "Ubushyuhe bwo mu majyaruguru",
       "region_n_boreal": "Amajyaruguru ya Boreal & Arctique",
       "region_s_subtropical": "Amajyepfo ya Subtropics",
@@ -681,12 +681,12 @@
       "region_s_subtropical": "IiNdawo eziMazantsi",
       "region_s_temperate": "Ubushushu obusezantsi",
       "global_heading": "Ideshibhodi yemozulu yehlabathi neyengingqi",
-      "global_intro": "Iitshathi ezifanayo, ezidityaniswe kwihlabathi liphela nangommandla wemozulu yelatitudinal kuzo zonke {n} izixeko. Amaxabiso kukudityaniswa kwamaqondo obushushu: isixeko ngasinye xa sithelekisa nesaso i-1961-1990 eqhelekileyo, emva koko i-avareji.",
+      "global_intro": "Iitshathi ezifanayo, ezidityaniswe kwihlabathi liphela kunye nemozulu yendawo yemozulu kwizixeko {n}. Amaxabiso kukudityaniswa kwamaqondo obushushu: isixeko ngasinye xa sithelekisa nesaso i-1961-1990 eqhelekileyo, emva koko i-avareji.",
       "global_choose": "Indawo yemozulu",
       "comparison_title": "Ubushushu bommandla ngamnye wemozulu",
       "comparison_cap": "Ubushushu bonyaka bommandla ngamnye bugudisiwe xa buthelekiswa nowe-1961-1990 eqhelekileyo. Ukunyuka umnqantsa kuthetha ukufudumala ngokukhawuleza.",
       "extremes_title": "Izixeko ezininzi kakhulu",
-      "extremes_cap": "Izixeko ezikhawulezayo zokufudumala (obomvu) kunye nezona zicothayo okanye ezipholileyo (eziluhlaza okwesibhakabhaka), ngezinga lokufudumala kwishumi leminyaka."
+      "extremes_cap": "Izixeko ezikhawulezayo zokufudumala (ezibomvu) kunye nezona zicothayo okanye ezipholileyo (eziluhlaza okwesibhakabhaka), ngezinga lokufudumala kwishumi leminyaka."
     },
     "zu": {
       "region_world": "Umhlaba",
@@ -705,7 +705,7 @@
       "extremes_cap": "Amadolobha ashisa kakhulu (abomvu) nahamba kancane noma apholile (aluhlaza okwesibhakabhaka), ngezinga lokufudumala ngeshumi leminyaka."
     },
     "jv": {
-      "region_world": "donya",
+      "region_world": "jagad",
       "region_tropical": "Tropis",
       "region_n_subtropical": "Subtropika Utara",
       "region_n_temperate": "Sedheng Utara",
@@ -985,7 +985,7 @@
       "region_s_subtropical": "Subtiroopikii Kibbaa",
       "region_s_temperate": "Kibbaa Teempireechara",
       "global_heading": "Daashboordii haala qilleensaa addunyaa & naannoo",
-      "global_intro": "Chaartiiwwan walfakkaatan, addunyaa guutuutti walitti qabamanii fi naannoo qilleensaa latitudinaaliin magaalota {n} keessatti. Gatiin anomaalii ho’aa dha: tokkoon tokkoon magaalaa fi kan mataa ishee 1961-1990 normal, sana booda giddu galeessa.",
+      "global_intro": "Chaartiiwwan walfakkaatan, addunyaa guutuutti walitti qabamanii fi naannoo qilleensaa latitudinaaliin magaalota {n} keessatti. Gatiin anomaalii ho’aa dha: magaalaan tokkoon tokkoon isaa kan ofii isaa 1961-1990 idilee wajjin wal bira qabamee yoo ilaalamu, sana booda giddu galeessa.",
       "global_choose": "Zoonii qilleensaa",
       "comparison_title": "Tokkoon tokkoon naannoo qilleensaa hangam saffisaan ho’aa jira",
       "comparison_cap": "Tokkoon tokkoon zoonii anomaalii ho’a waggaa sirri ta’e kan bara 1961-1990 idilee isaa wajjin wal bira qabamee yoo ilaalamu. Ol bahuun cirrachaa ta’e saffisaan ho’uu jechuudha.",
@@ -1145,12 +1145,12 @@
       "region_s_subtropical": "Subtropics koonfurta",
       "region_s_temperate": "Heer kulka Koonfurta",
       "global_heading": "Dashboardka cimilada caalamiga ah iyo gobolka",
-      "global_intro": "Jaantusyo isku mid ah, oo la isku daray adduunka oo dhan iyo aagga cimilada ee laa-tudinal ee {n} magaalooyinka. Qiimayaashu waa cillado heerkulka: magaalo kasta waxay ka soo horjeedaa 1961-1990 caadi, ka dibna celcelis ahaan.",
+      "global_intro": "Jaantusyo isku mid ah, oo la isku daray adduunka oo dhan iyo aagga cimilada ee laa-tudinal ee {n} magaalooyinka. Qiimaha waa cillado heerkulka: magaalo kasta iyo 1961-1990 iyada oo caadi ah, ka dibna la isku celceliyay.",
       "global_choose": "Aagga cimilada",
       "comparison_title": "Sida ugu dhakhsaha badan ee aag kasta oo cimiladu u kululaato",
       "comparison_cap": "Heerkulka sannadlaha ah ee aag kastaa wuu hagaagay marka loo eego 1961-1990 kii caadiga ahaa. Koritaanka sare waxay ka dhigan tahay kulayl degdeg ah.",
       "extremes_title": "Magaalooyinka ugu daran",
-      "extremes_cap": "Magaalooyinka aadka u kululaada (casaan) iyo kuwa ugu gaabis ah ama qaboojinta (buluug), iyada oo heerka kulaylka tobankii sano."
+      "extremes_cap": "Magaalooyinka aadka u kululaada (casaan) iyo kuwa ugu gaabis ah ama qaboojinta (buluug), adoo kuleelinaya heerka kulaylka tobankii sano."
     },
     "fi": {
       "region_world": "Maailma",
@@ -1177,7 +1177,7 @@
       "region_s_subtropical": "Södra subtroperna",
       "region_s_temperate": "Södra tempererat",
       "global_heading": "Global och regional klimatpanel",
-      "global_intro": "Samma diagram, aggregerade över hela världen och efter latitudinell klimatzon över {n} städer. Värdena är temperaturavvikelser: varje stad mot sin egen normala 1961-1990, sedan genomsnitt.",
+      "global_intro": "Samma diagram, aggregerade över hela världen och efter latitudinell klimatzon över {n} städer. Värden är temperaturavvikelser: varje stad mot sin egen normala 1961-1990, sedan medelvärde.",
       "global_choose": "Klimatzon",
       "comparison_title": "Hur snabbt varje klimatzon värms upp",
       "comparison_cap": "Varje zons utjämnade årliga temperaturavvikelse jämfört med dess normala 1961-1990. En brantare stigning innebär snabbare uppvärmning.",
@@ -1203,7 +1203,7 @@
     "tk": {
       "region_world": "Dünýä",
       "region_tropical": "Tropiki ýerler",
-      "region_n_subtropical": "Demirgazyk Subtropika",
+      "region_n_subtropical": "Demirgazyk subtropika",
       "region_n_temperate": "Demirgazyk temperatura",
       "region_n_boreal": "Demirgazyk Boreal we Arktika",
       "region_s_subtropical": "Günorta subtropika",
@@ -1213,7 +1213,7 @@
       "global_choose": "Howanyň sebiti",
       "comparison_title": "Her howa zolagy näçe çalt gyzýar",
       "comparison_cap": "Her zonanyň 1961-1990 adaty bilen deňeşdirilende ýyllyk temperatura anomaliýasy. Has dik dyrmaşmak has çalt gyzmagy aňladýar.",
-      "extremes_title": "Iň aşa şäherler",
+      "extremes_title": "Iň ekstremal şäherler",
       "extremes_cap": "Iň çalt gyzýan şäherler (gyzyl) we iň haýal ýa-da sowadýan şäherler (gök), on ýylda ýylylyk derejesi boýunça."
     },
     "is": {
@@ -1355,7 +1355,7 @@
       "global_heading": "Дэлхийн болон бүс нутгийн цаг уурын хяналтын самбар",
       "global_intro": "Дэлхий даяар болон {n} хотуудын өргөрөгийн уур амьсгалын бүсээр нэгтгэсэн ижил графикууд. Утга нь температурын гажиг юм: хот бүр өөрийн гэсэн 1961-1990 оны хэвийн, дараа нь дундаж үзүүлэлттэй харьцуулахад.",
       "global_choose": "Уур амьсгалын бүс",
-      "comparison_title": "Цаг уурын бүс болгон ямар хурдан дулаарч байна вэ",
+      "comparison_title": "Цаг уурын бүс бүр ямар хурдан дулаарч байна вэ",
       "comparison_cap": "Бүс бүрийн жигдэрсэн жилийн температурын гажиг 1961-1990 оныхтой харьцуулахад. Илүү эгц авирна гэдэг нь илүү хурдан дулаарна гэсэн үг.",
       "extremes_title": "Ихэнх экстрим хотууд",
       "extremes_cap": "Арван жилд дулааралтын хурдаар хамгийн хурдан дулаардаг хотууд (улаан) ба хамгийн удаан буюу сэрүүн хотууд (цэнхэр)."
@@ -1417,7 +1417,7 @@
       "region_s_subtropical": "Оңтүстік субтропиктер",
       "region_s_temperate": "Оңтүстік қоңыржай",
       "global_heading": "Жаһандық және аймақтық климат бақылау тақтасы",
-      "global_intro": "Дүние жүзі бойынша және {n} қалалардағы ендік климаттық белдеулері бойынша жинақталған бірдей диаграммалар. Мәндер температура ауытқулары болып табылады: әр қала өзінің 1961-1990 жылдардағы нормасымен салыстырғанда, содан кейін орташа.",
+      "global_intro": "Бүкіл әлем бойынша және {n} қалалардағы ендік климаттық белдеулері бойынша жинақталған бірдей диаграммалар. Мәндер температура ауытқулары болып табылады: әр қала өзінің 1961-1990 жылдардағы нормасымен салыстырғанда, содан кейін орташа.",
       "global_choose": "Климаттық аймақ",
       "comparison_title": "Әрбір климаттық белдеу қаншалықты жылдам жылынуда",
       "comparison_cap": "Әрбір аймақтың 1961-1990 жылдардағы қалыптыға қарсы жыл сайынғы тегістелген температура аномалиясы. Тік көтерілу жылдамырақ жылынуды білдіреді.",
@@ -1593,12 +1593,12 @@
       "region_s_subtropical": "दक्षिणी उपोष्णकटिबंधीय",
       "region_s_temperate": "दक्षिणी समशीतोष्ण",
       "global_heading": "वैश्विक एवं क्षेत्रीय जलवायु डैशबोर्ड",
-      "global_intro": "वही चार्ट, विश्वव्यापी रूप स॑ एकत्रित आरू {n} शहरऽ भर म॑ अक्षांशीय जलवायु क्षेत्र के अनुसार । मान तापमान विसंगति छै: प्रत्येक शहर बनाम अपनऽ 1961-1990 केरऽ सामान्य, तखन औसतन ।",
+      "global_intro": "वही चार्ट, विश्वव्यापी रूप स॑ एकत्रित आरू {n} शहरऽ म॑ अक्षांशीय जलवायु क्षेत्र के अनुसार । मान तापमान विसंगति छै: प्रत्येक शहर बनाम अपनऽ 1961-1990 केरऽ सामान्य, तखन औसतन ।",
       "global_choose": "जलवायु क्षेत्र",
       "comparison_title": "प्रत्येक जलवायु क्षेत्र कतेक तेजी स गरम भ रहल अछि",
       "comparison_cap": "प्रत्येक क्षेत्र केरऽ चिकनी वार्षिक तापमान विसंगति बनाम ओकरऽ १९६१-१९९० केरऽ सामान्य । खड़ा चढ़ाई के मतलब तेजी सं गर्मी बढ़नाय.",
       "extremes_title": "अधिकांश चरम शहर",
-      "extremes_cap": "सबसें तेजी सं गर्म होय वाला शहर (लाल) आरू सबसें धीमा या ठंडा होय वाला (नीला), प्रति दशक गर्मी के दर के अनुसार."
+      "extremes_cap": "सबसें तेजी सें गरम होय वाला शहर (लाल) आरू सबसें धीमा या ठंडा होय वाला (नीला), प्रति दशक गरम होय के दर के अनुसार ।"
     },
     "sa": {
       "region_world": "विश्व",
@@ -1876,7 +1876,7 @@
     },
     "co": {
       "cap_range": "L'intervallu minimu-massimu di ogni mese in tutti l'anni, cù l'annu più recente sovrapposto.",
-      "cap_stripes": "Una striscia à l'annu, culurita da a so partenza da a media 1961-1990: blu più fresche, rossa più calda. A transizione da u blu à u rossu hè u riscaldamentu."
+      "cap_stripes": "Una striscia à l'annu, culurita da a so partenza da a media 1961-1990: blu più fresche, rossa più calda. A transizione da u blu à u russu hè u riscaldamentu."
     },
     "cy": {
       "cap_range": "Ystod lleiaf-uchafswm pob mis ar draws yr holl flynyddoedd, gyda'r flwyddyn ddiweddaraf wedi'i gorchuddio.",
@@ -1916,7 +1916,7 @@
     },
     "gl": {
       "cap_range": "Rango mínimo-máximo de cada mes en todos os anos, superpoñendo o ano máis recente.",
-      "cap_stripes": "Unha franxa ao ano, coloreada pola súa saída da media de 1961-1990: azul máis frío, vermello máis quente. A transición do azul ao vermello é o quecemento."
+      "cap_stripes": "Unha raia ao ano, coloreada pola súa saída da media de 1961-1990: azul máis frío, vermello máis quente. A transición do azul ao vermello é o quecemento."
     },
     "gom": {
       "cap_range": "दर म्हयन्याची उण्यांत उणी-चडांत चड व्याप्ती सगळ्या वर्सांनी, सगळ्यांत हालींचें वर्स आडखळून.",
@@ -1955,7 +1955,7 @@
       "cap_stripes": "Umugqa owodwa ngonyaka, onemibala ngokusuka kwawo kusukela ku-avareji ye-1961-1990: i-blue cooler, i-red warmer. Ukuguquka kusuka eluhlaza okwesibhakabhaka kuya kokubomvu ukufudumala."
     },
     "jv": {
-      "cap_range": "Kisaran minimal-maksimum saben wulan ing kabeh taun, kanthi taun paling anyar dilapisi.",
+      "cap_range": "Rentang minimal-maksimum saben wulan ing kabeh taun, kanthi taun paling anyar dilapisi.",
       "cap_stripes": "Siji belang saben taun, diwarnai kanthi budhal saka rata-rata 1961-1990: biru adhem, abang luwih anget. Transisi saka biru dadi abang yaiku pemanasan."
     },
     "ht": {
@@ -1963,7 +1963,7 @@
       "cap_stripes": "Yon bann pa ane, koulè pa depa li soti nan mwayèn 1961-1990 la: pi fre ble, pi cho wouj. Tranzisyon an soti nan ble a wouj se planèt la."
     },
     "kri": {
-      "cap_range": "Ɛvri mɔnt in minim-maksim rɛnj akɔdin to ɔl di ia dɛn, wit di ia we dɔn pas pas ɔl we dɛn ɔvalayz.",
+      "cap_range": "Ɛvri mɔnt in minim-maksimam rɛnj akɔdin to ɔl di ia dɛn, wit di ia we dɔn pas pas ɔl we dɛn ɔvalayz.",
       "cap_stripes": "Wan strɛp pan ia, we gɛt kɔlɔ bay we i kɔmɔt frɔm di 1961-1990 avɛrej: blu kul, rɛd wam. Di chenj frɔm blu to rɛd na di wam."
     },
     "ku": {
@@ -2004,11 +2004,11 @@
     },
     "mt": {
       "cap_range": "Il-firxa minima-massimu ta' kull xahar matul is-snin kollha, bis-sena l-aktar reċenti sovrapposta.",
-      "cap_stripes": "Strixxa waħda fis-sena, ikkulurita bit-tluq tagħha mill-medja tal-1961-1990: blu li jkessaħ, aħmar sħun. It-tranżizzjoni minn blu għal aħmar hija t-tisħin."
+      "cap_stripes": "Strixxa waħda fis-sena, ikkulurita bit-tluq tagħha mill-medja tal-1961-1990: blu li jkessaħ, aħmar aktar sħun. It-tranżizzjoni minn blu għal aħmar hija t-tisħin."
     },
     "lus": {
       "cap_range": "Thla tin kum zawng zawnga minimum-maximum range, kum hnuhnung ber chu overlaid a ni.",
-      "cap_stripes": "Kum khatah stripe pakhat, 1961-1990 average atanga a inthlak danglamna avanga rawng: blue cooler, red warmer. Blue atanga red a inthlakna hi a lumna a ni."
+      "cap_stripes": "Kum khatah stripe pakhat, 1961-1990 average atanga a inthlak danglamna avanga rawng: blue cooler, red warmer. Blue atanga red a inthlak hi a lumna a ni."
     },
     "mi": {
       "cap_range": "Te awhe iti-mōrahi o ia marama puta noa i nga tau katoa, me te tau hou kua whakakikoruatia.",
@@ -2091,7 +2091,7 @@
       "cap_stripes": "Jeden pruh za rok, zbarvený odchylkou od průměru let 1961-1990: modrý chladnější, červený teplejší. Přechod z modré na červenou je oteplování."
     },
     "haw": {
-      "cap_range": "ʻO ka palena liʻiliʻi loa o kēlā me kēia mahina ma nā makahiki āpau, me ka makahiki hope loa i uhi ʻia.",
+      "cap_range": "ʻO ka palena haʻahaʻa loa o kēlā me kēia mahina ma nā makahiki āpau, me ka makahiki hope loa i uhi ʻia.",
       "cap_stripes": "Hoʻokahi paʻi i kēlā me kēia makahiki, waiho ʻia e kona haʻalele ʻana mai ka awelika 1961-1990: ʻulaʻula ʻulaʻula. ʻO ka hoʻololi ʻana mai ka uliuli i ka ʻulaʻula ka hoʻomehana."
     },
     "el": {
@@ -2256,7 +2256,7 @@
     },
     "ha": {
       "deephist_title": "Me yasa babu bayanai kafin 1940?",
-      "deephist_body": "<p>Taswirar sun fara ne a cikin 1940 saboda suna amfani da sake nazarin ERA5, wanda rikodin ya fara a waccan shekarar. Bayanan da suka gabata sun wanzu (Reanalysis na NOAA na 20th Century ya kara zuwa 1836, kuma wasu tashoshi kaɗan suna riƙe da bayanan ƙarni da yawa), amma ya dogara da sparser, abubuwan kallon tauraron dan adam na farko kuma yana ɗaukar rashin tabbas mafi girma. Ba a haɗa shi da jerin ERA5 a nan ba, saboda hanyoyin da kewayon kuskure sun bambanta.</p>",
+      "deephist_body": "<p>Taswirar sun fara ne a cikin 1940 saboda suna amfani da sake nazarin ERA5, wanda rikodin ya fara a wannan shekarar. Bayanan da suka gabata sun wanzu (Reanalysis na NOAA na 20th Century ya kara zuwa 1836, kuma wasu tashoshi kaɗan suna riƙe da bayanan ƙarni da yawa), amma ya dogara da sparser, abubuwan lura da tauraron dan adam kuma yana ɗaukar rashin tabbas mafi girma. Ba a haɗa shi da jerin ERA5 a nan ba, saboda hanyoyin da kewayon kuskure sun bambanta.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} yana riƙe ɗayan mafi tsayin bayanan zafin kayan aiki, farawa a {year}.</p>"
     },
     "pa": {
@@ -2291,7 +2291,7 @@
     },
     "gn": {
       "deephist_title": "Mba'ére ndaipóri dato 1940 mboyve?",
-      "deephist_body": "<p>Umi gráfico oñepyrü 1940-pe oiporúgui reanálisis ERA5, orekóva récord oñepyrüva upe arýpe. Oĩ umi dato tenondevegua (Reanálisis del Siglo XX NOAA ojepyso 1836 peve, ha mbovymi estación oguereko registro heta siglo rehegua), ha katu ojerovia umi observación escasavéva, presatélite rehe ha ogueraha incertidumbre tuichavéva. Noñembojoajúi serie ERA5 ndive ko’ápe, iñambuégui umi método ha rango de error.</p>",
+      "deephist_body": "<p>Umi gráfico oñepyrü 1940-pe oiporúgui reanálisis ERA5, orekóva récord oñepyrüva upe arýpe. Oĩ dato tenondevegua (Reanálisis del Siglo XX NOAA ojepyso 1836 peve, ha mbovymi estación oguereko registro heta siglo rehegua), ha katu ojerovia umi observación escasavéva, presatélite rehe ha ogueraha incertidumbre tuichavéva. Noñembojoajúi serie ERA5 ndive ko’ápe, iñambuégui umi método ha rango de error.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} oguereko peteĩva umi registro temperatura instrumental ipukuvéva, oñepyrũva {year}.</p>."
     },
     "ay": {
@@ -2311,7 +2311,7 @@
     },
     "bm": {
       "deephist_title": "Mun na kunnafoni si tɛ yen ka kɔn san 1940 ɲɛ?",
-      "deephist_body": "<p>Taabolow bɛ daminɛ san 1940 bawo u bɛ baara kɛ ni ERA5 sɛgɛsɛgɛli kura ye, min ka jatebɔ bɛ daminɛ o san na. Kunnafoni fɔlɔw bɛ yen (NOAA ka san kɛmɛ 20nan seginnkanni bɛ taa fo san 1836, wa telewisɔn damadɔw bɛ san kɛmɛ caman sɛbɛnw mara), nka a bɛ tali kɛ kɔlɔsiliw la minnu ka dɔgɔ, ka kɔn sateliti ɲɛ, wa a bɛ dannayabaliya belebelebaw ta. A ma fara ɲɔgɔn kan ni ERA5 seriyali ye yan, bawo fɛɛrɛw ni filiw hakɛw tɛ kelen ye.</p>",
+      "deephist_body": "<p>Taabolow bɛ daminɛ san 1940 bawo u bɛ baara kɛ ni ERA5 sɛgɛsɛgɛli kura ye, min ka jatebɔ bɛ daminɛ o san na. Kunnafoni fɔlɔw bɛ yen (NOAA ka san kɛmɛ 20nan seginnkanni bɛ taa fo san 1836, wa telewisɔn damadɔw bɛ san kɛmɛ caman sɛbɛnw mara), nka a bɛ tali kɛ kɔlɔsiliw la minnu ka dɔgɔ, minnu kɛra ka kɔn sateliti ɲɛ, wa a bɛ dannayabaliyabaw ta. A ma fara ɲɔgɔn kan ni ERA5 seriyali ye yan, bawo fɛɛrɛw ni filiw hakɛw tɛ kelen ye.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} bɛ minɛnw funteni jatebɔ janyalen dɔ minɛ, k’a daminɛ {year}.</p>"
     },
     "su": {
@@ -2341,8 +2341,8 @@
     },
     "sn": {
       "deephist_title": "Nei pasina data pamberi pa1940?",
-      "deephist_body": "<p>Machati anotanga muna 1940 nekuti vanoshandisa ERA5 reanalysis, ane rekodhi rinotanga gore iroro. Pakutanga data iripo (iyo NOAA 20th-Century Reanalysis inosvika 1836, uye zviteshi zvishoma zvine zvinyorwa zvemazana emakore akawanda), asi inotsamira pane sparser, pre-satellite yekutarisa uye inotakura kusava nechokwadi kwakakura. Haina kusanganiswa neERA5 series pano, nokuti nzira nemhosho dzakasiyana.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} inobata rekodhi retembiricha refu kwazvo, kutanga muna {year}.</p>"
+      "deephist_body": "<p>Machati anotanga muna 1940 nekuti vanoshandisa ERA5 reanalysis, ane rekodhi rinotanga gore iroro. Pakutanga data iripo (iyo NOAA 20th-Century Reanalysis inosvika 1836, uye zviteshi zvishoma zvine zvinyorwa zvemazana emakore akawanda), asi inotsamira pane sparser, pre-satellite yekutarisa uye inotakura kusava nechokwadi kwakakura. Haina kubatanidzwa neERA5 series pano, nokuti nzira nemhosho dzakasiyana.</p>",
+      "deephist_record": "<p class=\"dh-here\">{label} inobata rekodhi retembiricha yakarebesa, kutanga muna {year}.</p>"
     },
     "co": {
       "deephist_title": "Perchè ùn ci hè micca dati prima di u 1940?",
@@ -2427,7 +2427,7 @@
     "rw": {
       "deephist_title": "Kuki nta makuru mbere ya 1940?",
       "deephist_body": "<p>Imbonerahamwe itangira mu 1940 kuko ikoresha isesengura rya ERA5, inyandiko yayo itangira uwo mwaka. Amakuru yambere arahari (NOAA 20-Century Reanalysis igera kuri 1836, kandi sitasiyo nkeya zifite inyandiko zo mu binyejana byinshi), ariko zishingiye kubushakashatsi buke, mbere y’icyogajuru kandi butwara gushidikanya gukomeye. Ntabwo yahujwe nuruhererekane rwa ERA5 hano, kuko uburyo namakosa aringaniye.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} ifite imwe murwego rurerure rwibikoresho byubushyuhe, guhera muri {year}.</p>"
+      "deephist_record": "<p class=\"dh-here\">{label} ifata imwe murwego rurerure rwibikoresho byubushyuhe, guhera muri {year}.</p>"
     },
     "ilo": {
       "deephist_title": "Apay nga awan ti datos sakbay ti 1940?",
@@ -2451,7 +2451,7 @@
     },
     "ht": {
       "deephist_title": "Poukisa pa gen okenn done anvan 1940?",
-      "deephist_body": "<p>Tablo yo kòmanse an 1940 paske yo itilize re-analiz ERA5, ki gen dosye ki kòmanse ane sa a. Done pi bonè egziste (Reanaliz NOAA 20yèm syèk la pwolonje jiska 1836, ak kèk estasyon kenbe dosye plizyè syèk), men li depann sou obsèvasyon ki pi ra, pre-satelit epi pote ensètitid pi gwo. Li pa fizyone ak seri ERA5 isit la, paske metòd yo ak seri erè yo diferan.</p>",
+      "deephist_body": "<p>Tablo yo kòmanse an 1940 paske yo itilize re-analiz ERA5, ki gen dosye ki kòmanse ane sa a. Done pi bonè egziste (NOAA 20th-Century Reanalysis pwolonje jiska 1836, ak kèk estasyon kenbe dosye plizyè syèk), men li depann sou obsèvasyon pi ra, pre-satelit epi pote pi gwo ensètitid. Li pa fizyone ak seri ERA5 isit la, paske metòd yo ak seri erè yo diferan.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} kenbe youn nan dosye tanperati enstrimantal ki pi long yo, kòmanse nan {year}.</p>"
     },
     "kri": {
@@ -2475,7 +2475,7 @@
       "deephist_record": "<p class=\"dh-here\">{label} turi vieną ilgiausių instrumentų temperatūros rekordų, pradedant {year}.</p>"
     },
     "la": {
-      "deephist_title": "Cur nulla notitia ante MCMXL est?",
+      "deephist_title": "Cur data non est ante MCMXL?",
       "deephist_body": "<p> Chartae ab anno 1940 incipiunt quia reanalysi ERA5 utuntur, cuius recordatio eo anno incipit. Antea notitia exstat (Reanalysis NOAA XX-Century usque ad MDCCCXXXVI extenditur, et paucae stationes multi saeculi monumenta tenent), sed rarioribus, prae- satellitis observationibus nititur et incertiorem maiorem fert. Cum serie ERA5 non immiscetur hic, quia rationes et errorum vagationes differunt. </p>",
       "deephist_record": "<p class=\"dh-here\">{label} holds one of the longest instrumental temperature records, beginning in {year}.</p>"
     },
@@ -2501,8 +2501,8 @@
     },
     "mg": {
       "deephist_title": "Nahoana no tsy misy data alohan'ny 1940?",
-      "deephist_body": "<p>Ny tabilao dia manomboka amin'ny 1940 satria mampiasa ny reanalysis ERA5 izy ireo, izay manomboka amin'io taona io ny firaketana. Misy ny angon-drakitra teo aloha (ny NOAA 20th-Century Reanalysis dia miitatra hatrany amin'ny 1836, ary misy toeram-piantsonana vitsivitsy mitazona firaketana an-jatony maro), saingy miankina amin'ny fandinihana sparser, mialoha ny satelita ary mitondra fisalasalana lehibe kokoa. Tsy mitambatra amin'ny andiany ERA5 eto izy io, satria tsy mitovy ny fomba sy ny elanelana.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} mitazona ny iray amin'ireo firaketana ny mari-pana fitaovana lava indrindra, manomboka amin'ny {year}.</p>"
+      "deephist_body": "<p>Ny tabilao dia manomboka amin'ny 1940 satria mampiasa ny reanalysis ERA5 izy ireo, izay manomboka amin'io taona io ny firaketana. Misy angon-drakitra teo aloha (ny NOAA 20th-Century Reanalysis dia miitatra hatrany amin'ny 1836, ary misy toeram-piantsonana vitsivitsy mitazona firaketana an-jatony maro), saingy miantehitra amin'ny fandinihan-tena, mialoha ny satelita ary mitondra fisalasalana lehibe kokoa. Tsy mitambatra amin'ny andiany ERA5 eto izy io, satria tsy mitovy ny fomba sy ny elanelana.</p>",
+      "deephist_record": "<p class=\"dh-here\">{label} dia mitazona ny iray amin'ireo firaketana ny mari-pana fitaovana lava indrindra, manomboka amin'ny {year}.</p>"
     },
     "mt": {
       "deephist_title": "Għaliex m'hemm l-ebda data qabel l-1940?",
@@ -2536,7 +2536,7 @@
     },
     "uz": {
       "deephist_title": "Nima uchun 1940 yilgacha ma'lumotlar yo'q?",
-      "deephist_body": "<p>Chartlar 1940-yilda boshlanadi, chunki ular ERA5 qayta tahlilidan foydalanadi, uning rekordi oʻsha yili boshlanadi. Ilgari ma'lumotlar mavjud (NOAA 20-asrning qayta tahlili 1836 yilgacha cho'zilgan va bir nechta stantsiyalar ko'p asrlik rekordlarga ega), ammo u kamroq, sun'iy yo'ldoshdan oldingi kuzatuvlarga tayanadi va katta noaniqliklarga ega. U bu yerda ERA5 seriyasi bilan birlashtirilmagan, chunki usullar va xato diapazonlari farqlanadi.</p>",
+      "deephist_body": "<p>Chartlar 1940-yilda boshlanadi, chunki ular ERA5 qayta tahlilidan foydalanadi, uning rekordi oʻsha yili boshlanadi. Ilgari ma'lumotlar mavjud (NOAA 20th-Century Reanalysis 1836 yilgacha cho'zilgan va bir nechta stantsiyalar ko'p asrlik rekordlarga ega), ammo u siyrakroq, sun'iy yo'ldoshdan oldingi kuzatuvlarga tayanadi va katta noaniqlikni keltirib chiqaradi. U bu yerda ERA5 seriyasi bilan birlashtirilmagan, chunki usullar va xato diapazonlari farqlanadi.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> dan boshlangan eng uzun instrumental harorat rekordlaridan biriga ega."
     },
     "ro": {
@@ -2547,7 +2547,7 @@
     "qu": {
       "deephist_title": "¿Imanasqataq 1940 watamanta ñawpaqtaqa mana datos kanchu?",
       "deephist_body": "<p>Charts nisqakunaqa 1940 watapi qallarikun, ERA5 reanálisis nisqawan yanapachikusqankurayku, chay watamantapachan registro nisqa qallarikun. Ñawpaq willakuykunaqa kanmi (NOAApa XX Siglo Reanálisis nisqa 1836 watakamam mastarikun, pisi estacionkunam achka pachak watakunapi registrokunata hapin), ichaqa aswan pisilla, manaraq satélite nisqa qawariykunapim hapipakun, aswan hatun mana chiqap kaqtapas apamun. Kaypiqa manam ERA5 seriewan hukllawasqachu, imaraykuchus métodokuna pantaypa rangonkunapas hukniraymi.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} huknin aswan unay instrumental temperatura registrokunata hapin, {year}manta qallarispa.</p>."
+      "deephist_record": "<p class=\"dh-here\">{label} huknin aswan unay instrumental temperatura registrokunata hapin, {year}manta qallarispa.</p>"
     },
     "sm": {
       "deephist_title": "Aisea e leai ai ni faʻamatalaga aʻo leʻi oʻo i le 1940?",
@@ -2576,7 +2576,7 @@
     },
     "sl": {
       "deephist_title": "Zakaj ni podatkov pred letom 1940?",
-      "deephist_body": "<p>Lestvice se začnejo leta 1940, ker uporabljajo ponovno analizo ERA5, katere zapis se začne tega leta. Prejšnji podatki obstajajo (ponovna analiza NOAA iz 20. stoletja sega do leta 1836 in nekaj postaj ima zapise iz več stoletij), vendar se opirajo na redkejša, predsatelitska opazovanja in prinašajo večjo negotovost. Tukaj ni združena s serijo ERA5, ker se metode in razponi napak razlikujejo.</p>",
+      "deephist_body": "<p>Lestvice se začnejo leta 1940, ker uporabljajo ponovno analizo ERA5, katere zapis se začne tega leta. Prejšnji podatki obstajajo (ponovna analiza 20. stoletja NOAA sega do leta 1836 in nekaj postaj ima zapise iz več stoletij), vendar se zanašajo na redkejša, predsatelitska opazovanja in prinašajo večjo negotovost. Tukaj ni združena s serijo ERA5, ker se metode in razponi napak razlikujejo.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} ima enega najdaljših instrumentalnih temperaturnih rekordov, ki se začne leta {year}.</p>"
     },
     "so": {
@@ -2616,7 +2616,7 @@
     },
     "haw": {
       "deephist_title": "No ke aha ʻaʻohe ʻikepili ma mua o 1940?",
-      "deephist_body": "<p>E hoʻomaka nā pakuhi ma 1940 no ka mea hoʻohana lākou i ka ERA5 reanalysis, nona ka moʻolelo e hoʻomaka i kēlā makahiki. Loaʻa nā ʻikepili mua (ua hoʻonui ʻia ka NOAA 20th-Century Reanalysis i ka makahiki 1836, a paʻa kekahi mau kikowaena i nā moʻolelo o nā kenekulia he nui), akā hilinaʻi ia i ka ʻike ʻana i ka sparser, pre-satellite a lawe i ka maopopo ʻole. ʻAʻole ia i hoʻohui ʻia me ka moʻo ERA5 ma aneʻi, no ka mea, ʻokoʻa nā ala a me nā pae hewa.</p>",
+      "deephist_body": "<p>Hoʻomaka nā pakuhi ma 1940 no ka mea hoʻohana lākou i ka ERA5 reanalysis, nona ka moʻolelo e hoʻomaka i kēlā makahiki. Loaʻa nā ʻikepili mua (ua hoʻonui ʻia ka NOAA 20th-Century Reanalysis i 1836, a paʻa kekahi mau kikowaena i nā moʻolelo o nā kenekulia lehulehu), akā ke hilinaʻi nei ia i nā mākaʻikaʻi sparser, pre-satellite a lawe i ka maopopo ʻole. ʻAʻole ia i hoʻohui ʻia me ka moʻo ERA5 ma aneʻi, no ka mea, ʻokoʻa nā ala a me nā pae hewa.</p>",
       "deephist_record": "<p class=\"dh-here\">{label} paʻa i kekahi o nā moʻolelo wela loa o ka mea kani, e hoʻomaka ana ma {year}.</p>"
     },
     "el": {
@@ -2721,8 +2721,8 @@
     },
     "mai": {
       "deephist_title": "1940 स पहिने के कोनो आंकड़ा किएक नहि अछि?",
-      "deephist_body": "<p>चार्ट 1940 मे शुरू होइत अछि कारण एहि मे ईआरए5 पुनर्विश्लेषण के प्रयोग होइत अछि, जकर रिकॉर्ड ओहि साल शुरू होइत अछि | पहिने के आंकड़ा मौजूद छै (एनओएए केरऽ २०वीं सदी के पुनर्विश्लेषण १८३६ तलक फैललऽ छै, आरू कुछ स्टेशनऽ प॑ बहु-शताब्दी के रिकॉर्ड छै), लेकिन ई विरल, उपग्रह स॑ पहल॑ के अवलोकन प॑ निर्भर छै आरू एकरा स॑ बड़ऽ अनिश्चितता छै । एकरा एतय ERA5 श्रृंखला के साथ विलय नै करलऽ गेलऽ छै, कैन्हेंकि विधि आरू त्रुटि सीमा अलग-अलग छै.</p>",
-      "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> स शुरू होइत अछि, सबस लंबा वाद्य तापमान रिकॉर्ड में स एक अछि।"
+      "deephist_body": "<p>चार्ट 1940 मे शुरू होइत अछि कारण एहि मे ईआरए5 पुनर्विश्लेषण क उपयोग होइत अछि, जकर रिकॉर्ड ओहि साल शुरू होइत अछि | पहिने के आंकड़ा मौजूद छै (एनओएए के 20वीं सदी के पुनर्विश्लेषण 1836 तक फैललऽ छै, आरू कुछ स्टेशनऽ प॑ बहु-शताब्दी के रिकॉर्ड छै), लेकिन ई विरल, उपग्रह स॑ पहल॑ के अवलोकन प॑ निर्भर छै आरू एकरा स॑ बड़ऽ अनिश्चितता छै । एकरा एतय ERA5 श्रृंखला के साथ विलय नै करलऽ गेलऽ छै, कैन्हेंकि विधि आरू त्रुटि सीमा अलग-अलग छै.</p>",
+      "deephist_record": "<p class=\"dh-here\">{label} {year}.</p> से शुरू होकर सबसे लम्बे वाद्य तापमान रिकॉर्ड में से एक रखता है।"
     },
     "sa": {
       "deephist_title": "१९४० तमे वर्षात् पूर्वं किमर्थं दत्तांशः नास्ति?",
@@ -2784,97 +2784,173 @@
     "de": {
       "rank_intro_countries": "Jedes Land wird danach eingestuft, wie schnell sich seine Städte im Durchschnitt erwärmen: der Trend in °C pro Jahrzehnt im Zeitraum 1940–2025. Suchen Sie nach Ihrem.",
       "rank_search_countries": "Finden Sie ein Land…",
-      "cstat_cool": "{country}: {trend}°C pro Jahrzehnt seit 1940. Abkühlung, entgegen dem globalen Trend. Rang #{rank} von {total}."
+      "cstat_cool": "{country}: {trend}°C pro Jahrzehnt seit 1940. Abkühlung, entgegen dem globalen Trend. Rang #{rank} von {total}.",
+      "rank_win_label": "Wärmendes Fenster",
+      "rank_win_full": "Seit 1940",
+      "rank_win_recent": "Letzte 50 Jahre",
+      "rank_win_note": "Zwei Ansichten derselben Orte: Erwärmung über den gesamten Rekord hinweg und die moderne Rate (seit 1975), die vom IPCC und der WMO zitiert wird – dabei wird der kühle Aerosolabfall in der Mitte des Jahrhunderts außer Acht gelassen, der einen Trend über den gesamten Rekord hinweg steiler macht."
     },
     "fr": {
       "rank_intro_countries": "Chaque pays a été classé selon la vitesse moyenne de réchauffement de ses villes: la tendance en °C par décennie sur la période 1940-2025. Recherchez le vôtre.",
       "rank_search_countries": "Trouver un pays…",
-      "cstat_cool": "{country}: {trend}°C par décennie depuis 1940. Refroidissement, à contre-courant de la tendance mondiale. Rang n°{rank} sur {total}."
+      "cstat_cool": "{country}: {trend}°C par décennie depuis 1940. Refroidissement, à contre-courant de la tendance mondiale. Rang n°{rank} sur {total}.",
+      "rank_win_label": "Fenêtre chauffante",
+      "rank_win_full": "Depuis 1940",
+      "rank_win_recent": "50 dernières années",
+      "rank_win_note": "Deux points de vue sur les mêmes lieux: le réchauffement sur l'ensemble du record et le rythme moderne (depuis 1975) cité par le GIEC et l'OMM - cela laisse de côté la froide baisse des aérosols du milieu du siècle qui accentue une tendance sans précédent."
     },
     "es": {
       "rank_intro_countries": "Cada país se clasificó según la rapidez con la que sus ciudades se están calentando en promedio: la tendencia en °C por década durante el período 1940-2025. Busca el tuyo.",
       "rank_search_countries": "Encuentra un país...",
-      "cstat_cool": "{country}: {trend}°C por década desde 1940. Enfriamiento, en contra de la tendencia global. Puesto #{rank} de {total}."
+      "cstat_cool": "{country}: {trend}°C por década desde 1940. Enfriamiento, en contra de la tendencia global. Puesto #{rank} de {total}.",
+      "rank_win_label": "ventana de calentamiento",
+      "rank_win_full": "Desde 1940",
+      "rank_win_recent": "últimos 50 años",
+      "rank_win_note": "Dos visiones de los mismos lugares: el calentamiento en todo el registro y la tasa moderna (desde 1975) que citan el IPCC y la OMM; deja de lado la fría caída de aerosoles de mediados de siglo que intensifica una tendencia en todo el récord."
     },
     "uk": {
       "rank_intro_countries": "Кожна країна оцінюється за середньою швидкістю нагрівання в містах: тенденція в °C за десятиліття протягом 1940-2025 років. Шукайте свій.",
       "rank_search_countries": "Знайти країну…",
-      "cstat_cool": "{country}: {trend}°C за десятиліття з 1940 року. Похолодання всупереч глобальній тенденції. Рейтинг №{rank} з {total}."
+      "cstat_cool": "{country}: {trend}°C за десятиліття з 1940 року. Похолодання всупереч глобальній тенденції. Рейтинг №{rank} з {total}.",
+      "rank_win_label": "Утеплення вікна",
+      "rank_win_full": "З 1940 року",
+      "rank_win_recent": "Останні 50 років",
+      "rank_win_note": "Два погляди на ті самі місця: потепління за повним рекордом і сучасні темпи (з 1975 року), які цитують МГЕЗК і ВМО, - це не стосується прохолодного падіння аерозолю в середині століття, яке посилює повну рекордну тенденцію."
     },
     "zh": {
       "rank_intro_countries": "每个国家都根据其城市平均变暖速度进行排名：1940-2025 年每十年的摄氏度趋势。寻找你的。",
       "rank_search_countries": "寻找一个国家...",
-      "cstat_cool": "{country}：自 1940 年以来每十年{trend}°C。降温，与全球趋势相反。排名#{rank} {total}。"
+      "cstat_cool": "{country}：自 1940 年以来每十年{trend}°C。降温，与全球趋势相反。排名#{rank} {total}。",
+      "rank_win_label": "升温窗口",
+      "rank_win_full": "自 1940 年",
+      "rank_win_recent": "过去50年",
+      "rank_win_note": "对同一地点的两种看法：整个记录中的变暖，以及 IPCC 和 WMO 引用的现代速率（自 1975 年以来）——它忽略了本世纪中叶凉爽的气溶胶下降，该下降使整个记录的趋势变得陡峭。"
     },
     "hi": {
       "rank_intro_countries": "प्रत्येक देश की रैंकिंग इस आधार पर की जाती है कि उसके शहर औसतन कितनी तेजी से गर्म हो रहे हैं: 1940-2025 के दौरान प्रति दशक डिग्री सेल्सियस की प्रवृत्ति। अपने लिए खोजें.",
       "rank_search_countries": "एक देश खोजें...",
-      "cstat_cool": "{country}: {trend}°C 1940 से प्रति दशक। वैश्विक प्रवृत्ति के विपरीत शीतलन। {total} में से रैंक #{rank}."
+      "cstat_cool": "{country}: {trend}°C 1940 से प्रति दशक। वैश्विक प्रवृत्ति के विपरीत शीतलन। {total} में से रैंक #{rank}.",
+      "rank_win_label": "वार्मिंग खिड़की",
+      "rank_win_full": "1940 से",
+      "rank_win_recent": "पिछले 50 साल",
+      "rank_win_note": "एक ही स्थान के दो दृश्य: पूरे रिकॉर्ड में वार्मिंग, और आधुनिक दर (1975 से) जिसे आईपीसीसी और डब्लूएमओ उद्धृत करते हैं - यह मध्य-शताब्दी के शांत एयरोसोल डिप को छोड़ देता है जो एक पूर्ण-रिकॉर्ड प्रवृत्ति को बढ़ाता है।"
     },
     "ar": {
       "rank_intro_countries": "تم تصنيف كل دولة حسب مدى سرعة ارتفاع درجة حرارة مدنها في المتوسط: الاتجاه بالدرجات المئوية لكل عقد خلال الفترة من 1940 إلى 2025. ابحث عن ملكك.",
       "rank_search_countries": "ابحث عن دولة…",
-      "cstat_cool": "{country}: {trend} درجة مئوية لكل عقد منذ عام 1940. التبريد عكس الاتجاه العالمي. المرتبة رقم {rank} من {total}."
+      "cstat_cool": "{country}: {trend} درجة مئوية لكل عقد منذ عام 1940. التبريد عكس الاتجاه العالمي. المرتبة رقم {rank} من {total}.",
+      "rank_win_label": "نافذة الاحترار",
+      "rank_win_full": "منذ عام 1940",
+      "rank_win_recent": "آخر 50 سنة",
+      "rank_win_note": "وجهتا نظر لنفس الأماكن: ارتفاع درجات الحرارة عبر السجل الكامل، والمعدل الحديث (منذ عام 1975) الذي استشهدت به الهيئة الحكومية الدولية المعنية بتغير المناخ والمنظمة العالمية للأرصاد الجوية - وهو يتجاهل الانخفاض البارد في الهباء الجوي في منتصف القرن والذي أدى إلى تفاقم الاتجاه القياسي الكامل."
     },
     "pt": {
       "rank_intro_countries": "Cada país é classificado pela rapidez com que as suas cidades estão a aquecer, em média: a tendência em °C por década entre 1940-2025. Procure o seu.",
       "rank_search_countries": "Encontre um país…",
-      "cstat_cool": "{country}: {trend}°C por década desde 1940. Resfriamento, contra a tendência global. Classificação #{rank} de {total}."
+      "cstat_cool": "{country}: {trend}°C por década desde 1940. Resfriamento, contra a tendência global. Classificação #{rank} de {total}.",
+      "rank_win_label": "Janela de aquecimento",
+      "rank_win_full": "Desde 1940",
+      "rank_win_recent": "Últimos 50 anos",
+      "rank_win_note": "Duas visões dos mesmos locais: o aquecimento ao longo de todo o registo e a taxa moderna (desde 1975) citada pelo IPCC e pela OMM - que deixa de fora a queda fria de aerossóis de meados do século que acentua a tendência dos recordes completos."
     },
     "bn": {
       "rank_intro_countries": "প্রতিটি দেশের শহরগুলি গড়ে কত দ্রুত উষ্ণ হচ্ছে তার উপর ভিত্তি করে র‍্যাঙ্ক করা হয়েছে: 1940-2025 সালের মধ্যে প্রতি দশকে °C এর প্রবণতা। আপনার জন্য অনুসন্ধান করুন.",
       "rank_search_countries": "একটি দেশ খুঁজুন...",
-      "cstat_cool": "{country}: 1940 সাল থেকে প্রতি দশকে {trend}°C। শীতল, বৈশ্বিক প্রবণতার বিরুদ্ধে। র‍্যাঙ্ক #{rank} এর {total}।"
+      "cstat_cool": "{country}: 1940 সাল থেকে প্রতি দশকে {trend}°C। শীতল, বৈশ্বিক প্রবণতার বিরুদ্ধে। র‍্যাঙ্ক #{rank} এর {total}।",
+      "rank_win_label": "উষ্ণতা জানালা",
+      "rank_win_full": "1940 সাল থেকে",
+      "rank_win_recent": "গত 50 বছর",
+      "rank_win_note": "একই স্থানের দুটি দৃষ্টিভঙ্গি: পুরো রেকর্ড জুড়ে উষ্ণতা, এবং আধুনিক হার (1975 সাল থেকে) যেটি IPCC এবং WMO উদ্ধৃত করেছে - এটি মধ্য-শতাব্দীর শীতল অ্যারোসোল ডিপকে ছেড়ে দেয় যা একটি পূর্ণ-রেকর্ড প্রবণতাকে শক্তিশালী করে।"
     },
     "ru": {
       "rank_intro_countries": "Каждая страна ранжирована по тому, насколько быстро в среднем нагреваются ее города: тенденция в °C за десятилетие в период с 1940 по 2025 год. Ищите свой.",
       "rank_search_countries": "Найдите страну…",
-      "cstat_cool": "{country}: {trend}°C за десятилетие с 1940 года. Похолодание вопреки глобальной тенденции. Ранг №{rank} из {total}."
+      "cstat_cool": "{country}: {trend}°C за десятилетие с 1940 года. Похолодание вопреки глобальной тенденции. Ранг №{rank} из {total}.",
+      "rank_win_label": "Утепляющее окно",
+      "rank_win_full": "С 1940 года",
+      "rank_win_recent": "Последние 50 лет",
+      "rank_win_note": "Два взгляда на одни и те же места: потепление на протяжении всего периода наблюдений и современные темпы (с 1975 года), которые указывают МГЭИК и ВМО, - они не учитывают прохладный спад аэрозолей середины века, который усиливает тенденцию полного рекорда."
     },
     "id": {
       "rank_intro_countries": "Setiap negara diberi peringkat berdasarkan seberapa cepat rata-rata kota-kotanya mengalami pemanasan: tren dalam °C per dekade selama tahun 1940-2025. Cari milikmu.",
       "rank_search_countries": "Temukan negara…",
-      "cstat_cool": "{country}: {trend}°C per dekade sejak 1940. Pendinginan berlawanan dengan tren global. Peringkat #{rank} dari {total}."
+      "cstat_cool": "{country}: {trend}°C per dekade sejak 1940. Pendinginan berlawanan dengan tren global. Peringkat #{rank} dari {total}.",
+      "rank_win_label": "Jendela pemanasan",
+      "rank_win_full": "Sejak tahun 1940",
+      "rank_win_recent": "50 tahun terakhir",
+      "rank_win_note": "Dua pandangan mengenai kondisi yang sama: pemanasan yang mencapai rekor tertinggi, dan laju modern (sejak tahun 1975) yang dikutip oleh IPCC dan WMO - tidak memperhitungkan penurunan aerosol dingin pada abad pertengahan yang meningkatkan tren yang mencapai rekor tertinggi."
     },
     "ja": {
       "rank_intro_countries": "すべての国は、都市の平均温暖化速度、つまり 1940 年から 2025 年の 10 年あたりの℃の傾向によってランク付けされました。あなたのものを探してください。",
       "rank_search_countries": "国を探して…",
-      "cstat_cool": "{country}: 1940 年以降、10 年ごとに {trend}°C。世界的な傾向に反して寒冷化。ランク #{rank}/{total}。"
+      "cstat_cool": "{country}: 1940 年以降、10 年ごとに {trend}°C。世界的な傾向に反して寒冷化。ランク #{rank}/{total}。",
+      "rank_win_label": "温暖化ウィンドウ",
+      "rank_win_full": "1940年以降",
+      "rank_win_recent": "過去50年間",
+      "rank_win_note": "同じ場所に関する 2 つのビュー: 全記録にわたる温暖化と、IPCC と WMO が引用する現代の速度 (1975 年以降) - 全記録の傾向を急勾配にする世紀半ばの涼しいエアロゾルの低下が省略されています。"
     },
     "ur": {
       "rank_intro_countries": "ہر ملک کی درجہ بندی کی جاتی ہے کہ اس کے شہر اوسطاً کتنی تیزی سے گرم ہو رہے ہیں: 1940-2025 کے دوران °C فی دہائی میں رجحان۔ اپنی تلاش کریں۔",
       "rank_search_countries": "ایک ملک تلاش کریں…",
-      "cstat_cool": "{country}: 1940 سے فی دہائی {trend}°C۔ ٹھنڈک، عالمی رجحان کے خلاف۔ {total} کا #{rank} درجہ۔"
+      "cstat_cool": "{country}: 1940 سے فی دہائی {trend}°C۔ ٹھنڈک، عالمی رجحان کے خلاف۔ {total} کا #{rank} درجہ۔",
+      "rank_win_label": "گرم کرنے والی کھڑکی",
+      "rank_win_full": "1940 سے",
+      "rank_win_recent": "پچھلے 50 سال",
+      "rank_win_note": "ایک ہی جگہوں کے دو نظارے: پورے ریکارڈ میں گرمی، اور جدید شرح (1975 سے) جس کا IPCC اور WMO حوالہ دیتے ہیں - یہ وسط صدی کے ٹھنڈے ایروسول ڈپ کو چھوڑ دیتا ہے جو ایک مکمل ریکارڈ رجحان کو تیز کرتا ہے۔"
     },
     "it": {
       "rank_intro_countries": "Ogni paese è stato classificato in base alla velocità media di riscaldamento delle sue città: la tendenza in °C per decennio nel periodo 1940-2025. Cerca il tuo.",
       "rank_search_countries": "Trova un paese...",
-      "cstat_cool": "{country}: {trend}°C per decennio dal 1940. Raffreddamento, contro la tendenza globale. Classifica #{rank} su {total}."
+      "cstat_cool": "{country}: {trend}°C per decennio dal 1940. Raffreddamento, contro la tendenza globale. Classifica #{rank} su {total}.",
+      "rank_win_label": "Finestra di riscaldamento",
+      "rank_win_full": "Dal 1940",
+      "rank_win_recent": "Ultimi 50 anni",
+      "rank_win_note": "Due visioni degli stessi luoghi: il riscaldamento globale e il tasso moderno (dal 1975) citato dall’IPCC e dall’OMM – che lascia fuori il calo dell’aerosol di metà secolo che accentua una tendenza globale."
     },
     "tr": {
       "rank_intro_countries": "Her ülke, şehirlerinin ortalama ne kadar hızlı ısındığına göre sıralanıyor: 1940-2025 yılları arasında on yıl başına °C cinsinden eğilim. Sizinkini arayın.",
       "rank_search_countries": "Bir ülke bulun…",
-      "cstat_cool": "{country}: 1940'tan bu yana her on yılda {trend}°C. Küresel eğilimin aksine soğuma. Sıra #{rank} / {total}."
+      "cstat_cool": "{country}: 1940'tan bu yana her on yılda {trend}°C. Küresel eğilimin aksine soğuma. Sıra #{rank} / {total}.",
+      "rank_win_label": "Isınma penceresi",
+      "rank_win_full": "1940'tan beri",
+      "rank_win_recent": "Son 50 yıl",
+      "rank_win_note": "Aynı yerlere dair iki bakış: tüm kayıtlardaki ısınma ve IPCC ile WMO'nun belirttiği modern oran (1975'ten bu yana) - tam kayıt eğilimini güçlendiren yüzyılın ortasındaki serin aerosol düşüşünü dışarıda bırakıyor."
     },
     "ko": {
       "rank_intro_countries": "모든 국가는 도시가 평균적으로 얼마나 빨리 따뜻해지고 있는지에 따라 순위가 매겨져 있습니다. 추세는 1940~2025년 동안 10년당 °C입니다. 당신의 것을 검색하십시오.",
       "rank_search_countries": "국가를 찾아보세요…",
-      "cstat_cool": "{country}: 1940년 이후 10년마다 {trend}°C. 세계적인 추세에 반하는 냉각입니다. {total} 중 #{rank} 순위입니다."
+      "cstat_cool": "{country}: 1940년 이후 10년마다 {trend}°C. 세계적인 추세에 반하는 냉각입니다. {total} 중 #{rank} 순위입니다.",
+      "rank_win_label": "예열창",
+      "rank_win_full": "1940년 이후",
+      "rank_win_recent": "지난 50년",
+      "rank_win_note": "동일한 장소에 대한 두 가지 견해: 전체 기록에 걸친 온난화와 IPCC 및 WMO가 인용하는 현대 비율(1975년 이후) - 전체 기록 추세를 가파르게 만드는 20세기 중반의 시원한 에어로졸 딥을 제외합니다."
     },
     "fa": {
       "rank_intro_countries": "هر کشور بر اساس سرعت گرم شدن شهرهایش به طور متوسط ​​رتبه بندی می شود: روند درجه سانتی گراد در هر دهه طی سال های 1940-2025. مال خودت را جستجو کن",
       "rank_search_countries": "پیدا کردن کشور…",
-      "cstat_cool": "{country}: {trend} درجه سانتی گراد در هر دهه از سال 1940. خنک کننده، برخلاف روند جهانی. رتبه #{rank} از {total}."
+      "cstat_cool": "{country}: {trend} درجه سانتی گراد در هر دهه از سال 1940. خنک کننده، برخلاف روند جهانی. رتبه #{rank} از {total}.",
+      "rank_win_label": "پنجره گرم",
+      "rank_win_full": "از سال 1940",
+      "rank_win_recent": "50 سال گذشته",
+      "rank_win_note": "دو نما از یک مکان: گرم شدن در سراسر رکورد کامل، و نرخ مدرن (از سال 1975) که IPCC و WMO استناد می‌کنند - افت سرد آئروسل در اواسط قرن را کنار می‌گذارد که روند رکورد کامل را افزایش می‌دهد."
     },
     "vi": {
       "rank_intro_countries": "Mỗi quốc gia được xếp hạng theo tốc độ nóng lên trung bình của các thành phố: xu hướng tính theo °C mỗi thập kỷ trong giai đoạn 1940-2025. Tìm kiếm của bạn.",
       "rank_search_countries": "Tìm một quốc gia…",
-      "cstat_cool": "{country}: {trend}°C mỗi thập kỷ kể từ năm 1940. Hạ nhiệt, đi ngược lại xu hướng toàn cầu. Xếp hạng #{rank} trên {total}."
+      "cstat_cool": "{country}: {trend}°C mỗi thập kỷ kể từ năm 1940. Hạ nhiệt, đi ngược lại xu hướng toàn cầu. Xếp hạng #{rank} trên {total}.",
+      "rank_win_label": "Cửa sổ sưởi ấm",
+      "rank_win_full": "Từ năm 1940",
+      "rank_win_recent": "50 năm qua",
+      "rank_win_note": "Hai quan điểm về cùng một địa điểm: sự nóng lên trên toàn bộ kỷ lục và tốc độ hiện đại (kể từ năm 1975) mà IPCC và WMO trích dẫn - nó loại bỏ sự sụt giảm khí dung mát mẻ giữa thế kỷ đã làm tăng thêm xu hướng kỷ lục đầy đủ."
     },
     "nl": {
       "rank_intro_countries": "Elk land gerangschikt op basis van hoe snel zijn steden gemiddeld opwarmen: de trend in °C per decennium in de periode 1940-2025. Zoek naar de jouwe.",
       "rank_search_countries": "Zoek een land…",
-      "cstat_cool": "{country}: {trend}°C per decennium sinds 1940. Afkoeling, tegen de mondiale trend in. Rang #{rank} van {total}."
+      "cstat_cool": "{country}: {trend}°C per decennium sinds 1940. Afkoeling, tegen de mondiale trend in. Rang #{rank} van {total}.",
+      "rank_win_label": "Verwarmend venster",
+      "rank_win_full": "Sinds 1940",
+      "rank_win_recent": "Laatste 50 jaar",
+      "rank_win_note": "Twee visies op dezelfde plekken: de opwarming over het hele record, en het moderne tempo (sinds 1975) dat het IPCC en de WMO aanhalen – het laat de koele aerosoldip uit het midden van de eeuw buiten beschouwing die een trend over een volledig record verstevigt."
     },
     "sw": {
       "rank_title": "Kiwango cha ongezeko la joto duniani",
@@ -2890,12 +2966,16 @@
       "cstat_cool": "{country}: {trend}°C kwa kila muongo tangu 1940. Kupoeza, dhidi ya mwenendo wa kimataifa. Cheo #{rank} kati ya {total}.",
       "rank_more": "Onyesha zaidi",
       "rank_cities": "Miji",
-      "rank_countries": "Nchi"
+      "rank_countries": "Nchi",
+      "rank_win_label": "Dirisha la joto",
+      "rank_win_full": "Tangu 1940",
+      "rank_win_recent": "Miaka 50 iliyopita",
+      "rank_win_note": "Mionekano miwili ya maeneo sawa: ongezeko la joto katika rekodi kamili, na kiwango cha kisasa (tangu 1975) ambacho IPCC na WMO wanataja - inaacha nje hali nzuri ya katikati ya karne ya erosoli ambayo inakuza mwelekeo wa rekodi kamili."
     },
     "tl": {
       "rank_title": "Ranggo ng pag-init ng mundo",
       "rank_intro": "Ang bawat lungsod ay niraranggo ayon sa kung gaano kabilis ang pag-init: ang trend sa °C bawat dekada sa paglipas ng 1940-2025. Maghanap para sa iyo.",
-      "rank_intro_countries": "Ang bawat bansa ay niraranggo ayon sa kung gaano kabilis ang pag-init ng mga lungsod nito sa karaniwan: ang trend sa °C bawat dekada sa loob ng 1940-2025. Maghanap para sa iyo.",
+      "rank_intro_countries": "Ang bawat bansa ay niraranggo ayon sa kung gaano kabilis umiinit ang mga lungsod nito sa karaniwan: ang trend sa °C bawat dekada sa paglipas ng 1940-2025. Maghanap para sa iyo.",
       "rank_city": "lungsod",
       "rank_country": "Bansa",
       "rank_search": "Maghanap ng lungsod…",
@@ -2906,7 +2986,11 @@
       "cstat_cool": "{country}: {trend}°C bawat dekada mula noong 1940. Paglamig, laban sa pandaigdigang kalakaran. Ranggo #{rank} ng {total}.",
       "rank_more": "Magpakita ng higit pa",
       "rank_cities": "Mga lungsod",
-      "rank_countries": "Mga bansa"
+      "rank_countries": "Mga bansa",
+      "rank_win_label": "Pag-init ng bintana",
+      "rank_win_full": "Mula noong 1940",
+      "rank_win_recent": "Huling 50 taon",
+      "rank_win_note": "Dalawang view ng parehong mga lugar: warming sa buong record, at ang modernong rate (mula noong 1975) na binanggit ng IPCC at WMO - iniiwan nito ang cool na mid-century na aerosol dip na nagpapataas ng full-record na trend."
     },
     "th": {
       "rank_title": "อันดับภาวะโลกร้อน",
@@ -2922,7 +3006,11 @@
       "cstat_cool": "{country}: {trend}°C ต่อทศวรรษนับตั้งแต่ปี 1940 การระบายความร้อนสวนทางกับกระแสโลก อันดับ #{rank} จาก {total}",
       "rank_more": "แสดงเพิ่มเติม",
       "rank_cities": "เมือง",
-      "rank_countries": "ประเทศต่างๆ"
+      "rank_countries": "ประเทศต่างๆ",
+      "rank_win_label": "หน้าต่างทำความร้อน",
+      "rank_win_full": "ตั้งแต่ปี 1940",
+      "rank_win_recent": "50ปีที่ผ่านมา",
+      "rank_win_note": "มุมมองสองประการของสถานที่เดียวกัน: การอุ่นขึ้นทั่วทั้งสถิติ และอัตราสมัยใหม่ (ตั้งแต่ปี 1975) ที่ IPCC และ WMO อ้างถึง - ทำให้ไม่ต้องมีละอองลอยที่เย็นลงในช่วงกลางศตวรรษที่เพิ่มสูงขึ้นซึ่งเพิ่มแนวโน้มการบันทึกทั้งหมด"
     },
     "ta": {
       "rank_title": "உலக வெப்பமயமாதல் தரவரிசை",
@@ -2938,7 +3026,11 @@
       "cstat_cool": "{country}: 1940 முதல் ஒரு தசாப்தத்திற்கு {trend}°C. குளிர்ச்சி, உலகளாவிய போக்குக்கு எதிராக. ரேங்க் #{rank} of {total}.",
       "rank_more": "மேலும் காட்டு",
       "rank_cities": "நகரங்கள்",
-      "rank_countries": "நாடுகள்"
+      "rank_countries": "நாடுகள்",
+      "rank_win_label": "வெப்பமயமாதல் சாளரம்",
+      "rank_win_full": "1940 முதல்",
+      "rank_win_recent": "கடந்த 50 ஆண்டுகள்",
+      "rank_win_note": "ஒரே இடங்களின் இரண்டு காட்சிகள்: முழுப் பதிவில் வெப்பமயமாதல், மற்றும் IPCC மற்றும் WMO மேற்கோள் காட்டும் நவீன விகிதம் (1975 முதல்) - இது ஒரு முழு-பதிவுப் போக்கை மேம்படுத்தும் குளிர்ந்த நூற்றாண்டின் நடுப்பகுதியில் ஏரோசல் டிப்பை விட்டுச் செல்கிறது."
     },
     "mr": {
       "rank_title": "जागतिक तापमानवाढ रँकिंग",
@@ -2954,12 +3046,16 @@
       "cstat_cool": "{country}: 1940 पासून प्रति दशक {trend}°C. शीतकरण, जागतिक प्रवृत्तीच्या विरुद्ध. {total} पैकी #{rank} रँक.",
       "rank_more": "अधिक दाखवा",
       "rank_cities": "शहरे",
-      "rank_countries": "देश"
+      "rank_countries": "देश",
+      "rank_win_label": "वार्मिंग विंडो",
+      "rank_win_full": "1940 पासून",
+      "rank_win_recent": "गेली 50 वर्षे",
+      "rank_win_note": "समान ठिकाणांची दोन दृश्ये: संपूर्ण रेकॉर्ड ओलांडून तापमानवाढ, आणि आधुनिक दर (1975 पासून) ज्याचा IPCC आणि WMO ने उल्लेख केला आहे - यामुळे शतकाच्या मध्यभागी थंड एरोसोल डुबकी बाहेर पडते जी पूर्ण-रेकॉर्ड ट्रेंड वाढवते."
     },
     "te": {
       "rank_title": "వరల్డ్ వార్మింగ్ ర్యాంకింగ్",
       "rank_intro": "ప్రతి నగరం వేడెక్కుతున్న వేగాన్ని బట్టి ర్యాంక్ చేయబడింది: 1940-2025లో దశాబ్దానికి °C ట్రెండ్. మీ కోసం వెతకండి.",
-      "rank_intro_countries": "ప్రతి దేశం దాని నగరాలు సగటున ఎంత వేగంగా వేడెక్కుతున్నాయో దాని ఆధారంగా ర్యాంక్ చేయబడింది: 1940-2025లో దశాబ్దానికి °C ట్రెండ్. మీ కోసం వెతకండి.",
+      "rank_intro_countries": "ప్రతి దేశం దాని నగరాలు సగటున ఎంత వేగంగా వేడెక్కుతున్నాయి అనే దాని ఆధారంగా ర్యాంక్ చేయబడింది: 1940-2025లో దశాబ్దానికి °C ట్రెండ్. మీ కోసం వెతకండి.",
       "rank_city": "నగరం",
       "rank_country": "దేశం",
       "rank_search": "నగరాన్ని కనుగొనండి...",
@@ -2970,7 +3066,11 @@
       "cstat_cool": "{country}: 1940 నుండి దశాబ్దానికి {trend}°C. శీతలీకరణ, ప్రపంచ ధోరణికి వ్యతిరేకంగా. {total}లో #{rank} ర్యాంక్.",
       "rank_more": "మరింత చూపించు",
       "rank_cities": "నగరాలు",
-      "rank_countries": "దేశాలు"
+      "rank_countries": "దేశాలు",
+      "rank_win_label": "వార్మింగ్ విండో",
+      "rank_win_full": "1940 నుండి",
+      "rank_win_recent": "గత 50 సంవత్సరాలు",
+      "rank_win_note": "ఒకే స్థలాలకు సంబంధించిన రెండు వీక్షణలు: పూర్తి రికార్డులో వేడెక్కడం మరియు IPCC మరియు WMO పేర్కొన్న ఆధునిక రేటు (1975 నుండి) - ఇది పూర్తి-రికార్డ్ ట్రెండ్‌ను పెంచే చల్లని మధ్య-శతాబ్దపు ఏరోసోల్ డిప్‌ను వదిలివేస్తుంది."
     },
     "ha": {
       "rank_title": "Matsayin dumamar yanayi",
@@ -2986,7 +3086,11 @@
       "cstat_cool": "{country}: {trend}°C a kowace shekara goma tun daga 1940. Cooling, sabanin yanayin duniya. Matsayi #{rank} na {total}.",
       "rank_more": "Nuna ƙarin",
       "rank_cities": "Garuruwa",
-      "rank_countries": "Kasashe"
+      "rank_countries": "Kasashe",
+      "rank_win_label": "Tagar dumama",
+      "rank_win_full": "Tun daga 1940",
+      "rank_win_recent": "Shekaru 50 da suka wuce",
+      "rank_win_note": "Ra'ayoyi guda biyu na wurare iri ɗaya: ɗumamar cikakken rikodin, da ƙimar zamani (tun 1975) waɗanda IPCC da WMO suka ambata - yana barin yanayin sanyi na tsakiyar ƙarni na aerosol wanda ke haifar da cikakken yanayin rikodi."
     },
     "pa": {
       "rank_title": "ਵਿਸ਼ਵ ਵਾਰਮਿੰਗ ਦਰਜਾਬੰਦੀ",
@@ -3001,8 +3105,12 @@
       "cstat_line": "{country}: 1940 ਤੋਂ {trend}°C ਪ੍ਰਤੀ ਦਹਾਕਾ, ਦੁਨੀਆ ਦੇ {pct}% ਨਾਲੋਂ ਤੇਜ਼। {total} ਦਾ #{rank} ਦਰਜਾ।",
       "cstat_cool": "{country}: 1940 ਤੋਂ {trend}°C ਪ੍ਰਤੀ ਦਹਾਕਾ। ਕੂਲਿੰਗ, ਗਲੋਬਲ ਰੁਝਾਨ ਦੇ ਵਿਰੁੱਧ। {total} ਦਾ #{rank} ਰੈਂਕ।",
       "rank_more": "ਹੋਰ ਦਿਖਾਓ",
-      "rank_cities": "ਸ਼ਹਿਰਾਂ",
-      "rank_countries": "ਦੇਸ਼"
+      "rank_cities": "ਸ਼ਹਿਰ",
+      "rank_countries": "ਦੇਸ਼",
+      "rank_win_label": "ਗਰਮ ਕਰਨ ਵਾਲੀ ਵਿੰਡੋ",
+      "rank_win_full": "1940 ਤੋਂ",
+      "rank_win_recent": "ਪਿਛਲੇ 50 ਸਾਲ",
+      "rank_win_note": "ਇੱਕੋ ਥਾਂ ਦੇ ਦੋ ਦ੍ਰਿਸ਼: ਪੂਰੇ ਰਿਕਾਰਡ ਵਿੱਚ ਗਰਮ ਹੋਣਾ, ਅਤੇ ਆਧੁਨਿਕ ਦਰ (1975 ਤੋਂ) ਜਿਸਦਾ IPCC ਅਤੇ WMO ਦਾ ਹਵਾਲਾ ਦਿੱਤਾ ਗਿਆ ਹੈ - ਇਹ ਮੱਧ-ਸਦੀ ਦੇ ਐਰੋਸੋਲ ਡਿੱਪ ਨੂੰ ਛੱਡਦਾ ਹੈ ਜੋ ਇੱਕ ਪੂਰੇ-ਰਿਕਾਰਡ ਰੁਝਾਨ ਨੂੰ ਮਜ਼ਬੂਤ ਕਰਦਾ ਹੈ।"
     },
     "my": {
       "rank_title": "ကမ္ဘာကြီးပူနွေးလာမှုအဆင့်",
@@ -3018,7 +3126,11 @@
       "cstat_cool": "{country}- ​​1940 ခုနှစ်ကတည်းက ဆယ်စုနှစ်တစ်ခုလျှင် {trend}°C။ အအေးခံခြင်း၊ ကမ္ဘာ့လမ်းကြောင်းပေါ်နှင့်ဆန့်ကျင်ဘက်။ {total} ၏ အဆင့် #{rank}။",
       "rank_more": "ပိုပြပါ။",
       "rank_cities": "မြို့များ",
-      "rank_countries": "နိုင်ငံတွေ"
+      "rank_countries": "နိုင်ငံတွေ",
+      "rank_win_label": "ပူနွေးသောပြတင်းပေါက်",
+      "rank_win_full": "1940 ခုနှစ်ကတည်းက",
+      "rank_win_recent": "လွန်ခဲ့သော နှစ် 50",
+      "rank_win_note": "တူညီသောနေရာများ၏ရှုခင်းနှစ်ခု- စံချိန်အပြည့်ဖြင့် ပူနွေးလာခြင်းနှင့် IPCC နှင့် WMO မှဖော်ပြသော ခေတ်မီနှုန်း (1975 ခုနှစ်ကတည်းက) - ၎င်းသည် စံချိန်အပြည့်တင်နိုင်သော အေးမြသောရာစုအလယ်ပိုင်းလေထုကျဆင်းမှုမှ ထွက်သွားပါသည်။"
     },
     "am": {
       "rank_title": "የአለም ሙቀት መጨመር ደረጃ",
@@ -3034,7 +3146,11 @@
       "cstat_cool": "{country}: {trend}°C በአስር አመት ከ1940 ዓ.ም. ማቀዝቀዝ፣ ከአለም አቀፋዊ አዝማሚያ በተቃራኒ። ደረጃ #{rank} ከ{total}.",
       "rank_more": "ተጨማሪ አሳይ",
       "rank_cities": "ከተሞች",
-      "rank_countries": "አገሮች"
+      "rank_countries": "አገሮች",
+      "rank_win_label": "የማሞቂያ መስኮት",
+      "rank_win_full": "ከ1940 ዓ.ም",
+      "rank_win_recent": "ያለፉት 50 ዓመታት",
+      "rank_win_note": "ተመሳሳይ ቦታዎች ሁለት እይታዎች: ሙሉ መዝገብ ላይ ሙቀት, እና አይፒሲሲ እና ደብሊውኤምኦ ጠቅሰው ያለውን ዘመናዊ ተመን (1975 ጀምሮ) - ሙሉ-መዝገብ አዝማሚያ ያለውን አሪፍ አጋማሽ ክፍለ ዘመን የአየር ላይ መጥለቅ ትቶ."
     },
     "yo": {
       "rank_title": "Aye imorusi ranking",
@@ -3050,7 +3166,11 @@
       "cstat_cool": "{country}: {trend}°C fun ọdun mẹwa lati ọdun 1940. Itutu, lodi si aṣa agbaye. Ipo #{rank} ti {total}.",
       "rank_more": "Ṣe afihan diẹ sii",
       "rank_cities": "Awọn ilu",
-      "rank_countries": "Awọn orilẹ-ede"
+      "rank_countries": "Awọn orilẹ-ede",
+      "rank_win_label": "Ferese igbona",
+      "rank_win_full": "Lati ọdun 1940",
+      "rank_win_recent": "Odun 50 to koja",
+      "rank_win_note": "Awọn iwo meji ti awọn aaye kanna: imorusi kọja igbasilẹ kikun, ati oṣuwọn ode oni (lati ọdun 1975) ti IPCC ati WMO sọ - o jade kuro ni dip aerosol aarin-ọdun ti o tutu ti o ga aṣa igbasilẹ ni kikun."
     },
     "af": {
       "rank_title": "Wêreldverwarming ranglys",
@@ -3066,7 +3186,11 @@
       "cstat_cool": "{country}: {trend}°C per dekade sedert 1940. Verkoeling, teen die wêreldwye neiging. Rang #{rank} van {total}.",
       "rank_more": "Wys meer",
       "rank_cities": "Stede",
-      "rank_countries": "Lande"
+      "rank_countries": "Lande",
+      "rank_win_label": "Verwarmende venster",
+      "rank_win_full": "Sedert 1940",
+      "rank_win_recent": "Laaste 50 jaar",
+      "rank_win_note": "Twee aansigte van dieselfde plekke: verwarming oor die volle rekord, en die moderne tempo (sedert 1975) wat die IPCC en WMO aanhaal - dit laat die koel middel-eeuse aërosol-dip uit wat 'n volle rekord-tendens versterk."
     },
     "ak": {
       "rank_title": "Wiase nyinaa hyew ho nhyehyɛe",
@@ -3082,7 +3206,11 @@
       "cstat_cool": "{country}: {trend}°C mfe du biara fi 1940. Onwini, a ɛne wiase nyinaa su no bɔ abira. Dibea #{rank} wɔ {total} mu.",
       "rank_more": "Kyerɛ pii",
       "rank_cities": "Nkurow akɛse",
-      "rank_countries": "Aman ahorow"
+      "rank_countries": "Aman ahorow",
+      "rank_win_label": "Mfɛnsere a ɛma ɔhyew",
+      "rank_win_full": "Efi 1940 no",
+      "rank_win_recent": "Mfe 50 a atwam no",
+      "rank_win_note": "Adwene abien a ɛfa mmeae koro no ara ho: ɔhyew a ɛkɔ soro wɔ kyerɛwtohɔ a edi mũ no nyinaa mu, ne nnɛyi dodow (efi 1975) a IPCC ne WMO fa ka ho asɛm - egyaw afeha no mfinimfini aerosol a ɛyɛ nwini a ɛma kyerɛwtohɔ a edi mũ su no yɛ kɛse."
     },
     "gn": {
       "rank_title": "Ranking mundial calentamiento rehegua",
@@ -3098,7 +3226,11 @@
       "cstat_cool": "{country}: {trend}°C por década 1940 guive.Oñembopiro’y, contra la tendencia mundial. Oñemohenda #{rank} {total}-gui.",
       "rank_more": "Ehechaukave",
       "rank_cities": "Tavakuéra",
-      "rank_countries": "Tetãnguéra"
+      "rank_countries": "Tetãnguéra",
+      "rank_win_label": "Ventana oñembopiro’ýva",
+      "rank_win_full": "Ary 1940 guive",
+      "rank_win_recent": "50 ary ohasava'ekuépe",
+      "rank_win_note": "Mokõi jehecha umi tenda peteĩchaguáre: calentamiento opaite récord completo rupi, ha pe tasa moderna (1975 guive) ocitava IPCC ha OMM - oheja pe inmersión ro’ysã aerosol siglo mbytépe ombohapéva peteĩ tendencia récord completo."
     },
     "ay": {
       "rank_title": "Uraqpachan junt’uñapatakix ranking ukaw utji",
@@ -3114,12 +3246,16 @@
       "cstat_cool": "{country}: {trend}°C sapa tunka marana 1940 maratpacha.Thaya, uraqpachan tendencia ukar uñtasita. Rank #{rank} ukat {total}.",
       "rank_more": "Juk’ampi uñacht’ayaña",
       "rank_cities": "Markanaka",
-      "rank_countries": "Markanaka"
+      "rank_countries": "Markanaka",
+      "rank_win_label": "Uka ventana junt’uchaña",
+      "rank_win_full": "1940 marat aksarojja",
+      "rank_win_recent": "Qhipa 50 maranakanxa",
+      "rank_win_note": "Pä uñjawi pachpa chiqanakat: junt’uchasiñax taqpach registro ukanx, ukat jichha pacha tasa (1975 maratpacha) ukax IPCC ukat OMM ukanakax uñt’ayapxiwa - ukax jaytawayiw thaya chika pachan aerosol ukar ch’allt’ata, ukax mä tendencia completa récord ukar ch’amancharaki."
     },
     "az": {
       "rank_title": "Dünya istiləşmə reytinqi",
       "rank_intro": "Hər bir şəhər istiləşmə sürətinə görə sıralanır: 1940-2025-ci illər ərzində hər on ildə °C tendensiyası. Özünüzü axtarın.",
-      "rank_intro_countries": "Hər bir ölkə şəhərlərinin orta hesabla nə qədər sürətlə istiləşməsinə görə sıralanır: 1940-2025-ci illər ərzində hər onillikdə °C tendensiyası. Özünüzü axtarın.",
+      "rank_intro_countries": "Hər bir ölkə şəhərlərinin orta hesabla nə qədər sürətlə istiləşməsinə görə sıralanır: 1940-2025-ci illər ərzində hər on ildə °C tendensiyası. Özünüzü axtarın.",
       "rank_city": "Şəhər",
       "rank_country": "ölkə",
       "rank_search": "Şəhər tap...",
@@ -3130,7 +3266,11 @@
       "cstat_cool": "{country}: 1940-cı ildən bəri hər on ildə {trend}°C. Qlobal tendensiyaya qarşı soyutma. {total} arasından {rank} dərəcə.",
       "rank_more": "Daha çox göstər",
       "rank_cities": "Şəhərlər",
-      "rank_countries": "ölkələr"
+      "rank_countries": "ölkələr",
+      "rank_win_label": "İstilik pəncərəsi",
+      "rank_win_full": "1940-cı ildən",
+      "rank_win_recent": "Son 50 il",
+      "rank_win_note": "Eyni yerlərə iki baxış: tam rekord üzrə istiləşmə və IPCC və WMO-nun istinad etdiyi müasir nisbət (1975-ci ildən) - bu, tam rekord tendensiyanı gücləndirən sərin orta əsr aerozol dibini kənarda qoyur."
     },
     "ms": {
       "rank_title": "Kedudukan pemanasan dunia",
@@ -3146,7 +3286,11 @@
       "cstat_cool": "{country}: {trend}°C setiap dekad sejak 1940. Menyejukkan, menentang arah aliran global. Kedudukan #{rank} daripada {total}.",
       "rank_more": "Tunjukkan lagi",
       "rank_cities": "Bandar",
-      "rank_countries": "negara"
+      "rank_countries": "negara",
+      "rank_win_label": "Tingkap pemanasan",
+      "rank_win_full": "Sejak tahun 1940",
+      "rank_win_recent": "50 tahun lepas",
+      "rank_win_note": "Dua pemandangan tempat yang sama: pemanasan merentasi rekod penuh, dan kadar moden (sejak 1975) yang dipetik oleh IPCC dan WMO - ia meninggalkan penurunan aerosol abad pertengahan yang menyegarkan yang meningkatkan aliran rekod penuh."
     },
     "bm": {
       "rank_title": "Diɲɛ sumaya jatebɔ",
@@ -3162,11 +3306,15 @@
       "cstat_cool": "{country}: {trend}°C san tan kɔnɔ kabini san 1940. Nɛnɛ, ka kɛɲɛ ni diɲɛ taabolo ye. Jateden #{rank} ye {total} ye.",
       "rank_more": "Aw ye dɔ wɛrɛw jira",
       "rank_cities": "Dugubaw",
-      "rank_countries": "Jamana minnu bɛ yen"
+      "rank_countries": "Jamana minnu bɛ yen",
+      "rank_win_label": "Fenɛtiri min bɛ sumaya",
+      "rank_win_full": "Kabini san 1940",
+      "rank_win_recent": "San 50 tɛmɛnenw",
+      "rank_win_note": "Yɔrɔ kelenw filɛli fila: sumaya sɔrɔli sɛbɛn dafalen kɔnɔ, ani bi hakɛ (kabini san 1975) min fɔra IPCC ni OMM fɛ - o bɛ san kɛmɛ cɛmancɛ aerosol jigin nɛnɛman to yen min bɛ jatebɔ dafalen taabolo dɔ wuli."
     },
     "su": {
       "rank_title": "Peringkat pemanasan dunya",
-      "rank_intro": "Unggal kota rengking ku sabaraha gancang pemanasan: tren dina ° C per dasawarsa leuwih 1940-2025. Pilarian pikeun anjeun.",
+      "rank_intro": "Unggal kota rengking ku sabaraha gancang pemanasan: tren dina °C per dasawarsa leuwih 1940-2025. Pilarian pikeun anjeun.",
       "rank_intro_countries": "Unggal nagara rengking ku sabaraha gancang kotana rata-rata pamanasan: tren dina °C per dasawarsa leuwih 1940-2025. Pilarian pikeun anjeun.",
       "rank_city": "Kota",
       "rank_country": "Nagara",
@@ -3178,7 +3326,11 @@
       "cstat_cool": "{country}: {trend}°C per dasawarsa saprak 1940. Cooling, ngalawan trend global. Rengking #{rank} tina {total}.",
       "rank_more": "Témbongkeun deui",
       "rank_cities": "Kota-kota",
-      "rank_countries": "Nagara-nagara"
+      "rank_countries": "Nagara-nagara",
+      "rank_win_label": "Jandéla pemanasan",
+      "rank_win_full": "Kusabab 1940",
+      "rank_win_recent": "50 taun katukang",
+      "rank_win_note": "Dua pandangan tempat anu sami: pemanasan dina catetan pinuh, sareng tingkat modéren (saprak 1975) anu disebatkeun ku IPCC sareng WMO - éta nyéépkeun aerosol abad pertengahan anu tiis anu nyababkeun tren catetan pinuh."
     },
     "bs": {
       "rank_title": "Rangiranje za zagrijavanje svijeta",
@@ -3194,7 +3346,11 @@
       "cstat_cool": "{country}: {trend}°C po deceniji od 1940. Hlađenje, suprotno globalnom trendu. Rang #{rank} od {total}.",
       "rank_more": "Pokaži više",
       "rank_cities": "Gradovi",
-      "rank_countries": "Zemlje"
+      "rank_countries": "Zemlje",
+      "rank_win_label": "Prozor za zagrijavanje",
+      "rank_win_full": "Od 1940",
+      "rank_win_recent": "Poslednjih 50 godina",
+      "rank_win_note": "Dva pogleda na ista mjesta: zagrijavanje preko punog rekorda i moderna stopa (od 1975.) koju navode IPCC i WMO - izostavlja hladni pad aerosola sredinom stoljeća koji pojačava trend punog rekorda."
     },
     "ca": {
       "rank_title": "Rànquing de l'escalfament mundial",
@@ -3210,7 +3366,11 @@
       "cstat_cool": "{country}: {trend}°C per dècada des de 1940. Refrigeració, en contra de la tendència global. Classificació #{rank} de {total}.",
       "rank_more": "Mostra'n més",
       "rank_cities": "Ciutats",
-      "rank_countries": "Països"
+      "rank_countries": "Països",
+      "rank_win_label": "Finestra d'escalfament",
+      "rank_win_full": "Des de 1940",
+      "rank_win_recent": "Darrers 50 anys",
+      "rank_win_note": "Dues vistes dels mateixos llocs: l'escalfament al llarg del registre complet i la taxa moderna (des de 1975) que citen l'IPCC i l'OMM: deixa de banda la fresca baixada d'aerosols de mitjans de segle que augmenta una tendència de rècord complet."
     },
     "ceb": {
       "rank_title": "Ranggo sa pagpainit sa kalibutan",
@@ -3226,7 +3386,11 @@
       "cstat_cool": "{country}: {trend}°C kada dekada sukad niadtong 1940. Pagpabugnaw, batok sa global nga uso. Ranggo #{rank} sa {total}.",
       "rank_more": "Ipakita ang dugang",
       "rank_cities": "Mga syudad",
-      "rank_countries": "Mga nasud"
+      "rank_countries": "Mga nasud",
+      "rank_win_label": "Nag-init nga bintana",
+      "rank_win_full": "Sukad sa 1940",
+      "rank_win_recent": "Sa miaging 50 ka tuig",
+      "rank_win_note": "Duha ka pagtan-aw sa parehas nga mga lugar: pag-init sa tibuuk nga rekord, ug ang moderno nga rate (sukad sa 1975) nga gikutlo sa IPCC ug WMO - gibiyaan niini ang cool nga tunga-tunga sa siglo nga aerosol dip nga nagpataas sa usa ka tibuuk nga rekord sa uso."
     },
     "zh-TW": {
       "rank_title": "世界暖化排名",
@@ -3242,7 +3406,11 @@
       "cstat_cool": "{country}：自 1940 年起每十年{trend}°C。降溫，與全球趨勢相反。排名#{rank} {total}。",
       "rank_more": "顯示更多",
       "rank_cities": "城市",
-      "rank_countries": "國家"
+      "rank_countries": "國家",
+      "rank_win_label": "升溫窗口",
+      "rank_win_full": "自 1940 年",
+      "rank_win_recent": "過去50年",
+      "rank_win_note": "對同一地點的兩種看法：整個記錄中的變暖，以及 IPCC 和 WMO 引用的現代速率（自 1975 年以來）——它忽略了本世紀中葉涼爽的氣溶膠下降，該下降使整個記錄的趨勢變得陡峭。"
     },
     "sn": {
       "rank_title": "World warming ranking",
@@ -3255,10 +3423,14 @@
       "rank_empty": "Hapana guta rinoenderana netsvakiridzo iyoyo.",
       "cstat_title": "Nyika yako iri kudziya sei?",
       "cstat_line": "{country}: {trend}°C pamakore gumi kubvira 1940, inokurumidza kupfuura {pct}% yenyika. Chinzvimbo #{rank} che {total}.",
-      "cstat_cool": "{country}: {trend}°C pamakore gumi kubva 1940. Kutonhodza, kunopesana nemamiriro epasi rose. Chinzvimbo #{rank} che {total}.",
+      "cstat_cool": "{country}: {trend}°C pamakore gumi kubvira 1940. Kutonhodza, kunopesana nemamiriro epasi rose. Chinzvimbo #{rank} che {total}.",
       "rank_more": "Ratidza zvimwe",
       "rank_cities": "Maguta",
-      "rank_countries": "Nyika"
+      "rank_countries": "Nyika",
+      "rank_win_label": "Kudziya hwindo",
+      "rank_win_full": "Kubva 1940",
+      "rank_win_recent": "Makore makumi mashanu apfuura",
+      "rank_win_note": "Maonero maviri enzvimbo dzakafanana: kudziya kuzere rekodhi yakazara, uye mwero wemazuva ano (kubvira 1975) uyo IPCC neWMO inotaura - inosiya kunze inotonhorera yepakati-century aerosol dip iyo inonyudza yakazara-rekodhi maitiro."
     },
     "co": {
       "rank_title": "Classificazione di u riscaldamentu mundiale",
@@ -3274,7 +3446,11 @@
       "cstat_cool": "{country}: {trend}°C per decenniu da 1940. Cooling, contru à a tendenza glubale. Classifica #{rank} di {total}.",
       "rank_more": "Mostra di più",
       "rank_cities": "I cità",
-      "rank_countries": "I paesi"
+      "rank_countries": "I paesi",
+      "rank_win_label": "Finestra riscaldante",
+      "rank_win_full": "Dapoi u 1940",
+      "rank_win_recent": "L'ultimi 50 anni",
+      "rank_win_note": "Dui punti di vista di i stessi lochi: u riscaldamentu in tuttu u record, è u ritmu mudernu (dapoi u 1975) chì l'IPCC è l'OMM citanu - lascia fora a freschezza di l'aerosol di a mità di u seculu chì rinforza una tendenza record."
     },
     "cy": {
       "rank_title": "Safle cynhesu byd",
@@ -3290,7 +3466,11 @@
       "cstat_cool": "{country}: {trend}°C y ddegawd ers 1940. Oeri, yn erbyn y duedd fyd-eang. Safle #{rank} o {total}.",
       "rank_more": "Dangos mwy",
       "rank_cities": "Dinasoedd",
-      "rank_countries": "Gwledydd"
+      "rank_countries": "Gwledydd",
+      "rank_win_label": "Ffenestr cynhesu",
+      "rank_win_full": "Er 1940",
+      "rank_win_recent": "50 mlynedd diwethaf",
+      "rank_win_note": "Dau olwg o'r un lleoedd: cynhesu ar draws y record lawn, a'r gyfradd fodern (ers 1975) y mae'r IPCC a WMO yn ei ddyfynnu - mae'n gadael allan y dip aerosol oer o ganol y ganrif sy'n cynyddu'r duedd record lawn."
     },
     "da": {
       "rank_title": "Verdensopvarmningsranglisten",
@@ -3306,7 +3486,11 @@
       "cstat_cool": "{country}: {trend}°C pr. årti siden 1940. Afkøling mod den globale trend. Placering #{rank} af {total}.",
       "rank_more": "Vis mere",
       "rank_cities": "Byer",
-      "rank_countries": "lande"
+      "rank_countries": "lande",
+      "rank_win_label": "Varmende vindue",
+      "rank_win_full": "Siden 1940",
+      "rank_win_recent": "Sidste 50 år",
+      "rank_win_note": "To visninger af de samme steder: opvarmning på tværs af hele rekorden, og den moderne hastighed (siden 1975), som IPCC og WMO citerer - det udelader den kølige aerosoldip fra midten af århundredet, der stejler en fuld rekord-tendens."
     },
     "dv": {
       "rank_title": "ދުނިޔެ ހޫނުވުމުގެ ރޭންކިން",
@@ -3322,7 +3506,11 @@
       "cstat_cool": "{country}: 1940 ވަނަ އަހަރުން ފެށިގެން ދިހަ އަހަރަކަށް {trend}°C ފިނިވުން، ދުނިޔޭގެ ޓްރެންޑާ ޚިލާފަށް. ރޭންކް #{rank} ގެ {total}.",
       "rank_more": "އިތުރަށް ދައްކާ",
       "rank_cities": "ސިޓީތަކެވެ",
-      "rank_countries": "ގައުމުތަކެވެ"
+      "rank_countries": "ގައުމުތަކެވެ",
+      "rank_win_label": "ހޫނު ކުޑަދޮރެއް",
+      "rank_win_full": "1940 ވަނަ އަހަރުން ފެށިގެންނެވެ",
+      "rank_win_recent": "މިދިޔަ 50 އަހަރު...",
+      "rank_win_note": "އެއް ތަންތަނުގެ ދެ ވިއުގައެއް: ފުރިހަމަ ރެކޯޑް ހުރަސްކޮށް ހޫނުވުން، އަދި އައިޕީސީސީ އާއި ޑަބްލިޔުއެމްއޯ އިން ނަކަލުކުރާ ޒަމާނީ ރޭޓް (1975 އިން ފެށިގެން) - އެއީ ފުލް ރެކޯޑް ޓްރެންޑެއް ވަރުގަދަކޮށްދޭ ފިނި މެދު ގަރުނުގެ އެރޮސޯލް ޑިޕް ދޫކޮށްލާ ކަމެކެވެ."
     },
     "et": {
       "rank_title": "Maailma soojenemise edetabel",
@@ -3338,7 +3526,11 @@
       "cstat_cool": "{country}: {trend}°C kümnendi jooksul alates 1940. aastast. Jahutamine, vastupidiselt globaalsele trendile. Aste #{rank}/{total}-st.",
       "rank_more": "Näita rohkem",
       "rank_cities": "Linnad",
-      "rank_countries": "Riigid"
+      "rank_countries": "Riigid",
+      "rank_win_label": "Soojendav aken",
+      "rank_win_full": "Alates 1940. aastast",
+      "rank_win_recent": "Viimased 50 aastat",
+      "rank_win_note": "Kaks vaadet samadele kohtadele: soojenemine kogu rekordi ulatuses ja kaasaegne kiirus (alates 1975. aastast), mida IPCC ja WMO tsiteerivad – see jätab välja jaheda sajandi keskpaiga aerosoolilanguse, mis suurendab rekordilist trendi."
     },
     "eo": {
       "rank_title": "Mondvarmiĝo-rango",
@@ -3354,7 +3546,11 @@
       "cstat_cool": "{country}: {trend}°C por jardeko ekde 1940. Malvarmigo, kontraŭ la tutmonda tendenco. Rango numero {rank} de {total}.",
       "rank_more": "Montri pli",
       "rank_cities": "Urboj",
-      "rank_countries": "Landoj"
+      "rank_countries": "Landoj",
+      "rank_win_label": "Varmiĝanta fenestro",
+      "rank_win_full": "Ekde 1940",
+      "rank_win_recent": "Lastaj 50 jaroj",
+      "rank_win_note": "Du vidoj de la samaj lokoj: varmiĝo trans la plena rekordo, kaj la moderna indico (ekde 1975) kiun la IPCC kaj WMO citas - ĝi forlasas la malvarmetan mezjarcentan aerosolan trempiĝon, kiu pliigas plenan rekordan tendencon."
     },
     "eu": {
       "rank_title": "Berotze munduaren sailkapena",
@@ -3370,7 +3566,11 @@
       "cstat_cool": "{country}: {trend}°C hamarkadako 1940tik. Hoztea, joera globalaren aurka. {total}-ko {rank} sailkapena.",
       "rank_more": "Erakutsi gehiago",
       "rank_cities": "Hiriak",
-      "rank_countries": "Herrialdeak"
+      "rank_countries": "Herrialdeak",
+      "rank_win_label": "Berotzeko leihoa",
+      "rank_win_full": "1940az geroztik",
+      "rank_win_recent": "Azken 50 urteak",
+      "rank_win_note": "Leku bereko bi ikuspegi: errekor osoaren beroketa eta IPCCk eta WMOk aipatzen duten tasa modernoa (1975az geroztik), errekor osoko joera areagotzen duen mendearen erdialdeko aerosol jauzi freskoa kanpoan uzten du."
     },
     "ee": {
       "rank_title": "Xexeame ƒe dzoxɔxɔ ƒe ɖoƒe si woɖo",
@@ -3386,12 +3586,16 @@
       "cstat_cool": "{country}: {trend}°C le ƒe ewo ɖesiaɖe me tso ƒe 1940. Fafa, si tsi tre ɖe xexeame katã ƒe nɔnɔme ŋu. Ðoƒe #{rank} le {total} me.",
       "rank_more": "Fia nu geɖe wu",
       "rank_cities": "Dugãwo",
-      "rank_countries": "Dukɔwo"
+      "rank_countries": "Dukɔwo",
+      "rank_win_label": "Fesre si me dzoxɔxɔ le",
+      "rank_win_full": "Tso ƒe 1940 me",
+      "rank_win_recent": "Ƒe 50 siwo va yi",
+      "rank_win_note": "Nukpɔsusu eve le teƒe ɖeka mawo ke ŋu: dzoxɔxɔ le nuŋlɔɖi bliboa me, kple egbegbe agbɔsɔsɔ (tso ƒe 1975 me) si IPCC kple WMO yɔ - egblẽa ƒe alafa ƒe domedome ƒe aerosol ƒe nyɔnyrɔ̃ fafɛ si naa nuŋlɔɖi blibo ƒe nɔnɔme aɖe nu sẽna ɖe edzi."
     },
     "fy": {
       "rank_title": "World warming ranglist",
       "rank_intro": "Elke stêd ranglist op hoe fluch it opwaarmt: de trend yn °C per desennium oer 1940-2025. Sykje nei dyn.",
-      "rank_intro_countries": "Elk lân wurdt ranglist op hoe fluch har stêden gemiddeld opwaarme: de trend yn °C per desennium oer 1940-2025. Sykje nei dyn.",
+      "rank_intro_countries": "Elk lân ranglist op hoe fluch har stêden gemiddeld opwaarme: de trend yn °C per desennia oer 1940-2025. Sykje nei dyn.",
       "rank_city": "Stêd",
       "rank_country": "Lân",
       "rank_search": "Sykje in stêd...",
@@ -3399,10 +3603,14 @@
       "rank_empty": "Gjin stêd komt oerien mei dy sykopdracht.",
       "cstat_title": "Hoe wurdt jo lân waarm?",
       "cstat_line": "{country}: {trend}°C per desennium sûnt 1940, rapper as {pct}% fan 'e wrâld. Rang #{rank} fan {total}.",
-      "cstat_cool": "{country}: {trend}°C per desennium sûnt 1940. Koeling, tsjin de globale trend yn. Rang #{rank} fan {total}.",
+      "cstat_cool": "{country}: {trend}°C per desennium sûnt 1940. Cooling, tsjin de wrâldwide trend yn. Rang #{rank} fan {total}.",
       "rank_more": "Lit mear sjen",
       "rank_cities": "Stêden",
-      "rank_countries": "Lannen"
+      "rank_countries": "Lannen",
+      "rank_win_label": "Warming finster",
+      "rank_win_full": "Sûnt 1940",
+      "rank_win_recent": "Lêste 50 jier",
+      "rank_win_note": "Twa werjeften fan deselde plakken: opwaarming oer it folsleine rekord, en it moderne taryf (sûnt 1975) dat de IPCC en WMO oanhelje - it lit de koele mid-ieuske aerosol dip út dy't in folslein rekordtrend fersterket."
     },
     "ga": {
       "rank_title": "Rangú téamh domhanda",
@@ -3418,7 +3626,11 @@
       "cstat_cool": "{country}: {trend}°C in aghaidh na deich mbliana ó 1940. Fuarú, i gcoinne an treocht dhomhanda. Céim #{rank} de {total}.",
       "rank_more": "Taispeáin níos mó",
       "rank_cities": "Cathracha",
-      "rank_countries": "Tíortha"
+      "rank_countries": "Tíortha",
+      "rank_win_label": "Fuinneog téamh",
+      "rank_win_full": "Ó 1940 i leith",
+      "rank_win_recent": "50 bliain anuas",
+      "rank_win_note": "Dhá radharc ar na háiteanna céanna: téamh ar fud an taifead iomlán, agus an ráta nua-aimseartha (ó 1975) a luann an IPCC agus WMO - fágann sé amach an tumadh aerasóil fionnuar lár na haoise a géaraíonn treocht lán-taifead."
     },
     "gl": {
       "rank_title": "Clasificación do quecemento mundial",
@@ -3434,7 +3646,11 @@
       "cstat_cool": "{country}: {trend}°C por década desde 1940. Refrixeración, en contra da tendencia global. Rango #{rank} de {total}.",
       "rank_more": "Mostrar máis",
       "rank_cities": "Cidades",
-      "rank_countries": "Países"
+      "rank_countries": "Países",
+      "rank_win_label": "Ventá de quecemento",
+      "rank_win_full": "Dende 1940",
+      "rank_win_recent": "Últimos 50 anos",
+      "rank_win_note": "Dúas visións dos mesmos lugares: o quecemento ao longo do rexistro completo e a taxa moderna (desde 1975) que citan o IPCC e a OMM: deixa fóra o frío de aerosol de mediados de século que intensifica unha tendencia de récord completo."
     },
     "gom": {
       "rank_title": "संवसारीक उश्णतायेची क्रमवारी",
@@ -3450,7 +3666,11 @@
       "cstat_cool": "{country}: 1940 सावन दर दशकाक {trend}° से.. थंड करप, संवसारीक प्रवृत्ती आड. {total} चो #{rank} क्रमांक.",
       "rank_more": "आनिकूय दाखोवचें",
       "rank_cities": "शारां",
-      "rank_countries": "देशांचो आस्पाव जाता"
+      "rank_countries": "देशांचो आस्पाव जाता",
+      "rank_win_label": "उबें रावपी जनेलां",
+      "rank_win_full": "१९४० सावन",
+      "rank_win_recent": "फाटलीं 50 वर्सां",
+      "rank_win_note": "एकाच सुवातींचे दोन नदर: पुराय विक्रमांतल्यान उश्णताय, आनी आयपीसीसी आनी डब्ल्यूएमओ हांणी उल्लेख केल्लो आधुनीक दर (१९७५ सावन) - तो पुराय विक्रमी प्रवृत्ती खर करपी मध्य शेंकड्यांतलो थंड एरोसोल बुडटी सोडून दिता."
     },
     "gd": {
       "rank_title": "Rangachadh blàthachadh na cruinne",
@@ -3466,7 +3686,11 @@
       "cstat_cool": "{country}: {trend}°C gach deichead bho 1940. Fuarachadh, an aghaidh gluasad na cruinne. Rang #{rank} à {total}.",
       "rank_more": "Seall barrachd",
       "rank_cities": "Bailtean",
-      "rank_countries": "Dùthchannan"
+      "rank_countries": "Dùthchannan",
+      "rank_win_label": "Uinneag blàthachadh",
+      "rank_win_full": "Bho 1940",
+      "rank_win_recent": "50 bliadhna mu dheireadh",
+      "rank_win_note": "Dà shealladh de na h-aon àiteachan: blàthachadh thairis air a’ chlàr slàn, agus an ìre ùr-nodha (bho 1975) a tha an IPCC agus WMO ag ainmeachadh - tha e a’ fàgail a-mach an dip aerosol fionnar meadhan-aoiseil a tha a’ tionndadh gluasad làn-chlàraidh."
     },
     "hmn": {
       "rank_title": "Ntiaj teb ua cua sov qeb duas",
@@ -3482,14 +3706,18 @@
       "cstat_cool": "{country}: {trend}°C ib xyoo caum txij li xyoo 1940. Txias, tawm tsam lub ntiaj teb no. Qib #{rank} ntawm {total}.",
       "rank_more": "Qhia ntxiv",
       "rank_cities": "Lub zos",
-      "rank_countries": "Lub teb chaws"
+      "rank_countries": "Lub teb chaws",
+      "rank_win_label": "Lub qhov rais sov",
+      "rank_win_full": "Txij xyoo 1940",
+      "rank_win_recent": "50 xyoo dhau los",
+      "rank_win_note": "Ob qhov kev pom ntawm tib qhov chaw: ua kom sov thoob plaws tag nrho cov ntaub ntawv, thiab niaj hnub tus nqi (txij li xyoo 1975) uas IPCC thiab WMO hais - nws tawm ntawm qhov txias ib nrab xyoo pua aerosol dip uas ua rau muaj cov ntaub ntawv tag nrho."
     },
     "hr": {
       "rank_title": "Svjetsko zagrijavanje poredak",
       "rank_intro": "Svaki grad rangiran prema brzini zagrijavanja: trend u °C po desetljeću tijekom 1940.-2025. Potražite svoju.",
       "rank_intro_countries": "Svaka zemlja rangirana prema tome koliko brzo se njezini gradovi u prosjeku zagrijavaju: trend u °C po desetljeću tijekom 1940.-2025. Potražite svoju.",
       "rank_city": "Grad",
-      "rank_country": "Država",
+      "rank_country": "Zemlja",
       "rank_search": "Pronađite grad…",
       "rank_search_countries": "Pronađite državu…",
       "rank_empty": "Nijedan grad ne odgovara toj pretrazi.",
@@ -3498,10 +3726,14 @@
       "cstat_cool": "{country}: {trend}°C po desetljeću od 1940. Hlađenje, suprotno globalnom trendu. Rang #{rank} od {total}.",
       "rank_more": "Prikaži više",
       "rank_cities": "Gradovi",
-      "rank_countries": "zemlje"
+      "rank_countries": "zemlje",
+      "rank_win_label": "Prozor za zagrijavanje",
+      "rank_win_full": "Od 1940. godine",
+      "rank_win_recent": "Zadnjih 50 godina",
+      "rank_win_note": "Dva pogleda na ista mjesta: zagrijavanje u cijelom rekordu i moderna stopa (od 1975.) koju navode IPCC i WMO - izostavlja pad hladnog aerosola sredinom stoljeća koji pojačava trend punog rekorda."
     },
     "ig": {
-      "rank_title": "Ọkwa okpomọkụ ụwa",
+      "rank_title": "Ogo okpomọkụ ụwa",
       "rank_intro": "Obodo ọ bụla kwadoro ka ọ na-agba ọsọ ọsọ: usoro na Celsius C kwa afọ karịa 1940-2025. Chọọ nke gị.",
       "rank_intro_countries": "Mba ọ bụla na-eji ọsọ ọsọ obodo ya na-ekpo ọkụ na nkezi: usoro na Celsius C kwa afọ karịa 1940-2025. Chọọ nke gị.",
       "rank_city": "Obodo",
@@ -3514,7 +3746,11 @@
       "cstat_cool": "{country}: {trend}°C kwa afọ kemgbe 1940. Na-ajụ oyi, megidere ọnọdụ ụwa. Ọkwa #{rank} nke {total}.",
       "rank_more": "Gosikwuo",
       "rank_cities": "Obodo",
-      "rank_countries": "Mba"
+      "rank_countries": "Mba",
+      "rank_win_label": "Window na-ekpo ọkụ",
+      "rank_win_full": "Kemgbe 1940",
+      "rank_win_recent": "Afọ 50 gara aga",
+      "rank_win_note": "Echiche abụọ nke otu ebe: ikpo ọkụ n'ofe ndekọ zuru oke, yana ọnụego ọgbara ọhụrụ (ebe ọ bụ na 1975) nke IPCC na WMO kwuru - ọ na-ahapụ ikuku ikuku ikuku dị n'etiti narị afọ nke na-eme ka usoro ndekọ zuru ezu."
     },
     "rw": {
       "rank_title": "Urutonde rwubushyuhe bwisi",
@@ -3530,7 +3766,11 @@
       "cstat_cool": "{country}: {trend} ° C mu myaka icumi kuva 1940. Gukonja, kurwanya isi yose. Urutonde # {rank} rwa {total}.",
       "rank_more": "Erekana byinshi",
       "rank_cities": "Imijyi",
-      "rank_countries": "Ibihugu"
+      "rank_countries": "Ibihugu",
+      "rank_win_label": "Idirishya",
+      "rank_win_full": "Kuva mu 1940",
+      "rank_win_recent": "Imyaka 50 ishize",
+      "rank_win_note": "Ibitekerezo bibiri byahantu hamwe: gushyuha mubyanditswe byose, hamwe nigipimo kigezweho (kuva 1975) IPCC na WMO bavuga - gisiga ikonje rya aerosol yo mu kinyejana rwagati rwagati ikomeza ibintu byuzuye."
     },
     "ilo": {
       "rank_title": "Ranggo ti panagbara ti lubong",
@@ -3546,7 +3786,11 @@
       "cstat_cool": "{country}: {trend}°C iti tunggal dekada manipud idi 1940. Panagpalamiis, maibusor iti sangalubongan nga uso. Ranggo #{rank} ti {total}.",
       "rank_more": "Ipakita ti ad-adu pay",
       "rank_cities": "Dagiti siudad",
-      "rank_countries": "Dagiti pagilian"
+      "rank_countries": "Dagiti pagilian",
+      "rank_win_label": "Panagbara ti tawa",
+      "rank_win_full": "Manipud idi 1940",
+      "rank_win_recent": "Naudi a 50 a tawen",
+      "rank_win_note": "Dua a panagkita kadagiti agpapada a lugar: panagbara iti ballasiw ti naan-anay a rekord, ken ti moderno a rate (manipud idi 1975) a dakamaten ti IPCC ken WMO - daytoy ket mangibati ti nalamiis a tengnga ti siglo nga aerosol a panagdip a mangparangkis ti naan-anay a rekord nga uso."
     },
     "xh": {
       "rank_title": "Inqanaba lokufudumala kwehlabathi",
@@ -3562,7 +3806,11 @@
       "cstat_cool": "{country}: {trend}°C ngeshumi leminyaka ukususela ngo-1940. Ukupholisa, ngokuchasene nentsingiselo yehlabathi. Inqanaba #{rank} ye {total}.",
       "rank_more": "Bonisa ngakumbi",
       "rank_cities": "Izixeko",
-      "rank_countries": "Amazwe"
+      "rank_countries": "Amazwe",
+      "rank_win_label": "Ifestile yokufudumala",
+      "rank_win_full": "Ukususela ngowe-1940",
+      "rank_win_recent": "Iminyaka engama-50 edluleyo",
+      "rank_win_note": "Iimbono ezimbini zeendawo ezifanayo: ukufudumala kwirekhodi epheleleyo, kunye nezinga langoku (ukususela ngo-1975) i-IPCC kunye ne-WMO ekhankanyayo - ishiya ngaphandle idiphu ye-aerosol epholileyo ephakathi kwenkulungwane eyenza irekhodi epheleleyo."
     },
     "zu": {
       "rank_title": "Izinga lokufudumala komhlaba",
@@ -3578,7 +3826,11 @@
       "cstat_cool": "{country}: {trend}°C ngeshumi leminyaka kusukela ngo-1940. Ukupholisa, ngokumelene nethrendi yomhlaba. Izinga #{rank} kwezingu-{total}.",
       "rank_more": "Bonisa okwengeziwe",
       "rank_cities": "Amadolobha",
-      "rank_countries": "Amazwe"
+      "rank_countries": "Amazwe",
+      "rank_win_label": "Iwindi lokufudumala",
+      "rank_win_full": "Kusukela ngo-1940",
+      "rank_win_recent": "Iminyaka engu-50 edlule",
+      "rank_win_note": "Ukubuka okubili kwezindawo ezifanayo: ukufudumala kulo lonke irekhodi eligcwele, kanye nezinga lesimanje (kusukela ngo-1975) i-IPCC kanye ne-WMO ecashuniwe - lishiya ngaphandle idiphu epholile ye-aerosol yamaphakathi nekhulu leminyaka elenza irekhodi eliphelele."
     },
     "jv": {
       "rank_title": "Peringkat pemanasan donya",
@@ -3594,7 +3846,11 @@
       "cstat_cool": "{country}: {trend}°C saben dasawarsa wiwit 1940. Pendinginan, nglawan tren global. Peringkat #{rank} saka {total}.",
       "rank_more": "Tampilake liyane",
       "rank_cities": "Kutha-kutha",
-      "rank_countries": "negara-negara"
+      "rank_countries": "negara-negara",
+      "rank_win_label": "Jendela anget",
+      "rank_win_full": "Wiwit taun 1940",
+      "rank_win_recent": "50 taun kepungkur",
+      "rank_win_note": "Rong tampilan saka panggonan sing padha: anget ing rekor lengkap, lan tingkat modern (wiwit 1975) sing diarani IPCC lan WMO - ninggalake aerosol aerosol abad pertengahan sing nyenengake tren rekaman lengkap."
     },
     "ht": {
       "rank_title": "Klasman rechofman planèt la",
@@ -3610,7 +3866,11 @@
       "cstat_cool": "{country}: {trend}°C pou chak deseni depi 1940. Refwadisman, kont tandans mondyal la. Ranje #{rank} nan {total}.",
       "rank_more": "Montre plis",
       "rank_cities": "Vil yo",
-      "rank_countries": "Peyi yo"
+      "rank_countries": "Peyi yo",
+      "rank_win_label": "Fenèt chofe",
+      "rank_win_full": "Depi 1940",
+      "rank_win_recent": "50 dènye ane yo",
+      "rank_win_note": "De pwen de vi sou menm kote yo: chofe atravè tout dosye a, ak to modèn (depi 1975) ke IPCC a ak WMO site - li kite soti nan plonje ayewosòl fre mitan syèk la ki pipi yon tandans nan dosye konplè."
     },
     "kri": {
       "rank_title": "Di ranking fɔ di wɔl wam",
@@ -3626,7 +3886,11 @@
       "cstat_cool": "{country}: {trend}°C pan deka frɔm 1940. Kulin, agens di glob ɔl tren. Rank #{rank} di {total}.",
       "rank_more": "Sho mɔ",
       "rank_cities": "Siti dɛn",
-      "rank_countries": "Kɔntri dɛn"
+      "rank_countries": "Kɔntri dɛn",
+      "rank_win_label": "Winda we de wam",
+      "rank_win_full": "Frɔm 1940",
+      "rank_win_recent": "Las 50 ia",
+      "rank_win_note": "Tu we fɔ si di sem ples: fɔ wam akɔdin to di ful rɛkɛd, ɛn di mɔdan rit (sins 1975) we di IPCC ɛn WMO de tɔk bɔt - i de lɛf di kul mid-sɛnchɔri aerosol dip we de stip wan ful-rɛkɔd tren."
     },
     "ku": {
       "rank_title": "Rêzeya germbûna cîhanê",
@@ -3642,7 +3906,11 @@
       "cstat_cool": "{country}: {trend}°C serê dehsalekê ji sala 1940-an vir ve. Sarbûn, li dijî meyla cîhanî. Rêzeya #{rank} ya {total}.",
       "rank_more": "Zêdetir nîşan bide",
       "rank_cities": "Cities",
-      "rank_countries": "Welatên"
+      "rank_countries": "Welatên",
+      "rank_win_label": "Pencereya germkirinê",
+      "rank_win_full": "Ji sala 1940",
+      "rank_win_recent": "50 salên dawî",
+      "rank_win_note": "Du nerînên heman cihan: germbûna li seranserê qeyda tevahî, û rêjeya nûjen (ji sala 1975-an vir ve) ku IPCC û WMO destnîşan dikin - ew ji xwarbûna aerosolê ya sar a nîv-sedsalî ya ku meylek tev-rekorê zexm dike derdixe."
     },
     "lv": {
       "rank_title": "Pasaules sasilšanas reitings",
@@ -3658,12 +3926,16 @@
       "cstat_cool": "{country}: {trend}°C desmitgadē kopš 1940. gada. Atdzesēšana, pretēji globālajām tendencēm. #{rank}. vieta no {total}.",
       "rank_more": "Rādīt vairāk",
       "rank_cities": "Pilsētas",
-      "rank_countries": "valstis"
+      "rank_countries": "valstis",
+      "rank_win_label": "Sildošs logs",
+      "rank_win_full": "Kopš 1940. gada",
+      "rank_win_recent": "Pēdējie 50 gadi",
+      "rank_win_note": "Divi vienu un to pašu vietu skati: sasilšana visā rekordā un mūsdienu temps (kopš 1975. gada), ko citē IPCC un WMO — tas atstāj garām gadsimta vidus vēso aerosola kritumu, kas pastiprina rekorda tendenci."
     },
     "lt": {
       "rank_title": "Pasaulio atšilimo reitingas",
       "rank_intro": "Kiekvienas miestas reitinguojamas pagal tai, kaip greitai atšilo: °C tendencija per dešimtmetį 1940–2025 m. Ieškokite savo.",
-      "rank_intro_countries": "Kiekviena šalis reitinguojama pagal tai, kaip greitai jos miestai vidutiniškai šyla: °C tendencija per dešimtmetį 1940–2025 m. Ieškokite savo.",
+      "rank_intro_countries": "Kiekviena šalis reitinguojama pagal tai, kaip greitai jos miestai šyla vidutiniškai: °C tendencija per dešimtmetį 1940–2025 m. Ieškokite savo.",
       "rank_city": "Miestas",
       "rank_country": "Šalis",
       "rank_search": "Rasti miestą…",
@@ -3674,7 +3946,11 @@
       "cstat_cool": "{country}: {trend}°C per dešimtmetį nuo 1940 m. Vėsinimas, atsižvelgiant į pasaulines tendencijas. #{rank} reitingas iš {total}.",
       "rank_more": "Rodyti daugiau",
       "rank_cities": "Miestai",
-      "rank_countries": "Šalys"
+      "rank_countries": "Šalys",
+      "rank_win_label": "Šildomas langas",
+      "rank_win_full": "Nuo 1940 m",
+      "rank_win_recent": "Pastaruosius 50 metų",
+      "rank_win_note": "Du vaizdai į tas pačias vietas: atšilimas per visą rekordą ir šiuolaikinis tempas (nuo 1975 m.), kurį nurodo IPCC ir WMO – tai nepalieka vėsaus amžiaus vidurio aerozolio kritimo, kuris padidina rekordinę tendenciją."
     },
     "la": {
       "rank_title": "Orbis Terrarum calefactio ranking",
@@ -3690,12 +3966,16 @@
       "cstat_cool": "{country}: {trend}°C per decade since 1940. Cooling, against the global trend. Rank #{rank} of {total}.",
       "rank_more": "Monstra plura",
       "rank_cities": "urbes",
-      "rank_countries": "regiones"
+      "rank_countries": "regiones",
+      "rank_win_label": "Calefaciens fenestra",
+      "rank_win_full": "Cum 1940",
+      "rank_win_recent": "Last L annis",
+      "rank_win_note": "Duae sententiae eorundem locorum: per plenam recordum calefaciens, et moderna rate (ab anno 1975) quod IPCC et WMO citant - medium saeculum aerosol frigidum relinquit, qui plenam recordationem inclinat."
     },
     "ln": {
       "rank_title": "Classement ya réchauffement mondial",
       "rank_intro": "Engumba nyonso ezwamaki na molɔngɔ na kotalela ndenge oyo ezali kokóma molunge nokinoki: tendance ya °C na mbula zomi na boumeli ya 1940-2025. Luká oyo ya yo.",
-      "rank_intro_countries": "Mboka nyonso ezwamaki na molɔngɔ na ndenge oyo bingumba na yango ezali kokóma molunge nokinoki na mwayene: momeseno ya °C na boumeli ya mbula zomi na boumeli ya 1940-2025. Luká oyo ya yo.",
+      "rank_intro_countries": "Mboka nyonso ezwamaki na molɔngɔ na kotalela mbangu ndenge bingumba na yango ezali kokóma molunge na mwayene: tendance ya °C na mbula zomi na boumeli ya 1940-2025. Luká oyo ya yo.",
       "rank_city": "Engumba",
       "rank_country": "Mboka",
       "rank_search": "Boluka engumba moko...",
@@ -3703,10 +3983,14 @@
       "rank_empty": "Engumba moko te ekokani na bolukiluki wana.",
       "cstat_title": "Mboka na bino ezali ko chauffer ndenge nini?",
       "cstat_line": "{country}: {trend}°C na mbula zomi banda 1940, mbangu koleka {pct}% ya mokili. Molongo #{rank} ya {total}.",
-      "cstat_cool": "{country}: {trend}°C na mibu zomi banda 1940. Kopelisa, contre tendance mondiale. Molongo #{rank} ya {total}.",
+      "cstat_cool": "{country}: {trend}°C na mbula zomi banda 1940. Refroidissement, contre tendance mondiale. Molongo #{rank} ya {total}.",
       "rank_more": "Lakisa makambo mosusu",
       "rank_cities": "Bingumba",
-      "rank_countries": "Bikólo"
+      "rank_countries": "Bikólo",
+      "rank_win_label": "Fenêtre ya chauffage",
+      "rank_win_full": "Banda 1940",
+      "rank_win_recent": "Mbula 50 oyo euti koleka",
+      "rank_win_note": "Botali mibale ya bisika moko: bozongisi molunge na kati ya rekord mobimba, mpe taux ya mikolo oyo (uta 1975) oyo GIEC mpe OMM batangi - etiki libanda ya malili ya katikati ya ekeke ya kozinda ya aérosol oyo ematisaka tendance ya rekord mobimba."
     },
     "lg": {
       "rank_title": "Ensengeka y’ebbugumu ly’ensi",
@@ -3722,7 +4006,11 @@
       "cstat_cool": "{country}: {trend}°C buli myaka kkumi okuva mu 1940. Okunyogoza, okusinziira ku muze gw’ensi yonna. Ekifo #{rank} ku {total}.",
       "rank_more": "Laga ebisingawo",
       "rank_cities": "Ebibuga",
-      "rank_countries": "Amawanga"
+      "rank_countries": "Amawanga",
+      "rank_win_label": "Eddirisa eribuguma",
+      "rank_win_full": "Okuva mu 1940",
+      "rank_win_recent": "Emyaka 50 egiyise",
+      "rank_win_note": "Endowooza bbiri ez’ebifo bye bimu: okubuguma mu likodi enzijuvu, n’omutindo ogw’omulembe (okuva mu 1975) IPCC ne WMO gwe bajuliza - kireka ebweru okunnyika kw’omukka okunyogovu okw’omu makkati g’ekyasa okunyweza omuze gwa likodi enzijuvu."
     },
     "lb": {
       "rank_title": "Welterwiermung Ranking",
@@ -3738,7 +4026,11 @@
       "cstat_cool": "{country}: {trend}°C pro Jorzéngt zënter 1940. Ofkillung, géint de weltwäiten Trend. Rank #{rank} vun {total}.",
       "rank_more": "Méi weisen",
       "rank_cities": "Stied",
-      "rank_countries": "Länner"
+      "rank_countries": "Länner",
+      "rank_win_label": "Erwiermungsfenster",
+      "rank_win_full": "Zënter 1940",
+      "rank_win_recent": "Déi lescht 50 Joer",
+      "rank_win_note": "Zwou Meenungen op déiselwecht Plazen: Erwiermung iwwer de ganze Rekord, an de modernen Taux (zënter 1975) deen d'IPCC an d'WMO zitéieren - et léisst de coole Mëtt-Joerhonnert Aerosol-Dip eraus, deen e vollen Rekordtrend verstäerkt."
     },
     "hu": {
       "rank_title": "Felmelegedési világranglista",
@@ -3754,7 +4046,11 @@
       "cstat_cool": "{country}: {trend}°C évtizedenként 1940 óta. Lehűlés, a globális trenddel szemben. {total}/{rank}. helyezés.",
       "rank_more": "Mutasson többet",
       "rank_cities": "Városok",
-      "rank_countries": "Országok"
+      "rank_countries": "Országok",
+      "rank_win_label": "Melegítő ablak",
+      "rank_win_full": "1940 óta",
+      "rank_win_recent": "Az elmúlt 50 év",
+      "rank_win_note": "Két nézet ugyanarról a helyről: a teljes rekordon átívelő felmelegedés, valamint az IPCC és a WMO által hivatkozott modern sebesség (1975 óta) – kihagyja a hűvös, századközi aeroszolos zuhanást, amely a rekordot jelentő trendet meredíti."
     },
     "mg": {
       "rank_title": "Laharana momba ny fiakaran'ny maripana eran-tany",
@@ -3770,12 +4066,16 @@
       "cstat_cool": "{country}: {trend}°C isaky ny folo taona nanomboka tamin'ny 1940. Mangatsiaka, manohitra ny fironana manerantany. Laharana #{rank} amin'ny {total}.",
       "rank_more": "Asehoy bebe kokoa",
       "rank_cities": "Tanàna",
-      "rank_countries": "Firenena"
+      "rank_countries": "Firenena",
+      "rank_win_label": "Varavarankely mafana",
+      "rank_win_full": "Nanomboka tamin'ny 1940",
+      "rank_win_recent": "50 taona lasa",
+      "rank_win_note": "Fomba fijery roa amin'ny toerana iray ihany: hafanana manerana ny rakitsoratra feno, ary ny tahan'ny maoderina (hatramin'ny 1975) izay lazain'ny IPCC sy WMO - dia mamela ny aerosol mangatsiaka amin'ny tapaky ny taonjato fahasivy izay mampitombo ny fironana feno."
     },
     "mt": {
       "rank_title": "Klassifikazzjoni tat-tisħin tad-dinja",
-      "rank_intro": "Kull belt ikklassifikata skond kemm qed tissaħħan: it-tendenza f'°C kull għaxar snin matul l-1940-2025. Fittex għal tiegħek.",
-      "rank_intro_countries": "Kull pajjiż ikklassifikat skont kemm il-bliet tiegħu qed jisħnu bħala medja: it-tendenza f'°C għal kull għaxar snin matul l-1940-2025. Fittex għal tiegħek.",
+      "rank_intro": "Kull belt ikklassifikata skond kemm qed tissaħħan: ix-xejra f'°C kull għaxar snin matul l-1940-2025. Fittex għal tiegħek.",
+      "rank_intro_countries": "Kull pajjiż ikklassifikat skond kemm il-bliet tiegħu qed jisħnu bħala medja: it-tendenza f'°C għal kull għaxar snin matul l-1940-2025. Fittex għal tiegħek.",
       "rank_city": "Belt",
       "rank_country": "Pajjiż",
       "rank_search": "Sib belt...",
@@ -3786,7 +4086,11 @@
       "cstat_cool": "{country}: {trend}°C kull għaxar snin mill-1940. Tkessiħ, kontra t-tendenza globali. Rank #{rank} ta' {total}.",
       "rank_more": "Uri aktar",
       "rank_cities": "Bliet",
-      "rank_countries": "Pajjiżi"
+      "rank_countries": "Pajjiżi",
+      "rank_win_label": "Tieqa tat-tisħin",
+      "rank_win_full": "Mill-1940",
+      "rank_win_recent": "L-aħħar 50 sena",
+      "rank_win_note": "Żewġ fehmiet tal-istess postijiet: it-tisħin madwar ir-rekord sħiħ, u r-rata moderna (mill-1975) li l-IPCC u l-WMO jikkwotaw - tħalli barra l-aerosol dip frisk ta 'nofs is-seklu li tkabbar xejra ta' rekord sħiħ."
     },
     "lus": {
       "rank_title": "Khawvel lum chhoh zelna ranking",
@@ -3802,7 +4106,11 @@
       "cstat_cool": "{country}: Kum 1940 atang khan kum sawm khatah {trend}°C.Cooling, khawvel pum huap thil kalphung kalh zawngin. Rank #{rank} ah {total} a ni.",
       "rank_more": "A dang pawh entir rawh",
       "rank_cities": "Khawpui hrang hrang",
-      "rank_countries": "Ram hrang hrang"
+      "rank_countries": "Ram hrang hrang",
+      "rank_win_label": "Warming window a ni",
+      "rank_win_full": "Kum 1940 atang khan",
+      "rank_win_recent": "Kum 50 kalta chhung khan",
+      "rank_win_note": "Hmun inang thlirna pahnih: record kimchang pum puia lum chhoh zel, leh IPCC leh WMO-in an tarlan tunlai rate (1975 atang khan) - full-record trend tizualtu mid-century aerosol dip cool tak chu a kalsan a ni."
     },
     "mi": {
       "rank_title": "Te whakamahana o te ao",
@@ -3817,8 +4125,12 @@
       "cstat_line": "{country}: {trend}°C ia tekau tau mai i te tau 1940, tere ake i te {pct}% o te ao. Rarangi #{rank} o {total}.",
       "cstat_cool": "{country}: {trend}°C ia tekau tau mai i te 1940. Te whakamatao, ki te ahua o te ao. Rarangi #{rank} o {total}.",
       "rank_more": "Whakaaturia mai ano",
-      "rank_cities": "Taone",
-      "rank_countries": "Nga whenua"
+      "rank_cities": "Nga Taone",
+      "rank_countries": "Nga whenua",
+      "rank_win_label": "Matapihi whakamahana",
+      "rank_win_full": "Mai i te tau 1940",
+      "rank_win_recent": "50 tau kua hipa",
+      "rank_win_note": "E rua nga tirohanga mo nga waahi kotahi: te whakamahana puta noa i te rekoata katoa, me te reiti hou (mai i te tau 1975) e kiia ana e te IPCC me te WMO - ka mahue i te hauhautanga o te hauhautanga o te rau tau waenga e piki ana te ia o nga rekoata."
     },
     "no": {
       "rank_title": "Verdensoppvarmingsrangering",
@@ -3834,7 +4146,11 @@
       "cstat_cool": "{country}: {trend}°C per tiår siden 1940. Nedkjøling, mot den globale trenden. Rangering #{rank} av {total}.",
       "rank_more": "Vis mer",
       "rank_cities": "Byer",
-      "rank_countries": "Land"
+      "rank_countries": "Land",
+      "rank_win_label": "Varmende vindu",
+      "rank_win_full": "Siden 1940",
+      "rank_win_recent": "Siste 50 år",
+      "rank_win_note": "To visninger av de samme stedene: oppvarming over hele rekorden, og den moderne hastigheten (siden 1975) som IPCC og WMO siterer - det utelater den kjølige aerosoldeppen fra midten av århundret som øker en full rekordtrend."
     },
     "ny": {
       "rank_title": "Kutentha kwa dziko",
@@ -3844,13 +4160,17 @@
       "rank_country": "Dziko",
       "rank_search": "Pezani mzinda…",
       "rank_search_countries": "Pezani dziko…",
-      "rank_empty": "Palibe mzinda womwe ukufanana ndikusakaku.",
+      "rank_empty": "Palibe mzinda womwe ukufanana ndikusaka kumeneko.",
       "cstat_title": "Kodi dziko lanu likutentha bwanji?",
       "cstat_line": "{country}: {trend}°C pazaka khumi kuyambira 1940, mwachangu kuposa {pct}% yapadziko lonse lapansi. Udindo #{rank} wa {total}.",
       "cstat_cool": "{country}: {trend}°C pazaka khumi kuyambira 1940. Kuzizira, motsutsana ndi zomwe zikuchitika padziko lonse lapansi. Udindo #{rank} wa {total}.",
       "rank_more": "Onetsani zambiri",
       "rank_cities": "Mizinda",
-      "rank_countries": "Mayiko"
+      "rank_countries": "Mayiko",
+      "rank_win_label": "Kutentha zenera",
+      "rank_win_full": "Kuyambira 1940",
+      "rank_win_recent": "Zaka 50 zapitazi",
+      "rank_win_note": "Mawonedwe awiri a malo omwewo: kutentha kwambiri, komanso kuchuluka kwamakono (kuyambira 1975) komwe IPCC ndi WMO akutchula - kumasiya kuviika kozizira kwapakati pazaka zam'ma 1900 komwe kumakulitsa mbiri yonse."
     },
     "om": {
       "rank_title": "Sadarkaa ho'ina addunyaa",
@@ -3866,7 +4186,11 @@
       "cstat_cool": "{country}: {trend}°C kurmaana tokko keessatti bara 1940 irraa eegalee.Qobbaa’uu, faallaa adeemsa addunyaa. Sadarkaa #{rank} {total} keessaa.",
       "rank_more": "Dabalata agarsiisi",
       "rank_cities": "Magaalota",
-      "rank_countries": "Biyyoota"
+      "rank_countries": "Biyyoota",
+      "rank_win_label": "Foddaa ho'isuu",
+      "rank_win_full": "Bara 1940 irraa eegalee",
+      "rank_win_recent": "Waggoota 50 darban",
+      "rank_win_note": "Ilaalcha lama bakka walfakkaataa: ho'isuu galmee guutuu keessaa, fi saffisa ammayyaa (bara 1975 irraa eegalee) kan IPCC fi WMO caqasan - inni qabbanaa'aa walakkeessa jaarraa eroosoolii cuuphamuu kan adeemsa galmee guutuu cimsu dhiisa."
     },
     "uz": {
       "rank_title": "Jahon isishi reytingi",
@@ -3882,7 +4206,11 @@
       "cstat_cool": "{country}: 1940 yildan beri har oʻn yilda {trend}°C. Sovutish, global tendentsiyaga qarshi. {total}dan №{rank}-darajali.",
       "rank_more": "Ko'proq ko'rsatish",
       "rank_cities": "Shaharlar",
-      "rank_countries": "Mamlakatlar"
+      "rank_countries": "Mamlakatlar",
+      "rank_win_label": "Isitish oynasi",
+      "rank_win_full": "1940 yildan beri",
+      "rank_win_recent": "Oxirgi 50 yil",
+      "rank_win_note": "Xuddi shu joylarning ikkita ko'rinishi: to'liq rekord bo'ylab isinish va IPCC va WMO keltirgan zamonaviy ko'rsatkich (1975 yildan beri) - bu to'liq rekord tendentsiyani kuchaytiradigan asr o'rtalarida sovuq aerozol tushishini qoldiradi."
     },
     "ro": {
       "rank_title": "Clasamentul încălzirii mondiale",
@@ -3898,7 +4226,11 @@
       "cstat_cool": "{country}: {trend}°C pe deceniu din 1940. Răcire, contrar tendinței globale. Locul #{rank} din {total}.",
       "rank_more": "Arată mai multe",
       "rank_cities": "Orașe",
-      "rank_countries": "Țări"
+      "rank_countries": "Țări",
+      "rank_win_label": "Fereastra de încălzire",
+      "rank_win_full": "Din 1940",
+      "rank_win_recent": "Ultimii 50 de ani",
+      "rank_win_note": "Două puncte de vedere ale acelorași locuri: încălzirea de-a lungul întregului record și rata modernă (din 1975) pe care IPCC și OMM o citează - omite scăderea rece de aerosoli de la mijlocul secolului care accentuează o tendință record."
     },
     "qu": {
       "rank_title": "Kay pacha q’uñichiy ranking",
@@ -3914,11 +4246,15 @@
       "cstat_cool": "{country}: {trend}°C sapa chunka watamanta 1940 watamantapacha.Q’uñichiy, pachantinpi tendenciapa contranpi. Ranki #{rank} de {total}.",
       "rank_more": "Astawan rikuchiy",
       "rank_cities": "Llaqtakuna",
-      "rank_countries": "Llaqtakuna"
+      "rank_countries": "Llaqtakuna",
+      "rank_win_label": "Ventana q’uñichiy",
+      "rank_win_full": "1940 watamanta pacha",
+      "rank_win_recent": "Qhipa 50 watakuna",
+      "rank_win_note": "Iskay qhawariykuna kikin kitikunamanta: q'uñichiy tukuy registro hunt'aypi, chaymanta kunan pacha tasa (1975 watamanta) mayqinkunatachus IPCC chaymanta OMM citanku - saqillan q'uñi chawpi pachak aerosol challpuyta mayqinchus hunt'asqa registro tendenciata qaqayachin."
     },
     "sm": {
       "rank_title": "Fa'avasegaga ole lalolagi",
-      "rank_intro": "O aai uma e fa'avasega i le saoasaoa o le mafanafana: o le tulaga i le °C i le sefulu tausaga i luga ole 1940-2025. Su'e lau.",
+      "rank_intro": "O nu'u uma e fa'avasega i le saoasaoa o le mafanafana: o le tulaga i le °C i le sefulu tausaga i luga ole 1940-2025. Su'e lau.",
       "rank_intro_countries": "O atunuu uma e fa'avasega i le saoasaoa o le mafanafana o ona 'a'ai i le averesi: o le tulaga i le °C i le sefulu tausaga i luga ole 1940-2025. Su'e lau.",
       "rank_city": "Aai",
       "rank_country": "Atunuu",
@@ -3930,7 +4266,11 @@
       "cstat_cool": "{country}: {trend}°C i le sefulu tausaga talu mai le 1940. Fa'alili, fa'asaga i le tulaga o le lalolagi. Tulaga #{rank} o le {total}.",
       "rank_more": "Faaali atili",
       "rank_cities": "A'ai",
-      "rank_countries": "Atunuu"
+      "rank_countries": "Atunuu",
+      "rank_win_label": "Faamalama mafanafana",
+      "rank_win_full": "Talu mai le 1940",
+      "rank_win_recent": "50 tausaga talu ai",
+      "rank_win_note": "E lua vaaiga i nofoaga lava e tasi: mafanafana i luga o faʻamaumauga atoa, ma le fua faʻaonaponei (talu mai le 1975) o loʻo taʻua e le IPCC ma le WMO - e tuʻu ese ai le malulu o le aerosol i le ogatotonu o le seneturi lea e faʻateleina ai se faʻamaumauga atoa."
     },
     "st": {
       "rank_title": "Boemo ba ho futhumala ha lefatše",
@@ -3946,7 +4286,11 @@
       "cstat_cool": "{country}: {trend}°C ka lilemo tse leshome ho tloha ka 1940. Ho pholisa, khahlanong le mokhoa oa lefats'e. Boemo ba #{rank} ba {total}.",
       "rank_more": "Hlahisa ho feta",
       "rank_cities": "Metse",
-      "rank_countries": "Linaha"
+      "rank_countries": "Linaha",
+      "rank_win_label": "Fesetere e futhumatsang",
+      "rank_win_full": "Ho tloha ka 1940",
+      "rank_win_recent": "Lilemo tse 50 tse fetileng",
+      "rank_win_note": "Maikutlo a mabeli a libaka tse tšoanang: ho futhumala ho pholletsa le rekoto e felletseng, le sekhahla sa sejoale-joale (ho tloha ka 1975) seo IPCC le WMO li qotsang ka sona - e siea kantle ho phokotso ea aerosol ea bohareng ba lekholo e etsang hore rekoto e felletseng."
     },
     "nso": {
       "rank_title": "Maemo a go ruthetša ga lefase",
@@ -3962,7 +4306,11 @@
       "cstat_cool": "{country}: {trend}°C ka ngwagasome go tloga ka 1940. Go fodiša, kgahlanong le tshekamelo ya lefase ka bophara. Maemo #{rank} a {total}.",
       "rank_more": "Bontšha tše dingwe",
       "rank_cities": "Metse",
-      "rank_countries": "Dinaga"
+      "rank_countries": "Dinaga",
+      "rank_win_label": "Lefasetere la go ruthetša",
+      "rank_win_full": "Ga e sa le go tloga ka 1940",
+      "rank_win_recent": "Mengwaga ye 50 ya go feta",
+      "rank_win_note": "Dipono tše pedi tša mafelo a go swana: go ruthetša go ralala le rekoto ye e tletšego, le seelo sa sebjalebjale (go tloga ka 1975) seo IPCC le WMO di se tsopolago - e tlogela go ina ga aerosol mo go fodilego ga bogareng bja ngwagakgolo mo go steepens tshekamelo ya rekoto ka botlalo."
     },
     "sq": {
       "rank_title": "Renditja e ngrohjes botërore",
@@ -3978,7 +4326,11 @@
       "cstat_cool": "{country}: {trend}°C për dekadë që nga viti 1940. Ftohje, kundër trendit global. Renditja #{rank} nga {total}.",
       "rank_more": "Trego më shumë",
       "rank_cities": "Qytetet",
-      "rank_countries": "shtetet"
+      "rank_countries": "shtetet",
+      "rank_win_label": "Dritarja e ngrohjes",
+      "rank_win_full": "Që nga viti 1940",
+      "rank_win_recent": "50 vitet e fundit",
+      "rank_win_note": "Dy pamje të të njëjtave vende: ngrohja në të gjithë rekordin e plotë dhe shkalla moderne (që nga viti 1975) që citojnë IPCC dhe WMO - ajo lë jashtë rënies së ftohtë të aerosolit të mesit të shekullit që rrit një prirje rekord të plotë."
     },
     "sk": {
       "rank_title": "Rebríček svetového otepľovania",
@@ -3994,7 +4346,11 @@
       "cstat_cool": "{country}: {trend}°C za desaťročie od roku 1940. Ochladzovanie, proti globálnemu trendu. Poradie č. {rank} z {total}.",
       "rank_more": "Ukáž viac",
       "rank_cities": "Mestá",
-      "rank_countries": "krajiny"
+      "rank_countries": "krajiny",
+      "rank_win_label": "Ohrievacie okno",
+      "rank_win_full": "Od roku 1940",
+      "rank_win_recent": "Posledných 50 rokov",
+      "rank_win_note": "Dva pohľady na tie isté miesta: otepľovanie v úplnom rekorde a moderná miera (od roku 1975), ktorú uvádzajú IPCC a WMO – vynecháva chladný aerosólový prepad z polovice storočia, ktorý zostrmuje trend plných rekordov."
     },
     "sl": {
       "rank_title": "Lestvica svetovnega segrevanja",
@@ -4010,7 +4366,11 @@
       "cstat_cool": "{country}: {trend}°C na desetletje od leta 1940. Hlajenje v nasprotju s svetovnim trendom. Uvrstitev #{rank} od {total}.",
       "rank_more": "Pokaži več",
       "rank_cities": "Mesta",
-      "rank_countries": "Države"
+      "rank_countries": "Države",
+      "rank_win_label": "Ogrevanje okna",
+      "rank_win_full": "Od leta 1940",
+      "rank_win_recent": "Zadnjih 50 let",
+      "rank_win_note": "Dva pogleda na iste kraje: segrevanje v celotnem rekordu in sodobna stopnja (od leta 1975), ki jo navajata IPCC in WMO - izpušča hladen padec aerosolov sredi stoletja, ki povečuje trend polnega rekorda."
     },
     "so": {
       "rank_title": "Qiimaynta kulaylka aduunka",
@@ -4026,7 +4386,11 @@
       "cstat_cool": "{country}: {trend}°C tobankii sano ee la soo dhaafay ilaa 1940. Qaboojin, oo ka soo horjeeda isbeddelka caalamiga ah. Darajada #{rank} ee {total}.",
       "rank_more": "Wax badan muuji",
       "rank_cities": "Magaalooyinka",
-      "rank_countries": "Wadamada"
+      "rank_countries": "Wadamada",
+      "rank_win_label": "Daaqadda kululaynta",
+      "rank_win_full": "Ilaa 1940kii",
+      "rank_win_recent": "50kii sano ee la soo dhaafay",
+      "rank_win_note": "Laba aragtiyood oo isku meel ah: kululaynta guud ahaan rikoorka buuxa, iyo heerka casriga ah (ilaa 1975) ee IPCC iyo WMO ay soo xiganayeen - waxay ka baxaysaa qulqulka hawada qabow ee qarniga dhexe taasoo kor u qaadaysa isbeddel buuxa."
     },
     "fi": {
       "rank_title": "Maailman lämpenemisen ranking",
@@ -4042,7 +4406,11 @@
       "cstat_cool": "{country}: {trend}°C vuosikymmenessä vuodesta 1940 lähtien. Jäähtyminen maailmanlaajuista trendiä vastaan. Sijoitus #{rank}/{total}.",
       "rank_more": "Näytä lisää",
       "rank_cities": "kaupungit",
-      "rank_countries": "maat"
+      "rank_countries": "maat",
+      "rank_win_label": "Lämmittävä ikkuna",
+      "rank_win_full": "Vuodesta 1940",
+      "rank_win_recent": "Viimeiset 50 vuotta",
+      "rank_win_note": "Kaksi näkymää samoista paikoista: lämpeneminen koko ennätyksen yli ja nykyaikainen nopeus (vuodesta 1975), jonka IPCC ja WMO mainitsevat - se jättää pois vuosisadan puolivälin viileän aerosolipudotuksen, joka nostaa täyden ennätystrendin."
     },
     "sv": {
       "rank_title": "Världsuppvärmningsranking",
@@ -4058,7 +4426,11 @@
       "cstat_cool": "{country}: {trend}°C per decennium sedan 1940. Nedkylning, mot den globala trenden. Placering #{rank} av {total}.",
       "rank_more": "Visa mer",
       "rank_cities": "Städer",
-      "rank_countries": "Länder"
+      "rank_countries": "Länder",
+      "rank_win_label": "Värmande fönster",
+      "rank_win_full": "Sedan 1940",
+      "rank_win_recent": "Senaste 50 åren",
+      "rank_win_note": "Två vyer av samma platser: uppvärmning över hela rekordet, och den moderna takt (sedan 1975) som IPCC och WMO citerar - det utelämnar den svala aerosoldippen från mitten av århundradet som förstärker en rekordtrend."
     },
     "ts": {
       "rank_title": "Xiyimo xa ku hisa ka misava",
@@ -4074,7 +4446,11 @@
       "cstat_cool": "{country}: {trend}°C hi khume ra malembe kusukela hi 1940. Ku kufumela, ku lwisana na ntshamiseko wa misava hinkwayo. Xiyimo xa #{rank} xa {total}.",
       "rank_more": "Kombisa swo tala",
       "rank_cities": "Madoroba",
-      "rank_countries": "Matiko"
+      "rank_countries": "Matiko",
+      "rank_win_label": "Fasitere ro kufumela",
+      "rank_win_full": "Ku sukela hi 1940",
+      "rank_win_recent": "Malembe ya 50 lama hundzeke",
+      "rank_win_note": "Mavonelo mambirhi ya tindzhawu leti fanaka: ku kufumela eka rhekhodo leyi heleleke, na mpimo wa manguva lawa (kusukela hi 1975) lowu IPCC na WMO va tshahaka - swi tshika ku kufumela ka aerosol dip yale xikarhi ka lembe xidzana leswi tisaka ntshamiseko wa rhekhodo leyi heleleke."
     },
     "tk": {
       "rank_title": "Dünýä ýylylygynyň reýtingi",
@@ -4090,7 +4466,11 @@
       "cstat_cool": "{country}: 1940-njy ýyldan bäri on ýylda {trend} ° C. Global tendensiýa garşy sowatmak. {total} derejesi # {rank}.",
       "rank_more": "Has köp görkez",
       "rank_cities": "Şäherler",
-      "rank_countries": "Countriesurtlar"
+      "rank_countries": "Countriesurtlar",
+      "rank_win_label": "Armyly penjire",
+      "rank_win_full": "1940-njy ýyldan bäri",
+      "rank_win_recent": "Soňky 50 ýylda",
+      "rank_win_note": "Şol bir ýerlere iki gezek garaýyş: doly ýazgyda ýylylyk we IPCC we WMO-nyň getirýän häzirki döwri (1975-nji ýyldan bäri) - doly rekord tendensiýany güýçlendirýän orta asyryň sowuk aerozol çökgünligini galdyrýar."
     },
     "is": {
       "rank_title": "Heimshitunarstaða",
@@ -4106,7 +4486,11 @@
       "cstat_cool": "{country}: {trend}°C á áratug síðan 1940. Kólnun, gegn alþjóðlegri þróun. Sæti #{rank} af {total}.",
       "rank_more": "Sýna meira",
       "rank_cities": "Borgir",
-      "rank_countries": "Lönd"
+      "rank_countries": "Lönd",
+      "rank_win_label": "Hitandi gluggi",
+      "rank_win_full": "Síðan 1940",
+      "rank_win_recent": "Síðustu 50 ár",
+      "rank_win_note": "Tvær skoðanir á sömu stöðum: Hlýnun yfir öllu metinu og nútímahraðinn (síðan 1975) sem IPCC og WMO vitna í - það skilur eftir svala úðabrúsa um miðja öld sem dregur úr þróun fullrar mets."
     },
     "cs": {
       "rank_title": "Žebříček světového oteplování",
@@ -4122,7 +4506,11 @@
       "cstat_cool": "{country}: {trend}°C za dekádu od roku 1940. Chlazení, proti globálnímu trendu. Pořadí č. {rank} z {total}.",
       "rank_more": "Zobrazit více",
       "rank_cities": "Města",
-      "rank_countries": "země"
+      "rank_countries": "země",
+      "rank_win_label": "Oteplovací okno",
+      "rank_win_full": "Od roku 1940",
+      "rank_win_recent": "Posledních 50 let",
+      "rank_win_note": "Dva pohledy na stejná místa: oteplování v celém rekordu a moderní rychlost (od roku 1975), kterou uvádějí IPCC a WMO – vynechává chladný pokles aerosolu v polovině století, který umocňuje trend plných rekordů."
     },
     "haw": {
       "rank_title": "Ke kūlana hoʻomehana honua",
@@ -4138,7 +4526,11 @@
       "cstat_cool": "{country}: {trend}°C i kēlā me kēia ʻumi makahiki mai ka makahiki 1940. ʻO ka hoʻolili ʻana, kūʻē i ke ʻano honua. Papa #{rank} o {total}.",
       "rank_more": "Hōʻike hou aku",
       "rank_cities": "Kulanakauhale",
-      "rank_countries": "Nā ʻāina"
+      "rank_countries": "Nā ʻāina",
+      "rank_win_label": "Pumehana pukaaniani",
+      "rank_win_full": "Mai ka makahiki 1940",
+      "rank_win_recent": "50 makahiki i hala",
+      "rank_win_note": "ʻElua mau manaʻo o nā wahi like: ka hoʻomehana ʻana i ka moʻolelo piha, a me ka helu hou (mai ka makahiki 1975) i ʻōlelo ʻia e ka IPCC a me WMO - haʻalele ia i ka aerosol aerosol i waena o ke kenekulia e hoʻopiʻi i kahi ʻano moʻolelo piha."
     },
     "el": {
       "rank_title": "Κατάταξη υπερθέρμανσης του κόσμου",
@@ -4154,7 +4546,11 @@
       "cstat_cool": "{country}: {trend}°C ανά δεκαετία από το 1940. Ψύξη, ενάντια στην παγκόσμια τάση. Κατάταξη #{rank} από {total}.",
       "rank_more": "Εμφάνιση περισσότερων",
       "rank_cities": "πόλεις",
-      "rank_countries": "χωρών"
+      "rank_countries": "χωρών",
+      "rank_win_label": "Παράθυρο θέρμανσης",
+      "rank_win_full": "Από το 1940",
+      "rank_win_recent": "Τα τελευταία 50 χρόνια",
+      "rank_win_note": "Δύο όψεις των ίδιων τόπων: η θέρμανση σε όλο το ρεκόρ και ο σύγχρονος ρυθμός (από το 1975) που αναφέρουν η IPCC και ο WMO - αφήνει έξω τη δροσερή βουτιά αεροζόλ στα μέσα του αιώνα που ενισχύει μια τάση πλήρους ρεκόρ."
     },
     "be": {
       "rank_title": "Рэйтынг сусветнага пацяплення",
@@ -4170,7 +4566,11 @@
       "cstat_cool": "{country}: {trend}°C за дзесяцігоддзе з 1940 г. Пахаладанне насуперак сусветнай тэндэнцыі. Рэйтынг №{rank} з {total}.",
       "rank_more": "Паказаць больш",
       "rank_cities": "Гарады",
-      "rank_countries": "краіны"
+      "rank_countries": "краіны",
+      "rank_win_label": "Уцяпленне акна",
+      "rank_win_full": "З 1940г",
+      "rank_win_recent": "Апошнія 50 гадоў",
+      "rank_win_note": "Два выгляду адных і тых жа месцаў: пацяпленне ў поўным аб'ёме і сучасная хуткасць (з 1975 г.), якую цытуюць МГЭІК і СМА - гэта не ўлічвае падзенне прахалоднага аэразоля ў сярэдзіне стагоддзя, якое ўзмацняе тэндэнцыю да поўнага рэкорду."
     },
     "bg": {
       "rank_title": "Класация на световното затопляне",
@@ -4186,7 +4586,11 @@
       "cstat_cool": "{country}: {trend}°C на десетилетие от 1940 г. насам. Охлаждане, срещу глобалната тенденция. Ранг #{rank} от {total}.",
       "rank_more": "Покажи повече",
       "rank_cities": "градове",
-      "rank_countries": "Държави"
+      "rank_countries": "Държави",
+      "rank_win_label": "Затоплящ прозорец",
+      "rank_win_full": "От 1940г",
+      "rank_win_recent": "Последните 50 години",
+      "rank_win_note": "Два изгледа на едни и същи места: затопляне през пълния рекорд и съвременната скорост (от 1975 г.), цитирана от IPCC и WMO - пропуска хладното потапяне на аерозол в средата на века, което засилва тенденцията на пълен рекорд."
     },
     "ky": {
       "rank_title": "Дүйнөлүк жылуулуктун рейтинги",
@@ -4202,7 +4606,11 @@
       "cstat_cool": "{country}: 1940-жылдан бери он жылда {trend}°C. Глобалдык тенденцияга каршы муздатуу. {total} ичинен №{rank} даражасы.",
       "rank_more": "Көбүрөөк көрсөтүү",
       "rank_cities": "Шаарлар",
-      "rank_countries": "Өлкөлөр"
+      "rank_countries": "Өлкөлөр",
+      "rank_win_label": "Жылуу терезе",
+      "rank_win_full": "1940-жылдан бери",
+      "rank_win_recent": "Акыркы 50 жыл",
+      "rank_win_note": "Бир эле жерлердин эки көрүнүшү: толук рекорддук жылышуу жана IPCC жана WMO келтирген заманбап ылдамдык (1975-жылдан бери) - бул толук рекорддук тенденцияны күчөткөн кылымдын орто чениндеги салкын аэрозолдук чөмүлдүрбөйт."
     },
     "mk": {
       "rank_title": "Рангирање за затоплување на светот",
@@ -4218,7 +4626,11 @@
       "cstat_cool": "{country}: {trend}°C по деценија од 1940 година. Ладење, наспроти светскиот тренд. Ранг #{rank} од {total}.",
       "rank_more": "Прикажи повеќе",
       "rank_cities": "Градови",
-      "rank_countries": "Земји"
+      "rank_countries": "Земји",
+      "rank_win_label": "Прозорец за затоплување",
+      "rank_win_full": "Од 1940 г",
+      "rank_win_recent": "Последните 50 години",
+      "rank_win_note": "Два глетка на исти места: затоплување низ целосниот рекорд и модерната стапка (од 1975 година) што ја наведуваат IPCC и WMO - го изоставува ладното намалување на аеросолот од средината на векот што го зајакнува трендот со целосен рекорд."
     },
     "mn": {
       "rank_title": "Дэлхийн дулаарлын зэрэглэл",
@@ -4234,7 +4646,11 @@
       "cstat_cool": "{country}: 1940 оноос хойш 10 жилд {trend}°C. Хөргөх нь дэлхийн чиг хандлагын эсрэг. {total}-ийн #{rank} зэрэглэл.",
       "rank_more": "Илүү ихийг харуулах",
       "rank_cities": "Хотууд",
-      "rank_countries": "Улс орнууд"
+      "rank_countries": "Улс орнууд",
+      "rank_win_label": "Дулаан цонх",
+      "rank_win_full": "1940 оноос хойш",
+      "rank_win_recent": "Сүүлийн 50 жил",
+      "rank_win_note": "Ижил газруудын хоёр үзэмж: бүрэн дулааралт, IPCC болон WMO-ийн иш татсан орчин үеийн хурд (1975 оноос хойш) - энэ нь бүрэн дээд амжилтын чиг хандлагыг нэмэгдүүлж буй зууны дунд үеийн аэрозолийн уналтыг орхиж байна."
     },
     "sr": {
       "rank_title": "Рангирање за светско загревање",
@@ -4250,7 +4666,11 @@
       "cstat_cool": "{country}: {trend}°Ц по деценији од 1940. Хлађење, противно глобалном тренду. Ранг #{rank} од {total}.",
       "rank_more": "Покажи више",
       "rank_cities": "Градови",
-      "rank_countries": "Земље"
+      "rank_countries": "Земље",
+      "rank_win_label": "Прозор за загревање",
+      "rank_win_full": "Од 1940. године",
+      "rank_win_recent": "Последњих 50 година",
+      "rank_win_note": "Два погледа на иста места: загревање преко пуног рекорда и модерна стопа (од 1975.) коју наводе ИПЦЦ и ВМО - изоставља хладан пад аеросола средином века који појачава тренд пуног рекорда."
     },
     "tt": {
       "rank_title": "Дөнья җылыну рейтингы",
@@ -4266,7 +4686,11 @@
       "cstat_cool": "{country}: 1940 елдан ун ел эчендә {trend} ° С. Глобаль тенденциягә каршы суыту. {total} дәрәҗәсе # {rank}.",
       "rank_more": "Күбрәк күрсәтү",
       "rank_cities": "Шәһәрләр",
-      "rank_countries": "Илләр"
+      "rank_countries": "Илләр",
+      "rank_win_label": "Windылы тәрәзә",
+      "rank_win_full": "1940 елдан",
+      "rank_win_recent": "Соңгы 50 ел",
+      "rank_win_note": "Бер үк урыннарның ике күренеше: тулы рекорд буенча җылыну, һәм IPCC һәм WMO китергән заманча ставка (1975 елдан) - ул тулы рекордлы тенденцияне көчәйтүче салкын урта гасыр аэрозолын калдыра."
     },
     "tg": {
       "rank_title": "Рейтинги гармшавии ҷаҳон",
@@ -4282,7 +4706,11 @@
       "cstat_cool": "{country}: {trend}°C дар як даҳсола аз соли 1940. Сардшавӣ, бар хилофи тамоюли ҷаҳонӣ. Дараҷаи №{rank} аз {total}.",
       "rank_more": "Бештар нишон диҳед",
       "rank_cities": "Шаҳрҳо",
-      "rank_countries": "Кишварҳо"
+      "rank_countries": "Кишварҳо",
+      "rank_win_label": "Равзанаи гармкунӣ",
+      "rank_win_full": "Аз соли 1940",
+      "rank_win_recent": "50 соли охир",
+      "rank_win_note": "Ду манзараи ҳамон ҷойҳо: гармшавӣ дар рекорди пурра ва суръати муосир (аз соли 1975), ки IPCC ва WMO истинод мекунанд - он ғарқшавии сарди аэрозолро дар миёнаи аср дур мекунад, ки тамоюли пурраи рекордиро афзоиш медиҳад."
     },
     "kk": {
       "rank_title": "Әлемдік жылыну рейтингі",
@@ -4298,7 +4726,11 @@
       "cstat_cool": "{country}: 1940 жылдан бастап онжылдықта {trend}°C. Салқындау, әлемдік трендке қарсы. {total} ішінен №{rank} дәрежесі.",
       "rank_more": "Көбірек көрсету",
       "rank_cities": "Қалалар",
-      "rank_countries": "Елдер"
+      "rank_countries": "Елдер",
+      "rank_win_label": "Жылыту терезесі",
+      "rank_win_full": "1940 жылдан бастап",
+      "rank_win_recent": "Соңғы 50 жыл",
+      "rank_win_note": "Бірдей жердің екі көрінісі: толық рекордтық жылыну және IPCC және WMO келтірген заманауи қарқын (1975 жылдан бастап) - бұл толық рекордтық трендті күшейтетін ғасырдың ортасындағы салқын аэрозольді шөгуді қалдырады."
     },
     "hy": {
       "rank_title": "Աշխարհի տաքացման վարկանիշը",
@@ -4314,7 +4746,11 @@
       "cstat_cool": "{country}՝ {trend}°C մեկ տասնամյակում սկսած 1940 թվականից: Սառեցում, ընդդեմ համաշխարհային միտումի: Վարկանիշ #{rank} {total}-ից:",
       "rank_more": "Ցույց տալ ավելին",
       "rank_cities": "Քաղաքներ",
-      "rank_countries": "Երկրներ"
+      "rank_countries": "Երկրներ",
+      "rank_win_label": "Ջերմացնող պատուհան",
+      "rank_win_full": "1940 թվականից",
+      "rank_win_recent": "Վերջին 50 տարին",
+      "rank_win_note": "Նույն վայրերի երկու տեսարան. տաքացում ամբողջ ռեկորդով, և ժամանակակից տեմպեր (1975 թվականից), որը վկայակոչում են IPCC-ն և WMO-ն, դա անտեսում է միջին դարի սառը աերոզոլային անկումը, որը մեծացնում է ռեկորդային միտումը:"
     },
     "yi": {
       "rank_title": "וועלט וואָרמינג ראַנגקינג",
@@ -4330,7 +4766,11 @@
       "cstat_cool": "{country}: {trend}°C פּער יאָרצענדלינג זינט 1940. קאָאָלינג, קעגן די גלאבאלע גאַנג. ראַנג #{rank} פון {total}.",
       "rank_more": "ווייַזן מער",
       "rank_cities": "שטעט",
-      "rank_countries": "לענדער"
+      "rank_countries": "לענדער",
+      "rank_win_label": "וואָרמינג פֿענצטער",
+      "rank_win_full": "זינט 1940",
+      "rank_win_recent": "לעצטע 50 יאָר",
+      "rank_win_note": "צוויי מיינונגען פון די זעלבע ערטער: וואָרמינג איבער די פול רעקאָרד, און די מאָדערן קורס (זינט 1975) וואָס די IPCC און WMO ציטירן - עס לאָזן די קיל מיטן יאָרהונדערט אַעראָסאָל טונקען וואָס סטיפּאַנז אַ פול-רעקאָרד גאַנג."
     },
     "he": {
       "rank_title": "דירוג ההתחממות העולמי",
@@ -4346,12 +4786,16 @@
       "cstat_cool": "{country}: {trend}°C לעשור מאז 1940. קירור, בניגוד למגמה העולמית. דירוג #{rank} מתוך {total}.",
       "rank_more": "הצג עוד",
       "rank_cities": "ערים",
-      "rank_countries": "מדינות"
+      "rank_countries": "מדינות",
+      "rank_win_label": "חלון מתחמם",
+      "rank_win_full": "מאז 1940",
+      "rank_win_recent": "50 השנים האחרונות",
+      "rank_win_note": "שתי תצוגות של אותם מקומות: התחממות לאורך כל הרשומה, והקצב המודרני (מאז 1975) שה-IPCC ו-WMO מצטטות - זה משאיר את הטבילה הקרירה של אמצע המאה האירוסולית שמחריפה מגמת שיא מלא."
     },
     "ug": {
       "rank_title": "دۇنيا ئىسسىپ كېتىش دەرىجىسى",
-      "rank_intro": "ھەر بىر شەھەر ئۇنىڭ قانچىلىك تېز ئىسسىپ كەتكەنلىكىنى رەتكە تۇرغۇزدى: 1940-يىلدىن 2025-يىلغىچە بولغان ئون يىلدا ° C نىڭ يۈزلىنىشى. ئۆزىڭىزنى ئىزدەڭ.",
-      "rank_intro_countries": "ھەر قايسى دۆلەتلەر شەھەرلىرىنىڭ ئوتتۇرا ھېساب بىلەن قانچىلىك تېز ئىسسىپ كەتكەنلىكىنى رەتكە تۇرغۇزدى: 1940-2025-يىللاردىكى ھەر ئون يىلدا ° C نىڭ يۈزلىنىشى. ئۆزىڭىزنى ئىزدەڭ.",
+      "rank_intro": "ھەر بىر شەھەر ئۇنىڭ قانچىلىك ئىسسىپ كېتىشىگە تىزىلغان: 1940-2025-يىللاردىكى ھەر ئون يىلدا ° C نىڭ يۈزلىنىشى. ئۆزىڭىزنى ئىزدەڭ.",
+      "rank_intro_countries": "ھەر قايسى دۆلەتلەر شەھەرلىرىنىڭ ئوتتۇرا ھېساب بىلەن قانچىلىك تېز ئىسسىپ كەتكەنلىكىنى رەتكە تىزىدۇ: 1940-2025-يىللاردىكى ھەر ئون يىلدا ° C نىڭ يۈزلىنىشى. ئۆزىڭىزنى ئىزدەڭ.",
       "rank_city": "شەھەر",
       "rank_country": "دۆلەت",
       "rank_search": "شەھەر تېپىش…",
@@ -4362,7 +4806,11 @@
       "cstat_cool": "{country}: {trend}°C per decade since 1940. Cooling, against the global trend. Rank #{rank} of {total}.",
       "rank_more": "تېخىمۇ كۆپ كۆرسەت",
       "rank_cities": "شەھەرلەر",
-      "rank_countries": "دۆلەتلەر"
+      "rank_countries": "دۆلەتلەر",
+      "rank_win_label": "ئىللىق كۆزنەك",
+      "rank_win_full": "1940-يىلدىن باشلاپ",
+      "rank_win_recent": "يېقىنقى 50 يىل",
+      "rank_win_note": "ئوخشاش جايلارنىڭ ئىككى خىل كۆز قارىشى: پۈتۈن رېكورتنى قىزىتىش ۋە IPCC ۋە WMO تىلغا ئالغان زامانىۋى سۈرئەت (1975-يىلدىن باشلاپ) - ئۇ ئوتتۇرا ئەسىردىكى سالقىن ئايرۇدول چۆكمىسىنى قالدۇرۇپ، پۈتۈن رېكورتنى تىكلىدى."
     },
     "sd": {
       "rank_title": "ورلڊ وارمنگ جي درجه بندي",
@@ -4378,7 +4826,11 @@
       "cstat_cool": "{country}: {trend}°C في ڏهاڪي 1940 کان وٺي. ٿڌي، عالمي رجحان جي خلاف. درجه بندي #{rank} جو {total}.",
       "rank_more": "وڌيڪ ڏيکاريو",
       "rank_cities": "شهر",
-      "rank_countries": "ملڪ"
+      "rank_countries": "ملڪ",
+      "rank_win_label": "گرم ڪرڻ واري ونڊو",
+      "rank_win_full": "1940ع کان وٺي",
+      "rank_win_recent": "گذريل 50 سال",
+      "rank_win_note": "ساڳين جڳهن جا ٻه نظارا: پوري رڪارڊ ۾ گرمائش، ۽ جديد شرح (1975 کان وٺي) جنهن کي IPCC ۽ WMO بيان ڪري ٿو - اهو وچين صديءَ جي ايروسول ڊپ کي ڇڏي ٿو جيڪو مڪمل رڪارڊ رجحان کي تيز ڪري ٿو."
     },
     "ps": {
       "rank_title": "د نړۍ د تودوخې درجه بندي",
@@ -4394,7 +4846,11 @@
       "cstat_cool": "{country}: له 1940 راهیسې په هره لسیزه کې {trend}°C. یخ کول، د نړیوال رجحان په وړاندې. درجه بندي #{rank} د {total}.",
       "rank_more": "نور ښکاره کړئ",
       "rank_cities": "ښارونه",
-      "rank_countries": "هیوادونه"
+      "rank_countries": "هیوادونه",
+      "rank_win_label": "تودوخه کړکۍ",
+      "rank_win_full": "د 1940 راهیسې",
+      "rank_win_recent": "تیر 50 کاله",
+      "rank_win_note": "د ورته ځایونو دوه لیدونه: د بشپړ ریکارډ په اوږدو کې تودوخه، او عصري نرخ (له 1975 راهیسې) چې IPCC او WMO یې په ګوته کوي - دا د مینځنۍ پیړۍ یروسول ډوب پریږدي چې د بشپړ ریکارډ رجحان رامینځته کوي."
     },
     "ckb": {
       "rank_title": "ڕیزبەندی گەرمبوونی جیهان",
@@ -4410,7 +4866,11 @@
       "cstat_cool": "{country}: {trend}°C بۆ هەر دەیەیەک لە ساڵی 1940ەوە. ساردبوونەوە، لە بەرامبەر ڕەوتی جیهانی. پلەی #{rank} لە {total}.",
       "rank_more": "زیاتر پیشان بدە",
       "rank_cities": "شارەکان",
-      "rank_countries": "وڵاتان"
+      "rank_countries": "وڵاتان",
+      "rank_win_label": "پەنجەرەی گەرمکردنەوە",
+      "rank_win_full": "لە ساڵی ١٩٤٠ەوە",
+      "rank_win_recent": "٥٠ ساڵی ڕابردوو",
+      "rank_win_note": "دوو دیدگا بۆ هەمان شوێن: گەرمبوونەوە لە سەرانسەری تۆماری تەواودا، و ڕێژەی مۆدێرن (لە ساڵی 1975ەوە) کە IPCC و WMO ئاماژەی پێدەکەن - ئەوە نوقمبوونی فێنک و سارد و سڕی ناوەڕاستی سەدەی ئایرۆسۆڵ بەجێدەهێڵێت کە ڕەوتێکی تۆمارکراوی تەواو بەرزتر دەکاتەوە."
     },
     "doi": {
       "rank_title": "वर्ल्ड वार्मिंग रैंकिंग",
@@ -4426,7 +4886,11 @@
       "cstat_cool": "{country}: 1940 से {trend}°C प्रति दशक।शीतलन, वैश्विक रुझान दे खिलाफ। {total} दा #{rank} रैंक।",
       "rank_more": "और दिखाओ",
       "rank_cities": "शहरों",
-      "rank_countries": "देशों"
+      "rank_countries": "देशों",
+      "rank_win_label": "खिड़की गर्म करना",
+      "rank_win_full": "1940 दे बाद",
+      "rank_win_recent": "पिछले 50 साल",
+      "rank_win_note": "इक गै थाह् रें दे दो दृष्टिकोण: पूरे रिकार्ड च गर्मी, ते आधुनिक दर (1975 थमां) जेह् ड़ी आईपीसीसी ते डब्ल्यूएमओ हवाला दिंदे न - एह् ठंडी मझाटले शताब्दी दी एरोसोल डुबकी गी छोड़ी दिंदा ऐ जेह् ड़ी इक पूर्ण रिकार्ड रुझान गी खड़ी करदी ऐ।"
     },
     "ne": {
       "rank_title": "विश्व तापक्रम रैंकिंग",
@@ -4442,7 +4906,11 @@
       "cstat_cool": "{country}: 1940 देखि प्रति दशक {trend}°C। शीतलता, वैश्विक प्रवृत्ति विरुद्ध। {total} को #{rank} श्रेणी।",
       "rank_more": "थप देखाउनुहोस्",
       "rank_cities": "सहरहरू",
-      "rank_countries": "देशहरू"
+      "rank_countries": "देशहरू",
+      "rank_win_label": "न्यानो विन्डो",
+      "rank_win_full": "1940 देखि",
+      "rank_win_recent": "पछिल्लो 50 वर्ष",
+      "rank_win_note": "एउटै ठाउँका दुई दृश्यहरू: पूर्ण रेकर्डमा न्यानोपन, र आधुनिक दर (1975 पछि) जुन IPCC र WMO ले उद्धृत गर्दछ - यसले शताब्दीको मध्य शताब्दीको चिसो एयरोसोल डुब्न छोड्छ जसले पूर्ण रेकर्ड प्रवृत्तिलाई खडा गर्छ।"
     },
     "bho": {
       "rank_title": "वर्ल्ड वार्मिंग के रैंकिंग में दिहल गइल बा",
@@ -4458,7 +4926,11 @@
       "cstat_cool": "{country}: 1940 से प्रति दशक {trend}°C शीतलन, वैश्विक रुझान के खिलाफ। {total} के #{rank} रैंक बा।",
       "rank_more": "अउरी देखावल जाव",
       "rank_cities": "शहरन के बा",
-      "rank_countries": "देशन के बा"
+      "rank_countries": "देशन के बा",
+      "rank_win_label": "खिड़की के गरम हो रहल बा",
+      "rank_win_full": "1940 से लेके अब तक के बा",
+      "rank_win_recent": "पिछला 50 साल से भइल",
+      "rank_win_note": "एकही जगहन के दू गो बिचार: पूरा रिकार्ड में वार्मिंग, आ आधुनिक दर (1975 से) जेकर हवाला आईपीसीसी आ डब्ल्यूएमओ देलें - ई मस्त मध्य सदी के एरोसोल डुबकी के छोड़ देला जे पूरा रिकार्ड ट्रेंड के खड़ा करे ला।"
     },
     "mai": {
       "rank_title": "विश्व वार्मिंग रैंकिंग",
@@ -4474,7 +4946,11 @@
       "cstat_cool": "{country}: {trend}°C प्रति दशक 1940 के बाद से शीतलन, वैश्विक प्रवृत्ति के विरुद्ध | {total} के #{rank} रैंक।",
       "rank_more": "और देखाउ",
       "rank_cities": "शहर",
-      "rank_countries": "देश"
+      "rank_countries": "देश",
+      "rank_win_label": "वार्मिंग खिड़की",
+      "rank_win_full": "1940 से",
+      "rank_win_recent": "पिछले 50 साल",
+      "rank_win_note": "एकहि स्थानक दू टा दृश्य: पूरा रिकॉर्ड भरि वार्मिंग, आ आधुनिक दर (1975 सं) जकर हवाला आईपीसीसी आ डब्ल्यूएमओ दैत अछि - ई मध्य शताब्दीक शीतल एरोसोल डुबकी कें छोड़ि दैत अछि जे पूर्ण रिकॉर्ड प्रवृत्ति कें खड़ा करैत अछि."
     },
     "sa": {
       "rank_title": "विश्व तापन श्रेणी",
@@ -4483,14 +4959,18 @@
       "rank_city": "नगरम्",
       "rank_country": "देश",
       "rank_search": "एकं नगरं अन्वेष्टुम्...",
-      "rank_search_countries": "एकं देशं अन्वेष्टुम्...",
+      "rank_search_countries": "देशं अन्वेष्टुम्...",
       "rank_empty": "तस्य अन्वेषणस्य सङ्गतिः कोऽपि नगरः न भवति ।",
       "cstat_title": "भवतः देशः कथं तापयति?",
       "cstat_line": "{country}: १९४० तः प्रतिदशकं {trend}°C, विश्वस्य {pct}% अपेक्षया द्रुततरम् । {total} के #{rank} रैंक।",
       "cstat_cool": "{country}: {trend}°C प्रति दशकं 1940 तः शीतलनं, वैश्विकप्रवृत्तेः विरुद्धं। {total} के #{rank} रैंक।",
       "rank_more": "अधिकं दर्शयतु",
       "rank_cities": "नगराणि",
-      "rank_countries": "देशाः"
+      "rank_countries": "देशाः",
+      "rank_win_label": "तापन खिडकी",
+      "rank_win_full": "१९४० तमे वर्षात्",
+      "rank_win_recent": "गत ५० वर्षाणि",
+      "rank_win_note": "समानस्थानानां द्वे दृश्ये: पूर्ण-अभिलेखस्य पारं तापनं, तथा च आधुनिक-दरः (१९७५ तः) यत् IPCC तथा WMO इत्येतयोः उद्धृतं भवति - एतत् शीतल-मध्य-शताब्द्याः एरोसोल्-डुबकीं त्यजति यत् पूर्ण-अभिलेख-प्रवृत्तिं तीव्रं करोति"
     },
     "as": {
       "rank_title": "বিশ্ব উষ্ণতা বৃদ্ধিৰ ৰেংকিং",
@@ -4506,7 +4986,11 @@
       "cstat_cool": "{country}: ১৯৪০ চনৰ পৰা প্ৰতি দশকত {trend}°C।শীতলতা, বিশ্বব্যাপী ধাৰাটোৰ বিপৰীতে। {total} ৰ #{rank} ৰেংক।",
       "rank_more": "অধিক দেখুৱাওক",
       "rank_cities": "চহৰবোৰ",
-      "rank_countries": "দেশসমূহ"
+      "rank_countries": "দেশসমূহ",
+      "rank_win_label": "ৱাৰ্মিং উইণ্ডো",
+      "rank_win_full": "১৯৪০ চনৰ পৰা",
+      "rank_win_recent": "যোৱা ৫০ বছৰ",
+      "rank_win_note": "একে ঠাইৰ দুটা দৃষ্টিভংগী: সম্পূৰ্ণ অভিলেখৰ মাজেৰে উষ্ণতা বৃদ্ধি, আৰু আইপিচিচি আৰু ডব্লিউএমঅ'ই উল্লেখ কৰা আধুনিক হাৰ (১৯৭৫ চনৰ পৰা) - ই শীতল মধ্য শতিকাৰ এৰ'ছল ডিপক এৰি দিয়ে যিয়ে সম্পূৰ্ণ অভিলেখৰ ধাৰাক ঠেক কৰি তোলে।"
     },
     "gu": {
       "rank_title": "વર્લ્ડ વોર્મિંગ રેન્કિંગ",
@@ -4522,7 +5006,11 @@
       "cstat_cool": "{country}: 1940 થી દાયકા દીઠ {trend}°C. ઠંડક, વૈશ્વિક વલણ સામે. {total} માંથી #{rank} રેન્ક.",
       "rank_more": "વધુ બતાવો",
       "rank_cities": "શહેરો",
-      "rank_countries": "દેશો"
+      "rank_countries": "દેશો",
+      "rank_win_label": "વોર્મિંગ વિન્ડો",
+      "rank_win_full": "1940 થી",
+      "rank_win_recent": "છેલ્લા 50 વર્ષ",
+      "rank_win_note": "સમાન સ્થળોના બે દૃશ્યો: સંપૂર્ણ રેકોર્ડમાં ગરમ થવું, અને આધુનિક દર (1975 થી) જે IPCC અને WMO ટાંકે છે - તે મધ્ય-સદીના ઠંડા એરોસોલ ડીપને છોડી દે છે જે સંપૂર્ણ રેકોર્ડ વલણને વધારે છે."
     },
     "or": {
       "rank_title": "ୱାର୍ଲ୍ଡ ୱାର୍ମିଂ ର୍ୟାଙ୍କିଙ୍ଗ୍ |",
@@ -4538,7 +5026,11 @@
       "cstat_cool": "1940 ପରଠାରୁ {country}: {trend} ° C। ବିଶ୍ global ର ଧାରା ବିରୁଦ୍ଧରେ ଥଣ୍ଡା | {total} ର ରାଙ୍କ # {rank} |",
       "rank_more": "ଅଧିକ ଦେଖାନ୍ତୁ |",
       "rank_cities": "ସହରଗୁଡିକ",
-      "rank_countries": "ଦେଶଗୁଡିକ |"
+      "rank_countries": "ଦେଶଗୁଡିକ |",
+      "rank_win_label": "ଉଷ୍ମ ୱିଣ୍ଡୋ |",
+      "rank_win_full": "1940 ପରଠାରୁ",
+      "rank_win_recent": "ଗତ 50 ବର୍ଷ",
+      "rank_win_note": "ସମାନ ସ୍ଥାନଗୁଡିକର ଦୁଇଟି ଦୃଶ୍ୟ: ପୂର୍ଣ୍ଣ ରେକର୍ଡରେ ଉଷ୍ମତା, ଏବଂ ଆଧୁନିକ ହାର (1975 ପରଠାରୁ) ଯାହା ଆଇପିସିସି ଏବଂ ଡବ୍ଲୁଏମ୍ଓ ଦର୍ଶାଇଥାଏ - ଏହା ମଧ୍ୟ-ଶତାବ୍ଦୀର ଶୀତଳ ଏରୋସୋଲ୍ ବୁଡ଼ ପକାଇଥାଏ ଯାହା ଏକ ପୂର୍ଣ୍ଣ-ରେକର୍ଡ ଧାରାକୁ ଦୃ ep କରିଥାଏ |"
     },
     "kn": {
       "rank_title": "ವರ್ಲ್ಡ್ ವಾರ್ಮಿಂಗ್ ಶ್ರೇಯಾಂಕ",
@@ -4552,9 +5044,13 @@
       "cstat_title": "ನಿಮ್ಮ ದೇಶ ಹೇಗೆ ಬೆಚ್ಚಗಾಗುತ್ತಿದೆ?",
       "cstat_line": "{country}: 1940 ರಿಂದ ಪ್ರತಿ ದಶಕಕ್ಕೆ {trend}°C, ಪ್ರಪಂಚದ {pct}% ಗಿಂತ ವೇಗವಾಗಿ. {total} ರ ರ್ಯಾಂಕ್ #{rank}.",
       "cstat_cool": "{country}: 1940 ರಿಂದ ಪ್ರತಿ ದಶಕಕ್ಕೆ {trend}°C. ಕೂಲಿಂಗ್, ಜಾಗತಿಕ ಪ್ರವೃತ್ತಿಯ ವಿರುದ್ಧ. {total} ರ ರ್ಯಾಂಕ್ #{rank}.",
-      "rank_more": "ಇನ್ನಷ್ಟು ತೋರಿಸು",
+      "rank_more": "ಹೆಚ್ಚು ತೋರಿಸು",
       "rank_cities": "ನಗರಗಳು",
-      "rank_countries": "ದೇಶಗಳು"
+      "rank_countries": "ದೇಶಗಳು",
+      "rank_win_label": "ಬೆಚ್ಚಗಾಗುವ ಕಿಟಕಿ",
+      "rank_win_full": "1940 ರಿಂದ",
+      "rank_win_recent": "ಕಳೆದ 50 ವರ್ಷಗಳು",
+      "rank_win_note": "ಒಂದೇ ಸ್ಥಳಗಳ ಎರಡು ವೀಕ್ಷಣೆಗಳು: ಸಂಪೂರ್ಣ ದಾಖಲೆಯಾದ್ಯಂತ ವಾರ್ಮಿಂಗ್, ಮತ್ತು IPCC ಮತ್ತು WMO ಉಲ್ಲೇಖಿಸಿದ ಆಧುನಿಕ ದರ (1975 ರಿಂದ) - ಇದು ಪೂರ್ಣ-ರೆಕಾರ್ಡ್ ಪ್ರವೃತ್ತಿಯನ್ನು ಹೆಚ್ಚಿಸುವ ತಂಪಾದ ಮಧ್ಯ-ಶತಮಾನದ ಏರೋಸಾಲ್ ಡಿಪ್ ಅನ್ನು ಬಿಟ್ಟುಬಿಡುತ್ತದೆ."
     },
     "ml": {
       "rank_title": "ലോക താപന റാങ്കിംഗ്",
@@ -4570,7 +5066,11 @@
       "cstat_cool": "{country}: 1940 മുതൽ ഒരു ദശകത്തിൽ {trend}°C. തണുപ്പിക്കൽ, ആഗോള പ്രവണതയ്‌ക്കെതിരെ. റാങ്ക് #{rank} of {total}.",
       "rank_more": "കൂടുതൽ കാണിക്കുക",
       "rank_cities": "നഗരങ്ങൾ",
-      "rank_countries": "രാജ്യങ്ങൾ"
+      "rank_countries": "രാജ്യങ്ങൾ",
+      "rank_win_label": "ചൂടാക്കൽ വിൻഡോ",
+      "rank_win_full": "1940 മുതൽ",
+      "rank_win_recent": "കഴിഞ്ഞ 50 വർഷം",
+      "rank_win_note": "ഒരേ സ്ഥലങ്ങളുടെ രണ്ട് കാഴ്‌ചകൾ: ഫുൾ റെക്കോഡിലുടനീളം താപനം, കൂടാതെ IPCC ഉം WMO ഉദ്ധരിച്ച ആധുനിക നിരക്ക് (1975 മുതൽ) - ഇത് നൂറ്റാണ്ടിൻ്റെ മധ്യത്തിലെ എയറോസോൾ ഡിപ്പിനെ ഒഴിവാക്കുന്നു, ഇത് ഒരു മുഴുവൻ റെക്കോർഡ് ട്രെൻഡും വർദ്ധിപ്പിക്കുന്നു."
     },
     "si": {
       "rank_title": "ලෝක උණුසුම ශ්‍රේණිගත කිරීම",
@@ -4586,7 +5086,11 @@
       "cstat_cool": "{country}: 1940 සිට දශකයකට {trend}°C. සිසිලනය, ගෝලීය ප්‍රවණතාවයට එරෙහිව. {total} හි #{rank} ශ්‍රේණිය.",
       "rank_more": "තවත් පෙන්වන්න",
       "rank_cities": "නගර",
-      "rank_countries": "රටවල්"
+      "rank_countries": "රටවල්",
+      "rank_win_label": "උනුසුම් කවුළුව",
+      "rank_win_full": "1940 සිට",
+      "rank_win_recent": "පසුගිය වසර 50",
+      "rank_win_note": "එකම ස්ථානවල දසුන් දෙකක්: සම්පූර්ණ වාර්තාව හරහා උනුසුම් වීම, සහ IPCC සහ WMO උපුටා දක්වන නවීන අනුපාතය (1975 සිට) - එය පූර්ණ-වාර්තාගත ප්‍රවණතාවක් ඉහළ නංවන සිසිල් මැද ශතවර්ෂයේ aerosol dip ඉවත් කරයි."
     },
     "lo": {
       "rank_title": "ອັນດັບໂລກຮ້ອນ",
@@ -4602,7 +5106,11 @@
       "cstat_cool": "{country}: {trend}°C ຕໍ່ທົດສະວັດຕັ້ງແຕ່ປີ 1940. ຄວາມເຢັນ, ຕໍ່ກັບທ່າອ່ຽງຂອງໂລກ. ອັນດັບ #{rank} ຂອງ {total}.",
       "rank_more": "ສະແດງເພີ່ມເຕີມ",
       "rank_cities": "ເມືອງ",
-      "rank_countries": "ປະເທດ"
+      "rank_countries": "ປະເທດ",
+      "rank_win_label": "ປ່ອງຢ້ຽມອົບອຸ່ນ",
+      "rank_win_full": "ຕັ້ງ​ແຕ່​ປີ 1940​",
+      "rank_win_recent": "50 ປີຜ່ານມາ",
+      "rank_win_note": "ສອງທັດສະນະຂອງສະຖານທີ່ດຽວກັນ: ຄວາມອົບອຸ່ນໃນທົ່ວບັນທຶກເຕັມ, ແລະອັດຕາທີ່ທັນສະໄຫມ (ນັບຕັ້ງແຕ່ 1975) ທີ່ IPCC ແລະ WMO ອ້າງເຖິງ - ມັນອອກຈາກການແຊ່ນ້ໍາ aerosol ໃນກາງສະຕະວັດທີ່ເຢັນເຊິ່ງເຮັດໃຫ້ແນວໂນ້ມການບັນທຶກເຕັມທີ່."
     },
     "ka": {
       "rank_title": "მსოფლიო დათბობის რეიტინგი",
@@ -4618,7 +5126,11 @@
       "cstat_cool": "{country}: {trend}°C ათწლეულში 1940 წლიდან. გაგრილება, გლობალური ტენდენციის საწინააღმდეგოდ. წოდება #{rank} {total}-დან.",
       "rank_more": "მეტის ჩვენება",
       "rank_cities": "ქალაქები",
-      "rank_countries": "ქვეყნები"
+      "rank_countries": "ქვეყნები",
+      "rank_win_label": "დათბობის ფანჯარა",
+      "rank_win_full": "1940 წლიდან",
+      "rank_win_recent": "ბოლო 50 წელი",
+      "rank_win_note": "ერთი და იგივე ადგილების ორი ხედი: დათბობა მთელს რეკორდში და თანამედროვე მაჩვენებელი (1975 წლიდან), რომელსაც IPCC და WMO მოჰყავთ - ის გამოტოვებს შუა საუკუნის აეროზოლის გრილ ვარდნას, რომელიც აძლიერებს რეკორდულ ტენდენციას."
     },
     "ti": {
       "rank_title": "ደረጃ ምውሳኽ ሙቐት ዓለም",
@@ -4634,7 +5146,11 @@
       "cstat_cool": "{country}: {trend}°C ኣብ ዓሰርተ ዓመት ካብ 1940. ምዝሓል፣ ኣንጻር ዓለማዊ ዝንባለ። ደረጃ #{rank} ካብ {total}።",
       "rank_more": "ተወሳኺ ኣርእዩ",
       "rank_cities": "ከተማታት",
-      "rank_countries": "ሃገራት"
+      "rank_countries": "ሃገራት",
+      "rank_win_label": "መስኮት ምውዓይ",
+      "rank_win_full": "ካብ 1940 ጀሚሩ",
+      "rank_win_recent": "ዝሓለፉ 50 ዓመታት",
+      "rank_win_note": "ክልተ ኣረኣእያታት ናይ ሓደ ዓይነት ቦታታት፡ ምውዓይ ኣብ ምሉእ መዝገብ፡ ከምኡ'ውን እቲ IPCCን WMOን ዝጠቅስዎ ዘመናዊ ፍጥነት (ካብ 1975 ጀሚሩ) - ነቲ ምሉእ ክብረወሰን ዘለዎ ዝንባለ ዘጽንዕ ዝሑል ናይ መፋርቕ ክፍለ ዘመን ኤሮሶል ምጥሓል ይገድፎ።"
     },
     "km": {
       "rank_title": "ចំណាត់ថ្នាក់នៃកំដៅពិភពលោក",
@@ -4650,7 +5166,11 @@
       "cstat_cool": "{country}៖ {trend}°C ក្នុងមួយទសវត្សរ៍ចាប់តាំងពីឆ្នាំ 1940។ ត្រជាក់ ប្រឆាំងនឹងនិន្នាការសកល។ ចំណាត់ថ្នាក់ #{rank} នៃ {total}។",
       "rank_more": "បង្ហាញច្រើនទៀត",
       "rank_cities": "ទីក្រុង",
-      "rank_countries": "ប្រទេស"
+      "rank_countries": "ប្រទេស",
+      "rank_win_label": "បង្អួចកំដៅ",
+      "rank_win_full": "ចាប់តាំងពីឆ្នាំ 1940",
+      "rank_win_recent": "50 ឆ្នាំចុងក្រោយ",
+      "rank_win_note": "ទិដ្ឋភាពពីរនៃកន្លែងដូចគ្នា៖ ការឡើងកំដៅផែនដីពេញកំណត់ត្រា និងអត្រាទំនើប (តាំងពីឆ្នាំ 1975) ដែល IPCC និង WMO លើកឡើង - វាបន្សល់ទុកនូវការធ្លាក់ចុះនៃ aerosol ពាក់កណ្តាលសតវត្សន៍ដ៏ត្រជាក់ដែលបង្កើននិន្នាការកំណត់ត្រាពេញលេញ។"
     }
   },
   "hero": {
@@ -5585,7 +6105,7 @@
     "bm": "Dugu minnu ka san 10+sɛbɛnw bɛ yen ani jamana dɔnnen bɛ minnu na, olu dɔrɔn de bɛ jate, o la, yɔrɔ damadɔ minnu ka kunnafoniw man ca, olu ma jate fɔlɔ.",
     "su": "Ngan kota-kota anu gaduh catetan langkung ti 10 taun sareng nagara anu dikenal anu dikelompokeun, janten sababaraha tempat anu datana jarang henteu didaptarkeun.",
     "bs": "Samo gradovi sa 10+godina rekorda i poznatom zemljom su rangirani, tako da još nije navedeno nekoliko mjesta sa oskudnim podacima.",
-    "ca": "Només es classifiquen les ciutats amb més de 10 anys de registres i un país conegut, de manera que encara no es mostren alguns llocs amb dades escasses.",
+    "ca": "Només es classifiquen les ciutats amb més de 10 anys de registres i un país conegut, de manera que encara no s'enumeren alguns llocs amb dades escasses.",
     "ceb": "Ang mga lungsod lamang nga adunay 10+ka tuig nga mga rekord ug usa ka nailhan nga nasud ang na-ranggo, mao nga pipila ka mga lugar nga adunay gamay nga datos wala pa nalista.",
     "zh-TW": "只對有10年以上記錄和已知國家的城市進行排名，因此一些數據稀疏的地方尚未列出。",
     "sn": "Maguta chete ane 10+makore erekodhi uye nyika inozivikanwa inoiswa, saka nzvimbo shoma dzine data shoma hadzisati dzanyorwa.",
@@ -5628,7 +6148,7 @@
     "ny": "Mizinda yokhayo yokhala ndi mbiri yazaka 10+ndi dziko lodziwika ndi yomwe ili pagulu, kotero malo ochepa omwe ali ndi data yochepa sanatchulidwebe.",
     "om": "Magaalonni galmee waggaa 10+qabaniifi biyya beekamtu qofatu sadarkaa qaba, kanaaf bakkeewwan muraasni daataa xiqqaa qaban ammallee hin tarreeffamne.",
     "uz": "Faqat 10+yillik rekordlarga ega boʻlgan shaharlar va maʼlum bir mamlakat reytingga kiritilgan, shuning uchun siyrak maʼlumotlarga ega boʻlgan bir nechta joylar hali roʻyxatga olinmagan.",
-    "ro": "Numai orașele cu înregistrări de peste 10 ani și o țară cunoscută sunt clasate, așa că câteva locuri cu date rare nu sunt listate încă.",
+    "ro": "Sunt clasate doar orașele cu peste 10 ani de înregistrări și o țară cunoscută, așa că câteva locuri cu date rare nu sunt listate încă.",
     "qu": "10+wata registroyuq llaqtakunalla, riqsisqa suyuyuqllam rankikusqa kachkanku, chaymi pisi datuyuq pisilla sitiokuna manaraq listasqachu kachkan.",
     "sm": "Na'o 'a'ai e 10+tausaga o fa'amaumauga ma se atunu'u ta'uta'ua o lo'o fa'avasegaina, o lea e le'i lisiina ai ni nai nofoaga fa'atasi ai ma fa'amaumauga.",
     "st": "Ke litoropo tse nang le lirekoto tsa lilemo tse 10+le naha e tsebahalang feela tse behiloeng maemong, kahoo libaka tse 'maloa tse nang le lintlha tse fokolang ha li so thathamisitsoe.",
@@ -5665,7 +6185,7 @@
     "ne": "10+वर्षको रेकर्ड भएका शहरहरू र एक ज्ञात देशलाई मात्र स्थान दिइएको छ, त्यसैले थोरै डाटा भएका केही ठाउँहरू अझै सूचीबद्ध गरिएका छैनन्।",
     "bho": "खाली 10+साल के रिकार्ड आ ज्ञात देस वाला शहर सभ के रैंकिंग दिहल गइल बा, एह से बिरल डेटा वाला कुछ जगह सभ के लिस्ट अबहिन ले नइखे दिहल गइल।",
     "mai": "केवल 10+साल के रिकॉर्ड वाला शहर आ कोनो ज्ञात देश के रैंकिंग देल गेल अछि, ताहि लेल विरल डाटा वाला किछु जगह एखन धरि सूचीबद्ध नहिं अछि.",
-    "sa": "केवलं १०+वर्षाणां अभिलेखानां नगराणां, ज्ञातदेशस्य च क्रमाङ्कनं भवति, अतः विरलदत्तांशयुक्तानि कतिपयानि स्थानानि अद्यापि सूचीकृतानि न सन्ति ।",
+    "sa": "केवलं १०+वर्षाणां अभिलेखानां नगराणां ज्ञातदेशश्च श्रेणीकृताः सन्ति, अतः विरलदत्तांशयुक्तानि कतिपयानि स्थानानि अद्यापि सूचीकृतानि न सन्ति ।",
     "as": "কেৱল ১০+বছৰৰ অভিলেখ থকা চহৰ আৰু জনা দেশৰ ৰেংকিং কৰা হৈছে, গতিকে বিৰল তথ্য থকা কেইখনমান ঠাই এতিয়াও তালিকাভুক্ত কৰা হোৱা নাই।",
     "gu": "માત્ર 10+વર્ષનાં રેકોર્ડ્સ ધરાવતાં શહેરો અને જાણીતા દેશને જ ક્રમાંક આપવામાં આવ્યો છે, તેથી છૂટાછવાયા ડેટાવાળા થોડાં સ્થાનો હજુ સૂચિબદ્ધ નથી.",
     "or": "କେବଳ 10+ବର୍ଷର ରେକର୍ଡ ଥିବା ସହର ଏବଂ ଏକ ଜଣାଶୁଣା ଦେଶ ମାନ୍ୟତା ପାଇଛି, ତେଣୁ ଅଳ୍ପ ତଥ୍ୟ ସହିତ କିଛି ସ୍ଥାନ ଏପର୍ଯ୍ୟନ୍ତ ତାଲିକାଭୁକ୍ତ ହୋଇନାହିଁ |",
@@ -5674,7 +6194,7 @@
     "si": "වසර 10+වාර්තා ඇති නගර සහ දන්නා රටක් පමණක් ශ්‍රේණිගත කර ඇත, එබැවින් විරල දත්ත සහිත ස්ථාන කිහිපයක් තවමත් ලැයිස්තුගත කර නොමැත.",
     "lo": "ມີພຽງເມືອງທີ່ມີບັນທຶກ 10+ປີ ແລະປະເທດທີ່ຮູ້ຈັກເທົ່ານັ້ນທີ່ຖືກຈັດອັນດັບ, ດັ່ງນັ້ນບາງບ່ອນທີ່ມີຂໍ້ມູນບໍ່ຫຼາຍແມ່ນຍັງບໍ່ທັນມີລາຍຊື່ເທື່ອ.",
     "ka": "რეიტინგშია მხოლოდ 10+წლიანი ჩანაწერების მქონე ქალაქები და ცნობილი ქვეყანა, ამიტომ მწირი მონაცემების მქონე რამდენიმე ადგილი ჯერ არ არის ჩამოთვლილი.",
-    "ti": "ናይ 10+ዓመት መዝገብን ትፍለጥ ሃገርን ዘለወን ከተማታት ጥራይ እየን ተሰሪዐን ዘለወን፣ ስለዚ ውሑዳት ስፍሕ ዝበለ ዳታ ዘለወን ቦታታት ገና ኣይተዘርዘራን።",
+    "ti": "10+ዓመት ክብረወሰን ዘለወንን እትፍለጥ ሃገርን ዘለወን ከተማታት ጥራይ እየን ተሰሪዐን ዘለወን፣ ስለዚ ውሑዳት ስፍሕ ዝበለ ዳታ ዘለወን ቦታታት ገና ኣይተዘርዘራን።",
     "km": "មានតែទីក្រុងដែលមានកំណត់ត្រារយៈពេល 10+ឆ្នាំ និងប្រទេសដែលគេស្គាល់ប៉ុណ្ណោះដែលត្រូវបានចាត់ថ្នាក់ ដូច្នេះកន្លែងមួយចំនួនដែលមានទិន្នន័យតូចតាចមិនត្រូវបានរាយក្នុងបញ្ជីនៅឡើយ។"
   },
   "fs_label": {
@@ -5709,7 +6229,7 @@
     "et": "Täisekraan",
     "eo": "Plenekrana",
     "eu": "Pantaila osoa",
-    "ee": "Screen bliboa",
+    "ee": "Fullscreen",
     "fy": "Folslein skerm",
     "ga": "Lánscáileán",
     "gl": "Pantalla completa",
@@ -5858,7 +6378,7 @@
     "qu": "Zoom nisqamanta musuqmanta churay",
     "sm": "Toe seti le zoom",
     "st": "Seta katametso bocha",
-    "nso": "Seta gape go godiša",
+    "nso": "Seta go godiša gape",
     "sq": "Rivendos zmadhimin",
     "sk": "Obnoviť priblíženie",
     "sl": "Ponastavi povečavo",
@@ -5909,7 +6429,7 @@
     "th": "ฝังวิดเจ็ต",
     "ta": "விட்ஜெட்டை உட்பொதிக்கவும்",
     "mr": "विजेट एम्बेड करा",
-    "te": "విడ్జెట్ పొందుపరచండి",
+    "te": "విడ్జెట్‌ను పొందుపరచండి",
     "ha": "Saka widget din",
     "pa": "ਏਮਬੇਡ ਵਿਜੇਟ",
     "my": "ဝစ်ဂျက်ကို ထည့်သွင်းပါ။",
