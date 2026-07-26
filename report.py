@@ -1573,8 +1573,8 @@ ${topbar}
   </div><!-- /.tabs -->
 </main>
 <footer>${footer} · <a href="../embed.html">${widget_label}</a></footer>
-<link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js"></script>
+<!-- maplibre-gl (~207 KB) is loaded lazily by __initMap on the first Map-tab
+     open, not on every visit - most visitors never open the map. -->
 <script>
   var cities = ${markers};
   var PREVIEW = ${preview_markers};   // cities awaiting data (preview build only)
@@ -1592,8 +1592,29 @@ ${topbar}
   // Lazy: the tab controller (charts.js) calls this only when the Map tab is first
   // shown, so first paint isn't blocked on MapLibre + the coverage grid fetch.
   window.__initMap = function () {
-    if (window.__mapReady || !window.maplibregl) return;
+    if (window.__mapReady) return;
+    // Lazy-load maplibre-gl (library + CSS) the first time the Map tab opens,
+    // then re-enter once it's ready. Deferring this ~207 KB script off the
+    // initial load is the single biggest win for entering-the-site speed.
+    if (!window.maplibregl) {
+      if (window.__mapLoading) return;
+      window.__mapLoading = true;
+      var mapEl = document.getElementById('map');
+      if (mapEl) mapEl.classList.add('map-loading');
+      var css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = 'https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css';
+      document.head.appendChild(css);
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js';
+      s.onload = function () { window.__mapLoading = false; window.__initMap(); };
+      s.onerror = function () { window.__mapLoading = false; };
+      document.head.appendChild(s);
+      return;
+    }
     window.__mapReady = true;
+    var mapEl2 = document.getElementById('map');
+    if (mapEl2) mapEl2.classList.remove('map-loading');
     // The "Map" basemap is a keyless VECTOR style (OpenFreeMap): its labels are
     // data, so we re-render them in the site's language after load - raster tiles
     // can't be localised because the labels are baked into the image. The terrain/
