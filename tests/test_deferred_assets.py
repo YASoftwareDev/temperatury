@@ -25,6 +25,22 @@ from tests.conftest import build
 
 SLUG = "krakow"
 
+# A city page rendered BEFORE the topbar list became a sidecar still carries
+# <script src="_cities.js">, which no longer exists. Harmless: charts.js is a
+# shared, always-fresh asset and fetches _cities.json instead (verified - the
+# search still returns cities on such a page), and one full re-render clears it.
+# Tests that load a cached sibling page (the landing's region embed) therefore
+# tolerate exactly this request. A FRESH page referencing it would still fail
+# test_city_search_list_is_lazy_and_still_finds_cities.
+RETIRED_ASSET = "_cities.js"
+
+
+def _assert_only_retired_asset_failed(failed, errors):
+    assert all(u.endswith(RETIRED_ASSET) for u in failed), f"unexpected 404s: {failed}"
+    unexpected = [e for e in errors
+                  if not (failed and "Failed to load resource" in e)]
+    assert not unexpected, unexpected[:3]
+
 
 @contextlib.contextmanager
 def _serve(directory):
@@ -145,8 +161,10 @@ def test_inline_hooks_survive_the_deferred_script():
     * renderGlobal - the whole landing render would be skipped.
     """
     out = build(SLUG, "en", client_i18n=True)
-    errors = []
+    errors, failed = [], []
     with _serve(out) as base, _page(errors) as pg:
+        pg.on("response",
+              lambda r: failed.append(r.url) if r.status >= 400 else None)
         pg.goto(f"{base}/en/index.html", wait_until="load")
         pg.wait_for_timeout(3000)
 
@@ -181,7 +199,7 @@ def test_inline_hooks_survive_the_deferred_script():
                                  .slice(0, 5).map(e => e.textContent.trim())""")
     assert before and after and before != after, \
         f"unit switch did not rewrite the figures: {before} -> {after}"
-    assert not errors, errors[:3]
+    _assert_only_retired_asset_failed(failed, errors)
 
 
 @pytest.mark.slow
@@ -223,6 +241,53 @@ def test_a_failed_map_fetch_does_not_kill_the_session():
 
 
 @pytest.mark.slow
+def test_city_search_list_is_lazy_and_still_finds_cities():
+    """The topbar city list used to ship as a blocking <script> on every city page.
+
+    At full roster it is ~22 KB gzipped - larger than the page carrying it - and
+    only this search box ever reads it. Measured before the move: as a blocking
+    mid-body script it cost nothing in first paint (aborting the request left FCP
+    unchanged), so what this protects is entry-path bytes. Three things have to
+    hold: it is NOT requested on load, typing still returns cities, and a failed
+    fetch does not disable the search for the rest of the visit.
+    """
+    out = build(SLUG, "en", client_i18n=True)
+    assert (out / "en" / "_cities.json").is_file(), "the city list sidecar is missing"
+    html = (out / "en" / f"{SLUG}.html").read_text(encoding="utf-8")
+    assert "_cities.js" not in html, "the city list is a blocking <script> again"
+
+    errors, reqs = [], []
+    with _serve(out) as base, _page(errors) as pg:
+        state = {"fail": True}
+
+        def route(r):
+            reqs.append(1)
+            r.abort() if state["fail"] else r.continue_()
+
+        pg.route("**/_cities.json", route)
+        pg.goto(f"{base}/en/{SLUG}.html", wait_until="load")
+        pg.wait_for_timeout(1200)
+        assert not reqs, "the city list is on the entry path; it should load on first use"
+
+        pg.click("#cp-search")
+        pg.fill("#cp-search", "kra")
+        pg.wait_for_timeout(700)
+        assert reqs, "using the search box did not load the list"
+        attempts = len(reqs)
+
+        state["fail"] = False          # a later keystroke must RETRY, not reuse it
+        pg.fill("#cp-search", "krak")
+        pg.wait_for_selector("#cp-results li", timeout=5000)
+        assert len(reqs) > attempts, "the failed fetch was cached; the search stayed dead"
+        hits = pg.evaluate("""[...document.querySelectorAll('#cp-results li')]
+                                .map(li => li.textContent.toLowerCase())""")
+        assert any("krak" in h for h in hits), f"search returned no city: {hits[:5]}"
+    # Aborting a request logs "Failed to load resource"; that IS the scenario.
+    unexpected = [e for e in errors if "Failed to load resource" not in e]
+    assert not unexpected, unexpected[:3]
+
+
+@pytest.mark.slow
 def test_search_index_is_a_sidecar_and_still_searchable():
     """The index moved out of the landing HTML (it was three quarters of it). It must
     still arrive and wire the search, and must not be inlined again.
@@ -232,9 +297,11 @@ def test_search_index_is_a_sidecar_and_still_searchable():
     assert "window.__omniData=" not in index, "the search index is inline again"
     assert (out / "en" / "_omni.json").is_file(), "_omni.json was not written"
 
-    errors, fetched = [], []
+    errors, fetched, failed = [], [], []
     with _serve(out) as base, _page(errors) as pg:
         pg.on("response", lambda r: fetched.append(r.url) if "_omni.json" in r.url else None)
+        pg.on("response",
+              lambda r: failed.append(r.url) if r.status >= 400 else None)
         pg.goto(f"{base}/en/index.html", wait_until="load")
         pg.wait_for_timeout(3000)
         assert fetched, "the page never fetched _omni.json"
@@ -249,4 +316,4 @@ def test_search_index_is_a_sidecar_and_still_searchable():
         hits = pg.evaluate("""[...document.querySelectorAll('#omni-results li')]
                                 .map(li => li.textContent.toLowerCase())""")
         assert any("krak" in h for h in hits), f"search returned no city: {hits[:5]}"
-    assert not errors, errors[:3]
+    _assert_only_retired_asset_failed(failed, errors)

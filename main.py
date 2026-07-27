@@ -59,7 +59,7 @@ from report import (
     SITE_BASE,
     build_map_page,
     build_site,
-    write_cities_js,
+    write_cities_json,
     write_lang_redirect,
     write_page_js,
 )
@@ -593,16 +593,20 @@ def main() -> None:
                     return f"{loc.slug}.html"
                 folder = shells[0] if shells else "en"
                 return f"../{folder}/{loc.slug}.html"
-            write_cities_js(OUTPUT_DIR / lang / "_cities.js", _cities,
-                            i18n.get(lang), url_of=_url_of)
+            write_cities_json(OUTPUT_DIR / lang / "_cities.json", _cities,
+                              i18n.get(lang), url_of=_url_of)
         else:
             # Storage-tiering: only cities whose page exists in THIS language, so
             # the search never links a 404.
-            write_cities_js(
-                OUTPUT_DIR / lang / "_cities.js",
+            write_cities_json(
+                OUTPUT_DIR / lang / "_cities.json",
                 [loc for loc in _cities
                  if lang in g_citylangs.get(loc.slug, [])],
                 i18n.get(lang))
+        # The list used to ship as a blocking <script> (_cities.js). A restored
+        # cache still holds that file, and CI uploads output/ wholesale, so it
+        # would keep deploying unreferenced.
+        (OUTPUT_DIR / lang / "_cities.js").unlink(missing_ok=True)
         # Shared city-page runtime: everything that used to be inlined into
         # every city page but is identical across a language's cities.
         write_page_js(OUTPUT_DIR / lang, i18n.get(lang), lang)

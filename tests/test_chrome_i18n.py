@@ -92,8 +92,8 @@ def test_search_lists_all_cities_cross_language():
     build("tokyo", "en,pl,ja", client_i18n=True)
 
     def _cities(lang):
-        raw = (ROOT / f"output/{lang}/_cities.js").read_text(encoding="utf-8")
-        data = json.loads(raw.replace("window.__cpData=", "").rstrip(";\n"))
+        data = json.loads(
+            (ROOT / f"output/{lang}/_cities.json").read_text(encoding="utf-8"))
         return {row[0]: row[1] for row in data["c"]}
 
     pl = _cities("pl")   # Tokyo has no PL shell
