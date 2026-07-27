@@ -2244,19 +2244,41 @@
     }
   }
 
-  // Type-to-filter city search in the top bar. The list is the shared,
-  // browser-cached window.__cpData (from _cities.js); moved here from a per-page
-  // inline <script> so it is not duplicated across every city page. No-ops on
-  // pages without the search box (e.g. the map/index page).
+  // Type-to-filter city search in the top bar. The list comes from the shared,
+  // browser-cached _cities.json, fetched on first use (see load() below). No-ops
+  // on pages without the search box (e.g. the map/index page).
   function initCityPicker() {
     var inp = document.getElementById("cp-search");
     var box = document.getElementById("cp-results");
     if (!inp || !box) return;
-    var C = window.__cpData || { c: [] };
+    // A page cached from BEFORE this list became a sidecar still loads _cities.js
+    // and sets window.__cpData. Seed from it when present: that page's language
+    // folder may no longer be built, so _cities.json can be absent there and the
+    // fetch below would leave the picker dead. Fresh pages ship no such script,
+    // so __cpData is undefined and the list loads lazily.
+    var C = window.__cpData || { c: [] }, ready = null;
     function norm(s) {
       return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     }
     var N = C.c.map(function (c) { return norm(c[0]); });
+    // Fetched on first use, not shipped as a blocking <script>: at full roster the
+    // list is ~22 KB gzipped, bigger than the page, and only this box needs it.
+    // `ready` is CLEARED on failure so a later keystroke retries - caching the
+    // rejection would leave the search dead for the rest of the visit.
+    function load() {
+      if (ready) return ready;
+      ready = fetch("_cities.json")
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(function (d) {
+          C = (d && d.c) ? d : { c: [] };
+          N = C.c.map(function (c) { return norm(c[0]); });
+        })
+        .catch(function (e) { ready = null; throw e; });
+      return ready;
+    }
     var cur = -1, shown = [];
     function close() {
       box.hidden = true; inp.setAttribute("aria-expanded", "false"); cur = -1;
@@ -2297,8 +2319,23 @@
       });
       box.hidden = false; inp.setAttribute("aria-expanded", "true"); cur = -1;
     }
-    inp.addEventListener("input", function () { render(inp.value); });
-    inp.addEventListener("focus", function () { if (inp.value) render(inp.value); });
+    // Re-read inp.value when the list lands: the visitor keeps typing while the
+    // first fetch is in flight, so the query at resolution time is the live one.
+    function query() {
+      if (N.length) { render(inp.value); return; }
+      load().then(function () {
+        // The list can land after the visitor dismissed the box; rendering then
+        // would pop suggestions open on an unfocused combobox.
+        if (document.activeElement === inp) render(inp.value);
+      }, function () {});
+    }
+    inp.addEventListener("input", query);
+    inp.addEventListener("focus", function () {
+      // Warm the list so the first keystroke is instant; a seeded page (pre-cutover
+      // cache) already has it and must not fetch a file its folder may not carry.
+      if (!N.length) load().catch(function () {});
+      if (inp.value) query();
+    });
     inp.addEventListener("keydown", function (e) {
       if (box.hidden) return;
       if (e.key === "ArrowDown") {

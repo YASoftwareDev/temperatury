@@ -700,19 +700,23 @@ def _picker_data(city_locs: list[Location], tr: dict, url_of=None) -> list[list[
             for loc in items]
 
 
-def write_cities_js(path: Path, city_locs: list[Location], tr: dict,
-                    url_of=None) -> None:
-    """Write the shared per-language city list read by the topbar search.
+def write_cities_json(path: Path, city_locs: list[Location], tr: dict,
+                      url_of=None) -> None:
+    """Write the shared per-language city list used by the topbar search.
 
-    Emits ``window.__cpData={...}`` to ``_cities.js`` in ``path``'s directory.
-    Every city page in a language references this one file (browser-cached),
-    instead of inlining the ~35 KB list into all of them. Regenerated each build
-    so the search stays current even on incrementally-cached pages. ``url_of``
-    resolves each city's link (see :func:`_picker_data`).
+    A DATA sidecar (``_cities.json``), fetched by charts.js on first use - not a
+    ``<script>``. At full roster the list is ~22 KB gzipped, larger than the page
+    carrying it, and it serves only the search box, which most visits never open.
+    Measured before the change: as a blocking mid-body script it cost nothing in
+    first paint (aborting the request left FCP identical at 536 ms), so this buys
+    entry-path bytes and ~87 ms of DOMContentLoaded, not paint.
+
+    Regenerated each build so the search stays current even on incrementally
+    cached pages. ``url_of`` resolves each city's link (see :func:`_picker_data`).
     """
-    payload = json.dumps({"c": _picker_data(city_locs, tr, url_of)},
-                         ensure_ascii=False)
-    path.write_text("window.__cpData=" + payload + ";\n", encoding="utf-8")
+    path.write_text(
+        json.dumps({"c": _picker_data(city_locs, tr, url_of)}, ensure_ascii=False),
+        encoding="utf-8")
 
 
 def _city_picker(tr: dict, lang: str) -> str:
@@ -720,9 +724,9 @@ def _city_picker(tr: dict, lang: str) -> str:
 
     A type-to-filter search over the full city list: filtered client-side
     (accent-insensitive), navigable by keyboard or click. The list itself is not
-    inlined here - it comes from the shared, browser-cached ``_cities.js``
-    (``window.__cpData``, written once per build by ``write_cities_js``), so this
-    markup is tiny and identical on every page. ``lang`` is accepted for
+    inlined here and no longer ships as a ``<script>`` either - charts.js fetches
+    ``_cities.json`` when the box is first used (see :func:`write_cities_json`),
+    so this markup is tiny and identical on every page. ``lang`` is accepted for
     call-site symmetry with the other pieces.
     """
     placeholder = tr["choose_city"]
@@ -739,10 +743,10 @@ def _city_picker(tr: dict, lang: str) -> str:
         '<ul id="cp-results" class="cp-results" role="listbox" hidden></ul>'
         '</div></div>'
     )
-    # The list data ships in the shared, browser-cached _cities.js
-    # (window.__cpData); the search behaviour (type-to-filter, keyboard nav) is
-    # in the shared charts.js (initCityPicker), so nothing is inlined per page.
-    return html + '<script src="_cities.js"></script>'
+    # No <script> tag: the list is a data sidecar charts.js fetches on first use,
+    # and the search behaviour (type-to-filter, keyboard nav) is in the shared
+    # charts.js (initCityPicker), so nothing is inlined or blocking per page.
+    return html
 
 
 def _city_chooser(current: Location, nav_locations: list[Location], tr: dict,
