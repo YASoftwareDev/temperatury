@@ -53,7 +53,7 @@
     return window.matchMedia && matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light";
   }
   /* The automatic unit default is resolved ONCE, pre-paint, by the head bootstrap
-     in report.py (page language first, then the visitor's region) and written to
+     in report.py (the visitor's region, from their PRIMARY locale) and written to
      <html data-unit>. Read it back rather than re-deriving the rule here: this
      file is deferred, so its own answer would silently overwrite the bootstrap's.
      That is exactly how a Polish page came to show Fahrenheit - the rule was fixed

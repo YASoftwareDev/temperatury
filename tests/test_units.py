@@ -257,20 +257,22 @@ def test_landing_bakes_a_fahrenheit_label_map():
 
 @pytest.mark.parity
 @pytest.mark.slow
-def test_automatic_unit_follows_the_page_language_not_a_secondary_locale():
-    """A Polish page must never open in Fahrenheit. Reported from the live site.
+def test_automatic_unit_uses_only_the_primary_locale_region():
+    """A Polish page opened in Fahrenheit. Reported from the live site.
 
-    Two bugs combined. The rule scanned ALL of navigator.languages and took the
-    first tag carrying a region, so a Polish visitor whose list is
-    ["pl", "en-US", "en"] was read as American - a bare "pl" is not evidence of a
-    country, and a SECONDARY entry is not the visitor's region. And the page's own
-    language was never consulted, though /pl/ is Polish content and Poland is
-    metric. Only English is unit-ambiguous (spoken in Fahrenheit and metric
-    countries alike), so only an English page asks the browser at all.
+    The rule scanned ALL of navigator.languages and took the first tag carrying a
+    region, so a Polish visitor whose list is ["pl", "en-US", "en"] was read as
+    American: a bare "pl" carries no region, so the loop fell through to a
+    SECONDARY entry. Only the PRIMARY locale counts now, and a region-less tag is
+    not evidence of a country.
 
-    Waits for `load`, not `domcontentloaded`: the deferred appearance.js used to
-    carry a SECOND copy of this rule and silently overwrote the head bootstrap's
-    answer, which is why fixing the bootstrap alone changed nothing on screen.
+    The VISITOR'S REGION decides on every language - an American reading the
+    Polish page does get Fahrenheit. The page's language is deliberately NOT
+    consulted; unit is a property of the reader, not of the content.
+
+    Waits for `load`, not `domcontentloaded`: the deferred appearance.js carried a
+    SECOND copy of this rule and silently overwrote the head bootstrap's answer,
+    which is why fixing the bootstrap alone changed nothing on screen.
     """
     build(SLUG, "en,pl", client_i18n=True)
     pl = (ROOT / f"output/pl/{SLUG}.html").as_uri()
@@ -288,15 +290,20 @@ def test_automatic_unit_follows_the_page_language_not_a_secondary_locale():
             b.close()
             return got
 
-    # The report: a Polish reader whose browser lists en-US after a region-less pl.
+    # THE REPORT: a Polish reader whose browser lists en-US after a region-less pl.
     assert unit(pl, ["pl", "en-US", "en"]) == "C", "the Polish page opened in F"
-    # And no visitor, however American, gets F on a Polish page by DEFAULT
-    # (the manual toggle still overrides, it is just not the automatic choice).
-    assert unit(pl, ["en-US"]) == "C", "the Polish page opened in F"
-    # The same secondary-locale trap on an English page.
     assert unit(en, ["pl", "en-US", "en"]) == "C", \
         "a secondary en-US was mistaken for the visitor's region"
-    # Fahrenheit still works where it belongs, or the fix broke the feature.
+    # A region-less primary is no evidence either way -> the metric default.
+    assert unit(pl, ["pl"]) == "C"
+    assert unit(en, ["en"]) == "C", "a region-less 'en' must not imply the US"
+
+    # The visitor's region wins REGARDLESS of the page language: same reader,
+    # both languages, Fahrenheit either way.
     assert unit(en, ["en-US"]) == "F", "an American reader lost Fahrenheit"
-    assert unit(en, ["es-PR"]) == "F", "a Fahrenheit territory lost Fahrenheit"
+    assert unit(pl, ["en-US"]) == "F", \
+        "the visitor's region must decide on the Polish page too"
+    assert unit(pl, ["es-PR"]) == "F", "a Fahrenheit territory lost Fahrenheit"
+    # ...and a metric region stays metric on the English page.
     assert unit(en, ["en-GB"]) == "C", "a British reader got Fahrenheit"
+    assert unit(en, ["pl-PL"]) == "C"
