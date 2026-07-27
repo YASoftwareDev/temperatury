@@ -343,6 +343,11 @@ def main() -> None:
     if _charts_dir.is_dir():
         for _svg in _charts_dir.glob("*.svg"):
             _svg.unlink()
+        # CI restores output/ from a cache and deploys it as-is, so the combined
+        # payloads this build replaced with per-language / per-country slices would
+        # otherwise linger and ship forever - 1.1 MB nothing references.
+        for _legacy in ("_names.json", "country_outlines.json"):
+            (_charts_dir / _legacy).unlink(missing_ok=True)
     # Server->client (R1-hybrid) or SEO-tier cutover: a restored cache may carry
     # per-language city pages this build no longer generates (a city now renders
     # only its SEO shells). Drop any <lang>/<slug>.html whose language is not in
@@ -456,15 +461,26 @@ def main() -> None:
                     "gn": g_payload.get("gn") if _has_rank else None}),
         encoding="utf-8")
     # Localized place names for the ranking (drawn in the browser from the shared
-    # payload, so names are localized client-side). One {slug: name} file PER
-    # LANGUAGE, not one {slug: {lang: name}} table for all of them: the combined
-    # table is 309 KB gzipped and the landing page had to fetch every language's
-    # names before it could draw anything. A slice is 5-40 KB.
+    # payload, so names are localized client-side). One file PER LANGUAGE, not one
+    # {slug: {lang: name}} table for all of them: the combined table is 309 KB
+    # gzipped and the landing page had to fetch every language's names before it
+    # could draw anything. A slice is 5-40 KB.
+    # Keyed by the BASE language code, because that is what the browser asks for
+    # (document.documentElement.lang.split('-')[0]) and how the exonym table is
+    # keyed: zh-TW and zh share _names.zh.json. Emitting a regional variant its own
+    # file would write an English-fallback-only slice nothing ever fetches.
     from report import place_names_for
-    for _lang in i18n.LANGUAGES:
-        (OUTPUT_DIR / "charts" / f"_names.{_lang}.json").write_text(
-            json.dumps(place_names_for(_lang), ensure_ascii=False),
+    _name_langs = sorted({_l.split("-")[0] for _l in i18n.LANGUAGES})
+    for _base in _name_langs:
+        (OUTPUT_DIR / "charts" / f"_names.{_base}.json").write_text(
+            json.dumps(place_names_for(_base), ensure_ascii=False),
             encoding="utf-8")
+    # A restored cache may hold slices for languages (or regional variants) this
+    # build no longer emits; they would deploy unreferenced.
+    _want = {f"_names.{_b}.json" for _b in _name_langs}
+    for _old in (OUTPUT_DIR / "charts").glob("_names.*.json"):
+        if _old.name not in _want:
+            _old.unlink()
     # Data-coverage grid: per-cell mean-file coverage over the FULL target set
     # (config.LOCATIONS, not just the rendered cities), so the map's overlay shows
     # which reanalysis cells still need downloading. Derived from committed files,

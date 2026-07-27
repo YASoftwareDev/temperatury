@@ -126,19 +126,29 @@ def _local_name(slug: str, lang: str, default: str) -> str:
 
 
 def place_names_for(lang: str) -> dict:
-    """One language's slice of the exonym table, {slug: name}, with the English
-    exonym baked in wherever ``lang`` has none - the same
-    ``m[lang] || m.en`` fallback the browser used to do itself.
+    """One language's slice of the exonym table as ``{"l": ..., "f": ...}``:
+    ``l`` is what ``lang`` itself calls each city, ``f`` the English exonym for
+    the cities ``lang`` has no name for.
 
-    The full table is ~1 MB (309 KB gzipped) across 32 languages, and a visitor
-    reads one of them; the landing page fetched all 32 before it could draw the
-    ranking. Emitting the slices lets it fetch ~5-40 KB instead."""
-    out = {}
+    The full table is ~1 MB (309 KB gzipped): 32 languages have exonyms in it and
+    a visitor reads one of them, but the landing page fetched all 32 before it
+    could draw the ranking. A slice is ~5-40 KB. (One slice per unique BASE
+    language code - zh-TW shares zh's - and the languages with no exonyms of their
+    own get an English-fallback-only file.)
+
+    The two maps stay SEPARATE because the browser's three readers do not share
+    one fallback chain: the ranking shows the language's own name or its own
+    default (which carries our "(CC)" disambiguators), while the "did you know"
+    facts and the hero's climate-analog lines fall back to English first. Baking
+    ``l or f`` into one map would silently give the ranking the English fallback
+    it never had (charts.js: nameOwn vs nameAny)."""
+    own, fallback = {}, {}
     for slug, names in _CITY_NAMES.items():
-        name = names.get(lang) or names.get("en")
-        if name:
-            out[slug] = name
-    return out
+        if lang in names:
+            own[slug] = names[lang]
+        elif "en" in names:
+            fallback[slug] = names["en"]
+    return {"l": own, "f": fallback}
 
 
 def _seo_head(lang, languages, path, title, desc, jsonld=None):
@@ -1656,10 +1666,18 @@ ${topbar}
             return c.k !== 'region' && c.k !== 'ocean';
           });
           return d;
-        });
+        })
+        // Drop the cached promise on failure, else one transient error would
+        // hand every later caller the same rejection - permanently dead map AND
+        // compare pickers, since both share this promise.
+        .catch(function (e) { window.__mapDataP = null; throw e; });
     }
     return window.__mapDataP;
   };
+  function setMapLoading(on) {
+    var el = document.getElementById('map');
+    if (el) el.classList[on ? 'add' : 'remove']('map-loading');
+  }
   // Tiled Web-Mercator basemap (MapLibre GL). Mercator inflates the high
   // latitudes, but the overlays are all lon/lat so they register correctly, and
   // GPU rendering keeps the 4600-cell coverage grid smooth. Two keyless raster
@@ -1668,43 +1686,44 @@ ${topbar}
   // shown, so first paint isn't blocked on MapLibre + the coverage grid fetch.
   window.__initMap = function () {
     if (window.__mapReady) return;
-    // Markers come over the wire now, so fetch them alongside the library and
-    // re-enter when they land. Same shape as the maplibre branch below: bail out
-    // while in flight, clear the flag on failure so a later tab open retries.
+    // The markers (_map.json) and maplibre-gl are two INDEPENDENT round trips, so
+    // both start in this same invocation and whichever finishes last re-enters to
+    // find the other ready. Gating one on the other would put a whole round trip
+    // back on the Map tab - the thing this deferral exists to avoid. Each branch
+    // clears its flag on failure so a later tab open retries.
+    var waiting = false;
     if (!window.__mapDataReady) {
-      if (window.__mapDataLoading) return;
-      window.__mapDataLoading = true;
-      var mapEl0 = document.getElementById('map');
-      if (mapEl0) mapEl0.classList.add('map-loading');
-      window.__loadMapData().then(function () {
-        window.__mapDataLoading = false;
-        window.__mapDataReady = true;
-        window.__initMap();
-      }).catch(function () { window.__mapDataLoading = false; });
-      return;
+      waiting = true;
+      if (!window.__mapDataLoading) {
+        window.__mapDataLoading = true;
+        window.__loadMapData().then(function () {
+          window.__mapDataLoading = false;
+          window.__mapDataReady = true;
+          window.__initMap();
+        }).catch(function () { window.__mapDataLoading = false; setMapLoading(false); });
+      }
     }
     // Lazy-load maplibre-gl (library + CSS) the first time the Map tab opens,
     // then re-enter once it's ready. Deferring this ~207 KB script off the
     // initial load is the single biggest win for entering-the-site speed.
     if (!window.maplibregl) {
-      if (window.__mapLoading) return;
-      window.__mapLoading = true;
-      var mapEl = document.getElementById('map');
-      if (mapEl) mapEl.classList.add('map-loading');
-      var css = document.createElement('link');
-      css.rel = 'stylesheet';
-      css.href = 'https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css';
-      document.head.appendChild(css);
-      var s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js';
-      s.onload = function () { window.__mapLoading = false; window.__initMap(); };
-      s.onerror = function () { window.__mapLoading = false; };
-      document.head.appendChild(s);
-      return;
+      waiting = true;
+      if (!window.__mapLoading) {
+        window.__mapLoading = true;
+        var css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = 'https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css';
+        document.head.appendChild(css);
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js';
+        s.onload = function () { window.__mapLoading = false; window.__initMap(); };
+        s.onerror = function () { window.__mapLoading = false; setMapLoading(false); };
+        document.head.appendChild(s);
+      }
     }
+    if (waiting) { setMapLoading(true); return; }
     window.__mapReady = true;
-    var mapEl2 = document.getElementById('map');
-    if (mapEl2) mapEl2.classList.remove('map-loading');
+    setMapLoading(false);
     // The "Map" basemap is a keyless VECTOR style (OpenFreeMap): its labels are
     // data, so we re-render them in the site's language after load - raster tiles
     // can't be localised because the labels are baked into the image. The terrain/
@@ -2226,14 +2245,18 @@ ${topbar}
   window.__crz = ${rz_label_json};
   window.__rankPeople = ${rank_people_json};
   (function () {
-    // Names ({slug: localized name}) and the payload go out TOGETHER, not one
-    // after the other: the ranking needs both, so serializing them cost a whole
-    // round trip on the critical path. Only this page's language is fetched -
-    // _names.<lang>.json already has the English exonym baked in as a fallback.
+    // Names and the payload go out TOGETHER, not one after the other: the ranking
+    // needs both, so serializing them cost a whole round trip on the critical
+    // path. Only this page's language is fetched, by BASE code - zh-TW reads
+    // _names.zh.json, which is how the exonym table is keyed (see
+    // report.place_names_for for the {l, f} shape). Missing names just leave every
+    // city on its default name, so a failure here degrades rather than blocking
+    // the payload.
     var lang = (document.documentElement.lang || 'en').split('-')[0];
+    var NO_NAMES = { l: {}, f: {} };
     var names = fetch('../charts/_names.' + lang + '.json')
-      .then(function (r) { return r.ok ? r.json() : {}; })
-      .catch(function () { return {}; });
+      .then(function (r) { return r.ok ? r.json() : NO_NAMES; })
+      .catch(function () { return NO_NAMES; });
     var payload = fetch('../charts/_global.json')
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
     Promise.all([names, payload])
@@ -2286,7 +2309,7 @@ ${topbar}
             frag.appendChild(o);
           });
           dl.appendChild(frag);
-        }).catch(function () {});
+        }).catch(function () { cmpReadyP = null; });   // let the next pick retry
       }
       return cmpReadyP;
     }
@@ -2365,10 +2388,12 @@ ${topbar}
     }
     a.addEventListener('change', function () { cmpReady().then(draw); });
     b.addEventListener('change', function () { cmpReady().then(draw); });
-    // Typing starts before 'change' fires, so warm the list on first focus - the
-    // datalist has to be populated for the browser to suggest anything.
-    a.addEventListener('focus', cmpReady, { once: true });
-    b.addEventListener('focus', cmpReady, { once: true });
+    // Typing starts before 'change' fires, so warm the list on focus - the
+    // datalist has to be populated for the browser to suggest anything. Not
+    // {once:true}: cmpReady is already idempotent, and a one-shot listener would
+    // be spent by an attempt that failed, leaving focus unable to retry.
+    a.addEventListener('focus', cmpReady);
+    b.addEventListener('focus', cmpReady);
     // The stat rows under the overlay are built text; redraw on a °C/°F switch
     // (the chart itself rebuilds from its payload via 'themechange').
     if (window.__unitHooks) window.__unitHooks.push(draw);

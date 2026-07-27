@@ -877,6 +877,19 @@
     ric(function () { window.__ensureRanking(); });
   };
 
+  // Localized place names, loaded per page language as {l: own, f: English
+  // fallback} (see report.place_names_for). The split matters: nameAny falls back
+  // to the English exonym, nameOwn does not - the ranking keeps its own default
+  // name instead, which is where our "(CC)" disambiguators live.
+  function nameOwn(slug) {
+    var n = window.__names;
+    return (n && n.l && n.l[slug]) || null;
+  }
+  function nameAny(slug) {
+    var n = window.__names;
+    return nameOwn(slug) || (n && n.f && n.f[slug]) || null;
+  }
+
   // "Did you know" rotating facts (top of the Dashboard tab), each computed from
   // the loaded ranking - never fabricated. A fact is only added when its inputs
   // are present; the card stays hidden if nothing is computable. Numbers are put
@@ -891,9 +904,7 @@
     var T = {};
     try { T = JSON.parse(card.getAttribute("data-i18n") || "{}"); } catch (e) {}
     var rank = d.ranking;
-    function cityName(r) {
-      return (window.__names && window.__names[r.s]) || r.n;
-    }
+    function cityName(r) { return nameAny(r.s) || r.n; }
     var regionNames = null;
     try { regionNames = new Intl.DisplayNames([lang], { type: "region" }); } catch (e) {}
     function countryName(cc) {
@@ -1092,7 +1103,7 @@
     function remeasure() {
       card.style.minHeight = "0px";
       var mh = 0;
-      window.__heroMeasure(function () {
+      heroMeasure(function () {
         for (var k = 0; k < picks.length; k++) {
           renderHeroEntry(picks[k], picks[k].s, "data-none", card);
           if (card.offsetHeight > mh) mh = card.offsetHeight;
@@ -1656,10 +1667,9 @@
       f.alt = ""; f.src = "https://flagcdn.com/20x15/" + cc + ".png";
       return f;
     }
-    // Localized city name from the shared table (window.__names), else the default.
-    function localName(slug, def) {
-      return (window.__names && window.__names[slug]) || def;
-    }
+    // This language's own name for the city, else the default - deliberately NOT
+    // the English exonym, which would drop our "(CC)" disambiguators.
+    function localName(slug, def) { return nameOwn(slug) || def; }
     // Small "W" that opens the city's Wikipedia article in the PAGE language.
     // Special:Search?...&go=Go behaves like the search-box Go button: an exact
     // title match jumps straight to the article, otherwise it shows results -
@@ -2407,10 +2417,10 @@
   // every resize. Guarded before the data-outline claim so the real render still
   // injects normally.
   var __heroMeasuring = false;
-  window.__heroMeasure = function (fn) {
+  function heroMeasure(fn) {
     __heroMeasuring = true;
     try { fn(); } finally { __heroMeasuring = false; }
-  };
+  }
   function injectHeroOutline(host, cc) {
     if (__heroMeasuring) return;
     cc = (cc || "").toLowerCase();
@@ -2557,11 +2567,8 @@
     // the shared names table; templates come from the hero's data attributes.
     var box = el("rh-analog");
     if (box) {
-      var lang = (document.documentElement.lang || "en").split("-")[0];
       var ana = (window.__analogs || {})[slug] || {};
-      function locName(a) {
-        return (window.__names && window.__names[a.s]) || a.n;
-      }
+      function locName(a) { return nameAny(a.s) || a.n; }
       function fill(tmpl, a) {
         return tmpl.replace("{city}", name).replace("{analog}", locName(a))
                    .replace("{d}", a.d);
