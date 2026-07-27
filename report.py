@@ -125,10 +125,20 @@ def _local_name(slug: str, lang: str, default: str) -> str:
     return _CITY_NAMES.get(slug, {}).get(lang, default)
 
 
-def all_place_names() -> dict:
-    """The full {slug: {lang: name}} table (city exonyms + reference points), so
-    the browser gets the same localized names the server pages use."""
-    return _CITY_NAMES
+def place_names_for(lang: str) -> dict:
+    """One language's slice of the exonym table, {slug: name}, with the English
+    exonym baked in wherever ``lang`` has none - the same
+    ``m[lang] || m.en`` fallback the browser used to do itself.
+
+    The full table is ~1 MB (309 KB gzipped) across 32 languages, and a visitor
+    reads one of them; the landing page fetched all 32 before it could draw the
+    ranking. Emitting the slices lets it fetch ~5-40 KB instead."""
+    out = {}
+    for slug, names in _CITY_NAMES.items():
+        name = names.get(lang) or names.get("en")
+        if name:
+            out[slug] = name
+    return out
 
 
 def _seo_head(lang, languages, path, title, desc, jsonld=None):
@@ -1625,15 +1635,31 @@ ${topbar}
 <!-- maplibre-gl (~207 KB) is loaded lazily by __initMap on the first Map-tab
      open, not on every visit - most visitors never open the map. -->
 <script>
-  var cities = ${markers};
-  var PREVIEW = ${preview_markers};   // cities awaiting data (preview build only)
+  var cities = [], PREVIEW = [];      // filled by __loadMapData (see _map.json)
   var QV = ${qv_json};                // quick-view card strings (localized)
   var ZONE_COLOR = ${zone_color_json};
   var ZONE_BANDS = ${zone_bands_json};
   var GRID_TIP = ${grid_tip_js};      // "{n} of {m} cities with data" (localized)
-  // Real (analysed) cities, shared by the compare pickers and the map. Set here so
-  // Compare works even before the Map tab is opened (the map now inits lazily).
-  window.__mapCities = cities.filter(function (c) { return c.k !== 'region' && c.k !== 'ocean'; });
+  // The marker list lives in _map.json, not inline: ~295 KB of it, and the two
+  // things that read it (the map itself, the compare pickers) are both behind
+  // tabs. Whoever needs it first awaits this promise; later callers get the
+  // resolved one. window.__mapCities is the real (analysed) subset - no regions,
+  // no ocean reference points - which is what the compare pickers list.
+  window.__loadMapData = function () {
+    if (!window.__mapDataP) {
+      window.__mapDataP = fetch('_map.json')
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (d) {
+          cities = d.c || [];
+          PREVIEW = d.p || [];
+          window.__mapCities = cities.filter(function (c) {
+            return c.k !== 'region' && c.k !== 'ocean';
+          });
+          return d;
+        });
+    }
+    return window.__mapDataP;
+  };
   // Tiled Web-Mercator basemap (MapLibre GL). Mercator inflates the high
   // latitudes, but the overlays are all lon/lat so they register correctly, and
   // GPU rendering keeps the 4600-cell coverage grid smooth. Two keyless raster
@@ -1642,6 +1668,21 @@ ${topbar}
   // shown, so first paint isn't blocked on MapLibre + the coverage grid fetch.
   window.__initMap = function () {
     if (window.__mapReady) return;
+    // Markers come over the wire now, so fetch them alongside the library and
+    // re-enter when they land. Same shape as the maplibre branch below: bail out
+    // while in flight, clear the flag on failure so a later tab open retries.
+    if (!window.__mapDataReady) {
+      if (window.__mapDataLoading) return;
+      window.__mapDataLoading = true;
+      var mapEl0 = document.getElementById('map');
+      if (mapEl0) mapEl0.classList.add('map-loading');
+      window.__loadMapData().then(function () {
+        window.__mapDataLoading = false;
+        window.__mapDataReady = true;
+        window.__initMap();
+      }).catch(function () { window.__mapDataLoading = false; });
+      return;
+    }
     // Lazy-load maplibre-gl (library + CSS) the first time the Map tab opens,
     // then re-enter once it's ready. Deferring this ~207 KB script off the
     // initial load is the single biggest win for entering-the-site speed.
@@ -2185,17 +2226,22 @@ ${topbar}
   window.__crz = ${rz_label_json};
   window.__rankPeople = ${rank_people_json};
   (function () {
-    // Load localized names first (so the ranking can localize), then the payload.
-    fetch('../charts/_names.json').then(function (r) { return r.ok ? r.json() : {}; })
-      .catch(function () { return {}; })
-      .then(function (names) {
-        window.__names = names;
-        return fetch('../charts/_global.json')
-          .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-          .then(function (d) {
-            window.__gd = d;   // the map's quick-view card reads the ranking here
-            if (window.renderGlobal) window.renderGlobal(d);
-          });
+    // Names ({slug: localized name}) and the payload go out TOGETHER, not one
+    // after the other: the ranking needs both, so serializing them cost a whole
+    // round trip on the critical path. Only this page's language is fetched -
+    // _names.<lang>.json already has the English exonym baked in as a fallback.
+    var lang = (document.documentElement.lang || 'en').split('-')[0];
+    var names = fetch('../charts/_names.' + lang + '.json')
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .catch(function () { return {}; });
+    var payload = fetch('../charts/_global.json')
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+    Promise.all([names, payload])
+      .then(function (both) {
+        window.__names = both[0];
+        var d = both[1];
+        window.__gd = d;   // the map's quick-view card reads the ranking here
+        if (window.renderGlobal) window.renderGlobal(d);
       })
       .catch(function (e) {
         if (window.chartsUnavailable) window.chartsUnavailable(e);
@@ -2220,17 +2266,30 @@ ${topbar}
        both stay the same colour after a theme switch. */
     var COLORS = ['#d62728', '#2c7fb8'];
     var DOTVARS = ['var(--warm)', 'var(--cool)'];
-    var bySlug = {}, byVal = {};
-    (window.__mapCities || []).forEach(function (c) {
-      if (!c.s) return;
-      var slug = c.s.split('/').pop().replace('.html', '');
-      var val = c.n + (c.cc ? ' (' + c.cc.toUpperCase() + ')' : '');
-      bySlug[slug] = { n: c.n, val: val };
-      byVal[val] = slug;
-      var o = document.createElement('option');
-      o.value = val;
-      dl.appendChild(o);
-    });
+    // The city list is a fetch (see __loadMapData) and building ~2300 <option>
+    // nodes is real main-thread work, so both wait until Compare is actually
+    // used. Every entry point below goes through cmpReady(); the promise is
+    // shared with the map, so opening both tabs still fetches _map.json once.
+    var bySlug = {}, byVal = {}, cmpReadyP = null;
+    function cmpReady() {
+      if (!cmpReadyP) {
+        cmpReadyP = window.__loadMapData().then(function () {
+          var frag = document.createDocumentFragment();
+          (window.__mapCities || []).forEach(function (c) {
+            if (!c.s) return;
+            var slug = c.s.split('/').pop().replace('.html', '');
+            var val = c.n + (c.cc ? ' (' + c.cc.toUpperCase() + ')' : '');
+            bySlug[slug] = { n: c.n, val: val };
+            byVal[val] = slug;
+            var o = document.createElement('option');
+            o.value = val;
+            frag.appendChild(o);
+          });
+          dl.appendChild(frag);
+        }).catch(function () {});
+      }
+      return cmpReadyP;
+    }
     var cache = {}, cur = null, seq = 0;
     function loadCity(slug) {
       if (!cache[slug])
@@ -2304,16 +2363,26 @@ ${topbar}
           history.replaceState(null, '', '#cmp=' + sa + ',' + sb);
       }).catch(function () {});
     }
-    a.addEventListener('change', draw);
-    b.addEventListener('change', draw);
+    a.addEventListener('change', function () { cmpReady().then(draw); });
+    b.addEventListener('change', function () { cmpReady().then(draw); });
+    // Typing starts before 'change' fires, so warm the list on first focus - the
+    // datalist has to be populated for the browser to suggest anything.
+    a.addEventListener('focus', cmpReady, { once: true });
+    b.addEventListener('focus', cmpReady, { once: true });
     // The stat rows under the overlay are built text; redraw on a °C/°F switch
     // (the chart itself rebuilds from its payload via 'themechange').
     if (window.__unitHooks) window.__unitHooks.push(draw);
     var m = (location.hash || '').match(/cmp=([a-z0-9'-]+),([a-z0-9'-]+)/);
-    if (m && bySlug[m[1]] && bySlug[m[2]]) {
-      a.value = bySlug[m[1]].val;
-      b.value = bySlug[m[2]].val;
-      draw();
+    var cmpPrefilled = false;
+    // A #cmp= deep link is the one case that needs the list immediately.
+    if (m) {
+      cmpReady().then(function () {
+        if (!bySlug[m[1]] || !bySlug[m[2]]) return;
+        a.value = bySlug[m[1]].val;
+        b.value = bySlug[m[2]].val;
+        cmpPrefilled = true;
+        draw();
+      });
     }
     // The Compare tab opens on YOUR city vs a randomly chosen notable city, so it
     // is useful before you pick anything. Reuses window.__heroSlug (the hero's
@@ -2325,21 +2394,25 @@ ${topbar}
       'berlin', 'new-york', 'los-angeles', 'sao-paulo', 'rio-de-janeiro',
       'mexico-city', 'bangkok', 'jakarta', 'seoul', 'madrid', 'rome', 'toronto',
       'cape-town', 'nairobi', 'lagos', 'buenos-aires', 'hong-kong'];
-    var cmpPrefilled = !!(m && bySlug[m[1]] && bySlug[m[2]]);
     window.__cmpPrefill = function () {
       if (cmpPrefilled) return;
       var panel = document.getElementById('tp-compare');
       if (!panel || panel.hidden) return;
       if (a.value || b.value) return;
-      var mine = window.__heroSlug;
-      if (!mine || !bySlug[mine]) return;
-      var pool = ICONIC.filter(function (s) { return bySlug[s] && s !== mine; });
-      if (!pool.length) return;
-      var pick = pool[Math.floor(Math.random() * pool.length)];
-      a.value = bySlug[mine].val;
-      b.value = bySlug[pick].val;
-      cmpPrefilled = true;
-      draw();
+      cmpReady().then(function () {
+        // Re-check after the await: the visitor may have typed or navigated away
+        // while the city list was in flight.
+        if (cmpPrefilled || panel.hidden || a.value || b.value) return;
+        var mine = window.__heroSlug;
+        if (!mine || !bySlug[mine]) return;
+        var pool = ICONIC.filter(function (s) { return bySlug[s] && s !== mine; });
+        if (!pool.length) return;
+        var pick = pool[Math.floor(Math.random() * pool.length)];
+        a.value = bySlug[mine].val;
+        b.value = bySlug[pick].val;
+        cmpPrefilled = true;
+        draw();
+      });
     };
   })();
   // Auto-hide the sticky top bar on scroll - mobile only (desktop keeps it
@@ -3357,8 +3430,6 @@ def build_map_page(
             "index.html", _lang_nav(lang, languages, "index", in_place=False)),
         map_region_buttons=map_region_buttons,
         map_filter_label=tr.get("map_filter", "Continent or country"),
-        markers=json.dumps(markers, ensure_ascii=False),
-        preview_markers=json.dumps(preview_markers),
         qv_json=qv_json,
         coverage_note=coverage_note,
         kpi_band=kpi_band,
@@ -3453,6 +3524,13 @@ def build_map_page(
     )
     path = output_dir / "index.html"
     path.write_text(html, encoding="utf-8")
+    # The map's marker list (~295 KB raw / ~53 KB gzipped for the full roster)
+    # goes in a SIDECAR, not inline: maplibre already loads on the first Map-tab
+    # open, and the compare pickers are behind their own tab, so no visitor needs
+    # these bytes to see the landing page. Fetched by __loadMapData().
+    (output_dir / "_map.json").write_text(
+        json.dumps({"c": markers, "p": preview_markers}, ensure_ascii=False),
+        encoding="utf-8")
     return path
 
 

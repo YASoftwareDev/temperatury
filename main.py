@@ -327,10 +327,15 @@ def main() -> None:
     # Country border silhouettes for the hero (shared, language-neutral, keyed by
     # ISO alpha-2). Shipped once and fetched client-side by every hero, so the
     # path bytes are never duplicated across the (cities x languages) pages.
+    # ONE FILE PER COUNTRY: a hero draws a single country, so shipping all 174
+    # (27.7 KB gzipped) put 27 KB of other countries' borders on the entry path of
+    # the landing page AND every city page. A slice is 0.2-1.5 KB.
     _outlines = Path(__file__).resolve().parent / "assets" / "country_outlines.json"
     if _outlines.is_file():
         (OUTPUT_DIR / "charts").mkdir(parents=True, exist_ok=True)
-        (OUTPUT_DIR / "charts" / "country_outlines.json").write_bytes(_outlines.read_bytes())
+        for _cc, _shape in json.loads(_outlines.read_text(encoding="utf-8")).items():
+            (OUTPUT_DIR / "charts" / f"outline.{_cc}.json").write_text(
+                json.dumps(_shape), encoding="utf-8")
     for _lang in i18n.LANGUAGES:
         for _png in (OUTPUT_DIR / _lang).glob("*.png"):
             _png.unlink()
@@ -450,11 +455,16 @@ def main() -> None:
                     "gdt": g_payload.get("gdt") if _has_rank else None,
                     "gn": g_payload.get("gn") if _has_rank else None}),
         encoding="utf-8")
-    # Localized place names {slug: {lang: name}} for the ranking (drawn in the
-    # browser from the shared payload, so names are localized client-side).
-    from report import all_place_names
-    (OUTPUT_DIR / "charts" / "_names.json").write_text(
-        json.dumps(all_place_names(), ensure_ascii=False), encoding="utf-8")
+    # Localized place names for the ranking (drawn in the browser from the shared
+    # payload, so names are localized client-side). One {slug: name} file PER
+    # LANGUAGE, not one {slug: {lang: name}} table for all of them: the combined
+    # table is 309 KB gzipped and the landing page had to fetch every language's
+    # names before it could draw anything. A slice is 5-40 KB.
+    from report import place_names_for
+    for _lang in i18n.LANGUAGES:
+        (OUTPUT_DIR / "charts" / f"_names.{_lang}.json").write_text(
+            json.dumps(place_names_for(_lang), ensure_ascii=False),
+            encoding="utf-8")
     # Data-coverage grid: per-cell mean-file coverage over the FULL target set
     # (config.LOCATIONS, not just the rendered cities), so the map's overlay shows
     # which reanalysis cells still need downloading. Derived from committed files,
