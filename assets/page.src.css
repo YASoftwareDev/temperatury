@@ -296,18 +296,13 @@
   details.guide li { margin: .35rem 0; }
   details.guide b { color: var(--ink); }
   [dir="rtl"] details.guide ul { margin: .8rem 1.1rem .3rem 0; }
-  /* Deep-history explainer: what/why of pre-1940 climate, set apart in a warm
-     tone so it reads as context, not another chart. */
-  details.deephist { background: var(--panel-2); border: 1px solid var(--line);
-                     border-radius: 6px; padding: .75rem 1.2rem; margin: 2.5rem 0 0; }
-  details.deephist summary { cursor: pointer; font-weight: 600; color: var(--ink);
-                             font-family: var(--hdr); font-size: 1.02rem; }
-  details.deephist .dh-body { margin-top: .6rem; color: var(--ink-2); font-size: .9rem;
-                              max-width: 68ch; }
-  details.deephist p { margin: .55rem 0; }
-  details.deephist b { color: var(--ink); }
-  details.deephist .dh-here { border-inline-start: 3px solid var(--accent);
-                              padding-inline-start: .7rem; margin-top: .85rem; }
+  /* Long-record note: the single per-city fact the Q&A tab cannot carry (this
+     place holds one of the world's longest instrumental records). The pre-1940
+     explainer that used to sit here in a <details> now lives in the Q&A tab. */
+  .deephist-note { margin: 2.5rem 0 0; }
+  .deephist-note .dh-here { border-inline-start: 3px solid var(--accent);
+                            padding-inline-start: .7rem; margin: 0;
+                            color: var(--ink-2); font-size: .9rem; max-width: 68ch; }
   .iwidget { background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
              padding: .6rem .7rem; display: flex; flex-direction: column; margin: 0; }
   .iwhead { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;

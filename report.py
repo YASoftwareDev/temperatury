@@ -1135,16 +1135,20 @@ def build_site(
     # particular place holds one of the world's long instrumental records, so that
     # single line stays, as a plain note rather than a question the reader has to
     # open. Cities without such a record (the vast majority) now show nothing here.
-    dh = deephist.overlay(tr, lang)
+    # The MARKUP belongs here and the translated value is plain text. While the
+    # <p class="dh-here"> was part of the translated string, the machine translator
+    # had moved it in 39 of 132 languages - closing the tag mid-sentence, or opening
+    # the line after a leading word - so part of the note rendered outside the
+    # styled block. Structure in the template, words in the dictionary.
     _rec = deephist.record_for(slug)
     if not _rec:
         deep_history = ""
     else:
-        _rec_html = dh["deephist_record"].format(label=_rec[0], year=_rec[1])
-        _inner = (
-            f'<span{_i18n_attr("deephist_record", {"label": _rec[0], "year": _rec[1]}, html=True)}>'
-            f'{_rec_html}</span>') if _CLIENT_I18N else _rec_html
-        deep_history = f'<p class="deephist-note">{_inner}</p>'
+        _fmt = {"label": _rec[0], "year": _rec[1]}
+        deep_history = (
+            f'<div class="deephist-note">'
+            f'<p class="dh-here"{_i18n_attr("deephist_record", _fmt)}>'
+            f'{deephist.overlay(tr, lang)["deephist_record"].format(**_fmt)}</p></div>')
 
     # Climate analogs: "in 1940 this felt like X today" + "by 2050 it will feel
     # like Y today", two present-day cities that make the change concrete. Server
@@ -2308,16 +2312,18 @@ ${topbar}
       .then(function (r) { return r.ok ? r.json() : NO_OMNI; })
       .catch(function () { return NO_OMNI; });
     // __ready joins the fetches: initOmni and renderGlobal live in the deferred
-    // charts.js, and their `if (window.X)` guards would silently skip the whole
-    // landing render if a fast payload beat the script.
+    // charts.js, which a fast payload would otherwise beat. Called UNGUARDED on
+    // purpose - after __ready they exist unless charts.js itself failed, and that
+    // is a real failure belonging in the catch below (which shows the visitor an
+    // "unavailable" notice) rather than a silently skipped landing render.
     Promise.all([names, payload, omni, window.__ready])
       .then(function (both) {
         window.__names = both[0];
         window.__omniData = both[2];
         var d = both[1];
         window.__gd = d;   // the map's quick-view card reads the ranking here
-        if (window.initOmni) window.initOmni();
-        if (window.renderGlobal) window.renderGlobal(d);
+        window.initOmni();
+        window.renderGlobal(d);
       })
       .catch(function (e) {
         if (window.chartsUnavailable) window.chartsUnavailable(e);
@@ -2865,8 +2871,11 @@ _ABOUT_QA = [
      "ERA5, the reanalysis this site uses, currently reaches back to 1940 "
      "(ECMWF is gradually extending it to earlier decades). Starting in 1940 also "
      "gives every city the same consistent record of about 85 years, which is long "
+     # "Twentieth Century" is spelled out on purpose: written "20th-Century" the
+     # machine translator renders it as the ordinal "20." in languages that write
+     # ordinals that way, then splits the sentence there and drops the rest of it.
      "enough to measure a robust warming trend. Earlier data does exist (the NOAA "
-     "20th-Century Reanalysis extends to 1836, and a few stations hold "
+     "Twentieth Century Reanalysis extends to 1836, and a few stations hold "
      "multi-century records), but it rests on sparser, pre-satellite observations "
      "and carries larger uncertainty, so it is not merged into the ERA5 series "
      "here: the methods and error ranges differ. Where a city happens to hold one "

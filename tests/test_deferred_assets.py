@@ -21,7 +21,7 @@ import urllib.parse
 import pytest
 from playwright.sync_api import sync_playwright
 
-from tests.conftest import ROOT, build
+from tests.conftest import build
 
 SLUG = "krakow"
 
@@ -158,9 +158,13 @@ def test_inline_hooks_survive_the_deferred_script():
         assert src, "region iframe was never seeded (initRegionEmbed did not run)"
         target = urllib.parse.urljoin(f"{base}/en/index.html", src)
         assert pg.request.get(target).status == 200, f"region iframe points at {src}"
-        # __unitHooks: something registered, and a switch rewrites built text.
-        assert pg.evaluate("(window.__unitHooks || []).length") > 0, \
-            "no unit hooks registered - built text will not follow a unit switch"
+        # __unitHooks: the COMPARE hook specifically. Asserting only that the list
+        # is non-empty proves nothing - charts.js pushes five hooks of its own, so
+        # deleting the inline registration would leave that green. The compare
+        # redraw is identified by the chart id it renders into.
+        assert pg.evaluate("""(window.__unitHooks || []).some(
+            function (f) { return f.toString().indexOf('c-cmp') >= 0; })"""), \
+            "the inline compare-row unit hook is not registered"
 
         # The unit-switch EFFECT is asserted on a city page: the landing's figures
         # come from the ranking, which holds a single row in a one-city build.
@@ -237,4 +241,12 @@ def test_search_index_is_a_sidecar_and_still_searchable():
         assert pg.evaluate("((window.__omniData || {}).c || []).length") >= 1
         assert pg.evaluate("!!document.getElementById('omni-input').__wired"), \
             "the search was never wired to the loaded index"
+        # A wired listener is not a working search: a broken initOmni that binds
+        # handlers but matches nothing would pass everything above. Type a real
+        # query and require the built city back.
+        pg.fill("#omni-input", "krak")
+        pg.wait_for_selector("#omni-results li", timeout=5000)
+        hits = pg.evaluate("""[...document.querySelectorAll('#omni-results li')]
+                                .map(li => li.textContent.toLowerCase())""")
+        assert any("krak" in h for h in hits), f"search returned no city: {hits[:5]}"
     assert not errors, errors[:3]

@@ -10,7 +10,7 @@ have none. Deriving the fallback from the city's country code alone pointed 30 c
 import ogcards
 
 
-def _payload(n_cities: int, countries: list[str], big_pop_ccs=()) -> dict:
+def _payload(n_cities: int, countries: list[str]) -> dict:
     """A ranking of n_cities plus a country list that deliberately omits some of the
     countries the cities belong to - the shape that produced the bug."""
     ranking = []
@@ -18,9 +18,6 @@ def _payload(n_cities: int, countries: list[str], big_pop_ccs=()) -> dict:
         cc = "aa" if i % 2 == 0 else "zz"
         ranking.append({"s": f"city-{i:04d}", "n": f"City {i}", "cc": cc,
                         "t": 0.3, "dt": 2.5, "pop": n_cities - i})
-    for cc in big_pop_ccs:
-        ranking.insert(0, {"s": f"micro-{cc}", "n": f"Micro {cc}", "cc": cc,
-                           "t": 0.3, "dt": 2.5, "pop": 1})
     return {"ranking": ranking,
             "countries": [{"cc": cc, "t": 0.3, "rank": 1, "total": 1, "n": 10,
                            "pct": 50} for cc in countries]}
@@ -59,14 +56,17 @@ def test_a_city_in_an_unranked_country_has_no_country_card():
     """The 404 case, stated as the two facts report.build_site combines: the city is
     not in the personal-card set AND its country has no card, so the only correct
     target left is the world card.
+
+    The ranking must exceed CITY_CARDS: with a short one every city gets its own
+    card, the combination never occurs, and this test asserts nothing (it was
+    written that way once, guarded by `if tail:`, and passed vacuously).
     """
-    p = _payload(20, ["aa"], big_pop_ccs=["zz"])
+    p = _payload(ogcards.CITY_CARDS + 50, ["aa"])
     slugs, ccs = ogcards.city_card_slugs(p), ogcards.country_card_ccs(p)
     tail = [r for r in p["ranking"] if r["s"] not in slugs and r["cc"] not in ccs]
-    if tail:                      # with a small ranking every city gets a card
-        assert all(r["cc"] not in ccs for r in tail)
-    # And the fact the fix rests on, independent of roster size:
-    assert "zz" not in ccs, "zz has cities but no country card"
+    assert tail, "fixture produced no city with neither card - the case is untested"
+    assert all(r["cc"] == "zz" for r in tail), \
+        "only the unranked country's cities should fall through to the world card"
 
 
 def test_empty_payload_is_survivable():
