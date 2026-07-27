@@ -17,8 +17,13 @@ from plots import monthly_pivot
 _MONTHS = list(range(1, 13))
 
 # Loaded once per page (alongside the lightbox script).
+# defer, like the plugins and charts.js that follow it: these four only define
+# globals, and nothing inline touches them while the document is still parsing.
+# Deferred scripts still execute in order and before DOMContentLoaded, so
+# charts.js keeps finding Chart, and DOMContentLoaded keeps finding charts.js -
+# which is why anything inline that needs it waits for that event.
 CHARTJS_INCLUDE = (
-    '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/'
+    '<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/'
     'dist/chart.umd.min.js"></script>'
 )
 

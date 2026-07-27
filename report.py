@@ -467,7 +467,9 @@ window.__crz = ${rz_label_json};
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     })
-    .then(window.__expandYears)
+    // Looked up at call time, not parse time: charts.js is deferred, so the
+    // symbol does not exist yet while this script runs.
+    .then(function (c) { return window.__expandYears(c); })
     .then(draw)
     .catch(function (e) {
       if (window.chartsUnavailable) window.chartsUnavailable(e);
@@ -1062,11 +1064,11 @@ def build_site(
     # root asset referenced from each per-language page).
     chart_js = (
         interactive.CHARTJS_INCLUDE
-        + '<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/'
+        + '<script defer src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/'
           'dist/chartjs-chart-matrix.min.js"></script>'
-        + '<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/'
+        + '<script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/'
           'dist/chartjs-plugin-zoom.min.js"></script>'
-        + '<script src="../charts.js"></script>'
+        + '<script defer src="../charts.js"></script>'
     )
     range_widget = interactive.range_widget_html(
         slug, tr["range_title"].format(name=disp), tr["cap_range"],
@@ -1436,9 +1438,13 @@ ${topbar}
     <iframe class="region-frame" id="region-frame" title="${region_frame_title}"
             loading="lazy" referrerpolicy="no-referrer"></iframe>
   </div>
-  <!-- Load the remembered/default city at once (charts.js is already loaded
-       above), so the tab opens on a city without waiting for geolocation. -->
-  <script>window.initRegionEmbed&&window.initRegionEmbed();</script>
+  <!-- Load the remembered/default city at once, so the tab opens on a city without
+       waiting for geolocation. On DOMContentLoaded because charts.js is deferred:
+       deferred scripts run before that event, so it is the first moment
+       initRegionEmbed exists. Calling it inline would silently do nothing. -->
+  <script>document.addEventListener('DOMContentLoaded', function () {
+    if (window.initRegionEmbed) window.initRegionEmbed();
+  });</script>
     </section><!-- /tp-region -->
     <section class="tabpanel famous" role="tabpanel" id="tp-famous" aria-labelledby="tab-famous" tabindex="0" hidden>
       <!-- Famous-cities carousel: charts.js initCarousel cycles a set of iconic /
@@ -2339,7 +2345,7 @@ ${topbar}
         cache[slug] = fetch('../charts/' + slug + '.json').then(function (r) {
           if (!r.ok) throw new Error('HTTP ' + r.status);
           return r.json();
-        }).then(window.__expandYears);
+        }).then(function (c) { return window.__expandYears(c); });
       return cache[slug];
     }
     function rankRow(slug) {
@@ -2415,8 +2421,12 @@ ${topbar}
     a.addEventListener('focus', cmpReady);
     b.addEventListener('focus', cmpReady);
     // The stat rows under the overlay are built text; redraw on a °C/°F switch
-    // (the chart itself rebuilds from its payload via 'themechange').
-    if (window.__unitHooks) window.__unitHooks.push(draw);
+    // (the chart itself rebuilds from its payload via 'themechange'). Registered on
+    // DOMContentLoaded because charts.js, which owns __unitHooks, is deferred - the
+    // old `if (window.__unitHooks)` guard would just no-op silently here.
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.__unitHooks) window.__unitHooks.push(draw);
+    });
     var m = (location.hash || '').match(/cmp=([a-z0-9'-]+),([a-z0-9'-]+)/);
     var cmpPrefilled = false;
     // A #cmp= deep link is the one case that needs the list immediately.
@@ -3335,11 +3345,11 @@ def build_map_page(
     map_region_buttons = "".join(_mbtns)
     chart_js = (
         interactive.CHARTJS_INCLUDE
-        + '<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/'
+        + '<script defer src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.1/'
           'dist/chartjs-chart-matrix.min.js"></script>'
-        + '<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/'
+        + '<script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/'
           'dist/chartjs-plugin-zoom.min.js"></script>'
-        + '<script src="../charts.js"></script>'
+        + '<script defer src="../charts.js"></script>'
     )
 
     _map_desc = f'{tr["site_title"]} - {tr["map_sub"]}'[:300]
