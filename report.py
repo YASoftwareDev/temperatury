@@ -1406,7 +1406,12 @@ ${topbar}
     <p class="lookup-status" id="lookup-status" role="status"></p>
     <div class="lookup-result" id="lookup-result" hidden></div>
   </section>
-  <script>window.__omniData=${omni_data};</script>
+  <!-- The search index (~320 KB raw / 91 KB gzipped: every city, its localized
+       name, region and tier-aware URL) lives in _omni.json, not inline. Inline it
+       was three quarters of this page's HTML, and HTML has to arrive and parse
+       before anything paints - moving it cut first paint by ~380 ms. It is fetched
+       alongside the ranking payload below, so it lands at about the same moment it
+       used to, without standing between the visitor and the first pixel. -->
 </div>
 <!-- "Did you know" hook, on the main view above the tabs so it greets every
      visitor. Filled by charts.js from the loaded ranking (window.__gd) - every
@@ -2266,11 +2271,22 @@ ${topbar}
       .catch(function () { return NO_NAMES; });
     var payload = fetch('../charts/_global.json')
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
-    Promise.all([names, payload])
+    // The search index rides the same round trip. It must be in hand BEFORE the
+    // hero renders a remembered or geolocated city: heroCityUrl needs it to build
+    // the tier-aware cross-folder URL, and without it would link to a same-folder
+    // page that may have been pruned. renderGlobal drives every one of those
+    // renders, so resolving all three together is what keeps that link honest.
+    var NO_OMNI = { c: [], r: [], g: [] };
+    var omni = fetch('_omni.json')
+      .then(function (r) { return r.ok ? r.json() : NO_OMNI; })
+      .catch(function () { return NO_OMNI; });
+    Promise.all([names, payload, omni])
       .then(function (both) {
         window.__names = both[0];
+        window.__omniData = both[2];
         var d = both[1];
         window.__gd = d;   // the map's quick-view card reads the ranking here
+        if (window.initOmni) window.initOmni();
         if (window.renderGlobal) window.renderGlobal(d);
       })
       .catch(function (e) {
@@ -2278,9 +2294,6 @@ ${topbar}
         else if (window.console) console.error('global load', e);
       });
   })();
-  // Wire the omni search now too - city/region search works immediately; the
-  // country + "faster than N%" parts fill in once _global.json loads.
-  if (window.initOmni) window.initOmni();
   // --- compare two cities: overlay their yearly-anomaly curves --------------
   // Reuses the per-city chart JSONs (each city's anomalies vs its own
   // 1961-1990 baseline, LOESS included - all server-computed) and the shared
@@ -3563,6 +3576,10 @@ def build_map_page(
     (output_dir / "_map.json").write_text(
         json.dumps({"c": markers, "p": preview_markers}, ensure_ascii=False),
         encoding="utf-8")
+    # The omni search index, likewise a sidecar rather than inline: it is localized
+    # (region names, tier-aware cross-folder URLs) so it stays per-language, but it
+    # no longer has to be parsed before the page can paint.
+    (output_dir / "_omni.json").write_text(omni_data, encoding="utf-8")
     return path
 
 
