@@ -1129,25 +1129,22 @@ def build_site(
     heavyrain_figure = _fig("heavy-rain", "heavyrain_title", "cap_heavyrain") if has_precip else ""
     heatindex_figure = _fig("heat-index", "heatindex_title", "cap_heatindex") if has_appheat else ""
 
-    # Deep-history explainer (why the charts start in 1940); a city that is one
-    # of the world's long-record places also gets a specific "applicable here" line.
+    # "Why is there no data before 1940?" is ANSWERED IN THE Q&A TAB (_ABOUT_QA q3),
+    # so the city page no longer repeats it - it was the same question twice, in two
+    # wordings. What does NOT exist anywhere else is the per-city fact that this
+    # particular place holds one of the world's long instrumental records, so that
+    # single line stays, as a plain note rather than a question the reader has to
+    # open. Cities without such a record (the vast majority) now show nothing here.
     dh = deephist.overlay(tr, lang)
     _rec = deephist.record_for(slug)
-    _rec_html = dh["deephist_record"].format(label=_rec[0], year=_rec[1]) if _rec else ""
-    if _CLIENT_I18N:
-        _body = f'<span{_i18n_attr("deephist_body", html=True)}>{dh["deephist_body"]}</span>'
-        if _rec:
-            _body += (f'<span{_i18n_attr("deephist_record", {"label": _rec[0], "year": _rec[1]}, html=True)}>'
-                      f'{_rec_html}</span>')
-        deep_history = (
-            f'<details class="deephist"><summary{_i18n_attr("deephist_title")}>'
-            f'{dh["deephist_title"]}</summary>'
-            f'<div class="dh-body">{_body}</div></details>')
+    if not _rec:
+        deep_history = ""
     else:
-        deep_history = (
-            f'<details class="deephist"><summary>{dh["deephist_title"]}</summary>'
-            f'<div class="dh-body">{dh["deephist_body"]}{_rec_html}</div></details>'
-        )
+        _rec_html = dh["deephist_record"].format(label=_rec[0], year=_rec[1])
+        _inner = (
+            f'<span{_i18n_attr("deephist_record", {"label": _rec[0], "year": _rec[1]}, html=True)}>'
+            f'{_rec_html}</span>') if _CLIENT_I18N else _rec_html
+        deep_history = f'<p class="deephist-note">{_inner}</p>'
 
     # Climate analogs: "in 1940 this felt like X today" + "by 2050 it will feel
     # like Y today", two present-day cities that make the change concrete. Server
@@ -2868,7 +2865,12 @@ _ABOUT_QA = [
      "ERA5, the reanalysis this site uses, currently reaches back to 1940 "
      "(ECMWF is gradually extending it to earlier decades). Starting in 1940 also "
      "gives every city the same consistent record of about 85 years, which is long "
-     "enough to measure a robust warming trend."),
+     "enough to measure a robust warming trend. Earlier data does exist (the NOAA "
+     "20th-Century Reanalysis extends to 1836, and a few stations hold "
+     "multi-century records), but it rests on sparser, pre-satellite observations "
+     "and carries larger uncertainty, so it is not merged into the ERA5 series "
+     "here: the methods and error ranges differ. Where a city happens to hold one "
+     "of those long records, its page names it."),
     ("How do I read the charts?",
      "The recurring ones share a simple grammar. The decade area chart and the "
      "warming stripes show each decade compared with the 1961&#8211;1990 average: "
