@@ -2724,6 +2724,12 @@
   // refreshes the cache), so a stale trend/since/stripes can't outlive a data
   // regeneration; before it loads, the stored payload drives the early paint.
   function applyHeroCache() {
+    // Needs the search index first: heroCityUrl builds the tier-aware cross-folder
+    // URL out of it, and without it would guess "<slug>.html" - a page this
+    // language may not have. This runs at DOMContentLoaded, before _omni.json
+    // lands; renderGlobal calls it again once it has, so until then the visitor
+    // keeps the correct server-rendered default rather than a link that 404s.
+    if (!window.__omniData) return false;
     // A poisoned cache must never break page init, so the whole read is guarded.
     try {
       var c = heroCacheLoad();

@@ -126,14 +126,30 @@ def test_landing_switcher_navigates():
 @pytest.mark.slow
 def test_landing_omni_no_cross_language_404():
     """The landing omni search must link a city/alias with no shell in this
-    language to one it has (tier-aware), not a 404 same-folder URL."""
+    language to one it has (tier-aware), not a 404 same-folder URL.
+
+    The index lives in ``<lang>/_omni.json`` (it was inline in the landing HTML
+    until it turned out to be three quarters of that file and ~380 ms of first
+    paint), so this asserts on the rows themselves rather than on HTML substrings.
+    """
     build("tokyo", "en,pl,ja", client_i18n=True)
-    pl_index = (ROOT / "output/pl/index.html").read_text(encoding="utf-8")
-    ja_index = (ROOT / "output/ja/index.html").read_text(encoding="utf-8")
-    # PL is not a Tokyo shell: no omni row may point at a same-folder tokyo.html.
-    assert '"tokyo.html"' not in pl_index, \
-        "landing omni links a same-folder page that does not exist in PL (404)"
-    assert '"../en/tokyo.html' in pl_index or '"../ja/tokyo.html' in pl_index, \
-        "landing omni should link Tokyo cross-folder to an existing shell"
+
+    def tokyo_urls(lang: str) -> list[str]:
+        data = json.loads((ROOT / f"output/{lang}/_omni.json")
+                          .read_text(encoding="utf-8"))
+        return [row[1] for row in data["c"] if "tokyo.html" in row[1]]
+
+    pl_urls, ja_urls = tokyo_urls("pl"), tokyo_urls("ja")
+    assert pl_urls, "PL omni index should still offer Tokyo (cross-folder)"
+    # PL is not a Tokyo shell: no row may point at a same-folder tokyo.html.
+    assert not [u for u in pl_urls if not u.startswith("../")], \
+        f"PL omni links same-folder pages that do not exist (404): {pl_urls[:3]}"
+    assert all(u.startswith(("../en/tokyo.html", "../ja/tokyo.html")) for u in pl_urls), \
+        f"PL omni should link Tokyo cross-folder to an existing shell: {pl_urls[:3]}"
     # JA is a Tokyo shell: it links same-folder.
-    assert '"tokyo.html"' in ja_index, "JA landing omni should link Tokyo in-folder"
+    assert ja_urls and all(not u.startswith("../") for u in ja_urls), \
+        f"JA omni should link Tokyo in-folder: {ja_urls[:3]}"
+    # And the URL the omni offers must actually be on disk.
+    for lang, urls in (("pl", pl_urls), ("ja", ja_urls)):
+        target = (ROOT / f"output/{lang}" / urls[0].split("#")[0]).resolve()
+        assert target.is_file(), f"{lang} omni points at a missing page: {target}"
