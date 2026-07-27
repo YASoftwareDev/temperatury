@@ -253,3 +253,50 @@ def test_landing_bakes_a_fahrenheit_label_map():
     for k, v in fmap.items():
         if "°C" in cmap[k]:
             assert "°F" in v and "°C" not in v, f"{k!r} kept °C in the °F map"
+
+
+@pytest.mark.parity
+@pytest.mark.slow
+def test_automatic_unit_follows_the_page_language_not_a_secondary_locale():
+    """A Polish page must never open in Fahrenheit. Reported from the live site.
+
+    Two bugs combined. The rule scanned ALL of navigator.languages and took the
+    first tag carrying a region, so a Polish visitor whose list is
+    ["pl", "en-US", "en"] was read as American - a bare "pl" is not evidence of a
+    country, and a SECONDARY entry is not the visitor's region. And the page's own
+    language was never consulted, though /pl/ is Polish content and Poland is
+    metric. Only English is unit-ambiguous (spoken in Fahrenheit and metric
+    countries alike), so only an English page asks the browser at all.
+
+    Waits for `load`, not `domcontentloaded`: the deferred appearance.js used to
+    carry a SECOND copy of this rule and silently overwrote the head bootstrap's
+    answer, which is why fixing the bootstrap alone changed nothing on screen.
+    """
+    build(SLUG, "en,pl", client_i18n=True)
+    pl = (ROOT / f"output/pl/{SLUG}.html").as_uri()
+    en = (ROOT / f"output/en/{SLUG}.html").as_uri()
+
+    def unit(uri, langs):
+        with sync_playwright() as p:
+            b = p.chromium.launch()
+            pg = b.new_page(locale=langs[0])
+            pg.add_init_script(
+                "Object.defineProperty(navigator,'languages',{get:()=>%r});" % (langs,))
+            pg.goto(uri, wait_until="load")
+            pg.wait_for_timeout(600)          # let the deferred appearance.js apply
+            got = pg.evaluate("document.documentElement.getAttribute('data-unit')")
+            b.close()
+            return got
+
+    # The report: a Polish reader whose browser lists en-US after a region-less pl.
+    assert unit(pl, ["pl", "en-US", "en"]) == "C", "the Polish page opened in F"
+    # And no visitor, however American, gets F on a Polish page by DEFAULT
+    # (the manual toggle still overrides, it is just not the automatic choice).
+    assert unit(pl, ["en-US"]) == "C", "the Polish page opened in F"
+    # The same secondary-locale trap on an English page.
+    assert unit(en, ["pl", "en-US", "en"]) == "C", \
+        "a secondary en-US was mistaken for the visitor's region"
+    # Fahrenheit still works where it belongs, or the fix broke the feature.
+    assert unit(en, ["en-US"]) == "F", "an American reader lost Fahrenheit"
+    assert unit(en, ["es-PR"]) == "F", "a Fahrenheit territory lost Fahrenheit"
+    assert unit(en, ["en-GB"]) == "C", "a British reader got Fahrenheit"

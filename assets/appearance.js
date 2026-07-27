@@ -52,20 +52,14 @@
   function osTheme() {
     return window.matchMedia && matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light";
   }
-  /* Countries that use Fahrenheit for everyday temperature (US + territories and
-     a few small nations); everyone else defaults to Celsius. The visitor's
-     region comes from their locale, and a manual choice always overrides it. */
-  var FUNIT = ["US", "PR", "GU", "VI", "AS", "MP", "BS", "BZ", "KY", "PW", "FM", "MH"];
-  function autoUnit() {
-    try {
-      var langs = navigator.languages || [navigator.language || ""];
-      for (var i = 0; i < langs.length; i++) {
-        var m = /-([A-Za-z]{2})(?:$|-)/.exec(langs[i] || "");
-        if (m) return FUNIT.indexOf(m[1].toUpperCase()) >= 0 ? "F" : "C";
-      }
-    } catch (e) {}
-    return "C";
-  }
+  /* The automatic unit default is resolved ONCE, pre-paint, by the head bootstrap
+     in report.py (page language first, then the visitor's region) and written to
+     <html data-unit>. Read it back rather than re-deriving the rule here: this
+     file is deferred, so its own answer would silently overwrite the bootstrap's.
+     That is exactly how a Polish page came to show Fahrenheit - the rule was fixed
+     in the bootstrap while this stale second copy kept winning. */
+  var AUTO_UNIT = root.getAttribute("data-unit") || "C";
+  function autoUnit() { return AUTO_UNIT; }
   function cur(axis, fallback) {
     if (axis === "theme") return prefs.theme || osTheme();
     if (axis === "dir") return prefs.dir || "objective";
