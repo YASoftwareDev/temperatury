@@ -13,6 +13,7 @@ the output exactly, not relying on system fonts). Country names come from ICU
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -286,7 +287,9 @@ def _save_card(img: Image.Image, path: Path) -> None:
 # most-populous cities keep a personal card; everywhere else falls back to its
 # COUNTRY card, which is still that place's real climate card rather than a
 # generic placeholder. Tunable like langtier.SEO_PRERENDER.
-CITY_CARDS = 1000
+# TEMPERATURY_CITY_CARDS overrides it, which is how tests reach the fallback path
+# without building a >1000-city roster (same convention as TEMPERATURY_LANGS).
+CITY_CARDS = int(os.environ.get("TEMPERATURY_CITY_CARDS") or 1000)
 
 
 def city_card_slugs(payload: dict) -> set[str]:
