@@ -39,7 +39,7 @@ def merged_table(lang: str) -> dict:
     t: dict = {}
     t.update(i18n.get(lang))               # base UI + most captions live here
     t.update(captions.overlay({}, lang))   # extra chart captions
-    t.update(deephist.overlay({}, lang))   # deep-history explainer
+    t.update(deephist.overlay({}, lang))   # long-record note (explainer: Q&A tab)
     t.update(ranktext.overlay({}, lang))   # ranking strings
     t.update(_hero_flat(lang))             # hero / fullscreen / reset-zoom
     # Chrome outside <main> (topbar "back to map" link with its emoji stripped,
