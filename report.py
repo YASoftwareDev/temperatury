@@ -259,7 +259,16 @@ _PAGE = Template(
 <meta name="twitter:card" content="summary_large_image">
 ${seo_head}
 <script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[navigator.language||""];for(var i=0;i<L.length;i++){var m=/-([A-Za-z]{2})(?:$$|-)/.exec(L[i]||"");if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);if(/[?&]embed=1/.test(location.search))d.setAttribute("data-embed","1");}catch(e){}})();</script>
-<script>window.__tpref = ${tpref_i18n};window.__units = ${units_on};</script>
+<script>window.__tpref = ${tpref_i18n};window.__units = ${units_on};
+/* charts.js and Chart.js are deferred, so their API exists only from
+   DOMContentLoaded on - deferred scripts are guaranteed to run before it. Fetches
+   started while the document parses routinely resolve EARLIER than that, so every
+   consumer of that API awaits this promise instead of testing for a symbol at call
+   time (which silently no-ops, or throws, depending on the call). */
+window.__ready = new Promise(function (res) {
+  if (document.readyState !== 'loading') res();
+  else document.addEventListener('DOMContentLoaded', function () { res(); });
+});</script>
 <link rel="stylesheet" href="../page.css">
 <script defer src="../appearance.js"></script>
 </head>
@@ -462,14 +471,20 @@ window.__crz = ${rz_label_json};
       window.buildRecords('rec-' + slug, C._records, mo);
     }
   }
-  fetch('../charts/' + encodeURIComponent(slug) + '.json')
-    .then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    // Looked up at call time, not parse time: charts.js is deferred, so the
-    // symbol does not exist yet while this script runs.
-    .then(function (c) { return window.__expandYears(c); })
+  // The payload fetch starts now, but nothing is DRAWN until charts.js has run:
+  // this file is render-blocking while charts.js is deferred, and a same-origin
+  // JSON fetch easily wins that race. Awaiting __ready is what makes __expandYears
+  // and the renderers safe to call - testing for them here would either throw or,
+  // worse, quietly skip the year-axis expansion and draw a "_years" axis.
+  Promise.all([
+    fetch('../charts/' + encodeURIComponent(slug) + '.json')
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }),
+    window.__ready
+  ])
+    .then(function (both) { return window.__expandYears(both[0]); })
     .then(draw)
     .catch(function (e) {
       if (window.chartsUnavailable) window.chartsUnavailable(e);
@@ -1386,7 +1401,16 @@ _MAP_PAGE = Template(
 ${seo_head}
 <!-- world map rendered as SVG with D3 (Equal Earth, an equal-area projection) -->
 <script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[navigator.language||""];for(var i=0;i<L.length;i++){var m=/-([A-Za-z]{2})(?:$$|-)/.exec(L[i]||"");if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);}catch(e){}})();</script>
-<script>window.__tpref = ${tpref_i18n};window.__units = ${units_on};</script>
+<script>window.__tpref = ${tpref_i18n};window.__units = ${units_on};
+/* charts.js and Chart.js are deferred, so their API exists only from
+   DOMContentLoaded on - deferred scripts are guaranteed to run before it. Fetches
+   started while the document parses routinely resolve EARLIER than that, so every
+   consumer of that API awaits this promise instead of testing for a symbol at call
+   time (which silently no-ops, or throws, depending on the call). */
+window.__ready = new Promise(function (res) {
+  if (document.readyState !== 'loading') res();
+  else document.addEventListener('DOMContentLoaded', function () { res(); });
+});</script>
 <link rel="stylesheet" href="../landing.css">
 <script defer src="../appearance.js"></script>
 </head>
@@ -2286,7 +2310,10 @@ ${topbar}
     var omni = fetch('_omni.json')
       .then(function (r) { return r.ok ? r.json() : NO_OMNI; })
       .catch(function () { return NO_OMNI; });
-    Promise.all([names, payload, omni])
+    // __ready joins the fetches: initOmni and renderGlobal live in the deferred
+    // charts.js, and their `if (window.X)` guards would silently skip the whole
+    // landing render if a fast payload beat the script.
+    Promise.all([names, payload, omni, window.__ready])
       .then(function (both) {
         window.__names = both[0];
         window.__omniData = both[2];
@@ -2342,10 +2369,13 @@ ${topbar}
     var cache = {}, cur = null, seq = 0;
     function loadCity(slug) {
       if (!cache[slug])
-        cache[slug] = fetch('../charts/' + slug + '.json').then(function (r) {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.json();
-        }).then(function (c) { return window.__expandYears(c); });
+        cache[slug] = Promise.all([
+          fetch('../charts/' + slug + '.json').then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          }),
+          window.__ready
+        ]).then(function (both) { return window.__expandYears(both[0]); });
       return cache[slug];
     }
     function rankRow(slug) {
