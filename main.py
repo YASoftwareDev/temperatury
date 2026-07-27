@@ -128,12 +128,19 @@ _WORKER: dict = {}
 def _init_render_worker(locations: list[Location], languages: list[str],
                         analogs: dict | None = None,
                         rankpct: dict | None = None,
-                        citylangs: dict | None = None) -> None:
+                        citylangs: dict | None = None,
+                        cardslugs: set | None = None,
+                        cardccs: set | None = None) -> None:
     _WORKER["locations"] = locations
     _WORKER["languages"] = languages
     _WORKER["analogs"] = analogs or {}
     _WORKER["rankpct"] = rankpct or {}
     _WORKER["citylangs"] = citylangs or {}
+    # Which cities ogcards gave a personal share card, and which countries got one
+    # at all (small countries miss the country ranking's minimum-cities threshold).
+    # Passed in rather than recomputed so og:image cannot name a PNG that is absent.
+    _WORKER["cardslugs"] = cardslugs or set()
+    _WORKER["cardccs"] = cardccs or set()
 
 
 def _fastest_season(df, lat: float):
@@ -201,7 +208,12 @@ def _render_city(task) -> tuple[str, int]:
     # The range/records widget payloads ride along under reserved _-keys (the
     # page inits those widgets from this fetch too), so their ~23 KB is not
     # duplicated into all 32 language copies of every page.
+    # Charts only: range_data/records_data are handed to build_site below as well,
+    # so they must not be rewritten here. They carry no duplicated year axis anyway.
+    _years = chartdata.dedupe_year_axes(payloads)
     shared = {**payloads, "_range": range_data}
+    if _years:
+        shared["_years"] = _years
     if records_data is not None:
         shared["_records"] = records_data
     # Client-i18n serves one shell per city, so the {english: localized} chart-
@@ -227,7 +239,9 @@ def _render_city(task) -> tuple[str, int]:
                    has_dtr=df_ext is not None,
                    has_appheat=df_app is not None,
                    chart_i18n=chart_i18n, analog=analog, rank_pct=rank_pct,
-                   df_cur=df_cur, season=season)
+                   df_cur=df_cur, season=season,
+                   has_og_card=location.slug in _WORKER.get("cardslugs", ()),
+                   og_card_ccs=_WORKER.get("cardccs", frozenset()))
         n += 1
     return location.slug, n
 
@@ -327,10 +341,15 @@ def main() -> None:
     # Country border silhouettes for the hero (shared, language-neutral, keyed by
     # ISO alpha-2). Shipped once and fetched client-side by every hero, so the
     # path bytes are never duplicated across the (cities x languages) pages.
+    # ONE FILE PER COUNTRY: a hero draws a single country, so shipping all 174
+    # (27.7 KB gzipped) put 27 KB of other countries' borders on the entry path of
+    # the landing page AND every city page. A slice is 0.2-1.5 KB.
     _outlines = Path(__file__).resolve().parent / "assets" / "country_outlines.json"
     if _outlines.is_file():
         (OUTPUT_DIR / "charts").mkdir(parents=True, exist_ok=True)
-        (OUTPUT_DIR / "charts" / "country_outlines.json").write_bytes(_outlines.read_bytes())
+        for _cc, _shape in json.loads(_outlines.read_text(encoding="utf-8")).items():
+            (OUTPUT_DIR / "charts" / f"outline.{_cc}.json").write_text(
+                json.dumps(_shape), encoding="utf-8")
     for _lang in i18n.LANGUAGES:
         for _png in (OUTPUT_DIR / _lang).glob("*.png"):
             _png.unlink()
@@ -338,6 +357,11 @@ def main() -> None:
     if _charts_dir.is_dir():
         for _svg in _charts_dir.glob("*.svg"):
             _svg.unlink()
+        # CI restores output/ from a cache and deploys it as-is, so the combined
+        # payloads this build replaced with per-language / per-country slices would
+        # otherwise linger and ship forever - 1.1 MB nothing references.
+        for _legacy in ("_names.json", "country_outlines.json"):
+            (_charts_dir / _legacy).unlink(missing_ok=True)
     # Server->client (R1-hybrid) or SEO-tier cutover: a restored cache may carry
     # per-language city pages this build no longer generates (a city now renders
     # only its SEO shells). Drop any <lang>/<slug>.html whose language is not in
@@ -450,11 +474,27 @@ def main() -> None:
                     "gdt": g_payload.get("gdt") if _has_rank else None,
                     "gn": g_payload.get("gn") if _has_rank else None}),
         encoding="utf-8")
-    # Localized place names {slug: {lang: name}} for the ranking (drawn in the
-    # browser from the shared payload, so names are localized client-side).
-    from report import all_place_names
-    (OUTPUT_DIR / "charts" / "_names.json").write_text(
-        json.dumps(all_place_names(), ensure_ascii=False), encoding="utf-8")
+    # Localized place names for the ranking (drawn in the browser from the shared
+    # payload, so names are localized client-side). One file PER LANGUAGE, not one
+    # {slug: {lang: name}} table for all of them: the combined table is 309 KB
+    # gzipped and the landing page had to fetch every language's names before it
+    # could draw anything. A slice is 5-40 KB.
+    # Keyed by the BASE language code, because that is what the browser asks for
+    # (document.documentElement.lang.split('-')[0]) and how the exonym table is
+    # keyed: zh-TW and zh share _names.zh.json. Emitting a regional variant its own
+    # file would write an English-fallback-only slice nothing ever fetches.
+    from report import place_names_for
+    _name_langs = sorted({_l.split("-")[0] for _l in i18n.LANGUAGES})
+    for _base in _name_langs:
+        (OUTPUT_DIR / "charts" / f"_names.{_base}.json").write_text(
+            json.dumps(place_names_for(_base), ensure_ascii=False),
+            encoding="utf-8")
+    # A restored cache may hold slices for languages (or regional variants) this
+    # build no longer emits; they would deploy unreferenced.
+    _want = {f"_names.{_b}.json" for _b in _name_langs}
+    for _old in (OUTPUT_DIR / "charts").glob("_names.*.json"):
+        if _old.name not in _want:
+            _old.unlink()
     # Data-coverage grid: per-cell mean-file coverage over the FULL target set
     # (config.LOCATIONS, not just the rendered cities), so the map's overlay shows
     # which reanalysis cells still need downloading. Derived from committed files,
@@ -467,10 +507,14 @@ def main() -> None:
     _cov_tot = sum(c["m"] for c in _cov["cells"])
     print(f"Wrote coverage grid ({len(_cov['cells'])} cells, "
           f"{_cov_have}/{_cov_tot} cities with data).")
-    # Open Graph share cards (1200x630): one per country + a world card, so a
-    # link to any city previews its country's warming stat on social media.
+    # Open Graph share cards (1200x630): one per country, a world card, and a
+    # personal card for the most-populous cities (ogcards.CITY_CARDS) - the tail
+    # previews its country's card instead of adding ~20 KB of PNG per page.
+    g_cardslugs = ogcards.city_card_slugs(g_payload)
+    g_cardccs = ogcards.country_card_ccs(g_payload)
     n_cards = ogcards.build_cards(g_payload, OUTPUT_DIR)
-    print(f"Wrote {n_cards} share cards to {OUTPUT_DIR / 'og'}.")
+    print(f"Wrote {n_cards} share cards to {OUTPUT_DIR / 'og'} "
+          f"({len(g_cardslugs)} per-city).")
     # Embeddable ranking widget + its embed-code builder (reads _global.json).
     widget.build_widgets(OUTPUT_DIR)
     print(f"Wrote the embeddable widget + builder to {OUTPUT_DIR}.")
@@ -483,7 +527,7 @@ def main() -> None:
     written = 0
     if jobs == 1:
         _init_render_worker(locations, i18n.LANGUAGES, g_analogs, g_rankpct,
-                            g_citylangs)
+                            g_citylangs, g_cardslugs, g_cardccs)
         for task in tasks:
             written += _render_city(task)[1]
     else:
@@ -495,7 +539,8 @@ def main() -> None:
         with ProcessPoolExecutor(max_workers=jobs, mp_context=ctx,
                                  initializer=_init_render_worker,
                                  initargs=(locations, i18n.LANGUAGES, g_analogs,
-                                           g_rankpct, g_citylangs)) as pool:
+                                           g_rankpct, g_citylangs,
+                                           g_cardslugs, g_cardccs)) as pool:
             for _slug, n in pool.map(_render_city, tasks):
                 written += n
 

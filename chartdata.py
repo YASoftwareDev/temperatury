@@ -20,6 +20,8 @@ per city and shared across all languages.
 
 from __future__ import annotations
 
+from collections import Counter
+
 import numpy as np
 import pandas as pd
 
@@ -106,6 +108,48 @@ def _floats(arr) -> list:
     """NumPy/pandas array -> plain list of rounded floats (None for NaN)."""
     return [None if (v is None or (isinstance(v, float) and np.isnan(v)))
             else round(float(v), 2) for v in np.asarray(arr, dtype=float)]
+
+
+# Marker left in a chart payload's ``years``/``x`` slot meaning "use the city's
+# shared ``_years`` list". Spelled as the key it points at so the file reads for
+# itself; charts.js __expandYears puts the list back before anything reads it.
+YEARS_REF = "_years"
+
+
+def _is_year_axis(a) -> bool:
+    return (isinstance(a, list) and len(a) > 3
+            and all(isinstance(i, int) and 1900 < i < 2100 for i in a))
+
+
+def dedupe_year_axes(payloads: dict) -> list | None:
+    """Collapse the year axis that most of a city's charts share, in place.
+
+    Every chart carries its own ``years`` (or ``x``) list of ints, and in ~91% of
+    cities all of them span exactly the same years - 16 identical copies, ~7.6 KB
+    of a ~44 KB file, ~39 MB across the roster. The copies matching the most
+    common list become :data:`YEARS_REF`; a chart with a genuinely different span
+    (a shorter precipitation record, say) keeps its own list untouched.
+
+    Returns the hoisted list for the caller to store under ``_years``, or None if
+    there was nothing worth hoisting.
+    """
+    counts: Counter = Counter()
+    for payload in payloads.values():
+        if isinstance(payload, dict):
+            for key in ("years", "x"):
+                if _is_year_axis(payload.get(key)):
+                    counts[tuple(payload[key])] += 1
+    if not counts:
+        return None
+    winner, n = counts.most_common(1)[0]
+    if n < 2:
+        return None            # one copy is already minimal
+    for payload in payloads.values():
+        if isinstance(payload, dict):
+            for key in ("years", "x"):
+                if _is_year_axis(payload.get(key)) and tuple(payload[key]) == winner:
+                    payload[key] = YEARS_REF
+    return list(winner)
 
 
 def _trend_meta(years: np.ndarray, values: np.ndarray, tr: dict, Lf,

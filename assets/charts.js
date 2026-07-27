@@ -667,6 +667,22 @@
     return q;
   }
 
+  // A city's charts nearly always share one year axis, so the build stores it once
+  // as _years and leaves the string "_years" in each chart's years/x slot (see
+  // chartdata.dedupe_year_axes). Put the list back before anything reads a
+  // payload. Idempotent, so calling it twice on a cached city object is harmless.
+  window.__expandYears = function (city) {
+    var y = city && city._years;
+    if (!y) return city;
+    Object.keys(city).forEach(function (k) {
+      var p = city[k];
+      if (!p || typeof p !== "object") return;
+      if (p.years === "_years") p.years = y;
+      if (p.x === "_years") p.x = y;
+    });
+    return city;
+  };
+
   window.__charts = {};
   window.__chartPayloads = {};
   window.renderChart = function (canvasId, payload) {
@@ -877,6 +893,19 @@
     ric(function () { window.__ensureRanking(); });
   };
 
+  // Localized place names, loaded per page language as {l: own, f: English
+  // fallback} (see report.place_names_for). The split matters: nameAny falls back
+  // to the English exonym, nameOwn does not - the ranking keeps its own default
+  // name instead, which is where our "(CC)" disambiguators live.
+  function nameOwn(slug) {
+    var n = window.__names;
+    return (n && n.l && n.l[slug]) || null;
+  }
+  function nameAny(slug) {
+    var n = window.__names;
+    return nameOwn(slug) || (n && n.f && n.f[slug]) || null;
+  }
+
   // "Did you know" rotating facts (top of the Dashboard tab), each computed from
   // the loaded ranking - never fabricated. A fact is only added when its inputs
   // are present; the card stays hidden if nothing is computable. Numbers are put
@@ -891,10 +920,7 @@
     var T = {};
     try { T = JSON.parse(card.getAttribute("data-i18n") || "{}"); } catch (e) {}
     var rank = d.ranking;
-    function cityName(r) {
-      var m = window.__names && window.__names[r.s];
-      return (m && (m[lang] || m.en)) || r.n;
-    }
+    function cityName(r) { return nameAny(r.s) || r.n; }
     var regionNames = null;
     try { regionNames = new Intl.DisplayNames([lang], { type: "region" }); } catch (e) {}
     function countryName(cc) {
@@ -1093,10 +1119,12 @@
     function remeasure() {
       card.style.minHeight = "0px";
       var mh = 0;
-      for (var k = 0; k < picks.length; k++) {
-        renderHeroEntry(picks[k], picks[k].s, "data-none", card);
-        if (card.offsetHeight > mh) mh = card.offsetHeight;
-      }
+      heroMeasure(function () {
+        for (var k = 0; k < picks.length; k++) {
+          renderHeroEntry(picks[k], picks[k].s, "data-none", card);
+          if (card.offsetHeight > mh) mh = card.offsetHeight;
+        }
+      });
       card.style.minHeight = mh + "px";
       show(idx);
     }
@@ -1655,11 +1683,9 @@
       f.alt = ""; f.src = "https://flagcdn.com/20x15/" + cc + ".png";
       return f;
     }
-    // Localized city name from the shared table (window.__names), else the default.
-    function localName(slug, def) {
-      var m = window.__names;
-      return (m && m[slug] && m[slug][lang]) || def;
-    }
+    // This language's own name for the city, else the default - deliberately NOT
+    // the English exonym, which would drop our "(CC)" disambiguators.
+    function localName(slug, def) { return nameOwn(slug) || def; }
     // Small "W" that opens the city's Wikipedia article in the PAGE language.
     // Special:Search?...&go=Go behaves like the search-box Go button: an exact
     // title match jumps straight to the article, otherwise it shows results -
@@ -2386,29 +2412,42 @@
   // position and the loaded ranking; a no-op until both are present, and called
   // again from renderGlobal so it runs whenever the second one arrives.
   // --- Country border silhouette behind the hero (engraved-outline treatment) ---
-  // Border paths ship once in charts/country_outlines.json (keyed by lowercase
-  // ISO alpha-2) and are fetched lazily, so the geometry is never duplicated into
-  // the (cities x languages) pages. non-scaling-stroke keeps a constant ~1px line
-  // whatever the country's own viewBox.
-  var __outlinesP = null;
-  function heroOutlines() {
-    if (!__outlinesP) {
-      __outlinesP = fetch("../charts/country_outlines.json")
-        .then(function (r) { return r.ok ? r.json() : {}; })
-        .catch(function () { return {}; });
+  // Border paths ship as charts/outline.<cc>.json (lowercase ISO alpha-2), one
+  // file per country, so the geometry is never duplicated into the
+  // (cities x languages) pages AND a hero fetches only the border it draws -
+  // 0.2-1.5 KB instead of all 174 countries. non-scaling-stroke keeps a constant
+  // ~1px line whatever the country's own viewBox.
+  var __outlineP = {};
+  function heroOutline(cc) {
+    if (!__outlineP[cc]) {
+      __outlineP[cc] = fetch("../charts/outline." + cc + ".json")
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; });
     }
-    return __outlinesP;
+    return __outlineP[cc];
+  }
+  // Set while a hero card is being rendered only to MEASURE it (the carousel's
+  // tallest-slide pass). The silhouette is a decorative background and does not
+  // affect the card's height, so injecting it there fetched one border per slide -
+  // 18 round trips for renders that are overwritten immediately, repeated on
+  // every resize. Guarded before the data-outline claim so the real render still
+  // injects normally.
+  var __heroMeasuring = false;
+  function heroMeasure(fn) {
+    __heroMeasuring = true;
+    try { fn(); } finally { __heroMeasuring = false; }
   }
   function injectHeroOutline(host, cc) {
+    if (__heroMeasuring) return;
     cc = (cc || "").toLowerCase();
     if (!host || !/^[a-z]{2}$/.test(cc)) return;
     if (host.getAttribute("data-outline") === cc) return;  // already drawn/queued
     // Claim the intent now, before the async fetch, so a hero restore that clears
     // data-outline can revoke a still-pending injection in the callback below.
     host.setAttribute("data-outline", cc);
-    heroOutlines().then(function (map) {
+    heroOutline(cc).then(function (o) {
       if (host.getAttribute("data-outline") !== cc) return;  // superseded / restored
-      var o = map[cc], box = host.querySelector(".rh-silho");
+      var box = host.querySelector(".rh-silho");
       if (!o) { if (box) box.parentNode.removeChild(box);
                 host.removeAttribute("data-outline"); return; }
       if (!box) {
@@ -2544,12 +2583,8 @@
     // the shared names table; templates come from the hero's data attributes.
     var box = el("rh-analog");
     if (box) {
-      var lang = (document.documentElement.lang || "en").split("-")[0];
       var ana = (window.__analogs || {})[slug] || {};
-      function locName(a) {
-        var m = window.__names && window.__names[a.s];
-        return (m && (m[lang] || m.en)) || a.n;
-      }
+      function locName(a) { return nameAny(a.s) || a.n; }
       function fill(tmpl, a) {
         return tmpl.replace("{city}", name).replace("{analog}", locName(a))
                    .replace("{d}", a.d);
