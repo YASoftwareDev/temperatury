@@ -281,6 +281,37 @@ def _save_card(img: Image.Image, path: Path) -> None:
         colors=256, method=Image.Quantize.FASTOCTREE).save(path, optimize=True)
 
 
+# How many cities get their OWN share card. Each is ~20 KB of PNG, so the full
+# roster would be ~104 MB of images for pages that are mostly never shared. The
+# most-populous cities keep a personal card; everywhere else falls back to its
+# COUNTRY card, which is still that place's real climate card rather than a
+# generic placeholder. Tunable like langtier.SEO_PRERENDER.
+CITY_CARDS = 1000
+
+
+def city_card_slugs(payload: dict) -> set[str]:
+    """The slugs that get their own share card: the ``CITY_CARDS`` most populous.
+
+    report.build_site needs the same answer to aim ``og:image`` at the city card
+    or the country one, so the rule lives here and is passed to the render
+    workers - never recomputed with a different tie-break.
+    """
+    ranking = payload.get("ranking", [])
+    ranked = sorted(ranking, key=lambda r: (-(r.get("pop") or 0), r["s"]))
+    return {r["s"] for r in ranked[:CITY_CARDS]}
+
+
+def country_card_ccs(payload: dict) -> set[str]:
+    """Country codes that actually get a card.
+
+    Only countries in the COUNTRY ranking do, and that has a minimum-cities
+    threshold, so micro-states and small island nations have none - a city there
+    must fall through to the world card rather than to a 404. build_site is told
+    this set for the same reason it is told :func:`city_card_slugs`.
+    """
+    return {c["cc"] for c in payload.get("countries", []) if c.get("cc")}
+
+
 def build_cards(payload: dict, output_dir: Path) -> int:
     """Write ``output_dir/og/<cc>.png`` for every country in the ranking plus a
     ``world.png``. Returns the number of cards written."""
@@ -299,13 +330,17 @@ def build_cards(payload: dict, output_dir: Path) -> int:
         _save_card(_world_card(mean, len(ranking), n_countries),
                    og / "world.png")
         written += 1
-        # One card per city - the share image behind every city page's og:image.
-        # Ranking is sorted fastest-first, so the index is the global rank.
+        # A personal card for the most-populous cities (see CITY_CARDS); the tail
+        # shares its country's card. Ranking is sorted fastest-first, so the index
+        # is the global rank.
         cog = og / "city"
         cog.mkdir(parents=True, exist_ok=True)
         total_cities = len(ranking)
         analogs = payload.get("analogs", {})
+        want = city_card_slugs(payload)
         for i, r in enumerate(ranking):
+            if r["s"] not in want:
+                continue
             rank = i + 1
             pct = round(100 * (total_cities - rank) / total_cities) if total_cities else 0
             _save_card(
@@ -315,4 +350,8 @@ def build_cards(payload: dict, output_dir: Path) -> int:
                            analogs.get(r["s"])),
                 cog / f"{r['s']}.png")
             written += 1
+        # A cached output/ may hold cards for cities that no longer qualify.
+        for stale in cog.glob("*.png"):
+            if stale.stem not in want:
+                stale.unlink()
     return written

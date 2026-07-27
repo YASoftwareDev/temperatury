@@ -128,12 +128,19 @@ _WORKER: dict = {}
 def _init_render_worker(locations: list[Location], languages: list[str],
                         analogs: dict | None = None,
                         rankpct: dict | None = None,
-                        citylangs: dict | None = None) -> None:
+                        citylangs: dict | None = None,
+                        cardslugs: set | None = None,
+                        cardccs: set | None = None) -> None:
     _WORKER["locations"] = locations
     _WORKER["languages"] = languages
     _WORKER["analogs"] = analogs or {}
     _WORKER["rankpct"] = rankpct or {}
     _WORKER["citylangs"] = citylangs or {}
+    # Which cities ogcards gave a personal share card, and which countries got one
+    # at all (small countries miss the country ranking's minimum-cities threshold).
+    # Passed in rather than recomputed so og:image cannot name a PNG that is absent.
+    _WORKER["cardslugs"] = cardslugs or set()
+    _WORKER["cardccs"] = cardccs or set()
 
 
 def _fastest_season(df, lat: float):
@@ -201,7 +208,12 @@ def _render_city(task) -> tuple[str, int]:
     # The range/records widget payloads ride along under reserved _-keys (the
     # page inits those widgets from this fetch too), so their ~23 KB is not
     # duplicated into all 32 language copies of every page.
+    # Charts only: range_data/records_data are handed to build_site below as well,
+    # so they must not be rewritten here. They carry no duplicated year axis anyway.
+    _years = chartdata.dedupe_year_axes(payloads)
     shared = {**payloads, "_range": range_data}
+    if _years:
+        shared["_years"] = _years
     if records_data is not None:
         shared["_records"] = records_data
     # Client-i18n serves one shell per city, so the {english: localized} chart-
@@ -227,7 +239,9 @@ def _render_city(task) -> tuple[str, int]:
                    has_dtr=df_ext is not None,
                    has_appheat=df_app is not None,
                    chart_i18n=chart_i18n, analog=analog, rank_pct=rank_pct,
-                   df_cur=df_cur, season=season)
+                   df_cur=df_cur, season=season,
+                   has_og_card=location.slug in _WORKER.get("cardslugs", ()),
+                   og_card_ccs=_WORKER.get("cardccs", frozenset()))
         n += 1
     return location.slug, n
 
@@ -493,10 +507,14 @@ def main() -> None:
     _cov_tot = sum(c["m"] for c in _cov["cells"])
     print(f"Wrote coverage grid ({len(_cov['cells'])} cells, "
           f"{_cov_have}/{_cov_tot} cities with data).")
-    # Open Graph share cards (1200x630): one per country + a world card, so a
-    # link to any city previews its country's warming stat on social media.
+    # Open Graph share cards (1200x630): one per country, a world card, and a
+    # personal card for the most-populous cities (ogcards.CITY_CARDS) - the tail
+    # previews its country's card instead of adding ~20 KB of PNG per page.
+    g_cardslugs = ogcards.city_card_slugs(g_payload)
+    g_cardccs = ogcards.country_card_ccs(g_payload)
     n_cards = ogcards.build_cards(g_payload, OUTPUT_DIR)
-    print(f"Wrote {n_cards} share cards to {OUTPUT_DIR / 'og'}.")
+    print(f"Wrote {n_cards} share cards to {OUTPUT_DIR / 'og'} "
+          f"({len(g_cardslugs)} per-city).")
     # Embeddable ranking widget + its embed-code builder (reads _global.json).
     widget.build_widgets(OUTPUT_DIR)
     print(f"Wrote the embeddable widget + builder to {OUTPUT_DIR}.")
@@ -509,7 +527,7 @@ def main() -> None:
     written = 0
     if jobs == 1:
         _init_render_worker(locations, i18n.LANGUAGES, g_analogs, g_rankpct,
-                            g_citylangs)
+                            g_citylangs, g_cardslugs, g_cardccs)
         for task in tasks:
             written += _render_city(task)[1]
     else:
@@ -521,7 +539,8 @@ def main() -> None:
         with ProcessPoolExecutor(max_workers=jobs, mp_context=ctx,
                                  initializer=_init_render_worker,
                                  initargs=(locations, i18n.LANGUAGES, g_analogs,
-                                           g_rankpct, g_citylangs)) as pool:
+                                           g_rankpct, g_citylangs,
+                                           g_cardslugs, g_cardccs)) as pool:
             for _slug, n in pool.map(_render_city, tasks):
                 written += n
 

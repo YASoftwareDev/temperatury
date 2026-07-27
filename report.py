@@ -467,6 +467,7 @@ window.__crz = ${rz_label_json};
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     })
+    .then(window.__expandYears)
     .then(draw)
     .catch(function (e) {
       if (window.chartsUnavailable) window.chartsUnavailable(e);
@@ -977,6 +978,8 @@ def build_site(
     chart_i18n: dict | None = None,
     analog: dict | None = None,
     rank_pct: int | None = None,
+    has_og_card: bool = False,
+    og_card_ccs: frozenset | set = frozenset(),
     df_cur=None,
     season: tuple | None = None,
 ) -> Path:
@@ -1234,10 +1237,14 @@ def build_site(
         html_lang=tr["html_lang"],
         title=_title,
         seo_head=_seo_head(lang, languages, f"{slug}.html", _title, _desc, _jsonld),
-        # Each city shows its OWN share card (built per-slug in ogcards). Cities
-        # with a country are always in the ranking, so the card exists; the rare
-        # country-less city falls back to the world card.
-        og_image=(f"{SITE_BASE}/og/city/{slug}.png" if _cc
+        # The most-populous cities get their OWN card (ogcards.CITY_CARDS); the
+        # tail previews its country's card, and whatever has neither the world one.
+        # Both sets come from ogcards via the render worker rather than being
+        # re-derived, because "the country has a card" is NOT the same as "the city
+        # has a country": a country needs a minimum number of cities to enter the
+        # country ranking, so micro-states have no card and would 404 here.
+        og_image=(f"{SITE_BASE}/og/city/{slug}.png" if (has_og_card and _cc)
+                  else f"{SITE_BASE}/og/{_cc}.png" if _cc in og_card_ccs
                   else f"{SITE_BASE}/og/world.png"),
         og_url=f"{SITE_BASE}/{lang}/{slug}.html",
         share_label=tr.get("share", "Share"),
@@ -2319,7 +2326,7 @@ ${topbar}
         cache[slug] = fetch('../charts/' + slug + '.json').then(function (r) {
           if (!r.ok) throw new Error('HTTP ' + r.status);
           return r.json();
-        });
+        }).then(window.__expandYears);
       return cache[slug];
     }
     function rankRow(slug) {

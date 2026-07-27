@@ -667,6 +667,22 @@
     return q;
   }
 
+  // A city's charts nearly always share one year axis, so the build stores it once
+  // as _years and leaves the string "_years" in each chart's years/x slot (see
+  // chartdata.dedupe_year_axes). Put the list back before anything reads a
+  // payload. Idempotent, so calling it twice on a cached city object is harmless.
+  window.__expandYears = function (city) {
+    var y = city && city._years;
+    if (!y) return city;
+    Object.keys(city).forEach(function (k) {
+      var p = city[k];
+      if (!p || typeof p !== "object") return;
+      if (p.years === "_years") p.years = y;
+      if (p.x === "_years") p.x = y;
+    });
+    return city;
+  };
+
   window.__charts = {};
   window.__chartPayloads = {};
   window.renderChart = function (canvasId, payload) {
