@@ -75,8 +75,7 @@ def _spread_within_window(missing):
     Shuffling the whole queue instead would make the priority sort inert; not
     shuffling at all would make every contributor march the identical list and
     re-download each other's cities (daily-chunk.sh never refreshes the working
-    tree's data/, so a fetcher only sees what it fetched itself). Same
-    window-then-shuffle idiom as --top-pop.
+    tree's data/, so a fetcher only sees what it fetched itself).
     """
     head = missing[:_SHUFFLE_WINDOW]
     random.shuffle(head)
@@ -118,24 +117,19 @@ def run(args):
     # Wealthier countries' cities first (same priority as main.py --all): early
     # visitors skew that way, so the daily/VM backfill should cover them first as
     # it fills in. --shuffle keeps this order's top window and only reorders
-    # inside it; --top-pop replaces it with population for the enrich pass.
+    # inside it; --rendered-only narrows WHICH cities qualify, never their order.
     locs = sorted(config.LOCATIONS.values(), key=countries.download_priority_key)
-    if args.top_pop:
-        # Enrich mode: the N most-populous cities that are already render-
-        # eligible (mean cache present) - extra datasets only show on built
-        # pages, so enriching an unrendered city would waste quota.
-        import json
-        pop_path = Path(__file__).resolve().parent.parent / "data" / "city_pop.json"
-        try:
-            pop = json.loads(pop_path.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
-            pop = {}
+    if args.rendered_only:
+        # Enrich mode: only cities that already render (mean cache present), since
+        # the extra datasets appear on built pages and enriching an unrendered
+        # city would spend quota on something nobody can see. This filters the
+        # queue, it does NOT reorder it - the GDP priority above still decides who
+        # goes first. It used to re-sort by population here, which silently made
+        # that priority irrelevant on the only pass that spends real quota.
         locs = [l for l in locs
                 if getattr(l, "kind", "city") == "city"
                 and data._cache_path(l, args.start, args.end).exists()]
-        locs.sort(key=lambda l: pop.get(l.slug) or 0, reverse=True)
-        locs = locs[:args.top_pop]
-        print(f"enrich scope: top {len(locs)} rendered cities by population")
+        print(f"enrich scope: {len(locs)} already-rendered cities, in priority order")
     workers = args.workers or (16 if data._API_KEY else 5)
     endpoint = "PAID (uncapped)" if data._API_KEY else "free tier"
     print(f"Open-Meteo parallel backfill — {workers} workers, {endpoint}\n")
@@ -193,9 +187,9 @@ def parse_args(argv=None):
                          "by priority (for many people sharing one repo)")
     ap.add_argument("--max-seconds", type=int, default=0,
                     help="stop after N seconds (0 = no cap); portable timeout")
-    ap.add_argument("--top-pop", type=int, default=0,
-                    help="restrict to the N most-populous already-rendered "
-                         "cities (for enriching popular pages)")
+    ap.add_argument("--rendered-only", action="store_true",
+                    help="restrict to cities that already render (mean cached), "
+                         "keeping the priority order; for the enrich pass")
     args = ap.parse_args(argv)
     args.groups = [g.strip() for g in args.groups.split(",") if g.strip() in GROUPS]
     return args

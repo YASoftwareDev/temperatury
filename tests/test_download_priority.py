@@ -13,7 +13,7 @@ Two contracts pull against each other and both are load-bearing:
 Shuffling the whole queue satisfies the second and makes the first inert;
 sorting without shuffling satisfies the first and makes every contributor march
 the identical list. The queue therefore randomises *within* the priority window
-only - the same window-then-shuffle idiom `--top-pop` already uses.
+only, so several fetchers spread out without losing that order.
 """
 import random
 import sys
@@ -82,7 +82,7 @@ class _Args:
     """The argparse namespace `run()` expects, for a single offline mean pass."""
     start, end = 1940, 2025
     groups = ["mean"]
-    top_pop = 0
+    rendered_only = False
     workers = 1
     max_seconds = 0
     shuffle = False
@@ -202,3 +202,46 @@ def test_daily_chunk_still_never_touches_the_checked_out_branch():
     for mutating in ("git pull", "git merge", "git rebase", "git reset"):
         offenders = [ln for ln in body if mutating in ln]
         assert not offenders, f"{mutating} in daily-chunk.sh: {offenders}"
+
+
+def test_enrich_pass_keeps_the_priority_order(monkeypatch):
+    """The regression that made the whole priority feature a no-op in practice.
+
+    --rendered-only narrows the queue to cities that already render; it must not
+    reorder it. Re-sorting here (it used to sort by population) left the GDP order
+    governing only the mean pass - and on a spent free-tier quota the enrich pass
+    runs first and takes everything, so the mean pass wrote nothing and the
+    priority decided nothing at all. Ordering must survive the filter.
+    """
+    scheduled = _scheduled_slugs(monkeypatch, rendered_only=True)
+    assert scheduled, "expected the enrich pass to schedule something"
+
+    expected = [l.slug for l in sorted(config.LOCATIONS.values(),
+                                       key=countries.download_priority_key)
+                if l.slug in set(scheduled)]
+    assert scheduled == expected, "enrich pass reordered the priority queue"
+
+
+def test_enrich_pass_only_takes_already_rendered_cities(monkeypatch):
+    """The filter itself still has to work: enriching a city with no mean cached
+    spends quota on a page that will not be built."""
+    import om_parallel as om
+    seen = []
+
+    def _record(chunk, *a):
+        seen.extend(chunk)
+        return len(chunk), 0
+
+    monkeypatch.setattr(om, "_fetch_chunk", _record)
+    monkeypatch.setattr(om, "ThreadPoolExecutor",
+                        lambda max_workers=None: _SerialExecutor())
+    args = _Args()
+    args.rendered_only = True
+    args.groups = ["extremes"]
+    om.run(args)
+
+    import data as data_mod
+    for loc in seen:
+        assert getattr(loc, "kind", "city") == "city"
+        assert data_mod._cache_path(loc, 1940, 2025).exists(), \
+            f"{loc.slug} has no mean cache; enriching it wastes quota"

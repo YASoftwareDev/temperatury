@@ -75,7 +75,7 @@ echo "== fetching missing cities (up to 20 min; stops when today's quota is spen
 # ending it: fetchers who cannot see each other's files still collide on roughly
 # N^2/window cities a day (N = cities one fetcher manages), so a second machine
 # fetching in earnest wants an up-to-date data/ rather than just this.
-"$PY" tools/om_parallel.py --groups precip,extremes --top-pop 500 --shuffle --max-seconds 360
+"$PY" tools/om_parallel.py --groups precip,extremes --rendered-only --shuffle --max-seconds 360
 "$PY" tools/om_parallel.py --groups mean --shuffle --max-seconds 840
 
 # The genuinely-new data files: untracked, ASCII-named .csv.gz files not already
