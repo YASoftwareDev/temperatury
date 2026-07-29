@@ -36,6 +36,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import config  # noqa: E402
+import countries  # noqa: E402
 import data  # noqa: E402  (reuses its request/parse/cache-path helpers)
 
 # group -> (daily-vars, parser, cache-path fn, cities-per-request chunk size)
@@ -92,7 +93,10 @@ def _fetch_chunk(chunk, daily, parse, path_fn, start, end):
 
 
 def run(args):
-    locs = list(config.LOCATIONS.values())
+    # Wealthier countries' cities first (same priority as main.py --all): early
+    # visitors skew that way, so the daily/VM backfill should cover them first
+    # as it fills in. --shuffle (below) overrides this per group when set.
+    locs = sorted(config.LOCATIONS.values(), key=countries.download_priority_key)
     if args.top_pop:
         # Enrich mode: the N most-populous cities that are already render-
         # eligible (mean cache present) - extra datasets only show on built

@@ -408,3 +408,10 @@ def gdp_per_capita(cc: str | None) -> int:
     """Approximate nominal GDP per capita (USD) for an ISO-2 code, or a low
     fallback if unlisted/unknown. For download-queue prioritisation only."""
     return _GDP_PC.get((cc or "").lower(), _GDP_DEFAULT)
+
+
+def download_priority_key(loc: Location) -> tuple[int, str]:
+    """Sort key for the data-download queue: highest GDP-per-capita country
+    first (early visitors skew toward wealthier countries), ties - and
+    reference points with no country - broken by slug for a stable order."""
+    return (-gdp_per_capita(country_code(loc)), loc.slug)
