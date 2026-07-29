@@ -174,3 +174,31 @@ def test_daily_chunk_asks_for_the_spread_on_every_pass():
     assert calls, "expected daily-chunk.sh to invoke om_parallel.py"
     for call in calls:
         assert "--shuffle" in call, f"pass without --shuffle: {call.strip()}"
+
+
+def test_sync_wrapper_keeps_the_gatherer_non_destructive():
+    """tools/sync-and-gather.sh fast-forwards a dedicated clone before gathering.
+
+    Two invariants are easy to "simplify" away and both lose data if they go:
+    `reset --hard`/`clean` would discard cities this clone fetched but has not
+    pushed yet, and the fast-forward must stay `--ff-only` so a diverged clone
+    is never rewritten.
+    """
+    script = (Path(__file__).resolve().parent.parent
+              / "tools" / "sync-and-gather.sh").read_text(encoding="utf-8")
+    for destructive in ("reset --hard", "clean -", "push --force", "checkout -f"):
+        assert destructive not in script, f"destructive git in gatherer: {destructive}"
+    assert "--ff-only" in script
+    assert "hash-object" in script, "redundant files must be matched by content"
+
+
+def test_daily_chunk_still_never_touches_the_checked_out_branch():
+    """daily-chunk.sh is data-only by construction because it may run while a
+    feature branch is checked out. The sync belongs in the wrapper only - folding
+    it in here would fast-forward whatever branch happens to be out."""
+    script = (Path(__file__).resolve().parent.parent
+              / "tools" / "daily-chunk.sh").read_text(encoding="utf-8")
+    body = [ln for ln in script.splitlines() if not ln.lstrip().startswith("#")]
+    for mutating in ("git pull", "git merge", "git rebase", "git reset"):
+        offenders = [ln for ln in body if mutating in ln]
+        assert not offenders, f"{mutating} in daily-chunk.sh: {offenders}"

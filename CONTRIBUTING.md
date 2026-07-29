@@ -94,6 +94,21 @@ put the folder):
 the program to your Git Bash `bash.exe` with the argument
 `tools/daily-chunk.sh` and "Start in" set to your `temperatury` folder.
 
+### If this folder does nothing but gather
+
+Use `tools/sync-and-gather.sh` in place of `tools/daily-chunk.sh`:
+
+```
+30 0 * * * cd $HOME/temperatury && bash tools/sync-and-gather.sh >> $HOME/temps.log 2>&1
+```
+
+It refreshes `data/` from the project first, so you do not spend today's quota
+re-downloading cities somebody else already published, then gathers exactly as
+above. Cities you fetched but have not sent yet are kept. Use it only for a
+folder you keep on the `main` branch and never edit - if you have your own
+changes or another branch checked out there it just skips the refresh and
+gathers anyway, so nothing of yours is ever overwritten.
+
 ---
 
 ## Common questions
