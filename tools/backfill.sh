@@ -23,15 +23,14 @@ for round in $(seq 1 96); do
 
   # Fetch order matters under the rate limit: mean first (a city only renders
   # once its mean is cached), then the *cheap* precip (1 var, 15/call), then the
-  # *expensive* extremes (2 vars, 7/call) last. Doing extremes before precip
-  # starved precip — it drained the per-round quota first.
-  # Fetch order matters under the rate limit: mean first (a city only renders
-  # once its mean is cached), then the *cheap* precip (1 var, 15/call), then the
-  # *expensive* extremes (2 vars, 7/call). Apparent temperature (heat index) is
-  # the lowest-priority chart, so it is fetched last.
+  # *expensive* extremes (2 vars, 7/call). Doing extremes before precip starved
+  # precip — it drained the per-round quota first. Apparent temperature (heat
+  # index) is the lowest-priority chart, so it is fetched last. Within each
+  # dataset, cities are queued wealthiest-country-first (same priority as
+  # main.py --all / tools/om_parallel.py), since early visitors skew that way.
   "$PY" -c "
-import config, data
-locs = list(config.LOCATIONS.values())
+import config, countries, data
+locs = sorted(config.LOCATIONS.values(), key=countries.download_priority_key)
 mean = data.load_temperatures_bulk(locs, 1940, 2025)
 pre = data.load_precip_bulk(locs, 1940, 2025)
 ext = data.load_extremes_bulk(locs, 1940, 2025)
