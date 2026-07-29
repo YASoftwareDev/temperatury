@@ -211,7 +211,7 @@ cat <<EOF
        1. free account at https://github.com
        2. install GitHub CLI:  https://cli.github.com
        3. run:  gh auth login
-       4. re-run:  bash tools/daily-chunk.sh
+       4. run this helper again, the same way you ran it this time
 
  Nothing is lost - your download stays on disk, so re-running is safe.
 ============================================================
