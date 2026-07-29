@@ -14,7 +14,9 @@ Writes the same data/{slug}_1940-2025[...].csv.gz files main.py reads, FILL-ONLY
 concurrent git-add or reader never sees a half-written file. Does NOT commit —
 run alongside the ERA5 CDS worker (which writes staging pickles, not data/), then
 commit once from the main session. Priority mean → precip → extremes: mean
-unlocks a city's rendering.
+unlocks a city's rendering. Within a group, cities queue by country GDP per
+capita (see countries.download_priority_key); --shuffle randomises inside the
+top window only, so many contributors spread out without losing that order.
 
 Usage
 -----
@@ -39,6 +41,10 @@ import config  # noqa: E402
 import countries  # noqa: E402
 import data  # noqa: E402  (reuses its request/parse/cache-path helpers)
 
+# --shuffle randomises within this many highest-priority cities rather than the
+# whole queue, so contributors spread out without discarding the priority order.
+_SHUFFLE_WINDOW = 500
+
 # group -> (daily-vars, parser, cache-path fn, cities-per-request chunk size)
 GROUPS = {
     "mean":     ("temperature_2m_mean", data._parse_daily, data._cache_path, 15),
@@ -59,6 +65,22 @@ def _atomic_write(frame, path: Path) -> None:
     tmp = path.with_suffix(path.suffix + ".part")
     frame.to_csv(tmp, compression={"method": "gzip", "mtime": 0})
     os.replace(tmp, path)
+
+
+def _spread_within_window(missing):
+    """Randomise the highest-priority window of an already-prioritised queue.
+
+    Spreads work across contributors WITHOUT discarding the priority order: they
+    all draw from the same short head of the queue, but in a different order.
+    Shuffling the whole queue instead would make the priority sort inert; not
+    shuffling at all would make every contributor march the identical list and
+    re-download each other's cities (daily-chunk.sh never refreshes the working
+    tree's data/, so a fetcher only sees what it fetched itself). Same
+    window-then-shuffle idiom as --top-pop.
+    """
+    head = missing[:_SHUFFLE_WINDOW]
+    random.shuffle(head)
+    return head + missing[_SHUFFLE_WINDOW:]
 
 
 def _fetch_chunk(chunk, daily, parse, path_fn, start, end):
@@ -94,8 +116,9 @@ def _fetch_chunk(chunk, daily, parse, path_fn, start, end):
 
 def run(args):
     # Wealthier countries' cities first (same priority as main.py --all): early
-    # visitors skew that way, so the daily/VM backfill should cover them first
-    # as it fills in. --shuffle (below) overrides this per group when set.
+    # visitors skew that way, so the daily/VM backfill should cover them first as
+    # it fills in. --shuffle keeps this order's top window and only reorders
+    # inside it; --top-pop replaces it with population for the enrich pass.
     locs = sorted(config.LOCATIONS.values(), key=countries.download_priority_key)
     if args.top_pop:
         # Enrich mode: the N most-populous cities that are already render-
@@ -132,7 +155,7 @@ def run(args):
             print(f"[{group}] nothing missing")
             continue
         if args.shuffle:
-            random.shuffle(missing)  # spread work when many people share one repo
+            missing = _spread_within_window(missing)
         chunks = [missing[i:i + chunk_sz] for i in range(0, len(missing), chunk_sz)]
         print(f"[{group}] {len(missing)} cities in {len(chunks)} chunks")
         done = failed = 0
@@ -166,7 +189,8 @@ def parse_args(argv=None):
     ap.add_argument("--groups", default="mean,precip,extremes")
     ap.add_argument("--workers", type=int, default=0, help="0 = auto by quota")
     ap.add_argument("--shuffle", action="store_true",
-                    help="randomise fetch order (for many people sharing one repo)")
+                    help=f"randomise fetch order within the top {_SHUFFLE_WINDOW} "
+                         "by priority (for many people sharing one repo)")
     ap.add_argument("--max-seconds", type=int, default=0,
                     help="stop after N seconds (0 = no cap); portable timeout")
     ap.add_argument("--top-pop", type=int, default=0,

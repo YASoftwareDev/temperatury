@@ -66,14 +66,17 @@ git fetch -q origin main \
 
 echo "== fetching missing cities (up to 20 min; stops when today's quota is spent) =="
 # Two passes. First finish the popular pages: precipitation + daily max/min for
-# the most-populous cities that are already rendered (unlocks their extra
-# charts and the records widget) - --shuffle spreads that enrichment work when
-# many contributors share this script. Then spend the rest of the budget
-# widening mean coverage, wealthiest-country-first (no --shuffle here, so that
-# priority order actually governs instead of being scrambled). Once the enrich
-# backlog is empty, its pass costs seconds.
+# the most-populous cities that are already rendered (unlocks their extra charts
+# and the records widget). Then spend the rest of the budget widening mean
+# coverage, wealthiest-country-first. Once the enrich backlog is empty, its pass
+# costs seconds. --shuffle on both passes randomises only within the priority
+# window, so the priority order still decides which cities are in play while two
+# fetchers pick different ones out of it. That thins duplicate work rather than
+# ending it: fetchers who cannot see each other's files still collide on roughly
+# N^2/window cities a day (N = cities one fetcher manages), so a second machine
+# fetching in earnest wants an up-to-date data/ rather than just this.
 "$PY" tools/om_parallel.py --groups precip,extremes --top-pop 500 --shuffle --max-seconds 360
-"$PY" tools/om_parallel.py --groups mean --max-seconds 840
+"$PY" tools/om_parallel.py --groups mean --shuffle --max-seconds 840
 
 # The genuinely-new data files: untracked, ASCII-named .csv.gz files not already
 # on origin/main. (A feature branch keeps already-pushed files untracked in the

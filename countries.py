@@ -380,8 +380,10 @@ def country_population(cc: str) -> int:
 # Approximate nominal GDP per capita (USD, ~2023, rounded), by ISO-2 code. These
 # are public reference figures used ONLY to prioritise the data-download queue
 # (wealthier countries first, since early visitors skew that way) - they are
-# never displayed on the site. Unlisted countries fall back to a low value so
-# they queue after the listed ones. Rounding/approximation is fine for ordering.
+# never displayed on the site. Unlisted countries fall back to _GDP_DEFAULT,
+# which sits low in the table but not below it - the ten listed countries poorer
+# than that default still queue after an unlisted one. Approximation is fine
+# here: this only decides fetch order, never a displayed figure.
 _GDP_PC: dict[str, int] = {
     "lu": 128000, "ie": 104000, "ch": 93000, "no": 87000, "sg": 85000,
     "qa": 81000, "us": 81000, "is": 79000, "dk": 68000, "au": 65000,
@@ -412,6 +414,8 @@ def gdp_per_capita(cc: str | None) -> int:
 
 def download_priority_key(loc: Location) -> tuple[int, str]:
     """Sort key for the data-download queue: highest GDP-per-capita country
-    first (early visitors skew toward wealthier countries), ties - and
-    reference points with no country - broken by slug for a stable order."""
+    first (early visitors skew toward wealthier countries), ties broken by slug
+    for a stable order. Ocean/region reference points have no country and so
+    queue on the unlisted-country default, mid-pack; only their mean is used
+    anyway (they are map-only, never rendered as a city page)."""
     return (-gdp_per_capita(country_code(loc)), loc.slug)
