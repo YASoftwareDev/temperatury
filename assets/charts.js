@@ -1285,7 +1285,10 @@
       // (relabelled to the searched place) instead of a live fetch. Covers small
       // villages (below the alias floor) and works when the daily quota is spent.
       var near = nearestCity(p.latitude, p.longitude);
-      if (near) { oclose(); location.href = near + ".html#as=" + encodeURIComponent(p.name); return; }
+      // heroCityUrl, not "<slug>.html": the snapped city may have no shell in
+      // THIS language (SEO tiering prunes them), and a same-folder link would
+      // 404 - exactly what the map dots and the search already avoid.
+      if (near) { oclose(); location.href = heroCityUrl(near) + "#as=" + encodeURIComponent(p.name); return; }
       out.hidden = true;
       var cached = cacheGet(q);
       if (cached) { showResult(cached.place, cached.s); return; }
@@ -2661,7 +2664,13 @@
   function regionSetUrl(url, manual) {
     var f = document.getElementById("region-frame");
     if (!f || !url) return;
-    var full = url + (url.indexOf("?") >= 0 ? "&" : "?") + "embed=1";
+    // The query goes BEFORE any #fragment. An alias city arrives as
+    // "<primary>.html#as=<name>", and appending "?embed=1" after that put the
+    // whole thing in the fragment: location.search stayed empty so embed mode
+    // never engaged, and the alias read as "<name>?embed=1".
+    var hash = "", base = url, h = url.indexOf("#");
+    if (h >= 0) { hash = url.slice(h); base = url.slice(0, h); }
+    var full = base + (base.indexOf("?") >= 0 ? "&" : "?") + "embed=1" + hash;
     if (f.getAttribute("src") !== full) f.src = full;
     var hint = document.getElementById("region-embed-hint");
     if (hint) hint.hidden = true;
