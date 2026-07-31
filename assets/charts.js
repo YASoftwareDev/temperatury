@@ -2689,24 +2689,24 @@
     window.__regionManual = false;
     try { localStorage.removeItem(REGION_KEY); } catch (e) {}
     regionSyncReset();
-    // Denied/unavailable geolocation with no cache would otherwise leave the
-    // OLD manual pick showing with the reset button now gone - no visible
-    // sign the reset did anything. Fall back to the tier-aware server default
-    // in that case, same as a first-ever visit.
-    var hadCache = applyHeroCache();   // last-known geolocated city while a fresh fix lands
-    function fallbackToDefault() {
-      if (hadCache) return;
+    // Show a correct region SYNCHRONOUSLY first - the remembered city, else the
+    // tier-aware server default, exactly what a first-ever visit shows. Without
+    // it the old manual pick stays on screen whenever the position never lands
+    // (denied, insecure context) OR lands with nothing covered nearby, and with
+    // the reset button now hidden that reads as "the button did nothing".
+    // Geolocation then refines this, the same default->located swap as page load.
+    if (!applyHeroCache()) {
       var host = document.getElementById("region-embed");
       var d = host && host.getAttribute("data-default");
       if (d) regionSetHome(d);
     }
-    if (!navigator.geolocation || window.isSecureContext === false) { fallbackToDefault(); return; }
+    if (!navigator.geolocation || window.isSecureContext === false) return;
     navigator.geolocation.getCurrentPosition(
       function (pos) {
         window.__heroPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         applyHero();
       },
-      fallbackToDefault,
+      function () {},
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 0 }
     );
   }

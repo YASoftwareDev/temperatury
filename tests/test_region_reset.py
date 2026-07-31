@@ -92,18 +92,23 @@ def test_region_reset_clears_manual_pick_and_refollows_geolocation():
     assert len(errors) <= len(failed), errors[:5]
 
 
+# A position never resolving (denied / insecure context) and one resolving far
+# from every covered city are DIFFERENT code paths - the first never reaches
+# applyHero, the second reaches it and bails at its "nothing covered nearby"
+# guard - but both must leave the same visible result, since with the reset
+# button now hidden a stale manual pick reads as "the button did nothing".
 @pytest.mark.slow
-def test_region_reset_falls_back_to_default_when_geolocation_is_denied():
-    """Denied/unavailable geolocation with no remembered city (temperatury:hero
-    cache) must not leave the OLD manual pick on screen with the reset button
-    now hidden - that looks like the reset silently did nothing. It should fall
-    back to the same tier-aware server default a first-ever visit shows."""
+@pytest.mark.parametrize("geo", [
+    None,                                        # denied: no permission granted
+    {"latitude": -48.876, "longitude": -123.393},  # Point Nemo: no city for ~2600 km
+])
+def test_region_reset_falls_back_to_default_when_geolocation_gives_no_city(geo):
     out = build(SLUG, "en", client_i18n=True)
     with _serve(out) as base, sync_playwright() as p:
         b = p.chromium.launch()
         try:
-            ctx = b.new_context()   # no geolocation permission granted -> denied
-            pg = ctx.new_page()
+            kw = {"permissions": ["geolocation"], "geolocation": geo} if geo else {}
+            pg = b.new_context(**kw).new_page()
             pg.goto(f"{base}/en/index.html", wait_until="load")
             pg.wait_for_function(
                 "(window.__omniData && (window.__omniData.g||[]).length > 0) "
@@ -116,12 +121,14 @@ def test_region_reset_falls_back_to_default_when_geolocation_is_denied():
             assert pg.evaluate("window.__regionManual") is True
 
             pg.click("#region-reset")
-            pg.wait_for_function(
-                "document.documentElement && !window.__regionManual", timeout=8000)
+            pg.wait_for_function("!window.__regionManual", timeout=8000)
+            # Give a resolving-but-useless fix time to arrive and be rejected,
+            # so this cannot pass merely by asserting before applyHero runs.
+            pg.wait_for_timeout(1500)
             assert pg.evaluate(
                 "document.getElementById('region-frame').src"
             ).endswith(default + "?embed=1"), \
-                "denied geolocation with no cache should fall back to the default"
+                "a reset that finds no city should show the default, not the old pick"
             assert pg.is_hidden("#region-reset")
         finally:
             b.close()
