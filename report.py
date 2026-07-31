@@ -3296,12 +3296,22 @@ def build_map_page(
             + '</a></p>')
     _rank_by_slug = {r["s"]: r for r in (ranking or [])}
     _all_trends = sorted(r["t"] for r in (ranking or []))
+    # The city the "your region" tab opens on before geolocation resolves.
+    # DEFAULT_LOCATION normally - but a build that does not CONTAIN it (a
+    # --location build, or its data gone missing) would otherwise point the
+    # region frame at a page that was never written. Fall back to a city this
+    # build actually produced, and describe THAT city throughout: slug, name,
+    # warming figure and stripes all have to agree.
     _def_loc = next((lc for lc in locations if lc.slug == DEFAULT_LOCATION), None)
-    hero_default_slug = _dot_url_slug(DEFAULT_LOCATION)
+    if _def_loc is None:
+        _def_loc = next((lc for lc in locations
+                         if getattr(lc, "kind", "city") == "city"), None)
+    _def_slug = _def_loc.slug if _def_loc else DEFAULT_LOCATION
+    hero_default_slug = _dot_url_slug(_def_slug)
     hero_default_name = _local_name(
-        DEFAULT_LOCATION, lang,
+        _def_slug, lang,
         _def_loc.name if _def_loc else DEFAULT_LOCATION.replace("-", " ").title())
-    _def_rank = _rank_by_slug.get(DEFAULT_LOCATION)
+    _def_rank = _rank_by_slug.get(_def_slug)
     hero_default_trend = _signed(_def_rank["t"], 2) if _def_rank else ""
     hero_default_cta = hero_cta.format(name=hero_default_name)
     # The city's own warming stripes (its `st` decade anomalies -> the blue->red
