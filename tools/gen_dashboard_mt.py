@@ -79,6 +79,51 @@ def _with_retry(g_code, en_items, label):
     return {k: v for k, v in en_items}       # English fallback
 
 
+# Renderings that mean something DIFFERENT from the source, not merely clumsy.
+# The facts report a RATE (°C per decade); "hottest" is an absolute claim and a
+# false one - Nuuk leads the warming ranking and is nowhere near the hottest
+# place on it. This exact collapse shipped in 13 languages before anyone looked.
+TRIPWIRES = {
+    "fastest_city": ("hottest", "warmest", "highest temperature", "very hot"),
+    "fastest_country": ("hottest", "warmest", "highest temperature", "very hot"),
+}
+
+
+def audit(result: dict) -> None:
+    """Back-translate what we just wrote and report anything that comes back
+    saying something else. Runs here rather than in a test because CI builds
+    offline - this is the last point with a network and a human watching."""
+    from tools.review_mt_quality import _back, _similarity          # noqa: PLC0415
+
+    print("\n== auditing new translations (back-translation) ==")
+    flagged = 0
+    for table, langs in result.items():
+        en_tbl = TABLES.get(table)
+        en = {k: v for k, v in en_tbl["en"].items()} if en_tbl else {}
+        for lg, kv in langs.items():
+            if not isinstance(kv, dict):
+                continue
+            for k, v in kv.items():
+                src = en.get(k)
+                if not isinstance(src, str) or not isinstance(v, str):
+                    continue
+                back = _back(GCODE.get(lg, lg), v)
+                if back is None:
+                    continue
+                trip = [w for w in TRIPWIRES.get(k, ()) if w in back.lower()]
+                score = _similarity(src, back)
+                if trip:
+                    print(f"  MEANING  {lg}/{table}.{k}: says {trip[0]!r} - "
+                          f"the value is a rate, not an absolute\n"
+                          f"           {back}")
+                    flagged += 1
+                elif score < 0.45:
+                    print(f"  low {score:.2f}  {lg}/{table}.{k}: {back}")
+                    flagged += 1
+    print(f"== {flagged} entr{'y' if flagged == 1 else 'ies'} worth a look "
+          f"(low scores are often just a different idiom; MEANING ones are not)")
+
+
 def main():
     result: dict = {}
     for name, table in TABLES.items():
@@ -107,6 +152,8 @@ def main():
     OUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n",
                    encoding="utf-8")
     print(f"DONE: wrote {OUT}.")
+    if "--no-audit" not in sys.argv:
+        audit(result)
 
 
 if __name__ == "__main__":

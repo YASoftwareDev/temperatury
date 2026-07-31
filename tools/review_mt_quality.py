@@ -86,10 +86,33 @@ def main() -> None:
     ap.add_argument("--limit", type=int, default=0, help="only the first N languages")
     ap.add_argument("--data-dir", help="audit an i18n_data/ from elsewhere "
                                        "(e.g. one extracted from another ref)")
+    ap.add_argument("--all", action="store_true", help="every key, not just one")
+    ap.add_argument("--json", help="write the full result to this path, for a "
+                                   "reviewer packet instead of a terminal read")
     args = ap.parse_args()
     if args.data_dir:
         global DATA_DIR
         DATA_DIR = Path(args.data_dir)
+
+    if args.all or args.json:
+        packet: dict = {}
+        for key in sorted(SOURCES):
+            en_k, vals_k = SOURCES[key], _values(key)
+            langs_k = sorted(vals_k)[: args.limit or None]
+            print(f"{key}: {len(langs_k)} languages", flush=True)
+            for lg in langs_k:
+                rt = _back(GCODE.get(lg, lg), vals_k[lg])
+                packet.setdefault(lg, {})[key] = {
+                    "en": en_k, "native": vals_k[lg], "back": rt,
+                    "score": round(_similarity(en_k, rt), 3) if rt else None,
+                }
+        out = Path(args.json or "mt_review_packet.json")
+        out.write_text(json.dumps(packet, ensure_ascii=False, indent=1) + "\n",
+                       encoding="utf-8")
+        flagged = sum(1 for kv in packet.values() for r in kv.values()
+                      if r["score"] is not None and r["score"] < 0.45)
+        print(f"\nwrote {out} - {len(packet)} languages, {flagged} entries under 0.45")
+        return
 
     en = SOURCES[args.key]
     vals = _values(args.key)
