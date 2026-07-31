@@ -145,5 +145,6 @@
   "footer": "Jenere {date} · done ki soti nan <a href=\"https://open-meteo.com/\">Open-Meteo</a> re-analiz istorik (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sous sou GitHub</a>",
   "_mt": true,
   "qv_baseline": "Mwayèn deseni yo kont debaz 1961-1990 la",
-  "qv_chart_alt": "Deseni pa deseni t' ap chofe kò, ranpli graphique zòn"
+  "qv_chart_alt": "Deseni pa deseni t' ap chofe kò, ranpli graphique zòn",
+  "region_reset": "📍 Sèvi ak kote mwen an"
 }

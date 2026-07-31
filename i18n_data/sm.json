@@ -145,5 +145,6 @@
   "footer": "Fausia {date} · fa'amaumauga mai le <a href=\"https://open-meteo.com/\">Tatala-Meteo</a> su'esu'ega fa'asolopito (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">puna i GitHub</a>",
   "_mt": true,
   "qv_baseline": "Sefulu tausaga averesi vs le 1961-1990 laina faavae",
-  "qv_chart_alt": "Fa'amafanafana le sefulu tausaga ma le sefulu tausaga, fa'atumu siata o le eria"
+  "qv_chart_alt": "Fa'amafanafana le sefulu tausaga ma le sefulu tausaga, fa'atumu siata o le eria",
+  "region_reset": "📍 Fa'aoga lo'u nofoaga"
 }

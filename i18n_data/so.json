@@ -145,5 +145,6 @@
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
   "_mt": true,
   "qv_baseline": "Celcelis ahaan tobankii sano ee la soo dhaafay 1961-1990",
-  "qv_chart_alt": "Toban sano-toban sano oo kululaynta, shaxda aagga oo buuxa"
+  "qv_chart_alt": "Toban sano-toban sano oo kululaynta, shaxda aagga oo buuxa",
+  "region_reset": "📍 Isticmaal goobtayda"
 }

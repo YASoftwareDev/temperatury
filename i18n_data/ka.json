@@ -145,5 +145,6 @@
   "footer": "გენერირებულია {date} · მონაცემები <a href=\"https://open-meteo.com/\">Open-Meteo</a> ისტორიული რეანალიზიდან (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">წყარო GitHub-ზე</a>",
   "_mt": true,
   "qv_baseline": "ათწლეულის საშუალო მაჩვენებელი 1961-1990 წლებში",
-  "qv_chart_alt": "ათწლეულის განმავლობაში დათბობა, შევსებული ფართობის სქემა"
+  "qv_chart_alt": "ათწლეულის განმავლობაში დათბობა, შევსებული ფართობის სქემა",
+  "region_reset": "📍 გამოიყენეთ ჩემი მდებარეობა"
 }

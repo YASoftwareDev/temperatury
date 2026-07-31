@@ -145,5 +145,6 @@
   "footer": "Cynhyrchwyd {date} · data o <a href=\"https://open-meteo.com/\">Open-Meteo</a> ailddadansoddiad hanesyddol (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> ffynhonnell ar GitHub</a>",
   "_mt": true,
   "qv_baseline": "Cyfartaledd degawdau yn erbyn llinell sylfaen 1961-1990",
-  "qv_chart_alt": "Cynhesu ddegawd ar ôl degawd, siart ardal wedi'i llenwi"
+  "qv_chart_alt": "Cynhesu ddegawd ar ôl degawd, siart ardal wedi'i llenwi",
+  "region_reset": "📍 Defnyddiwch fy lleoliad"
 }

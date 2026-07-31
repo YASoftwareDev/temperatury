@@ -145,5 +145,6 @@
   "footer": "Napataud {date} · a datos manipud iti <a href=\"https://open-meteo.com/\">Open-Meteo</a> historikal a panaganalisar manen (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">gubuayan iti GitHub</a>.",
   "_mt": true,
   "qv_baseline": "Dekada a promedio vs ti 1961-1990 a batayan",
-  "qv_chart_alt": "Dekada-por-dekada a panagbara, napno a tsart ti lugar"
+  "qv_chart_alt": "Dekada-por-dekada a panagbara, napno a tsart ti lugar",
+  "region_reset": "📍 Usaren ti lokasionko"
 }

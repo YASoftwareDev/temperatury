@@ -145,5 +145,6 @@
   "footer": "{date} · তথ্যৰ পৰা সৃষ্টি কৰা হৈছে <a href=\"https://open-meteo.com/\">মুকলি-মেটিঅ'</a> ঐতিহাসিক পুনৰ বিশ্লেষণ (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub ত উৎস</a>",
   "_mt": true,
   "qv_baseline": "দশকৰ গড় বনাম ১৯৬১-১৯৯০ চনৰ ভিত্তি ৰেখা",
-  "qv_chart_alt": "দশকৰ পিছত দশক উষ্ণতা বৃদ্ধি, ভৰ্তি এলেকাৰ চাৰ্ট"
+  "qv_chart_alt": "দশকৰ পিছত দশক উষ্ণতা বৃদ্ধি, ভৰ্তি এলেকাৰ চাৰ্ট",
+  "region_reset": "📍 মোৰ স্থান ব্যৱহাৰ কৰক"
 }

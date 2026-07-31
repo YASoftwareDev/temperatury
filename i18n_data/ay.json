@@ -145,5 +145,6 @@
   "footer": "Uñstayata {date} · yatiyawi <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanálisis histórico (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fuente GitHub</a> ukan",
   "_mt": true,
   "qv_baseline": "Tunka maranakan promedios vs 1961-1990 maranakan línea base",
-  "qv_chart_alt": "Tunka marat tunka marakamaw junt’uchasi, phuqhat área chart"
+  "qv_chart_alt": "Tunka marat tunka marakamaw junt’uchasi, phuqhat área chart",
+  "region_reset": "📍 Kawkhantï jikxataskta uk apnaqañamawa"
 }

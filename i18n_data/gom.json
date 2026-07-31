@@ -145,5 +145,6 @@
   "footer": "<a href=\"https://open-meteo.com/\">Open-Meteo</a> इतिहासीक पुनर्विश्लेशण (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">स्त्रोत GitHub</a> चेर {date} · डेटा तयार केला.",
   "_mt": true,
   "qv_baseline": "दशकाची सरासरी विरुद्ध 1961-1990 वर्साची मुळावी रेखा",
-  "qv_chart_alt": "दशका उपरांत दशक उश्णताय, भरून गेल्ल्या क्षेत्राचो आराखडो"
+  "qv_chart_alt": "दशका उपरांत दशक उश्णताय, भरून गेल्ल्या क्षेत्राचो आराखडो",
+  "region_reset": "📍 म्हजें स्थान वापरात"
 }

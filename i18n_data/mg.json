@@ -145,5 +145,6 @@
   "footer": "Nateraka {date} · angona avy amin'ny <a href=\"https://open-meteo.com/\">Open-Meteo</a> fanadihadiana ara-tantara (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">loharano tao amin'ny GitHub</a>",
   "_mt": true,
   "qv_baseline": "Salanisan'ny folo taona vs ny baseline 1961-1990",
-  "qv_chart_alt": "Fanafanana am-polony taona, tabilao faritra feno"
+  "qv_chart_alt": "Fanafanana am-polony taona, tabilao faritra feno",
+  "region_reset": "📍 Ampiasao ny toerana misy ahy"
 }

@@ -145,5 +145,6 @@
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
   "_mt": true,
   "qv_baseline": "Nkezi afọ iri vs ntọala 1961-1990",
-  "qv_chart_alt": "Okpomọkụ afọ iri na afọ iri, eserese mpaghara juputara"
+  "qv_chart_alt": "Okpomọkụ afọ iri na afọ iri, eserese mpaghara juputara",
+  "region_reset": "📍 Jiri ọnọdụ m"
 }

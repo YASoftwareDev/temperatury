@@ -145,5 +145,6 @@
   "footer": "{date} · kunnafoniw bɔra <a href=\"https://open-meteo.com/\">Open-Meteo</a> tariku sɛgɛsɛgɛli seginni (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> sɔrɔyɔrɔ GitHub kan</a>",
   "_mt": true,
   "qv_baseline": "San tan hakɛw ni san 1961-1990 daminɛw cɛ",
-  "qv_chart_alt": "San tan ni tan sumaya, yɔrɔ falen jatebɔ"
+  "qv_chart_alt": "San tan ni tan sumaya, yɔrɔ falen jatebɔ",
+  "region_reset": "📍 Baara kɛ ni ne sigiyɔrɔ ye"
 }

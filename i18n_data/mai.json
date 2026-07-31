@@ -145,5 +145,6 @@
   "footer": "से उत्पन्न {date} · डेटा <a href=\"https://open-meteo.com/\">खुला-उल्कापात</a> ऐतिहासिक पुनर्विश्लेषण (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub पर स्रोत</a>",
   "_mt": true,
   "qv_baseline": "दशक औसत बनाम 1961-1990 के आधार रेखा",
-  "qv_chart_alt": "दशक दर दशक वार्मिंग, भरल क्षेत्र चार्ट"
+  "qv_chart_alt": "दशक दर दशक वार्मिंग, भरल क्षेत्र चार्ट",
+  "region_reset": "📍 हमर लोकेशन के प्रयोग करू"
 }

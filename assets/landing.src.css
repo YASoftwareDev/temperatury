@@ -586,6 +586,15 @@
   .region-frame { display:block; width:100%; height:calc(100vh - 210px);
     min-height:560px; border:0; border-radius:var(--radius);
     background:var(--bg); color-scheme:light dark; }
+  /* "Use my location" - clears a manual pick that pinned this tab away from
+     geolocation, for a visitor who travelled since picking. Floats over the
+     frame's top-right corner so it doesn't reflow the layout on show/hide. */
+  .region-reset { position:absolute; top:.6rem; right:.6rem; z-index:2;
+    font:inherit; font-size:.82rem; padding:.35rem .75rem; border-radius:999px;
+    border:1px solid var(--line); background:var(--panel); color:var(--ink);
+    cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.15);
+    transition:border-color .12s ease, background .12s ease; }
+  .region-reset:hover { border-color:var(--line-2); }
   /* "Your region" featured hero: a clean, light full-bleed band that opens the
      page on the visitor's nearest covered city - place name, its warming figure
      and a link on the page ground. Full-bleed width is kept, but the previous

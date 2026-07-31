@@ -145,5 +145,6 @@
   "footer": "માંથી {date} · ડેટા જનરેટ કર્યો <a href=\"https://open-meteo.com/\">ઓપન-મેટિયો</a> ઐતિહાસિક પુનઃવિશ્લેષણ (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub પર સ્ત્રોત</a>",
   "_mt": true,
   "qv_baseline": "દાયકાની સરેરાશ વિ 1961-1990 બેઝલાઇન",
-  "qv_chart_alt": "દાયકા-દર-દશક વોર્મિંગ, ભરાયેલ વિસ્તાર ચાર્ટ"
+  "qv_chart_alt": "દાયકા-દર-દશક વોર્મિંગ, ભરાયેલ વિસ્તાર ચાર્ટ",
+  "region_reset": "📍 મારા સ્થાનનો ઉપયોગ કરો"
 }

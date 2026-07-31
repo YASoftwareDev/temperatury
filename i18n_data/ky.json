@@ -145,5 +145,6 @@
   "footer": "Түзүлгөн {date} · <a href=\"https://open-meteo.com/\">Open-Meteo</a> тарыхый кайра анализден алынган маалыматтар (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub</a> булагы",
   "_mt": true,
   "qv_baseline": "1961-1990-жылдардагы орточо көрсөткүчкө салыштырмалуу",
-  "qv_chart_alt": "Декадалык жылыш, толтурулган аймак диаграммасы"
+  "qv_chart_alt": "Декадалык жылыш, толтурулган аймак диаграммасы",
+  "region_reset": "📍 Менин жайгашкан жеримди колдон"
 }

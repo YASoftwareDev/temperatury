@@ -145,5 +145,6 @@
   "footer": "Ku endliwile {date} · datha ku suka eka <a href=\"https://open-meteo.com/\">Open-Meteo</a> nxopaxopo wa matimu nakambe (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">xihlovo eka GitHub</a>",
   "_mt": true,
   "qv_baseline": "Swiringaniso swa khume ra malembe vs xiyimo xa le hansi xa 1961-1990",
-  "qv_chart_alt": "Ku kufumela ka khume hi khume ra malembe, chati ya ndhawu leyi taleke"
+  "qv_chart_alt": "Ku kufumela ka khume hi khume ra malembe, chati ya ndhawu leyi taleke",
+  "region_reset": "📍 Tirhisa ndhawu ya mina"
 }

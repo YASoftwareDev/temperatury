@@ -145,5 +145,6 @@
   "footer": "تولید شوي {date} · ډاټا د <a href=\"https://open-meteo.com/\">Open-Meteo</a> تاریخي بیا تحلیل (ERA5) څخه · <a href=\"https://github.com/YASoftwareDev/temperatury\"> سرچینه په GitHub</a>",
   "_mt": true,
   "qv_baseline": "د لسیزې اوسط د 1961-1990 بیس لاین په وړاندې",
-  "qv_chart_alt": "لسیزه په لسیزه کې تودوخه، د ډک شوي ساحې چارټ"
+  "qv_chart_alt": "لسیزه په لسیزه کې تودوخه، د ډک شوي ساحې چارټ",
+  "region_reset": "📍 زما ځای وکاروئ"
 }

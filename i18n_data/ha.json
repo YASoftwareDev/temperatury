@@ -168,5 +168,6 @@
   "season_autumn": "kaka",
   "grid_alias_note": "Ana lissafta bayanan zafi ga kowace tantanin grid na bayanan yanayi mai kusan kilomita 11. {alias} da {city} suna cikin tantani ɗaya, don haka duka biyu suna nuna tarihi iri ɗaya tun 1940.",
   "qv_baseline": "Matsakaicin shekaru goma vs tushen 1961-1990",
-  "qv_chart_alt": "Dumamar shekaru goma zuwa goma, ginshiƙi mai cike da yanki"
+  "qv_chart_alt": "Dumamar shekaru goma zuwa goma, ginshiƙi mai cike da yanki",
+  "region_reset": "📍 Yi amfani da wurina"
 }

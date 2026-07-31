@@ -145,5 +145,6 @@
   "footer": "Generearre {date} · gegevens fan <a href=\"https://open-meteo.com/\">Open-Meteo</a> histoaryske reanalyze (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">boarne op GitHub</a>",
   "_mt": true,
   "qv_baseline": "Desenniagemiddelden tsjin de basisline fan 1961-1990",
-  "qv_chart_alt": "Desennia foar desennia opwaarming, ynfolle gebietskaart"
+  "qv_chart_alt": "Desennia foar desennia opwaarming, ynfolle gebietskaart",
+  "region_reset": "📍 Brûk myn lokaasje"
 }

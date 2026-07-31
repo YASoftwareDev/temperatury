@@ -168,5 +168,6 @@
   "season_autumn": "majira ya kupukutika",
   "grid_alias_note": "Rekodi za joto hukokotolewa kwa kila seli ya gridi ya data ya hali ya hewa ya ~km 11. {alias} inashiriki seli yake na {city}, kwa hivyo zote mbili zinaonyesha rekodi ile ile tangu 1940.",
   "qv_baseline": "Wastani wa muongo dhidi ya msingi wa 1961-1990",
-  "qv_chart_alt": "Kuongeza joto kwa muongo kwa muongo, chati ya eneo lililojaa"
+  "qv_chart_alt": "Kuongeza joto kwa muongo kwa muongo, chati ya eneo lililojaa",
+  "region_reset": "📍 Tumia eneo langu"
 }

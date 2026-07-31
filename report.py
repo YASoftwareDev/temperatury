@@ -1464,6 +1464,11 @@ ${topbar}
        search routes a picked city here instead of navigating away. -->
   <div class="region-embed" id="region-embed" data-default="${hero_default_slug}">
     <p class="region-embed-hint" id="region-embed-hint">${region_hint}</p>
+    <!-- Only shown once a manual pick (search/map/"did you know" click) has
+         pinned this tab away from geolocation - charts.js (regionSyncReset)
+         toggles [hidden]. Click clears the pin and re-requests a fresh fix,
+         so a visitor who travelled with the pin still set isn't stuck. -->
+    <button type="button" class="region-reset" id="region-reset" hidden>${region_reset_label}</button>
     <iframe class="region-frame" id="region-frame" title="${region_frame_title}"
             loading="lazy" referrerpolicy="no-referrer"></iframe>
   </div>
@@ -2997,6 +3002,11 @@ _DYK_I18N = {
            "faster_world": "{b}{pct}%{/b} міст теплішають швидше за середню по світу.",
            "fastest_country": "{country} — країна, що теплішає найшвидше — {b}{v} °C{/b} за десятиліття."},
 }
+# Curated only for the 6 core languages above; every other site language would
+# otherwise show the fact templates in raw English (only {city}/{country} are
+# localized, client-side) - fill the gap the same way globaltext/captions/
+# deephist/ranktext/hero do, from the shared MT sidecar.
+extra_i18n.fill(_DYK_I18N, "dyk")
 
 
 def _dyk_dict(lang: str) -> dict:
@@ -3137,6 +3147,23 @@ def build_map_page(
     lo, hi = BASELINE
     fmt = {"name": "", "base": f"{lo}-{hi}", "lo": lo, "hi": hi}
 
+    # Language tiering / SEO tiering: a city without a page in THIS language
+    # links to its first built language (always incl. English) instead of a
+    # 404. Under client-i18n that shell then auto-localizes to the visitor's
+    # saved language on arrival. Used by the map dots AND the "your region"
+    # hero's default city below - that default is DEFAULT_LOCATION regardless
+    # of language, and DEFAULT_LOCATION's own SEO tier does not include every
+    # site language (e.g. Warszawa only pre-renders en+pl), so without this the
+    # region-embed iframe 404s on first paint in every OTHER language.
+    def _dot_url_slug(slug: str) -> str:
+        langs = (city_langs or {}).get(slug)
+        if not langs or lang in langs:
+            return f"{slug}.html"
+        return f"../{langs[0]}/{slug}.html"
+
+    def _dot_url(loc) -> str:
+        return _dot_url_slug(loc.slug)
+
     # "Your region" hero, shown before (and when there is no) geolocation. Seed
     # it with the site's default city and its headline warming stat so the panel
     # renders populated with no JS, geolocation, or network request; charts.js
@@ -3270,7 +3297,7 @@ def build_map_page(
     _rank_by_slug = {r["s"]: r for r in (ranking or [])}
     _all_trends = sorted(r["t"] for r in (ranking or []))
     _def_loc = next((lc for lc in locations if lc.slug == DEFAULT_LOCATION), None)
-    hero_default_slug = f"{DEFAULT_LOCATION}.html"
+    hero_default_slug = _dot_url_slug(DEFAULT_LOCATION)
     hero_default_name = _local_name(
         DEFAULT_LOCATION, lang,
         _def_loc.name if _def_loc else DEFAULT_LOCATION.replace("-", " ").title())
@@ -3315,18 +3342,6 @@ def build_map_page(
 
     # Each city dot is coloured by its climate zone; the map paints matching
     # latitude bands + a legend, so the geography reads against the dashboard.
-    def _dot_url_slug(slug: str) -> str:
-        # Language tiering / SEO tiering: a city without a page in THIS language
-        # links to its first built language (always incl. English) instead of a
-        # 404. Under client-i18n that shell then auto-localizes to the visitor's
-        # saved language on arrival.
-        langs = (city_langs or {}).get(slug)
-        if not langs or lang in langs:
-            return f"{slug}.html"
-        return f"../{langs[0]}/{slug}.html"
-
-    def _dot_url(loc) -> str:
-        return _dot_url_slug(loc.slug)
     markers = [
         {"n": _local_name(loc.slug, lang, loc.name), "s": _dot_url(loc),
          "lat": loc.latitude, "lon": loc.longitude, "z": zone_of(loc.latitude),
@@ -3504,6 +3519,7 @@ def build_map_page(
         hero_bg=hero_bg,
         region_hint=tr.get("choose_city", "Choose a city..."),
         region_frame_title=_tab_str(lang, "region"),
+        region_reset_label=tr.get("region_reset", "📍 Use my location"),
         hero_since_tmpl=hero_since_tmpl,
         hero_faster_tmpl=hero_faster_tmpl,
         hero_locating=hero_locating,

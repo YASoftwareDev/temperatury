@@ -169,5 +169,6 @@
   "nav_ranking": "ランキング",
   "_mt_partial": true,
   "qv_baseline": "10 年間の平均と 1961 ～ 1990 年の基準値の比較",
-  "qv_chart_alt": "数十年ごとの温暖化、塗りつぶされた領域グラフ"
+  "qv_chart_alt": "数十年ごとの温暖化、塗りつぶされた領域グラフ",
+  "region_reset": "📍 私の位置情報を使用する"
 }

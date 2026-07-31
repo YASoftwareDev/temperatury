@@ -145,5 +145,6 @@
   "footer": "דזשענערייטאַד {date} · דאַטן פון <a href=\"https://open-meteo.com/\">Open-Meteo</a> היסטארישע ריאַנאַליז (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">מקור אויף GitHub</a>",
   "_mt": true,
   "qv_baseline": "יאָרצענדלינג אַוורידזשיז קעגן די 1961-1990 באַסעלינע",
-  "qv_chart_alt": "יאָרצענדלינג דורך יאָרצענדלינג וואָרמינג, אָנגעפילט געגנט טשאַרט"
+  "qv_chart_alt": "יאָרצענדלינג דורך יאָרצענדלינג וואָרמינג, אָנגעפילט געגנט טשאַרט",
+  "region_reset": "📍 ניצן מיין אָרט"
 }

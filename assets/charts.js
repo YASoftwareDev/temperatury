@@ -2658,6 +2658,13 @@
   // country (window.__myCC) for the ranking highlight + Compare prefill.
   var REGION_KEY = "temperatury:region";
   window.__regionManual = false;
+  // The reset control only makes sense once a manual pick has actually pinned
+  // the tab away from geolocation - hidden otherwise so it isn't clutter on
+  // every first visit.
+  function regionSyncReset() {
+    var b = document.getElementById("region-reset");
+    if (b) b.hidden = !window.__regionManual;
+  }
   function regionSetUrl(url, manual) {
     var f = document.getElementById("region-frame");
     if (!f || !url) return;
@@ -2669,8 +2676,49 @@
     if (manual) {
       window.__regionManual = true;
       try { localStorage.setItem(REGION_KEY, url); } catch (e) {}
+      regionSyncReset();
     }
   }
+  // Only the newest position request may render. Page load asks with
+  // maximumAge 6h, so its answer can be a six-hour-old fix still in flight when
+  // the visitor hits reset - and reset exists precisely because they have since
+  // moved. Without this, that stale answer lands after the pin is cleared and
+  // wins, putting the old region back.
+  var heroPosSeq = 0;
+  // Undo a manual pick (e.g. a "did you know" city click, or a search result)
+  // that would otherwise pin the tab away from geolocation forever - a
+  // traveller changing city/country needs a way back to "wherever I am now"
+  // without clearing the whole site's storage by hand. Re-requests a FRESH
+  // position (maximumAge:0) rather than reusing the up-to-6h-old cached one,
+  // since the point of resetting is usually that the visitor has moved.
+  function heroResetManual() {
+    window.__regionManual = false;
+    try { localStorage.removeItem(REGION_KEY); } catch (e) {}
+    regionSyncReset();
+    // Show a correct region SYNCHRONOUSLY first - the remembered city, else the
+    // tier-aware server default, exactly what a first-ever visit shows. Without
+    // it the old manual pick stays on screen whenever the position never lands
+    // (denied, insecure context) OR lands with nothing covered nearby, and with
+    // the reset button now hidden that reads as "the button did nothing".
+    // Geolocation then refines this, the same default->located swap as page load.
+    if (!applyHeroCache()) {
+      var host = document.getElementById("region-embed");
+      var d = host && host.getAttribute("data-default");
+      if (d) regionSetHome(d);
+    }
+    if (!navigator.geolocation || window.isSecureContext === false) return;
+    var seq = ++heroPosSeq;
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        if (seq !== heroPosSeq) return;
+        window.__heroPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        applyHero();
+      },
+      function () {},
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 0 }
+    );
+  }
+  window.heroResetManual = heroResetManual;
   // Home (geolocated/remembered) city view - only if the visitor has not manually
   // picked a city (that pick wins and persists across visits).
   function regionSetHome(url) { if (!window.__regionManual && url) regionSetUrl(url, false); }
@@ -2684,6 +2732,9 @@
     try { manual = localStorage.getItem(REGION_KEY); } catch (e) {}
     if (manual) { window.__regionManual = true; regionSetUrl(manual, false); }
     else { var d = host.getAttribute("data-default"); if (d) regionSetUrl(d, false); }
+    regionSyncReset();
+    var reset = document.getElementById("region-reset");
+    if (reset && !reset.__wired) { reset.__wired = true; reset.addEventListener("click", heroResetManual); }
   }
   window.initRegionEmbed = initRegionEmbed;
 
@@ -2829,8 +2880,10 @@
     // Graceful fallback: no Geolocation API, or an insecure context (file://,
     // plain http) where it is blocked - keep the remembered/default city.
     if (!navigator.geolocation || window.isSecureContext === false) return;
+    var seq = ++heroPosSeq;
     navigator.geolocation.getCurrentPosition(
       function (pos) {
+        if (seq !== heroPosSeq) return;   // a reset superseded this request
         window.__heroPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         applyHero();
       },

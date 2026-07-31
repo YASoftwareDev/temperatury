@@ -145,5 +145,6 @@
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
   "_mt": true,
   "qv_baseline": "1961-1990 അടിസ്ഥാനരേഖയ്‌ക്കെതിരെ ദശാബ്ദ ശരാശരി",
-  "qv_chart_alt": "ദശാബ്ദങ്ങൾക്കുള്ളിൽ താപനം, നിറഞ്ഞ ഏരിയ ചാർട്ട്"
+  "qv_chart_alt": "ദശാബ്ദങ്ങൾക്കുള്ളിൽ താപനം, നിറഞ്ഞ ഏരിയ ചാർട്ട്",
+  "region_reset": "📍 എൻ്റെ സ്ഥാനം ഉപയോഗിക്കുക"
 }

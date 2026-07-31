@@ -145,5 +145,6 @@
   "footer": "S'han generat {date} · dades de <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanàlisi històrica (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">font a GitHub</a>",
   "_mt": true,
   "qv_baseline": "Mitjanes de la dècada respecte a la línia de base 1961-1990",
-  "qv_chart_alt": "Escalfament dècada a dècada, gràfic d'àrea omplert"
+  "qv_chart_alt": "Escalfament dècada a dècada, gràfic d'àrea omplert",
+  "region_reset": "📍 Utilitza la meva ubicació"
 }

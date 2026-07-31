@@ -145,5 +145,6 @@
   "footer": "Generirano {date} · podaci iz <a href=\"https://open-meteo.com/\">Open-Meteo</a> povijesne reanalize (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">izvor na GitHubu</a>",
   "_mt": true,
   "qv_baseline": "Prosjeci desetljeća u odnosu na početnu vrijednost 1961.-1990",
-  "qv_chart_alt": "Zagrijavanje desetljeće po desetljeće, ispunjeni površinski grafikon"
+  "qv_chart_alt": "Zagrijavanje desetljeće po desetljeće, ispunjeni površinski grafikon",
+  "region_reset": "📍 Koristi moju lokaciju"
 }

@@ -145,5 +145,6 @@
   "footer": "Wɔayɛ {date} · nsɛm a efi <a href=\"https://open-meteo.com/\">Open-Meteo</a> abakɔsɛm mu nhwehwɛmu a wɔasan ayɛ (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fibea wɔ GitHub</a>",
   "_mt": true,
   "qv_baseline": "Mfe du mu nkyɛmu vs 1961-1990 mfiase",
-  "qv_chart_alt": "Mfe du biara ɔhyew, mpɔtam nhyehyɛe a wɔahyɛ no ma"
+  "qv_chart_alt": "Mfe du biara ɔhyew, mpɔtam nhyehyɛe a wɔahyɛ no ma",
+  "region_reset": "📍 Fa beae a mewɔ no di dwuma"
 }

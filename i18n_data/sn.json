@@ -145,5 +145,6 @@
   "footer": "Yakagadzirwa {date} · data kubva <a href=\"https://open-meteo.com/\">Open-Meteo</a> nhoroondo reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source paGitHub</a>",
   "_mt": true,
   "qv_baseline": "Makumi emakore avhareji vs iyo 1961-1990 yekutanga",
-  "qv_chart_alt": "Makumi-ne-makore ekudziya, yakazara nzvimbo chati"
+  "qv_chart_alt": "Makumi-ne-makore ekudziya, yakazara nzvimbo chati",
+  "region_reset": "📍 Shandisa nzvimbo yangu"
 }

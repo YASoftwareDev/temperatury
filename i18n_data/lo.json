@@ -145,5 +145,6 @@
   "footer": "ສ້າງຂຶ້ນ {date} · ຂໍ້ມູນຈາກ <a href=\"https://open-meteo.com/\">Open-Meteo</a> ການວິເຄາະປະຫວັດສາດ (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">ແຫຼ່ງໃນ GitHub</a>",
   "_mt": true,
   "qv_baseline": "ສະເລ່ຍທົດສະວັດທຽບກັບ 1961-1990 ພື້ນຖານ",
-  "qv_chart_alt": "ອາກາດຮ້ອນໃນແຕ່ລະທົດສະວັດ, ຕາຕະລາງພື້ນທີ່ເຕັມໄປ"
+  "qv_chart_alt": "ອາກາດຮ້ອນໃນແຕ່ລະທົດສະວັດ, ຕາຕະລາງພື້ນທີ່ເຕັມໄປ",
+  "region_reset": "📍 ໃຊ້ສະຖານທີ່ຂອງຂ້ອຍ"
 }

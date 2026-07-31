@@ -145,5 +145,6 @@
   "footer": "Ստեղծվել է {date} · տվյալներ <a href=\"https://open-meteo.com/\">Open-Meteo</a> պատմական վերավերլուծությունից (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">աղբյուր GitHub</a>-ում",
   "_mt": true,
   "qv_baseline": "Տասնամյակի միջին ցուցանիշներն ընդդեմ 1961-1990 թթ",
-  "qv_chart_alt": "Տասնամյակ առ տասնամյա տաքացում, լցված տարածքի գծապատկեր"
+  "qv_chart_alt": "Տասնամյակ առ տասնամյա տաքացում, լցված տարածքի գծապատկեր",
+  "region_reset": "📍 Օգտագործեք իմ գտնվելու վայրը"
 }

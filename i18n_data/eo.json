@@ -145,5 +145,6 @@
   "footer": "Generita {date} · datumoj de <a href=\"https://open-meteo.com/\">Open-Meteo</a> historia reanalizo (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fonto sur GitHub</a>",
   "_mt": true,
   "qv_baseline": "Jardekaj mezumoj kontraŭ la 1961-1990 bazlinio",
-  "qv_chart_alt": "Jardeko-post-jardeka varmiĝo, plenigita areo-diagramo"
+  "qv_chart_alt": "Jardeko-post-jardeka varmiĝo, plenigita areo-diagramo",
+  "region_reset": "📍 Uzu mian lokon"
 }

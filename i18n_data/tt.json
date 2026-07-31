@@ -145,5 +145,6 @@
   "footer": "Generated {date} · data from <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
   "_mt": true,
   "qv_baseline": "Уртача дистә ел - 1961-1990 базасы",
-  "qv_chart_alt": "Дистә-ун ел җылыну, тутырылган район схемасы"
+  "qv_chart_alt": "Дистә-ун ел җылыну, тутырылган район схемасы",
+  "region_reset": "📍 Минем урынымны кулланыгыз"
 }
