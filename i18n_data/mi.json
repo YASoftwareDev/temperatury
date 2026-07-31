@@ -145,5 +145,6 @@
   "footer": "Hangaia {date} · raraunga mai i <a href=\"https://open-meteo.com/\">Tuwhera-Meteo</a> arotakenga o mua (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">puna i runga i GitHub</a>",
   "_mt": true,
   "qv_baseline": "Tekau tau toharite ki te rarangi 1961-1990",
-  "qv_chart_alt": "Te whakamahanatanga tekau tau ki te tekau tau, kua whakakiia te tūtohi rohe"
+  "qv_chart_alt": "Te whakamahanatanga tekau tau ki te tekau tau, kua whakakiia te tūtohi rohe",
+  "region_reset": "📍 Whakamahia taku waahi"
 }

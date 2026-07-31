@@ -145,5 +145,6 @@
   "footer": "E hlahisitsoe {date} · data ho tsoa ho <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanalysis ea nalane (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> mohloli ho GitHub</a>",
   "_mt": true,
   "qv_baseline": "Kakaretso ea lilemo tse leshome khahlano le motheo oa 1961-1990",
-  "qv_chart_alt": "Ho futhumala ha lilemo-leshome, ho tletse chate ea sebaka"
+  "qv_chart_alt": "Ho futhumala ha lilemo-leshome, ho tletse chate ea sebaka",
+  "region_reset": "📍 Sebelisa sebaka seo ke leng ho sona"
 }

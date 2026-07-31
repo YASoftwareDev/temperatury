@@ -145,5 +145,6 @@
   "footer": "{date} generált · adatok az <a href=\"https://open-meteo.com/\">Open-Meteo</a> történelmi újraelemzésből (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">forrás a GitHubon</a>",
   "_mt": true,
   "qv_baseline": "Évtizedes átlagok az 1961-1990 közötti időszakhoz képest",
-  "qv_chart_alt": "Évtizedről évtizedre felmelegedés, kitöltött területdiagram"
+  "qv_chart_alt": "Évtizedről évtizedre felmelegedés, kitöltött területdiagram",
+  "region_reset": "📍 Használd a helyemet"
 }

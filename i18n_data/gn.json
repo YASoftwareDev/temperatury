@@ -145,5 +145,6 @@
   "footer": "Ojejapo {date} · marandu <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanálisis histórico (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fuente GitHub-pe</a>",
   "_mt": true,
   "qv_baseline": "Umi promedio década vs línea base 1961-1990",
-  "qv_chart_alt": "Década por década calentamiento, gráfico área henyhêva"
+  "qv_chart_alt": "Década por década calentamiento, gráfico área henyhêva",
+  "region_reset": "📍 Eipuru che lugár"
 }

@@ -2679,6 +2679,12 @@
       regionSyncReset();
     }
   }
+  // Only the newest position request may render. Page load asks with
+  // maximumAge 6h, so its answer can be a six-hour-old fix still in flight when
+  // the visitor hits reset - and reset exists precisely because they have since
+  // moved. Without this, that stale answer lands after the pin is cleared and
+  // wins, putting the old region back.
+  var heroPosSeq = 0;
   // Undo a manual pick (e.g. a "did you know" city click, or a search result)
   // that would otherwise pin the tab away from geolocation forever - a
   // traveller changing city/country needs a way back to "wherever I am now"
@@ -2701,8 +2707,10 @@
       if (d) regionSetHome(d);
     }
     if (!navigator.geolocation || window.isSecureContext === false) return;
+    var seq = ++heroPosSeq;
     navigator.geolocation.getCurrentPosition(
       function (pos) {
+        if (seq !== heroPosSeq) return;
         window.__heroPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         applyHero();
       },
@@ -2872,8 +2880,10 @@
     // Graceful fallback: no Geolocation API, or an insecure context (file://,
     // plain http) where it is blocked - keep the remembered/default city.
     if (!navigator.geolocation || window.isSecureContext === false) return;
+    var seq = ++heroPosSeq;
     navigator.geolocation.getCurrentPosition(
       function (pos) {
+        if (seq !== heroPosSeq) return;   // a reset superseded this request
         window.__heroPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         applyHero();
       },

@@ -145,5 +145,6 @@
   "footer": "Gjeneruar {date} · të dhëna nga rianaliza historike <a href=\"https://open-meteo.com/\">Open-Meteo</a> (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">burimi në GitHub</a>",
   "_mt": true,
   "qv_baseline": "Mesatarja e dekadës kundrejt bazës 1961-1990",
-  "qv_chart_alt": "Ngrohja dekadë pas dekade, grafiku i zonës së mbushur"
+  "qv_chart_alt": "Ngrohja dekadë pas dekade, grafiku i zonës së mbushur",
+  "region_reset": "📍 Përdor vendndodhjen time"
 }

@@ -145,5 +145,6 @@
   "footer": "Genererade {date} · data från <a href=\"https://open-meteo.com/\">Open-Meteo</a> historisk omanalys (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">källa på GitHub</a>",
   "_mt": true,
   "qv_baseline": "Decenniumsmedelvärden jämfört med 1961-1990 baslinjen",
-  "qv_chart_alt": "Uppvärmning årtionde för årtionde, fyllt områdesdiagram"
+  "qv_chart_alt": "Uppvärmning årtionde för årtionde, fyllt områdesdiagram",
+  "region_reset": "📍 Använd min plats"
 }

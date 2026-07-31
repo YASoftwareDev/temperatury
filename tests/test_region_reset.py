@@ -132,3 +132,59 @@ def test_region_reset_falls_back_to_default_when_geolocation_gives_no_city(geo):
             assert pg.is_hidden("#region-reset")
         finally:
             b.close()
+
+
+# Page load asks for a position with maximumAge 6h, so its answer may be a
+# six-hour-old fix - and it can still be in flight when the visitor hits reset,
+# which exists precisely because they have since moved. Deterministic here: a
+# stub queues the callbacks so the page-load one is released AFTER the reset,
+# which is the interleaving real timing only produces intermittently.
+_GEO_STUB = """
+window.__geoQueue = [];
+navigator.geolocation.getCurrentPosition = function (ok) {
+  window.__geoQueue.push(ok);
+};
+window.__geoRelease = function (i, lat, lon) {
+  window.__geoQueue[i]({ coords: { latitude: lat, longitude: lon } });
+};
+"""
+
+
+@pytest.mark.slow
+def test_stale_inflight_position_cannot_override_a_reset():
+    out = build(SLUG, "en", client_i18n=True)
+    with _serve(out) as base, sync_playwright() as p:
+        b = p.chromium.launch()
+        try:
+            pg = b.new_context().new_page()
+            pg.add_init_script(_GEO_STUB)
+            pg.goto(f"{base}/en/index.html", wait_until="load")
+            pg.wait_for_function(
+                "(window.__omniData && (window.__omniData.g||[]).length > 0) "
+                "&& (window.__ranking && window.__ranking.length > 0)",
+                timeout=8000)
+            default = pg.evaluate(
+                "document.getElementById('region-embed').getAttribute('data-default')")
+            # Page load's request is parked, not answered.
+            assert pg.evaluate("window.__geoQueue.length") == 1
+
+            pg.evaluate("window.__regionShow('some-other-city.html')")
+            pg.click("#region-reset")
+            pg.wait_for_function("window.__geoQueue.length === 2", timeout=8000)
+
+            # Now the SIX-HOUR-OLD page-load fix finally lands, pointing at the
+            # covered city. It must be ignored: the reset superseded it.
+            pg.evaluate(f"window.__geoRelease(0, {KRAKOW_LAT}, {KRAKOW_LON})")
+            pg.wait_for_timeout(500)
+            assert pg.evaluate(
+                "document.getElementById('region-frame').src"
+            ).endswith(default + "?embed=1"), \
+                "a stale in-flight position overrode the reset"
+
+            # The reset's own fresh fix is still authoritative.
+            pg.evaluate(f"window.__geoRelease(1, {KRAKOW_LAT}, {KRAKOW_LON})")
+            pg.wait_for_function(
+                "document.getElementById('region-frame').src.indexOf('krakow.html') >= 0",
+                timeout=8000)
+        finally:
+            b.close()

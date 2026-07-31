@@ -145,5 +145,6 @@
   "footer": "Búið til {date} · gögn frá <a href=\"https://open-meteo.com/\">Open-Meteo</a> sögulegri endurgreiningu (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">heimild á GitHub</a>",
   "_mt": true,
   "qv_baseline": "Meðaltal áratuga samanborið við grunnlínu 1961-1990",
-  "qv_chart_alt": "Hlýnandi áratug fyrir áratug, fyllt svæðisrit"
+  "qv_chart_alt": "Hlýnandi áratug fyrir áratug, fyllt svæðisrit",
+  "region_reset": "📍 Notaðu staðsetninguna mína"
 }

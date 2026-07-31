@@ -145,5 +145,6 @@
   "footer": "Generated {date} · cov ntaub ntawv los ntawm <a href=\"https://open-meteo.com/\">Open-Meteo</a> keeb kwm reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source ntawm GitHub</a>",
   "_mt": true,
   "qv_baseline": "Xyoo caum nruab nrab vs lub hauv paus ntawm 1961-1990",
-  "qv_chart_alt": "Xyoo caum-los-xyoo-laus ua kom sov, puv cheeb tsam daim ntawv"
+  "qv_chart_alt": "Xyoo caum-los-xyoo-laus ua kom sov, puv cheeb tsam daim ntawv",
+  "region_reset": "📍 Siv kuv qhov chaw nyob"
 }

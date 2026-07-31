@@ -145,5 +145,6 @@
   "footer": "Vygenerované {date} · údaje z <a href=\"https://open-meteo.com/\">Open-Meteo</a> historickej reanalýzy (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">zdroj na GitHub</a>",
   "_mt": true,
   "qv_baseline": "Priemery za desaťročie vs. základná hodnota z rokov 1961-1990",
-  "qv_chart_alt": "Desaťročie za desaťročím otepľovanie, vyplnený plošný graf"
+  "qv_chart_alt": "Desaťročie za desaťročím otepľovanie, vyplnený plošný graf",
+  "region_reset": "📍 Použiť moju polohu"
 }

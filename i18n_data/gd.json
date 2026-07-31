@@ -145,5 +145,6 @@
   "footer": "Gineadh {date} · dàta bho <a href=\"https://open-meteo.com/\">Open-Meteo</a> ath-sgrùdadh eachdraidheil (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\"> stòr air GitHub</a>",
   "_mt": true,
   "qv_baseline": "Cuibheasachd deichead vs bun-loidhne 1961-1990",
-  "qv_chart_alt": "Blàthachadh deich bliadhna às deidh deich bliadhna, clàr sgìre air a lìonadh"
+  "qv_chart_alt": "Blàthachadh deich bliadhna às deidh deich bliadhna, clàr sgìre air a lìonadh",
+  "region_reset": "📍 Cleachd m’ àite"
 }

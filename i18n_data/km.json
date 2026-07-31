@@ -145,5 +145,6 @@
   "footer": "បង្កើត {date} · ទិន្នន័យពី <a href=\"https://open-meteo.com/\">Open-Meteo</a> ការវិភាគប្រវត្តិសាស្រ្ត (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">ប្រភពនៅលើ GitHub</a>",
   "_mt": true,
   "qv_baseline": "មធ្យមភាគមួយទសវត្សរ៍ធៀបនឹងខ្សែបន្ទាត់មូលដ្ឋានឆ្នាំ 1961-1990",
-  "qv_chart_alt": "ការឡើងកំដៅពីមួយទសវត្សរ៍ទៅមួយទសវត្សរ៍ តារាងតំបន់ពេញ"
+  "qv_chart_alt": "ការឡើងកំដៅពីមួយទសវត្សរ៍ទៅមួយទសវត្សរ៍ តារាងតំបន់ពេញ",
+  "region_reset": "📍 ប្រើទីតាំងរបស់ខ្ញុំ"
 }

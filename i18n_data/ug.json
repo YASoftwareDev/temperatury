@@ -145,5 +145,6 @@
   "footer": "ھاسىل قىلىنغان {date} · سانلىق مەلۇمات <a href=\"https://open-meteo.com/\">Open-Meteo</a> تارىخى قايتا تەھلىل (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">مەنبە GitHub</a>",
   "_mt": true,
   "qv_baseline": "ئوتتۇرا ھېساب بىلەن 1961-1990-يىللىرى",
-  "qv_chart_alt": "ئون يىلدىن ئون يىلغىچە ئىسسىنىش، تولغان رايون جەدۋىلى"
+  "qv_chart_alt": "ئون يىلدىن ئون يىلغىچە ئىسسىنىش، تولغان رايون جەدۋىلى",
+  "region_reset": "📍 ئورنۇمنى ئىشلىتىڭ"
 }

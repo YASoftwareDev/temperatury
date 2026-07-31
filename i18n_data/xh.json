@@ -145,5 +145,6 @@
   "footer": "Yenziwe {date} · idatha esuka <a href=\"https://open-meteo.com/\">Open-Meteo</a> uhlaziyo lwembali (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">source kwiGitHub</a>",
   "_mt": true,
   "qv_baseline": "Ishumi leminyaka eliphakathi ngokuchasene nesiseko sika-1961-1990",
-  "qv_chart_alt": "Ukufudumala kweshumi leminyaka, itshathi yendawo egcweleyo"
+  "qv_chart_alt": "Ukufudumala kweshumi leminyaka, itshathi yendawo egcweleyo",
+  "region_reset": "📍 Sebenzisa indawo yam"
 }

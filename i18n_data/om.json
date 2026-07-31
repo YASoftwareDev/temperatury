@@ -145,5 +145,6 @@
   "footer": "Madda {date} · <a href=\"https://open-meteo.com/\">Open-Meteo</a> irra deebiin xiinxaluu seenaa (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">madda GitHub irratti</a> irraa argame.",
   "_mt": true,
   "qv_baseline": "Giddugaleessa waggoota kurnan vs bu’uura bara 1961-1990",
-  "qv_chart_alt": "Ho’ina kurmaana kurmaanaan, chaartii naannoo guutame"
+  "qv_chart_alt": "Ho’ina kurmaana kurmaanaan, chaartii naannoo guutame",
+  "region_reset": "📍 Bakka ani jirutti fayyadamaa"
 }

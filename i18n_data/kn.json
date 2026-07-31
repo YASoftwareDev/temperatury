@@ -145,5 +145,6 @@
   "footer": "{date} · ಡೇಟಾವನ್ನು ರಚಿಸಲಾಗಿದೆ <a href=\"https://open-meteo.com/\">ಓಪನ್-ಮೀಟಿಯೋ</a> ಐತಿಹಾಸಿಕ ಮರು ವಿಶ್ಲೇಷಣೆ (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub ನಲ್ಲಿ ಮೂಲ</a>",
   "_mt": true,
   "qv_baseline": "1961-1990 ಬೇಸ್‌ಲೈನ್ ವಿರುದ್ಧ ದಶಕದ ಸರಾಸರಿಗಳು",
-  "qv_chart_alt": "ದಶಕದಿಂದ ದಶಕದ ತಾಪಮಾನ ಏರಿಕೆ, ತುಂಬಿದ ಪ್ರದೇಶದ ಚಾರ್ಟ್"
+  "qv_chart_alt": "ದಶಕದಿಂದ ದಶಕದ ತಾಪಮಾನ ಏರಿಕೆ, ತುಂಬಿದ ಪ್ರದೇಶದ ಚಾರ್ಟ್",
+  "region_reset": "📍 ನನ್ನ ಸ್ಥಳವನ್ನು ಬಳಸಿ"
 }

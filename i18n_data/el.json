@@ -145,5 +145,6 @@
   "footer": "Δημιουργήθηκαν {date} · δεδομένα από την ιστορική επανάλυση <a href=\"https://open-meteo.com/\">Open-Meteo</a> (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">πηγή στο GitHub</a>",
   "_mt": true,
   "qv_baseline": "Μέσοι όροι δεκαετίας σε σχέση με τη βασική γραμμή 1961-1990",
-  "qv_chart_alt": "Δεκαετία με δεκαετία Θέρμανση, γεμάτη περιοχή διάγραμμα"
+  "qv_chart_alt": "Δεκαετία με δεκαετία Θέρμανση, γεμάτη περιοχή διάγραμμα",
+  "region_reset": "📍 Χρησιμοποιήστε την τοποθεσία μου"
 }

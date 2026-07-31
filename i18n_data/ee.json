@@ -145,5 +145,6 @@
   "footer": "Wowɔ {date} · nyatakakawo tso <a href=\"https://open-meteo.com/\">Open-Meteo</a> ŋutinya me gbugbɔgadzro (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">tsoƒe le GitHub</a>",
   "_mt": true,
   "qv_baseline": "Ƒe ewo ƒe mamã dediewo vs 1961-1990 ƒe gɔmedzedze",
-  "qv_chart_alt": "Dzoxɔxɔ ƒe ewo ɖesiaɖe, nuto ƒe nɔnɔmetata si yɔ fũ"
+  "qv_chart_alt": "Dzoxɔxɔ ƒe ewo ɖesiaɖe, nuto ƒe nɔnɔmetata si yɔ fũ",
+  "region_reset": "📍 Zã afi si mele"
 }

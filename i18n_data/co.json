@@ -145,5 +145,6 @@
   "footer": "Generate {date} · dati da <a href=\"https://open-meteo.com/\">Open-Meteo</a> rianalisi storica (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">fonte in GitHub</a>",
   "_mt": true,
   "qv_baseline": "Media di a decada versus a basa di 1961-1990",
-  "qv_chart_alt": "Riscaldamentu di decenniu per decenniu, graficu di l'area piena"
+  "qv_chart_alt": "Riscaldamentu di decenniu per decenniu, graficu di l'area piena",
+  "region_reset": "📍 Aduprate u mo locu"
 }

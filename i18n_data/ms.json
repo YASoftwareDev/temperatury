@@ -145,5 +145,6 @@
   "footer": "Dijana {date} · data daripada <a href=\"https://open-meteo.com/\">Open-Meteo</a> analisis semula sejarah (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sumber pada GitHub</a>",
   "_mt": true,
   "qv_baseline": "Purata dekad berbanding garis dasar 1961-1990",
-  "qv_chart_alt": "Pemanasan dekad demi dekad, carta kawasan terisi"
+  "qv_chart_alt": "Pemanasan dekad demi dekad, carta kawasan terisi",
+  "region_reset": "📍 Gunakan lokasi saya"
 }

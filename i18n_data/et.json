@@ -145,5 +145,6 @@
   "footer": "Loodud {date} · andmed <a href=\"https://open-meteo.com/\">Open-Meteo</a> ajaloolisest ümberanalüüsist (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">allikast GitHubis</a>",
   "_mt": true,
   "qv_baseline": "Kümnendi keskmised võrreldes 1961–1990 lähtetasemega",
-  "qv_chart_alt": "Aastakümnete kaupa soojenemine, täidetud alade diagramm"
+  "qv_chart_alt": "Aastakümnete kaupa soojenemine, täidetud alade diagramm",
+  "region_reset": "📍 Kasuta minu asukohta"
 }
