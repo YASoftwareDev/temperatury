@@ -6049,11 +6049,11 @@
     },
     "my": {
       "label": "သင်သိခဲ့သလား?",
-      "fastest_city": "{city} ပူနွေးမှုသည် ဆယ်စုနှစ်တစ်ခုလျှင် {b}{v}°C{/b} အမြန်ဆုံးဖြစ်သည်။",
+      "fastest_city": "{city}သည် အခြားမြို့များထက် ပိုမိုပူနွေးလာသည် — {b}{v}°C{/b} ဆယ်စုနှစ်တစ်ခုလျှင်။",
       "over2": "{b}{n}{/b} {total}မြို့များသည် 1940 ခုနှစ်ကတည်းက {b}2°C{/b}ထက် ပိုမိုပူနွေးလာခဲ့သည်။",
       "avg_since": "ပျမ်းမျှမြို့သည် 1940 ခုနှစ်မှစ၍ {b}{v}°C{/b} ပူနွေးလာသည်။",
       "faster_world": "မြို့များ၏ {b}{pct}%{/b} ကမ္ဘာ့မြို့ပျမ်းမျှထက် ပိုမိုပူနွေးလာသည်။",
-      "fastest_country": "{country} သည် ဆယ်စုနှစ်တစ်ခုလျှင် {b}{v}°C{/b} အပူဆုံးနိုင်ငံဖြစ်သည်။"
+      "fastest_country": "{country} သည် အခြားနိုင်ငံများထက် ပိုမိုပူနွေးလာသည် — {b}{v}°C{/b} ဆယ်စုနှစ်တစ်ခုလျှင်။"
     },
     "am": {
       "label": "ይህን ያውቁ ኖሯል?",
@@ -6065,11 +6065,11 @@
     },
     "yo": {
       "label": "Se o mo?",
-      "fastest_city": "{city} n gbona ju gbogbo wọn lọ - {b}{v} °C{/b} fun ọdun mẹwa.",
+      "fastest_city": "{city} ń yára yára ju àwọn ìlú mìíràn lọ - {b}{v}°C{/b} fún ọdún mẹ́wàá.",
       "over2": "{b}{n}{/b} ti awọn ilu {total} ti gbona ju {b}2 °C{/b} lati 1940.",
       "avg_since": "Ilu apapọ ti gbona {b}{v} °C{/b} lati ọdun 1940.",
       "faster_world": "{b}{pct}%{/b} ti awọn ilu gbona yiyara ju apapọ ilu-aye lọ.",
-      "fastest_country": "{country} jẹ orilẹ-ede ti o yara julọ-igbona - {b}{v} °C{/b} fun ọdun mẹwa."
+      "fastest_country": "{country} ń yára yára ju orílẹ̀-èdè èyíkéyìí lọ — {b}{v}°C{/b} fún ọdún mẹ́wàá."
     },
     "af": {
       "label": "Het jy geweet?",
@@ -6169,11 +6169,11 @@
     },
     "sn": {
       "label": "Waizviziva here?",
-      "fastest_city": "{city} iri kudziya zvakanyanya kupfuura ese — {b}{v} °C{/b} pamakore gumi.",
+      "fastest_city": "{city} iri kudziya nekukurumidza kupfuura chero rimwe guta — {b}{v} °C{/b} pamakore gumi.",
       "over2": "{b}{n}{/b} ye {total} maguta akadziya kupfuura {b}2 °C{/b} kubva 1940.",
       "avg_since": "Avhareji yeguta yakadziya {b}{v} °C{/b} kubvira 1940.",
       "faster_world": "{b}{pct}%{/b} emaguta anodziya nekukurumidza kupfuura avhareji yemaguta epasirese.",
-      "fastest_country": "{country} ndiyo nyika inodziya zvakanyanya — {b}{v} °C{/b} pamakore gumi."
+      "fastest_country": "{country} iri kudziya nekukurumidza kupfuura chero imwe nyika — {b}{v} °C{/b} pamakore gumi."
     },
     "co": {
       "label": "Sapete?",
@@ -6281,11 +6281,11 @@
     },
     "hmn": {
       "label": "Koj puas paub?",
-      "fastest_city": "{city} ua kom sov sai tshaj plaws - {b}{v}°C{/b} ib xyoo caum.",
+      "fastest_city": "{city} ua kom sov sai dua lwm lub nroog - {b}{v}°C{/b} ib xyoo caum.",
       "over2": "{b}{n}{/b} ntawm {total} lub zos tau sov tshaj {b}2°C{/b} txij xyoo 1940.",
       "avg_since": "Lub nroog nruab nrab tau sov {b}{v}°C{/b} txij xyoo 1940.",
       "faster_world": "{b}{pct}%{/b} ntawm cov nroog sov sai dua lub ntiaj teb-lub nroog nruab nrab.",
-      "fastest_country": "{country} yog lub teb chaws sov tshaj plaws - {b}{v}°C{/b} ib xyoo caum."
+      "fastest_country": "{country} ua kom sov sai dua li lwm lub tebchaws - {b}{v}°C{/b} ib xyoo caum."
     },
     "hr": {
       "label": "jeste li znali",
@@ -6297,19 +6297,19 @@
     },
     "ig": {
       "label": "Ị maara?",
-      "fastest_city": "{city} na-ekpo ọkụ nke ukwuu - {b}{v} °C{/b} kwa afọ.",
+      "fastest_city": "{city} na-ekpo ọkụ karịa obodo ọ bụla ọzọ - {b}{v} °C{/b} kwa afọ.",
       "over2": "{b}{n}{/b} nke {total} obodo ejirila ọkụ karịa {b}2°C{/b} kemgbe 1940.",
       "avg_since": "Nkezi obodo a na-ekpo ọkụ {b}{v}°C{/b} kemgbe 1940.",
       "faster_world": "{b}{pct}%{/b} nke obodo na-ekpo ọkụ karịa nkezi obodo-ụwa.",
-      "fastest_country": "{country} bụ obodo na-ekpo ọkụ ngwa ngwa - {b}{v} °C{/b} kwa afọ."
+      "fastest_country": "{country} na-ekpo ọkụ karịa obodo ọ bụla - {b}{v} °C{/b} kwa afọ."
     },
     "rw": {
       "label": "Wari ubizi?",
-      "fastest_city": "{city} irashyuha cyane muri byose - {b}{v} ° C{/b} kumyaka icumi.",
+      "fastest_city": "{city} irashyuha vuba kurusha iyindi mijyi - {b}{v} ° C{/b} kumyaka icumi.",
       "over2": "{b}{n}{/b} yo mu mijyi {total} yashyushye kurenza {b}2 ° C{/b} kuva 1940.",
       "avg_since": "Umujyi ugereranije washyushye {b}{v} ° C{/b} kuva 1940.",
       "faster_world": "{b}{pct}% {/b} yimijyi irashyuha byihuse kuruta isi-umujyi ugereranije.",
-      "fastest_country": "{country} nicyo gihugu gishyuha cyane - {b}{v} ° C{/b} mu myaka icumi."
+      "fastest_country": "{country} irashyuha cyane kurusha ibindi bihugu - {b}{v} ° C{/b} mu myaka icumi."
     },
     "ilo": {
       "label": "Ammom kadi?",
@@ -6321,19 +6321,19 @@
     },
     "xh": {
       "label": "Ubusazi?",
-      "fastest_city": "{city} ishushu kakhulu kunabo bonke — {b}{v} °C{/b} kwishumi leminyaka.",
+      "fastest_city": "{city} ishushu ngokukhawuleza kunaso nasiphi na esinye isixeko — {b}{v} °C{/b} kwishumi leminyaka ngalinye.",
       "over2": "{b}{n}{/b} ye-{total} izixeko zifudumeze ngaphezu kwe-{b}2 °C{/b} ukusukela ngo-1940.",
       "avg_since": "Umndilili wesixeko ufudumale {b}{v} °C{/b} ukusukela ngo-1940.",
       "faster_world": "{b}{pct}%{/b} yezixeko ezishushu ngokukhawuleza kunomndilili wesixeko sehlabathi.",
-      "fastest_country": "{country} lelona lizwe likhawulezayo ukufudumala — {b}{v} °C{/b} kwishumi leminyaka."
+      "fastest_country": "{country} lufudumala ngokukhawuleza kunalo naliphi na elinye ilizwe — {b}{v} °C{/b} kwishumi leminyaka ngalinye."
     },
     "zu": {
       "label": "Uthi bewazi?",
-      "fastest_city": "{city} ishisa kakhulu kunawo wonke — {b}{v} °C{/b} ishumi leminyaka.",
+      "fastest_city": "{city} ifudumala ngokushesha kunanoma iliphi elinye idolobha — {b}{v} °C{/b} ishumi leminyaka.",
       "over2": "{b}{n}{/b} kwamadolobha angu-{total} afudumale ngaphezu kuka-{b}2 °C{/b} kusukela ngo-1940.",
       "avg_since": "Idolobha elimaphakathi liye lafudumala {b}{v} °C{/b} kusukela ngo-1940.",
       "faster_world": "{b}{pct}%{/b} yamadolobha afudumele ngokushesha kunesilinganiso samadolobha omhlaba.",
-      "fastest_country": "{country} iyizwe elishisa kakhulu kunawo wonke — {b}{v} °C{/b} ishumi leminyaka."
+      "fastest_country": "{country} kufudumala ngokushesha kunanoma yiliphi elinye izwe — {b}{v} °C{/b} ishumi leminyaka."
     },
     "jv": {
       "label": "Apa sampeyan ngerti?",
@@ -6425,11 +6425,11 @@
     },
     "mg": {
       "label": "Fantatrao ve?",
-      "fastest_city": "Ny {city} dia mafana indrindra amin'ny rehetra — {b}{v} °C{/b} isan-taona.",
+      "fastest_city": "{city} dia mihamafana haingana kokoa noho ny tanàna hafa — {b}{v} °C{/b} isan-taona.",
       "over2": "{b}{n}{/b} amin’ny {total} tanàna dia nafanaina mihoatra ny {b}2°C{/b} nanomboka tamin’ny 1940.",
       "avg_since": "Ny salan'isan'ny tanàna dia nanafana {b}{v} °C{/b} nanomboka tamin'ny 1940.",
       "faster_world": "{b}{pct}%{/b} amin'ny tanàn-dehibe dia mafana kokoa noho ny salan'isan'ny tanàna maneran-tany.",
-      "fastest_country": "{country} no firenena mafana indrindra indrindra — {b}{v} °C{/b} isaky ny folo taona."
+      "fastest_country": "{country} dia mihamafana haingana kokoa noho ny firenena hafa — {b}{v} °C{/b} isaky ny folo taona."
     },
     "mt": {
       "label": "Kont taf?",
@@ -6449,11 +6449,11 @@
     },
     "mi": {
       "label": "I mohio koe?",
-      "fastest_city": "Ko te {city} te whakamahana tere rawa atu — {b}{v} °C{/b} ia tekau tau.",
+      "fastest_city": "He tere ake te mahana o {city} i era atu taone — {b}{v} °C{/b} ia tekau tau.",
       "over2": "{b}{n}{/b} o {total} pa kua mahana ake i te {b}2 °C{/b} mai i te tau 1940.",
       "avg_since": "Kua mahana te taone toharite {b}{v} °C{/b} mai i te tau 1940.",
       "faster_world": "{b}{pct}%{/b} o nga taone nui ake te mahana i te toharite o te taone-ao.",
-      "fastest_country": "Ko {country} te whenua tino wera rawa — {b}{v} °C{/b} ia tekau tau."
+      "fastest_country": "He tere ake te mahana o {country} i era atu whenua — {b}{v} °C{/b} ia tekau tau."
     },
     "no": {
       "label": "Visste du det?",
@@ -6465,11 +6465,11 @@
     },
     "ny": {
       "label": "Kodi mumadziwa?",
-      "fastest_city": "{city} kukutentha kwambiri kuposa zonse — {b}{v} °C{/b} pazaka khumi.",
+      "fastest_city": "{city} kukutentha kwambiri kuposa mzinda wina uliwonse — {b}{v} °C{/b} pazaka khumi.",
       "over2": "{b}{n}{/b} ya {total} mizinda yatentha kuposa {b}2 °C{/b} kuyambira 1940.",
       "avg_since": "Mzinda wapakati watentha {b}{v} °C{/b} kuyambira 1940.",
       "faster_world": "{b}{pct}%{/b} Mizinda imatentha mwachangu kuposa kuchuluka kwamizinda yapadziko lonse lapansi.",
-      "fastest_country": "{country} ndi dziko lomwe likutentha kwambiri — {b}{v} °C{/b} pazaka khumi."
+      "fastest_country": "{country} kukutentha kwambiri kuposa dziko lina lililonse — {b}{v} °C{/b} pazaka khumi."
     },
     "om": {
       "label": "Beektuu?",
@@ -6553,11 +6553,11 @@
     },
     "so": {
       "label": "Ma ogtahay",
-      "fastest_city": "{city} aad bay ugu kululaatay dhammaan - {b}{v} °C{/b} tobankii sano.",
+      "fastest_city": "{city} si ka dhaqso badan ayay u kululaatay magaalo kasta - {b}{v} °C{/b} tobankii sano.",
       "over2": "{b}{n}{/b} oo ah {total} magaalooyin ayaa kulaalay in ka badan {b}2 °C{/b} tan iyo 1940kii.",
       "avg_since": "Celcelis ahaan magaaladu way kulushahay {b}{v} °C{/b} ilaa 1940kii.",
       "faster_world": "{b}{pct}%{/b} magaalooyinka ayaa kuleyl aad u dheereeya marka loo eego celceliska magaalada.",
-      "fastest_country": "{country} waa dalka ugu kululaynta badan - {b}{v} °C{/b} tobankii sano."
+      "fastest_country": "{country} wuu kulaalayaa si ka dhakhso badan waddan kasta - {b}{v} °C{/b} tobankii sano."
     },
     "fi": {
       "label": "Tiesitkö?",
@@ -6729,11 +6729,11 @@
     },
     "sd": {
       "label": "ڇا توهان کي خبر آهي؟",
-      "fastest_city": "{city} سڀني کان تيز ترين گرم ٿي رهيو آهي — {b}{v} °C{/b} في ڏهاڪي.",
+      "fastest_city": "{city} ڪنهن به ٻئي شهر جي ڀيٽ ۾ تيزيءَ سان گرم ٿي رهيو آهي — {b}{v} °C{/b} في ڏهاڪي.",
       "over2": "{b}{n}{/b} {total} شهرن مان 1940 کان وٺي {b}2 °C{/b} کان وڌيڪ گرم آهي.",
       "avg_since": "1940 کان وٺي سراسري شهر {b}{v} °C{/b} گرم آهي.",
       "faster_world": "{b}{pct}%{/b} شهر دنيا جي شهر جي سراسري کان تيز گرم آهن.",
-      "fastest_country": "{country} تيز ترين گرمي پد وارو ملڪ آهي — {b}{v} °C{/b} في ڏهاڪي."
+      "fastest_country": "{country} ڪنهن به ٻئي ملڪ جي ڀيٽ ۾ تيزيءَ سان گرم ٿي رهيو آهي - {b}{v} °C{/b} في ڏهاڪي."
     },
     "ps": {
       "label": "ته خبر يې؟",
