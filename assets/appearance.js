@@ -143,7 +143,7 @@
       'overflow:hidden;margin-inline-end:.2rem;}',
     '.tpref-unit button{font:inherit;font-size:.78rem;font-weight:650;cursor:pointer;',
       'border:0;background:var(--panel);color:var(--muted);padding:.3rem .55rem;line-height:1;}',
-    '.tpref-unit button[aria-pressed="true"]{background:var(--accent);color:#fff;}'
+    '.tpref-unit button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);}'
   ].join("");
 
   var GEAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +

@@ -2689,14 +2689,24 @@
     window.__regionManual = false;
     try { localStorage.removeItem(REGION_KEY); } catch (e) {}
     regionSyncReset();
-    applyHeroCache();   // last-known geolocated city while a fresh fix lands
-    if (!navigator.geolocation || window.isSecureContext === false) return;
+    // Denied/unavailable geolocation with no cache would otherwise leave the
+    // OLD manual pick showing with the reset button now gone - no visible
+    // sign the reset did anything. Fall back to the tier-aware server default
+    // in that case, same as a first-ever visit.
+    var hadCache = applyHeroCache();   // last-known geolocated city while a fresh fix lands
+    function fallbackToDefault() {
+      if (hadCache) return;
+      var host = document.getElementById("region-embed");
+      var d = host && host.getAttribute("data-default");
+      if (d) regionSetHome(d);
+    }
+    if (!navigator.geolocation || window.isSecureContext === false) { fallbackToDefault(); return; }
     navigator.geolocation.getCurrentPosition(
       function (pos) {
         window.__heroPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         applyHero();
       },
-      function () {},
+      fallbackToDefault,
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 0 }
     );
   }

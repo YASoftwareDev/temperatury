@@ -90,3 +90,38 @@ def test_region_reset_clears_manual_pick_and_refollows_geolocation():
     unexpected = [e for e in errors if "Failed to load resource" not in e]
     assert not unexpected, unexpected[:5]
     assert len(errors) <= len(failed), errors[:5]
+
+
+@pytest.mark.slow
+def test_region_reset_falls_back_to_default_when_geolocation_is_denied():
+    """Denied/unavailable geolocation with no remembered city (temperatury:hero
+    cache) must not leave the OLD manual pick on screen with the reset button
+    now hidden - that looks like the reset silently did nothing. It should fall
+    back to the same tier-aware server default a first-ever visit shows."""
+    out = build(SLUG, "en", client_i18n=True)
+    with _serve(out) as base, sync_playwright() as p:
+        b = p.chromium.launch()
+        try:
+            ctx = b.new_context()   # no geolocation permission granted -> denied
+            pg = ctx.new_page()
+            pg.goto(f"{base}/en/index.html", wait_until="load")
+            pg.wait_for_function(
+                "(window.__omniData && (window.__omniData.g||[]).length > 0) "
+                "&& (window.__ranking && window.__ranking.length > 0)",
+                timeout=8000)
+            default = pg.evaluate(
+                "document.getElementById('region-embed').getAttribute('data-default')")
+
+            pg.evaluate("window.__regionShow('some-other-city.html')")
+            assert pg.evaluate("window.__regionManual") is True
+
+            pg.click("#region-reset")
+            pg.wait_for_function(
+                "document.documentElement && !window.__regionManual", timeout=8000)
+            assert pg.evaluate(
+                "document.getElementById('region-frame').src"
+            ).endswith(default + "?embed=1"), \
+                "denied geolocation with no cache should fall back to the default"
+            assert pg.is_hidden("#region-reset")
+        finally:
+            b.close()
