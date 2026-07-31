@@ -138,14 +138,19 @@
     '.tpref-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--ink);}',
     '#tpref-scrim{position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.28);',
       'opacity:0;visibility:hidden;transition:opacity .22s ease;}',
-    '#tpref-scrim.open{opacity:1;visibility:visible;}'
+    '#tpref-scrim.open{opacity:1;visibility:visible;}',
+    '.tpref-unit{display:inline-flex;border:1px solid var(--line);border-radius:999px;',
+      'overflow:hidden;margin-inline-end:.2rem;}',
+    '.tpref-unit button{font:inherit;font-size:.78rem;font-weight:650;cursor:pointer;',
+      'border:0;background:var(--panel);color:var(--muted);padding:.3rem .55rem;line-height:1;}',
+    '.tpref-unit button[aria-pressed="true"]{background:var(--accent);color:#fff;}'
   ].join("");
 
   var GEAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.14.6.65 1.05 1.28 1.05H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
 
-  var panel, scrim, btn, lastFocus = null;
+  var panel, scrim, btn, unitBtns, lastFocus = null;
   function focusables() {
     return Array.prototype.slice.call(panel.querySelectorAll(
       'button, [href], input, select, [tabindex]:not([tabindex="-1"])'));
@@ -229,20 +234,36 @@
     seg(sHero, [["plain", "pref_plain", "Plain"], ["tint", "pref_tint", "Tint"]], "hero");
     gHero.appendChild(sHero); panel.appendChild(gHero);
 
-    /* No unit control on a server-i18n build - see isF() in charts.js: nothing
-       there could relabel the charts, so the choice would only half-apply. */
-    if (window.__units !== 0) {
-      var gUnit = group(T("pref_unit", "Temperature unit"));
-      var sUnit = document.createElement("div"); sUnit.className = "tpref-seg";
-      /* Fallbacks match report._tpref_i18n's inline English, which is the source
-         tools/gen_mapui.py extracts to machine-translate. */
-      seg(sUnit, [["C", "pref_unit_c", "Celsius"],
-                  ["F", "pref_unit_f", "Fahrenheit"]], "unit");
-      gUnit.appendChild(sUnit); panel.appendChild(gUnit);
-    }
-
     document.body.appendChild(scrim);
     document.body.appendChild(panel);
+
+    /* Standalone unit toggle, next to the language switcher - NOT inside the
+       Appearance panel. A temperature unit is a data choice, not a look; buried
+       in a "Wygląd"/Appearance menu it read as unrelated to what it does
+       ("C/F shouldn't be in wygląd panel - it is confusing"). One click, no
+       menu, and it's exactly what it looks like it does.
+       No unit control on a server-i18n build - see isF() in charts.js: nothing
+       there could relabel the charts, so the choice would only half-apply. */
+    if (window.__units !== 0) {
+      unitBtns = [];
+      var uGroup = document.createElement("div");
+      uGroup.className = "tpref-unit"; uGroup.setAttribute("role", "group");
+      uGroup.setAttribute("aria-label", T("pref_unit", "Temperature unit"));
+      /* Fallbacks match report._tpref_i18n's inline English, which is the
+         source tools/gen_mapui.py extracts to machine-translate. The symbol
+         is the visible label (universal notation); the full word is the
+         tooltip/aria-label for screen readers. */
+      [["C", "°C", "pref_unit_c", "Celsius"], ["F", "°F", "pref_unit_f", "Fahrenheit"]]
+        .forEach(function (o) {
+          var b = document.createElement("button");
+          b.type = "button"; b.textContent = o[1];
+          b.title = T(o[2], o[3]); b.setAttribute("aria-label", b.title);
+          b.dataset.axis = "unit"; b.dataset.val = o[0];
+          b.addEventListener("click", function () { set("unit", o[0]); });
+          uGroup.appendChild(b); unitBtns.push(b);
+        });
+      mount(uGroup);
+    }
 
     btn = document.createElement("button");
     btn.id = "tpref-btn"; btn.type = "button";
@@ -306,6 +327,10 @@
     panel.querySelectorAll("[data-axis]").forEach(function (b) {
       var a = b.dataset.axis, v = b.dataset.val;
       b.setAttribute("aria-pressed", String(vals[a]) === v ? "true" : "false");
+    });
+    // The unit toggle lives in the topbar, not the panel - synced separately.
+    if (unitBtns) unitBtns.forEach(function (b) {
+      b.setAttribute("aria-pressed", vals.unit === b.dataset.val ? "true" : "false");
     });
   }
 

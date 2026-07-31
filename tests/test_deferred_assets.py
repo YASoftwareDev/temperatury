@@ -191,7 +191,7 @@ def test_inline_hooks_survive_the_deferred_script():
         before = pg.evaluate("""[...document.querySelectorAll('.tval')]
                                   .slice(0, 5).map(e => e.textContent.trim())""")
         pg.evaluate("""() => document.querySelector(
-            '#tpref-panel [data-axis="unit"][data-val="F"]').click()""")
+            '.tpref-unit [data-axis="unit"][data-val="F"]').click()""")
         pg.wait_for_function(
             "document.documentElement.getAttribute('data-unit') === 'F'", timeout=5000)
         pg.wait_for_timeout(1200)

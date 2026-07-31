@@ -206,7 +206,7 @@ def test_unit_toggle_round_trip():
         def pick(unit):
             pg.evaluate(
                 """(u) => document.querySelector(
-                     '#tpref-panel [data-axis="unit"][data-val=' + JSON.stringify(u) + ']'
+                     '.tpref-unit [data-axis="unit"][data-val=' + JSON.stringify(u) + ']'
                    ).click()""", unit)
             pg.wait_for_function(
                 "(u) => document.documentElement.getAttribute('data-unit') === u",

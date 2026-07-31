@@ -43,6 +43,7 @@ TABLES = {
     "deephist": deephist._TEXT,
     "ranktext": ranktext._TEXT,
     "hero": report._HERO_I18N,
+    "dyk": report._DYK_I18N,
 }
 # Flat {lang: string} tables -> (english-key-label, table).
 _FLAT = {
