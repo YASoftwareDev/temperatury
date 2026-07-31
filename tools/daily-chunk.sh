@@ -154,8 +154,40 @@ while [ "$tries" -lt 5 ]; do
   push_rc=2; break
 done
 
+# The push above went out through an ISOLATED index, so these files are on main
+# yet still untracked here - and stay that way, which makes the next `git pull`
+# abort ("untracked working tree files would be overwritten"). Reconcile: drop
+# the local copies that are byte-identical to what we just pushed, then
+# fast-forward, which brings the very same bytes back as tracked files.
+#
+# Deliberately narrow, because this is the one step that touches the checked-out
+# branch: only on main, only with a clean index, only files git confirms are
+# untracked AND identical to the pushed blob. Anything else is left alone - an
+# unreconciled tree is untidy, losing someone's work is not.
+reconcile_local_copies() {
+  [ "$(git symbolic-ref --quiet --short HEAD 2>/dev/null)" = "main" ] || return 0
+  git diff --quiet && git diff --cached --quiet || return 0
+  local f blob removed=0
+  for f in "${NEWFILES[@]}"; do
+    [ -f "$f" ] || continue
+    git ls-files --error-unmatch -- "$f" >/dev/null 2>&1 && continue   # already tracked
+    blob="$(git rev-parse --quiet --verify "$COMMIT:$f" 2>/dev/null)" || continue
+    [ "$blob" = "$(git hash-object -- "$f")" ] || continue             # not identical
+    rm -f -- "$f" && removed=$((removed + 1))
+  done
+  [ "$removed" -gt 0 ] || return 0
+  if git merge --ff-only "$COMMIT" >/dev/null 2>&1; then
+    echo "  reconciled $removed local file(s) into main (now tracked)."
+  else
+    # Could not fast-forward, so restore what we removed rather than leave gaps.
+    git checkout -- data/ 2>/dev/null || true
+    echo "  note: left $removed file(s) untracked (main would not fast-forward)." >&2
+  fi
+}
+
 if [ "$push_rc" -eq 0 ]; then
   echo; echo "DONE: pushed $NEW city file(s) to $slug (data only). CI will rebuild + deploy."
+  reconcile_local_copies
   "$PY" tools/coverage.py 2>/dev/null | grep 'mean (historical)' || true
   exit 0
 fi
