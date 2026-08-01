@@ -1,11 +1,20 @@
 """Map each city to its country (ISO 3166-1 alpha-2), for the warming rankings
 and the share cards.
 
-The country is derived from the city's IANA timezone, which is stable and
-reliable for cities. ``_TZ_CC`` was generated from the tzdb ``zone1970.tab`` +
-``zone.tab`` (the legacy list, for aliased zones) for exactly the timezones our
-cities use. ``_SLUG_OVERRIDE`` fixes the rare zone shared across a border where
-the tzdb's primary country isn't the city's.
+Cities from ``cities750k.tsv`` carry their own GeoNames country code, which is
+what ``country_code`` uses. The rest fall back to ``_TZ_CC``, a timezone ->
+country map, with ``_SLUG_OVERRIDE`` for a zone shared across a border where the
+primary country isn't the city's.
+
+A timezone does NOT identify a country, so the fallback is a last resort and not
+a source of truth: GeoNames files 41 Vietnamese cities under ``Asia/Bangkok``,
+and while the country came from the timezone the site showed every one of them
+with a Thai flag and counted them toward Thailand in the warming ranking.
+
+``_TZ_CC`` maps each zone to its PRIMARY country, which is the right answer for
+its other job - ``tz_country_map`` ships it to the browser so a visitor's country
+can be guessed from ``Intl…timeZone`` offline, and a browser reporting
+``Asia/Bangkok`` really is most likely in Thailand.
 
 Localised country *names* are produced in the browser via ``Intl.DisplayNames``
 from the code (so a Polish page shows "Polska", English shows "Poland") - no
@@ -37,6 +46,7 @@ _TZ_CC: dict[str, str] = {
     "Africa/Dar_es_Salaam": "tz",
     "Africa/Djibouti": "dj",
     "Africa/Douala": "cm",
+    "Africa/El_Aaiun": "eh",
     "Africa/Freetown": "sl",
     "Africa/Gaborone": "bw",
     "Africa/Harare": "zw",
@@ -68,15 +78,25 @@ _TZ_CC: dict[str, str] = {
     "Africa/Tunis": "tn",
     "Africa/Windhoek": "na",
     "America/Anchorage": "us",
+    "America/Araguaina": "br",
     "America/Argentina/Buenos_Aires": "ar",
+    "America/Argentina/Catamarca": "ar",
     "America/Argentina/Cordoba": "ar",
+    "America/Argentina/Jujuy": "ar",
+    "America/Argentina/La_Rioja": "ar",
     "America/Argentina/Mendoza": "ar",
+    "America/Argentina/Salta": "ar",
+    "America/Argentina/San_Juan": "ar",
+    "America/Argentina/San_Luis": "ar",
+    "America/Argentina/Tucuman": "ar",
     "America/Argentina/Ushuaia": "ar",
     "America/Asuncion": "py",
     "America/Bahia": "br",
     "America/Belem": "br",
     "America/Belize": "bz",
+    "America/Boa_Vista": "br",
     "America/Bogota": "co",
+    "America/Boise": "us",
     "America/Campo_Grande": "br",
     "America/Cancun": "mx",
     "America/Caracas": "ve",
@@ -84,24 +104,31 @@ _TZ_CC: dict[str, str] = {
     "America/Chihuahua": "mx",
     "America/Ciudad_Juarez": "mx",
     "America/Costa_Rica": "cr",
+    "America/Cuiaba": "br",
+    "America/Curacao": "cw",
     "America/Denver": "us",
+    "America/Detroit": "us",
     "America/Edmonton": "ca",
     "America/El_Salvador": "sv",
     "America/Fortaleza": "br",
+    "America/Glace_Bay": "ca",
     "America/Guatemala": "gt",
     "America/Guayaquil": "ec",
     "America/Guyana": "gy",
+    "America/Halifax": "ca",
     "America/Havana": "cu",
     "America/Hermosillo": "mx",
     "America/Indiana/Indianapolis": "us",
     "America/Iqaluit": "ca",
     "America/Jamaica": "jm",
+    "America/Kentucky/Louisville": "us",
     "America/La_Paz": "bo",
     "America/Lima": "pe",
     "America/Los_Angeles": "us",
     "America/Maceio": "br",
     "America/Managua": "ni",
     "America/Manaus": "br",
+    "America/Matamoros": "mx",
     "America/Mazatlan": "mx",
     "America/Merida": "mx",
     "America/Mexico_City": "mx",
@@ -114,11 +141,17 @@ _TZ_CC: dict[str, str] = {
     "America/Paramaribo": "sr",
     "America/Phoenix": "us",
     "America/Port-au-Prince": "ht",
+    "America/Porto_Velho": "br",
+    "America/Puerto_Rico": "pr",
     "America/Punta_Arenas": "cl",
     "America/Recife": "br",
+    "America/Regina": "ca",
+    "America/Rio_Branco": "br",
+    "America/Santarem": "br",
     "America/Santiago": "cl",
     "America/Santo_Domingo": "do",
     "America/Sao_Paulo": "br",
+    "America/St_Johns": "ca",
     "America/Tegucigalpa": "hn",
     "America/Tijuana": "mx",
     "America/Toronto": "ca",
@@ -128,41 +161,60 @@ _TZ_CC: dict[str, str] = {
     "Asia/Aden": "ye",
     "Asia/Almaty": "kz",
     "Asia/Amman": "jo",
+    "Asia/Aqtau": "kz",
+    "Asia/Aqtobe": "kz",
     "Asia/Ashgabat": "tm",
+    "Asia/Atyrau": "kz",
     "Asia/Baghdad": "iq",
     "Asia/Bahrain": "bh",
     "Asia/Baku": "az",
     "Asia/Bangkok": "th",
+    "Asia/Barnaul": "ru",
     "Asia/Beirut": "lb",
     "Asia/Bishkek": "kg",
     "Asia/Brunei": "bn",
+    "Asia/Chita": "ru",
     "Asia/Colombo": "lk",
     "Asia/Damascus": "sy",
     "Asia/Dhaka": "bd",
     "Asia/Dili": "tl",
     "Asia/Dubai": "ae",
     "Asia/Dushanbe": "tj",
+    "Asia/Gaza": "ps",
+    "Asia/Hebron": "ps",
     "Asia/Ho_Chi_Minh": "vn",
     "Asia/Hong_Kong": "hk",
+    "Asia/Irkutsk": "ru",
     "Asia/Jakarta": "id",
+    "Asia/Jayapura": "id",
     "Asia/Jerusalem": "il",
     "Asia/Kabul": "af",
+    "Asia/Kamchatka": "ru",
     "Asia/Karachi": "pk",
     "Asia/Kathmandu": "np",
     "Asia/Kolkata": "in",
     "Asia/Krasnoyarsk": "ru",
     "Asia/Kuala_Lumpur": "my",
+    "Asia/Kuching": "my",
     "Asia/Kuwait": "kw",
+    "Asia/Macau": "mo",
     "Asia/Makassar": "id",
     "Asia/Manila": "ph",
     "Asia/Muscat": "om",
     "Asia/Nicosia": "cy",
+    "Asia/Novokuznetsk": "ru",
     "Asia/Novosibirsk": "ru",
     "Asia/Omsk": "ru",
+    "Asia/Oral": "kz",
     "Asia/Phnom_Penh": "kh",
+    "Asia/Pontianak": "id",
     "Asia/Pyongyang": "kp",
     "Asia/Qatar": "qa",
+    "Asia/Qostanay": "kz",
+    "Asia/Qyzylorda": "kz",
     "Asia/Riyadh": "sa",
+    "Asia/Sakhalin": "ru",
+    "Asia/Samarkand": "uz",
     "Asia/Seoul": "kr",
     "Asia/Shanghai": "cn",
     "Asia/Singapore": "sg",
@@ -172,7 +224,9 @@ _TZ_CC: dict[str, str] = {
     "Asia/Tehran": "ir",
     "Asia/Thimphu": "bt",
     "Asia/Tokyo": "jp",
+    "Asia/Tomsk": "ru",
     "Asia/Ulaanbaatar": "mn",
+    "Asia/Urumqi": "cn",
     "Asia/Vientiane": "la",
     "Asia/Vladivostok": "ru",
     "Asia/Yakutsk": "ru",
@@ -181,6 +235,7 @@ _TZ_CC: dict[str, str] = {
     "Asia/Yerevan": "am",
     "Atlantic/Canary": "es",
     "Atlantic/Cape_Verde": "cv",
+    "Atlantic/Madeira": "pt",
     "Atlantic/Reykjavik": "is",
     "Australia/Adelaide": "au",
     "Australia/Brisbane": "au",
@@ -191,6 +246,7 @@ _TZ_CC: dict[str, str] = {
     "Australia/Sydney": "au",
     "Europe/Amsterdam": "nl",
     "Europe/Andorra": "ad",
+    "Europe/Astrakhan": "ru",
     "Europe/Athens": "gr",
     "Europe/Belgrade": "rs",
     "Europe/Berlin": "de",
@@ -203,6 +259,8 @@ _TZ_CC: dict[str, str] = {
     "Europe/Dublin": "ie",
     "Europe/Helsinki": "fi",
     "Europe/Istanbul": "tr",
+    "Europe/Kaliningrad": "ru",
+    "Europe/Kirov": "ru",
     "Europe/Kyiv": "ua",
     "Europe/Lisbon": "pt",
     "Europe/Ljubljana": "si",
@@ -223,11 +281,13 @@ _TZ_CC: dict[str, str] = {
     "Europe/San_Marino": "sm",
     "Europe/Sarajevo": "ba",
     "Europe/Saratov": "ru",
+    "Europe/Simferopol": "ua",
     "Europe/Skopje": "mk",
     "Europe/Sofia": "bg",
     "Europe/Stockholm": "se",
     "Europe/Tallinn": "ee",
     "Europe/Tirane": "al",
+    "Europe/Ulyanovsk": "ru",
     "Europe/Vaduz": "li",
     "Europe/Vatican": "va",
     "Europe/Vienna": "at",
@@ -241,6 +301,7 @@ _TZ_CC: dict[str, str] = {
     "Indian/Mahe": "sc",
     "Indian/Maldives": "mv",
     "Indian/Mauritius": "mu",
+    "Indian/Reunion": "re",
     "Pacific/Apia": "ws",
     "Pacific/Auckland": "nz",
     "Pacific/Efate": "vu",
@@ -263,10 +324,17 @@ _SLUG_OVERRIDE: dict[str, str] = {
 
 def country_code(loc: Location) -> str | None:
     """ISO 3166-1 alpha-2 (lowercase) for a real city; None for ocean/region
-    reference points (which have no country)."""
+    reference points (which have no country).
+
+    ``loc.country`` (GeoNames, per city) wins where present. Deriving the country
+    from the timezone is only a fallback for the curated entries, because a
+    timezone maps to a country and not the other way round: 41 Vietnamese cities
+    are filed under ``Asia/Bangkok`` in GeoNames and were being reported - flag,
+    warming ranking and all - as Thai."""
     if getattr(loc, "kind", "city") != "city":
         return None
-    return _SLUG_OVERRIDE.get(loc.slug) or _TZ_CC.get(loc.timezone)
+    return (getattr(loc, "country", None) or _SLUG_OVERRIDE.get(loc.slug)
+            or _TZ_CC.get(loc.timezone))
 
 
 def flag_url(cc: str) -> str:

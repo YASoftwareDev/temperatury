@@ -62,6 +62,11 @@ class Location:
     #   a hollow marker so it doesn't read as a city, but still charted/aggregated.
     # "ocean" - an open-ocean reference point: distinct hollow marker, no city.
     kind: str = "city"
+    # ISO 3166-1 alpha-2, lowercase, straight from GeoNames. Only the TSV roster
+    # carries it; curated entries leave it None and fall back to the timezone map
+    # in countries.py, which is exact for them (no curated city sits in a country
+    # that shares its timezone with another).
+    country: str | None = None
 
     @property
     def slug(self) -> str:
@@ -448,15 +453,16 @@ for _region, _name, _lat, _lon, _tz, _kind in _REFERENCE:
 
 # Every city with population > 750,000 (GeoNames), de-duplicated against the
 # curated list above by proximity. Committed as a TSV (region, name, lat, lon,
-# IANA timezone) so the set is reproducible; regenerate with tools/gen_cities.py.
+# IANA timezone, ISO 3166-1 alpha-2) so the set is reproducible; regenerate with
+# tools/gen_cities.py.
 _EXTRA_CITIES = ROOT / "cities750k.tsv"
 if _EXTRA_CITIES.exists():
     for _row in _EXTRA_CITIES.read_text(encoding="utf-8").splitlines():
         if not _row.strip():
             continue
-        _region, _name, _lat, _lon, _tz = _row.split("\t")
+        _region, _name, _lat, _lon, _tz, _cc = _row.split("\t")
         _city = Location(_name, float(_lat), float(_lon), _tz,
-                         _geo_region(_region, float(_lon)))
+                         _geo_region(_region, float(_lon)), country=_cc)
         LOCATIONS.setdefault(_city.slug, _city)  # curated entries win on collision
 
 # Alias cities: smaller places that share a primary's ~11 km Open-Meteo grid

@@ -14,7 +14,7 @@ duplicate the curated "Warszawa".
 
 Writes two files:
   - ``cities750k.tsv``   — the primaries (>100k, deduped). Columns: region, name,
-    lat, lon, tz.
+    lat, lon, tz, cc.
   - ``city_aliases.tsv`` — every smaller city that shares a primary's ~11 km
     Open-Meteo grid cell (identical record), so it is searchable by its own name
     and reuses the primary's data. Columns: primary_slug, alias_name, region,
@@ -198,7 +198,10 @@ def main() -> None:
         slugs.add(slug)
         slug_pos[slug] = (la, lo)
         coords.append((la, lo))
-        rows.append((region, name, f"{la:.4f}", f"{lo:.4f}", tz))
+        # cc travels with the row: countries.py must not re-derive it from the
+        # timezone, which is not a country key (GeoNames files 41 Vietnamese
+        # cities under Asia/Bangkok).
+        rows.append((region, name, f"{la:.4f}", f"{lo:.4f}", tz, cc.lower()))
 
     rows.sort(key=lambda r: (r[0], r[1]))
     out = Path(__file__).resolve().parent.parent / "cities750k.tsv"
@@ -220,7 +223,7 @@ def write_aliases(all_cities: list[tuple], rows: list[tuple],
     primaries = [(config.slugify(n), n, la, lo, r)
                  for r, n, la, lo, _ in config._CITIES]
     primaries += [(config.slugify(n), n, float(la), float(lo), r)
-                  for r, n, la, lo, _ in rows]
+                  for r, n, la, lo, _tz, _cc in rows]
     idx = build_grid_index(primaries)
 
     # Largest-first: if two candidates share a slug, the more populous one wins;
