@@ -193,15 +193,31 @@ def test_sync_wrapper_keeps_the_gatherer_non_destructive():
 
 
 def test_daily_chunk_still_never_touches_the_checked_out_branch():
-    """daily-chunk.sh is data-only by construction because it may run while a
-    feature branch is checked out. The sync belongs in the wrapper only - folding
-    it in here would fast-forward whatever branch happens to be out."""
+    """daily-chunk.sh may run while a feature branch is checked out, so it must
+    never move whatever branch happens to be out. The sync belongs in the wrapper.
+
+    The one branch move it is allowed is the reconcile step: after pushing, it
+    fast-forwards main onto the commit it just pushed, and only when main is the
+    checked-out branch. That is why the ban is on the unguarded forms rather than
+    on the string `git merge` - which is what this test used to assert, until
+    reconcile was added and it started failing on a merge that is safe by
+    construction.
+    """
     script = (Path(__file__).resolve().parent.parent
               / "tools" / "daily-chunk.sh").read_text(encoding="utf-8")
     body = [ln for ln in script.splitlines() if not ln.lstrip().startswith("#")]
-    for mutating in ("git pull", "git merge", "git rebase", "git reset"):
+    for mutating in ("git pull", "git rebase", "git reset"):
         offenders = [ln for ln in body if mutating in ln]
         assert not offenders, f"{mutating} in daily-chunk.sh: {offenders}"
+    # Any merge must be fast-forward-only: it can then only ever advance a branch
+    # to a commit that already contains its history, never rewrite or conflict.
+    merges = [ln for ln in body if "git merge" in ln]
+    assert merges, "reconcile's ff-only merge went missing"
+    for ln in merges:
+        assert "--ff-only" in ln, f"non-ff merge in daily-chunk.sh: {ln.strip()}"
+    # ...and it must be reached only with main actually checked out.
+    assert 'symbolic-ref --quiet --short HEAD 2>/dev/null)" = "main"' in script, (
+        "the ff-only merge is no longer gated on main being the checked-out branch")
 
 
 def test_enrich_pass_keeps_the_priority_order(monkeypatch):
