@@ -5866,7 +5866,7 @@
     "zh": {
       "label": "你可知道？",
       "fastest_city": "{city} 是变暖最快的——每十年{b}{v} °C{/b}。",
-      "over2": "自 1940 年以来，{b}{n}{/b} {total} 城市的气温已超过 {b}2 °C{/b}。",
+      "over2": "自 1940 年以来，{b}{n}{/b} {total} 城市中的每个城市变暖超过 {b}2 °C{/b}。",
       "avg_since": "自 1940 年以来，城市平均气温已升高 {b}{v} °C{/b}。",
       "faster_world": "{b}{pct}%{/b} 的城市变暖速度快于世界城市平均水平。",
       "fastest_country": "{country} 是变暖最快的国家 — 每十年{b}{v} °C{/b}。"
@@ -6162,7 +6162,7 @@
     "zh-TW": {
       "label": "你可知道？",
       "fastest_city": "{city} 是暖化最快的－每十年{b}{v} °C{/b}。",
-      "over2": "自 1940 年以來，{b}{n}{/b} {total} 城市的氣溫已超過 {b}2 °C{/b}。",
+      "over2": "自 1940 年以來，{b}{n}{/b} {total} 城市中的每個城市變暖超過 {b}2 °C{/b}。",
       "avg_since": "自 1940 年以來，城市平均氣溫已上升 {b}{v} °C{/b}。",
       "faster_world": "{b}{pct}%{/b} 的城市暖化速度快於世界城市平均。",
       "fastest_country": "{country} 是暖化最快的國家 — 每十年{b}{v} °C{/b}。"
@@ -6297,7 +6297,7 @@
     },
     "ig": {
       "label": "Ị maara?",
-      "fastest_city": "{city} na-ekpo ọkụ karịa obodo ọ bụla ọzọ - {b}{v} °C{/b} kwa afọ.",
+      "fastest_city": "Ọ dịghị obodo ọzọ na-ekpo ọkụ ngwa ngwa ka {city} - {b}{v} °C{/b} kwa afọ.",
       "over2": "{b}{n}{/b} nke {total} obodo ejirila ọkụ karịa {b}2°C{/b} kemgbe 1940.",
       "avg_since": "Nkezi obodo a na-ekpo ọkụ {b}{v}°C{/b} kemgbe 1940.",
       "faster_world": "{b}{pct}%{/b} nke obodo na-ekpo ọkụ karịa nkezi obodo-ụwa.",

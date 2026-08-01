@@ -83,9 +83,17 @@ def _with_retry(g_code, en_items, label):
 # The facts report a RATE (°C per decade); "hottest" is an absolute claim and a
 # false one - Nuuk leads the warming ranking and is nowhere near the hottest
 # place on it. This exact collapse shipped in 13 languages before anyone looked.
+# COMPARATIVES belong here as much as superlatives: a first pass at the fix
+# checked only for "hottest"/"warmest" and passed an Igbo string that said
+# "is hotter than any other city" - the same false claim, one inflection away.
+_ABSOLUTE_HEAT = ("hottest", "warmest", "hotter", "warmer",
+                  "highest temperature", "very hot")
 TRIPWIRES = {
-    "fastest_city": ("hottest", "warmest", "highest temperature", "very hot"),
-    "fastest_country": ("hottest", "warmest", "highest temperature", "very hot"),
+    "fastest_city": _ABSOLUTE_HEAT,
+    "fastest_country": _ABSOLUTE_HEAT,
+    # "warmed BY more than 2 °C" is a change; "temperature exceeded 2 °C" is an
+    # absolute, and trivially true of nearly every city on earth.
+    "over2": ("exceeded", "exceed", "above 2", "over 2 °c"),
 }
 
 
