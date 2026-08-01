@@ -61,6 +61,23 @@ def test_roster_countries_are_two_letter_codes():
         assert len(r[5]) == 2 and r[5].islower(), f"bad country code in {r}"
 
 
+def test_xinjiang_cities_aggregate_on_xinjiang_time():
+    """A city's timezone is not decoration: data.py hands it to Open-Meteo as the
+    timezone the daily means are aggregated in, so a wrong UTC offset shifts every
+    day boundary and is then baked into the committed CSV.
+
+    Urumqi (curated) and Bole (GeoNames) carried Asia/Shanghai, two hours off the
+    Asia/Urumqi their 20 Xinjiang neighbours use. Both were fixed before either
+    had been fetched, so no cached data was aggregated on the wrong boundary.
+
+    Note this is NOT the Vietnam case: tzdb really does file north Vietnam under
+    Asia/Bangkok ("TH,CX,KH,LA,VN ... north Vietnam" in zone1970.tab), so those
+    timezones were right and only the country derived from them was wrong.
+    """
+    for slug in ("urumqi", "bole"):
+        assert config.LOCATIONS[slug].timezone == "Asia/Urumqi"
+
+
 def test_alias_generation_accepts_the_rows_the_generator_now_emits():
     """`main()` builds the roster rows and hands the same list to
     `write_aliases`, which unpacked them positionally - so widening the row by a

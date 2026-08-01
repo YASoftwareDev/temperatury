@@ -298,7 +298,9 @@ _CITIES: list[tuple] = [
     ("Asia", "Guangzhou", 23.1291, 113.2644, "Asia/Shanghai"),
     ("Asia", "Chengdu", 30.5728, 104.0668, "Asia/Shanghai"),
     ("Asia", "Harbin", 45.8038, 126.5349, "Asia/Shanghai"),
-    ("Asia", "Urumqi", 43.8256, 87.6168, "Asia/Shanghai"),
+    # Xinjiang Time (UTC+6), per tzdb; Beijing Time would aggregate the daily
+    # means on a day boundary two hours off local, unlike its 20 neighbours here.
+    ("Asia", "Urumqi", 43.8256, 87.6168, "Asia/Urumqi"),
     ("Asia", "Lhasa", 29.6520, 91.1721, "Asia/Shanghai"),
     ("Asia", "Hong Kong", 22.3193, 114.1694, "Asia/Hong_Kong"),
     ("Asia", "Mumbai", 19.0760, 72.8777, "Asia/Kolkata"),
