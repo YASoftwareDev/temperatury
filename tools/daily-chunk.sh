@@ -165,9 +165,17 @@ done
 # untracked AND identical to the pushed blob. Anything else is left alone - an
 # unreconciled tree is untidy, losing someone's work is not.
 reconcile_local_copies() {
-  [ "$(git symbolic-ref --quiet --short HEAD 2>/dev/null)" = "main" ] || return 0
-  git diff --quiet && git diff --cached --quiet || return 0
-  local f blob removed=0
+  local on_main=0 f blob removed=0
+  [ "$(git symbolic-ref --quiet --short HEAD 2>/dev/null)" = "main" ] && on_main=1
+  # A clean tree only matters when main is checked out, because only then do we
+  # move the branch the worktree is sitting on.
+  if [ "$on_main" -eq 1 ]; then
+    git diff --quiet && git diff --cached --quiet || return 0
+  fi
+  # Removing an untracked file whose bytes are already in the commit we just
+  # PUSHED loses nothing: the content is durable on origin/main. Off main it
+  # also restores the honest state - a feature branch never had these files, so
+  # a worktree without them is what the branch actually describes.
   for f in "${NEWFILES[@]}"; do
     [ -f "$f" ] || continue
     git ls-files --error-unmatch -- "$f" >/dev/null 2>&1 && continue   # already tracked
@@ -176,12 +184,23 @@ reconcile_local_copies() {
     rm -f -- "$f" && removed=$((removed + 1))
   done
   [ "$removed" -gt 0 ] || return 0
-  if git merge --ff-only "$COMMIT" >/dev/null 2>&1; then
-    echo "  reconciled $removed local file(s) into main (now tracked)."
+
+  if [ "$on_main" -eq 1 ]; then
+    if git merge --ff-only "$COMMIT" >/dev/null 2>&1; then
+      echo "  reconciled $removed file(s) into main (now tracked)."
+    else
+      git checkout -- data/ 2>/dev/null || true   # restore rather than leave gaps
+      echo "  note: kept $removed file(s) (main would not fast-forward)." >&2
+    fi
+    return 0
+  fi
+  # Off main: advance the local main REF without checking it out, so a later
+  # `git checkout main` materialises exactly these files instead of aborting on
+  # them. Never touches the checked-out branch.
+  if git fetch -q origin main:main 2>/dev/null; then
+    echo "  reconciled $removed file(s); local main advanced (checkout main to get them)."
   else
-    # Could not fast-forward, so restore what we removed rather than leave gaps.
-    git checkout -- data/ 2>/dev/null || true
-    echo "  note: left $removed file(s) untracked (main would not fast-forward)." >&2
+    echo "  reconciled $removed file(s); run 'git fetch origin main:main' when convenient." >&2
   fi
 }
 
