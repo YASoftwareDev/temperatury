@@ -43,6 +43,37 @@ _CHUNK = 15
 _CHUNK_PAUSE = 2.0
 
 
+class QuotaExhausted(RuntimeError):
+    """A 429 that says a whole hour's (or day's) budget is spent, not a burst.
+
+    Open-Meteo returns 429 for two very different situations, and the status
+    code alone cannot tell them apart - only the JSON ``reason`` can:
+
+    * "Minutely API request limit exceeded" - a burst; it clears inside our
+      backoff window, so retrying is exactly right.
+    * "Hourly/Daily API request limit exceeded" - the server itself says to come
+      back next hour or tomorrow, which is far beyond ``_MAX_ATTEMPTS`` * 60s.
+      Retrying cannot succeed; it only adds load to an endpoint already
+      refusing us, and the caller should stop the run instead.
+
+    Treating the second as a generic failure is what silently froze the backfill:
+    every chunk burned ~120s of futile retries and was logged as merely
+    "pending", so a spent budget looked identical to flaky network.
+    """
+
+
+def _quota_window(response: requests.Response) -> str | None:
+    """Return "hourly"/"daily" when a 429 means a spent budget, else None."""
+    try:
+        reason = (response.json() or {}).get("reason", "")
+    except ValueError:
+        reason = response.text or ""
+    reason = reason.lower()
+    if "limit exceeded" not in reason:
+        return None
+    return next((w for w in ("hourly", "daily") if w in reason), None)
+
+
 def _retry_after(response: requests.Response, attempt: int) -> float:
     """Seconds to wait after a 429 - honour Retry-After, else back off."""
     header = response.headers.get("Retry-After", "")
@@ -64,9 +95,17 @@ def _request(params: dict, what: str):
     for attempt in range(1, _MAX_ATTEMPTS + 1):
         try:
             response = requests.get(_ARCHIVE_URL, params=params, timeout=_REQUEST_TIMEOUT)
-            if response.status_code == 429 and attempt < _MAX_ATTEMPTS:
-                time.sleep(_retry_after(response, attempt))
-                continue
+            if response.status_code == 429:
+                window = _quota_window(response)
+                if window:
+                    resets = {"hourly": "hour", "daily": "day"}[window]
+                    raise QuotaExhausted(
+                        f"Open-Meteo {window} request limit reached (while fetching "
+                        f"{what}); it resets on the next {resets}."
+                    )
+                if attempt < _MAX_ATTEMPTS:
+                    time.sleep(_retry_after(response, attempt))
+                    continue
             response.raise_for_status()
             break
         except requests.RequestException as error:
