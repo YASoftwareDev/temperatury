@@ -64,19 +64,33 @@ echo "== syncing latest data from GitHub =="
 git fetch -q origin main \
   || { echo "git fetch failed - resolve the above, then re-run." >&2; exit 1; }
 
-echo "== fetching missing cities (up to 20 min; stops when today's quota is spent) =="
-# Two passes. First finish the popular pages: precipitation + daily max/min for
-# the most-populous cities that are already rendered (unlocks their extra charts
-# and the records widget). Then spend the rest of the budget widening mean
-# coverage, wealthiest-country-first. Once the enrich backlog is empty, its pass
-# costs seconds. --shuffle on both passes randomises only within the priority
-# window, so the priority order still decides which cities are in play while two
-# fetchers pick different ones out of it. That thins duplicate work rather than
-# ending it: fetchers who cannot see each other's files still collide on roughly
-# N^2/window cities a day (N = cities one fetcher manages), so a second machine
-# fetching in earnest wants an up-to-date data/ rather than just this.
-"$PY" tools/om_parallel.py --groups precip,extremes --rendered-only --shuffle --max-seconds 360
-"$PY" tools/om_parallel.py --groups mean --shuffle --max-seconds 840
+echo "== fetching missing cities (stops as soon as the hourly quota is spent) =="
+# The free tier meters by the HOUR, not by the day, and one chunk (15 cities x
+# 86 years) is heavy: a run lands roughly 75 cities before every further call
+# comes back "Hourly API request limit exceeded". So a run does not get a budget
+# it can divide between groups - it gets ONE group's worth, and whichever group
+# runs first takes all of it.
+#
+# That is why a fixed order silently froze two thirds of the dataset: `precip`
+# always led, so `extremes` gained nothing between 2026-07-29 and 2026-08-05 and
+# `mean` (the only group that adds NEW cities) stalled at 2494 from 2026-08-03.
+# Rotating the leader by UTC day gives each group every third run, so all three
+# keep moving. --shuffle still spreads concurrent fetchers within the priority
+# window; it cannot help when the budget itself is the binding constraint.
+case $(( 10#$(date -u +%j) % 3 )) in
+  0) ORDER="mean precip extremes" ;;
+  1) ORDER="precip extremes mean" ;;
+  *) ORDER="extremes mean precip" ;;
+esac
+echo "today's group order: $ORDER"
+for group in $ORDER; do
+  # Only the enrich groups are restricted to already-rendered cities; `mean` is
+  # what widens the roster, so it must see every city.
+  case "$group" in
+    mean) "$PY" tools/om_parallel.py --groups mean --shuffle --max-seconds 400 ;;
+    *)    "$PY" tools/om_parallel.py --groups "$group" --rendered-only --shuffle --max-seconds 400 ;;
+  esac
+done
 
 # The genuinely-new data files: untracked, ASCII-named .csv.gz files not already
 # on origin/main. (A feature branch keeps already-pushed files untracked in the

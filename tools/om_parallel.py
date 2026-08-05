@@ -99,6 +99,10 @@ def _fetch_chunk(chunk, daily, parse, path_fn, start, end):
     label = f"{len(chunk)} cities ({chunk[0].name}…)"
     try:
         payload = data._request(params, label)
+    except data.QuotaExhausted:
+        # Not this chunk's problem: the whole budget is gone, so every queued
+        # chunk would fail too. Propagate so run() can stop the pass at once.
+        raise
     except Exception:  # noqa: BLE001 — rate-limited/unreachable chunk: skip, retry next run
         return 0, len(chunk)
     items = payload if isinstance(payload, list) else [payload]
@@ -153,6 +157,7 @@ def run(args):
         chunks = [missing[i:i + chunk_sz] for i in range(0, len(missing), chunk_sz)]
         print(f"[{group}] {len(missing)} cities in {len(chunks)} chunks")
         done = failed = 0
+        exhausted = None
         t0 = time.time()
         with ThreadPoolExecutor(max_workers=workers) as ex:
             futs = [ex.submit(_fetch_chunk, c, daily, parse, path_fn, args.start, args.end)
@@ -160,7 +165,13 @@ def run(args):
             try:
                 remaining = max(deadline - time.time(), 0.0) if deadline else None
                 for i, fut in enumerate(as_completed(futs, timeout=remaining), 1):
-                    w, f = fut.result()
+                    try:
+                        w, f = fut.result()
+                    except data.QuotaExhausted as spent:
+                        for other in futs:
+                            other.cancel()  # queued chunks drop; in-flight finish
+                        exhausted = str(spent)
+                        break
                     done += w
                     failed += f
                     if i % 5 == 0 or i == len(futs):
@@ -173,6 +184,11 @@ def run(args):
                 print(f"  {group}: time cap ({args.max_seconds}s) reached, stopping")
         print(f"[{group}] done: {done} written, {failed} still missing "
               f"in {time.time() - t0:.0f}s")
+        if exhausted:
+            # Every later group would only re-hit the same wall, so end the run
+            # here rather than logging two more empty passes.
+            print(f"[{group}] stopped: {exhausted}")
+            break
 
 
 def parse_args(argv=None):
