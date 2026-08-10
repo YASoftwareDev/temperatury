@@ -83,7 +83,8 @@ def _apply_shard(missing, shard, shuffle):
     """Split a missing-list into (owned, fallback) and queue owned first.
 
     Two sharded machines never touch the same city while both still have owned
-    work - a guarantee, unlike staggered start times. The fallback tail keeps
+    work queued (fallback requests can only overlap the final in-flight owned
+    chunks) - a guarantee, unlike staggered start times. The fallback tail keeps
     the dataset complete anyway: a machine whose own slice is exhausted (or
     whose peer died) walks the others' cities, where the shuffle window is the
     only - and by then sufficient - overlap protection.
@@ -94,6 +95,10 @@ def _apply_shard(missing, shard, shuffle):
     if shuffle:
         mine, rest = _spread_within_window(mine), _spread_within_window(rest)
     return mine, rest
+
+
+def _chunked(seq, size):
+    return [seq[i:i + size] for i in range(0, len(seq), size)]
 
 
 def _spread_within_window(missing):
@@ -186,9 +191,14 @@ def run(args):
             print(f"[{group}] shard {args.shard[0]}/{args.shard[1]}: "
                   f"{len(mine)} owned, {len(rest)} fallback after them")
             missing = mine + rest
-        elif args.shuffle:
-            missing = _spread_within_window(missing)
-        chunks = [missing[i:i + chunk_sz] for i in range(0, len(missing), chunk_sz)]
+            # Chunk the halves separately: one blind chunking would pad the
+            # last owned chunk with fallback cities, putting another machine's
+            # cities into a bulk request while owned work remains.
+            chunks = _chunked(mine, chunk_sz) + _chunked(rest, chunk_sz)
+        else:
+            if args.shuffle:
+                missing = _spread_within_window(missing)
+            chunks = _chunked(missing, chunk_sz)
         print(f"[{group}] {len(missing)} cities in {len(chunks)} chunks")
         done = failed = 0
         exhausted = None

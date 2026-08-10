@@ -46,7 +46,7 @@ def test_owned_cities_queue_before_fallback():
     assert all(om_parallel._shard_of(l.slug, 4) == 1 for l in mine)
     assert all(om_parallel._shard_of(l.slug, 4) != 1 for l in rest)
     assert len(mine) + len(rest) == len(LOCS)
-    # Without --shuffle the priority order inside each half is untouched.
+    # Without --shuffle the input order (GDP priority in production) is kept.
     assert mine == [l for l in LOCS if om_parallel._shard_of(l.slug, 4) == 1]
 
 
@@ -54,6 +54,39 @@ def test_two_shards_never_share_owned_work():
     a, _ = om_parallel._apply_shard(LOCS, (1, 3), shuffle=False)
     b, _ = om_parallel._apply_shard(LOCS, (2, 3), shuffle=False)
     assert not {l.slug for l in a} & {l.slug for l in b}
+
+
+def test_no_bulk_request_mixes_owned_and_fallback_cities(monkeypatch):
+    """The boundary chunk must not smuggle fallback cities into a request.
+
+    Chunking `mine + rest` blindly would pad the last owned chunk with the
+    first fallback cities, so a machine would fetch another shard's cities in
+    the same bulk request while it still has owned work - exactly the
+    collision sharding exists to rule out. Drives run() itself, so a
+    regression in its chunk construction cannot slip past.
+    """
+    from tests.test_download_priority import (_Args, _NeverCached,
+                                              _SerialExecutor)
+
+    for shard in ((1, 4), (3, 4), (2, 3)):
+        args = _Args()
+        args.shard = shard
+        chunks: list[list] = []
+        monkeypatch.setattr(om_parallel, "_fetch_chunk",
+                            lambda chunk, *a: (chunks.append(chunk), (len(chunk), 0))[1])
+        daily, parse, _, chunk_sz = om_parallel.GROUPS["mean"]
+        monkeypatch.setitem(om_parallel.GROUPS, "mean",
+                            (daily, parse, lambda l, s, e: _NeverCached(), chunk_sz))
+        monkeypatch.setattr(om_parallel, "ThreadPoolExecutor",
+                            lambda max_workers=None: _SerialExecutor())
+        om_parallel.run(args)
+
+        idx, total = shard
+        owned_flags = [{om_parallel._shard_of(l.slug, total) == idx - 1
+                        for l in c} for c in chunks]
+        assert chunks and all(len(f) == 1 for f in owned_flags)  # homogeneous
+        # All owned chunks strictly before all fallback chunks.
+        assert owned_flags == sorted(owned_flags, key=lambda f: f != {True})
 
 
 def test_shard_arg_parses_and_rejects():
