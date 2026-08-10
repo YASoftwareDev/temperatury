@@ -56,7 +56,12 @@ def main() -> int:
         new_bytes += len(blob)
         done += 1
         if not args.dry_run:
-            dst.write_bytes(blob)
+            # Via a temp file: an interrupted write must not leave a partial
+            # .tpy, which codec.cached_path would then PREFER over the intact
+            # legacy file still sitting next to it.
+            tmp = dst.with_suffix(dst.suffix + ".part")
+            tmp.write_bytes(blob)
+            tmp.replace(dst)
             src.unlink()
         if i % 500 == 0:
             print(f"  {i}/{len(files)}...", flush=True)

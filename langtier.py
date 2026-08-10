@@ -119,12 +119,16 @@ SEO_PRERENDER = 2
 # site-wide are both worse than spending the bytes where they are actually
 # read, so cities are tiered by population:
 #
-#   * the top RICH_TIER cities keep the full treatment (SEO_PRERENDER shells,
-#     an OG card, the complete chart payload) - these are what people open and
-#     what gets shared;
-#   * every other city gets ONE prerendered shell, no OG card, and a lite chart
-#     payload. Nothing is lost to a visitor: the language switcher, every chart
-#     the lite payload carries, search and the map all still work client-side.
+#   * the top RICH_TIER cities pre-render every SEO language - these are what
+#     people open and what gets shared;
+#   * every other city pre-renders ONE shell. Nothing is lost to a visitor: the
+#     language switcher, search and the map all still work client-side.
+#
+# This covers the language-shell share of the per-city cost ONLY. Slimming that
+# shell and shipping a lite chart payload for the tail are still to do, and
+# both are required before the roster can actually grow - see
+# ~/projects/tasks/doing/temperatury-10k-roster.md. Do not read this tier as
+# "the page size problem is solved".
 #
 # Ranking is by GeoNames population over the FULL roster, so a city's tier never
 # changes as the data cache grows.

@@ -84,7 +84,7 @@ def _retry_after(response: requests.Response, attempt: int) -> float:
 
 
 def _cache_path(location: Location, start_year: int, end_year: int) -> Path:
-    """Return the on-disk cache path (gzipped CSV) for a location and span."""
+    """Return the on-disk cache path (see codec) for a location and span."""
     return DATA_DIR / f"{location.slug}_{start_year}-{end_year}{codec.SUFFIX}"
 
 

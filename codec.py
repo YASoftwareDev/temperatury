@@ -54,11 +54,30 @@ def _quantize(values: np.ndarray) -> np.ndarray:
     -0.05 and 0.05 to the same stored tenth on exactly-representable inputs).
     """
     v = np.asarray(values, dtype="float64")
-    out = np.where(np.isnan(v), MISSING,
-                   np.trunc(v * SCALE + np.copysign(0.5, v)))
-    if np.any((out != MISSING) & ((out < -32767) | (out > 32767))):
+    # NaN is legitimate - it means "no observation that day". An infinity is
+    # neither a measurement nor an absence, so it must not quietly become one:
+    # rejecting it here is the same rule as the sentinel check below.
+    if np.any(np.isinf(v)):
+        raise ValueError("non-finite value is not a measurement")
+    real = ~np.isnan(v)
+    scaled = np.where(real, v * SCALE, 0.0)
+    q = np.trunc(scaled + np.copysign(0.5, v), where=real, out=np.zeros_like(v))
+    # Refuse input finer than the format can hold rather than quietly rounding
+    # it. Every source so far emits one decimal (verified across all families),
+    # but "lossless round-trip" has to fail loudly the day that stops being
+    # true - a silently rounded measurement is indistinguishable from a real
+    # one. The tolerance absorbs float64 representation error only (12.3*10 is
+    # 123.00000000000001), not genuine extra precision.
+    if np.any(real & (np.abs(scaled - np.round(scaled)) > 1e-6)):
+        raise ValueError(f"value carries more precision than 1/{SCALE} units")
+    # Range-check the REAL values only, and reject the sentinel itself: a
+    # genuine -3276.8 would otherwise quantize onto MISSING and decode back as
+    # NaN - a measurement silently becoming "no observation", which is the one
+    # failure this format must never have. Unreachable for temperature or
+    # rainfall, but it costs one comparison to make it impossible.
+    if np.any(real & ((q <= MISSING) | (q > 32767))):
         raise ValueError("value out of int16 range at 0.1 precision")
-    return out.astype(np.int16)
+    return np.where(real, q, MISSING).astype(np.int16)
 
 
 def encode(frame: pd.DataFrame) -> bytes:
@@ -66,14 +85,24 @@ def encode(frame: pd.DataFrame) -> bytes:
     if frame.index.name != "date":
         raise ValueError(f"expected a 'date' index, got {frame.index.name!r}")
     idx = pd.to_datetime(frame.index)
+    # Only the DATE is stored, so a timestamp carrying a time of day would come
+    # back shifted to midnight - the index silently changing, which is the same
+    # class of failure as a value silently changing.
+    if len(idx) and (idx != idx.normalize()).any():
+        raise ValueError("index carries a time of day; only whole dates are stored")
     if len(idx) > 1:
         step = np.unique(np.diff(idx.to_numpy()).astype("timedelta64[D]"))
         if step.size != 1 or step[0] != np.timedelta64(1, "D"):
             raise ValueError("index is not contiguous daily; dates cannot be "
                              "dropped for this frame")
+    # An empty frame is legitimate: the current-year fetch returns one for a
+    # location whose archive has no rows yet, and the caller caches it so the
+    # next run does not re-request it. There is no first date to record.
+    # Ordinal 1, not 0: 0 is not a valid date ordinal. The value is never read
+    # back for an empty frame, but it has to be decodable.
+    start = idx[0].to_pydatetime().date().toordinal() if len(idx) else 1
     head = bytearray(MAGIC)
-    head += struct.pack("<BBIi", VERSION, len(frame.columns), len(frame),
-                        idx[0].to_pydatetime().date().toordinal())
+    head += struct.pack("<BBIi", VERSION, len(frame.columns), len(frame), start)
     for name in frame.columns:
         raw = str(name).encode("utf-8")
         head += struct.pack("<H", len(raw)) + raw
@@ -97,15 +126,26 @@ def decode(blob: bytes) -> pd.DataFrame:
         off += 2
         names.append(buf[off:off + ln].decode("utf-8"))
         off += ln
+    # Exact length, not "at least": trailing bytes would mean the header and
+    # the body disagree about how many days this file holds, and decoding the
+    # header's count would silently drop the remainder. Silent truncation is
+    # the one outcome a measurement store must never have.
+    if len(buf) - off != n_rows * n_cols * 2:
+        raise ValueError("cache blob body does not match its header")
     flat = np.frombuffer(buf, dtype="<i2", count=n_rows * n_cols, offset=off)
     # Reproduce the LEGACY index exactly - microsecond resolution and no freq -
     # not merely the same instants. Downstream resample/reindex/merge was all
     # written against what read_csv produced, so a migration that quietly
     # changed the index dtype or attached a freq would be a behaviour change
     # wearing a storage change's clothes.
-    dates = (pd.date_range(_dt.date.fromordinal(start), periods=n_rows,
-                           freq="D", name="date")
-             ._with_freq(None).astype("datetime64[us]"))
+    if n_rows:
+        dates = (pd.date_range(_dt.date.fromordinal(start), periods=n_rows,
+                               freq="D", name="date")
+                 ._with_freq(None).astype("datetime64[us]"))
+    else:
+        # No rows means no start date was meaningful; date_range cannot be
+        # asked to expand the placeholder ordinal (it predates pandas' range).
+        dates = pd.DatetimeIndex([], name="date").astype("datetime64[us]")
     data = {}
     for i, name in enumerate(names):
         col = flat[i * n_rows:(i + 1) * n_rows].astype("float64")

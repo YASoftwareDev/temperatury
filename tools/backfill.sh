@@ -8,6 +8,11 @@
 # Runs until both datasets cover all cities, then exits. It commits + pushes
 # each batch to main; CI then rebuilds the site offline from the cache.
 set -u
+# Bracket ranges like [ -~] compare in COLLATION order outside the C locale,
+# so under a UTF-8 locale a plain-ASCII name can fall outside [ -~] and be
+# judged non-ASCII. bash >= 5.0 hides this (globasciiranges defaults on);
+# bash 4.3 does not, where the guard below silently discarded EVERY file.
+shopt -s globasciiranges 2>/dev/null || true
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 PY="$REPO/.venv/bin/python"
 PROBE='https://archive-api.open-meteo.com/v1/archive?latitude=52&longitude=21&start_date=2024-07-01&end_date=2024-07-02&daily=temperature_2m_max&timezone=auto'
@@ -45,7 +50,7 @@ open('/tmp/backfill_remaining.txt','w').write(str(mm+me+mp+ma))
 "
   remaining=$(cat /tmp/backfill_remaining.txt 2>/dev/null || echo 99)
 
-  for f in data/*.csv.gz; do
+  for f in data/*.tpy data/*.csv.gz; do
     [ -e "$f" ] || continue
     case "$f" in *[!\ -~]*) : ;; *) git add "$f" ;; esac
   done

@@ -13,9 +13,9 @@ Dataset: ``derived-era5-single-levels-daily-statistics`` (CDS), 1940-present,
 extremes. Requires a ``~/.cdsapirc`` and having accepted the dataset licence.
 
 Output — the exact files ``main.py`` already reads (fill-only unless --overwrite):
-    data/{slug}_1940-2025.csv.gz          date,temperature_2m_mean         (°C)
-    data/{slug}_1940-2025_extremes.csv.gz date,temperature_2m_max,_min     (°C)
-    data/{slug}_1940-2025_precip.csv.gz   date,precipitation_sum           (mm)
+    data/{slug}_1940-2025.tpy             date,temperature_2m_mean         (°C)
+    data/{slug}_1940-2025_extremes.tpy    date,temperature_2m_max,_min     (°C)
+    data/{slug}_1940-2025_precip.tpy      date,precipitation_sum           (mm)
 
 ERA5 units: 2 m temperature in Kelvin (−273.15 → °C); total precipitation in
 metres (×1000 → mm). The day boundary is UTC (a single global grid can only use
@@ -45,6 +45,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import codec  # noqa: E402
 import config  # noqa: E402
 
 DATASET = "derived-era5-single-levels-daily-statistics"
@@ -266,8 +267,10 @@ def run(args):
             mats[key] = (col, big)
 
         for slug in slugs:
-            path = DATA_DIR / f"{slug}_{args.start}-{args.end}{suffix}.csv.gz"
-            if path.exists() and not args.overwrite:
+            path = DATA_DIR / f"{slug}_{args.start}-{args.end}{suffix}{codec.SUFFIX}"
+            # Either encoding counts as already-extracted, or a migrated
+            # cache would be re-derived and written back in the old format.
+            if codec.cached_path(path) and not args.overwrite:
                 skipped_existing += 1
                 continue
             cols = {}
@@ -285,9 +288,14 @@ def run(args):
             if out.empty:
                 skipped_missing += 1
                 continue
+            # dropna above leaves holes, but the codec implies dates from a
+            # CONTIGUOUS run, so put the dropped days back as NaN: an absent row
+            # and an all-NaN row both mean "no observation that day".
+            out.index = pd.to_datetime(out.index)
+            out = out.reindex(pd.date_range(out.index.min(), out.index.max(),
+                                            freq="D"))
             out.index.name = "date"
-            out.index = out.index.strftime("%Y-%m-%d")
-            out.to_csv(path)
+            codec.write_frame(out, path)
             written += 1
 
     print(f"\ndone: wrote {written}, kept {skipped_existing} existing, "
