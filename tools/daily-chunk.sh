@@ -112,6 +112,14 @@ for group in $ORDER; do
     mean) "$PY" tools/om_parallel.py --groups mean --shuffle --max-seconds 400 ;;
     *)    "$PY" tools/om_parallel.py --groups "$group" --rendered-only --shuffle --max-seconds 400 ;;
   esac
+  # Exit 2 is argparse rejecting the invocation - a bad .gather-shard /
+  # TEMPERATURY_SHARD value, most likely. Without this check every group's
+  # pass fails the same way and the run ends in "Nothing new to send" with
+  # exit 0: a fleet machine silently gathering nothing, indefinitely.
+  if [ $? -eq 2 ]; then
+    echo "ERROR: the fetcher rejected its arguments - check .gather-shard / TEMPERATURY_SHARD. Aborting." >&2
+    exit 1
+  fi
 done
 
 # The genuinely-new data files: untracked, ASCII-named .csv.gz files not already
