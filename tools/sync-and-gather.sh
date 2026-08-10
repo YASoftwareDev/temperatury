@@ -3,6 +3,11 @@
 # then run the normal daily chunk. Point a second machine at this instead of
 # tools/daily-chunk.sh directly.
 #
+# Fleet machines should also each own a shard: `echo "2/4" > .gather-shard`
+# (unique I per machine, same N everywhere). Sharded machines fetch disjoint
+# hash-buckets of cities, so even exactly-simultaneous runs cannot download the
+# same city while both have owned work left; see tools/daily-chunk.sh.
+#
 # Why the sync matters: daily-chunk.sh only fetches refs, never updating the
 # working tree, so each machine's "is this city cached?" check sees only what it
 # downloaded itself. Two machines that cannot see each other's files re-download

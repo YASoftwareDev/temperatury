@@ -86,6 +86,7 @@ class _Args:
     workers = 1
     max_seconds = 0
     shuffle = False
+    shard = None
 
 
 class _NeverCached:

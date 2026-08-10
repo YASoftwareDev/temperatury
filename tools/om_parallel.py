@@ -30,8 +30,10 @@ from __future__ import annotations
 import argparse
 import os
 import random
+import re
 import sys
 import time
+import zlib
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from concurrent.futures import TimeoutError as _FuturesTimeout
 from pathlib import Path
@@ -65,6 +67,33 @@ def _atomic_write(frame, path: Path) -> None:
     tmp = path.with_suffix(path.suffix + ".part")
     frame.to_csv(tmp, compression={"method": "gzip", "mtime": 0})
     os.replace(tmp, path)
+
+
+def _shard_of(slug: str, total: int) -> int:
+    """Stable bucket for a city: crc32 of the slug, mod the shard count.
+
+    crc32 (unlike ``hash()``) is identical across Python builds and platforms,
+    so every machine in a fleet computes the same partition without ever
+    talking to each other - that independence is the whole mechanism.
+    """
+    return zlib.crc32(slug.encode("utf-8")) % total
+
+
+def _apply_shard(missing, shard, shuffle):
+    """Split a missing-list into (owned, fallback) and queue owned first.
+
+    Two sharded machines never touch the same city while both still have owned
+    work - a guarantee, unlike staggered start times. The fallback tail keeps
+    the dataset complete anyway: a machine whose own slice is exhausted (or
+    whose peer died) walks the others' cities, where the shuffle window is the
+    only - and by then sufficient - overlap protection.
+    """
+    idx, total = shard
+    mine = [l for l in missing if _shard_of(l.slug, total) == idx - 1]
+    rest = [l for l in missing if _shard_of(l.slug, total) != idx - 1]
+    if shuffle:
+        mine, rest = _spread_within_window(mine), _spread_within_window(rest)
+    return mine, rest
 
 
 def _spread_within_window(missing):
@@ -152,7 +181,12 @@ def run(args):
         if not missing:
             print(f"[{group}] nothing missing")
             continue
-        if args.shuffle:
+        if args.shard:
+            mine, rest = _apply_shard(missing, args.shard, args.shuffle)
+            print(f"[{group}] shard {args.shard[0]}/{args.shard[1]}: "
+                  f"{len(mine)} owned, {len(rest)} fallback after them")
+            missing = mine + rest
+        elif args.shuffle:
             missing = _spread_within_window(missing)
         chunks = [missing[i:i + chunk_sz] for i in range(0, len(missing), chunk_sz)]
         print(f"[{group}] {len(missing)} cities in {len(chunks)} chunks")
@@ -191,6 +225,19 @@ def run(args):
             break
 
 
+def _shard_arg(value: str):
+    """Parse and validate an ``I/N`` shard spec into a (1-based index, total)."""
+    m = re.fullmatch(r"(\d+)/(\d+)", value.strip())
+    if not m:
+        raise argparse.ArgumentTypeError(
+            f"expected I/N (e.g. 2/4), got {value!r}")
+    idx, total = int(m.group(1)), int(m.group(2))
+    if total < 1 or not 1 <= idx <= total:
+        raise argparse.ArgumentTypeError(
+            f"need 1 <= I <= N, got {idx}/{total}")
+    return idx, total
+
+
 def parse_args(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -206,7 +253,19 @@ def parse_args(argv=None):
     ap.add_argument("--rendered-only", action="store_true",
                     help="restrict to cities that already render (mean cached), "
                          "keeping the priority order; for the enrich pass")
+    ap.add_argument("--shard", type=_shard_arg, default=None, metavar="I/N",
+                    help="own the I-th of N hash-buckets of cities and fetch "
+                         "those first, everyone else's only after; disjoint "
+                         "across a fleet by construction (default: "
+                         "$TEMPERATURY_SHARD if set)")
     args = ap.parse_args(argv)
+    if args.shard is None and os.environ.get("TEMPERATURY_SHARD"):
+        # A typo here must fail loudly, not silently fall back to the unsharded
+        # queue - that would reintroduce fleet collisions invisibly.
+        try:
+            args.shard = _shard_arg(os.environ["TEMPERATURY_SHARD"])
+        except argparse.ArgumentTypeError as e:
+            ap.error(f"TEMPERATURY_SHARD: {e}")
     args.groups = [g.strip() for g in args.groups.split(",") if g.strip() in GROUPS]
     return args
 
