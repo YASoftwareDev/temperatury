@@ -266,3 +266,20 @@ def test_enrich_pass_only_takes_already_rendered_cities(monkeypatch):
         assert getattr(loc, "kind", "city") == "city"
         assert data_mod._cache_path(loc, 1940, 2025).exists(), \
             f"{loc.slug} has no mean cache; enriching it wastes quota"
+
+
+def test_tier_assignment_is_independent_of_roster_order():
+    """langtier promises pages never silently lose languages between deploys.
+
+    Most of the roster has no population entry, so ties decide hundreds of tier
+    slots. Breaking those ties by arrival order would reshuffle them whenever a
+    city is added - and the roster is planned to grow roughly sixfold.
+    """
+    import random
+
+    import langtier
+    locs = list(config.LOCATIONS.values())
+    shuffled = locs[:]
+    random.Random(5).shuffle(shuffled)
+    assert langtier.rich_tier_slugs(locs) == langtier.rich_tier_slugs(shuffled)
+    assert langtier.full_tier_slugs(locs) == langtier.full_tier_slugs(shuffled)
