@@ -137,8 +137,6 @@
   "cap_heatindex": "Dagen waarop de gevoelstemperatuur (hitte-index, waarin luchtvochtigheid is meegenomen) hitte-stressniveaus bereikt — de maat die openbare hittewaarschuwingen gebruiken. Vereist de dataset met gevoelstemperatuur.",
   "footer": "Gegenereerd {date} · gegevens van <a href=\"https://open-meteo.com/\">Open-Meteo</a> historische reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">bron op GitHub</a>",
   "intro": "Hoe de grote steden ter wereld sinds 1940 zijn opgewarmd — dagelijkse temperatuurgegevens uit de ERA5-klimaatreanalyse.",
-  "map_coverage": "Tot nu toe {done} van {total} steden geanalyseerd - de rest komt er dag na dag bij.",
-  "map_coverage_help": "Help data te verzamelen",
   "qv_nodata": "Voor deze stad zijn er nog geen gegevens.",
   "qv_nearest": "Dichtstbijzijnde geanalyseerde stad",
   "cur_so_far": "{year} tot nu toe (t/m {day} {month}): gemiddeld {v} °C, {d} °C t.o.v. het gemiddelde 1961-1990 voor dezelfde dagen van het jaar.",

@@ -137,8 +137,6 @@
   "cap_heatindex": "Hari ketika suhu terasa (indeks panas, yang memperhitungkan kelembapan) mencapai tingkat stres panas — metrik yang digunakan peringatan panas publik. Membutuhkan dataset suhu terasa.",
   "footer": "Dihasilkan {date} · data dari <a href=\"https://open-meteo.com/\">Open-Meteo</a> reanalisis historis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sumber di GitHub</a>",
   "intro": "Bagaimana kota-kota besar dunia menghangat sejak 1940 — catatan suhu harian dari reanalisis iklim ERA5.",
-  "map_coverage": "{done} dari {total} kota telah dianalisis - sisanya ditambahkan dari hari ke hari.",
-  "map_coverage_help": "Bantu kumpulkan data",
   "qv_nodata": "Belum ada data untuk kota ini.",
   "qv_nearest": "Kota teranalisis terdekat",
   "cur_so_far": "{year} sejauh ini (hingga {day} {month}): rata-rata {v} °C, {d} °C dibanding rata-rata 1961-1990 untuk hari-hari yang sama dalam setahun.",

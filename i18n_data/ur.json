@@ -135,8 +135,6 @@
   "cap_heatindex": "وہ دن جب محسوس ہونے والا درجہ حرارت (heat index، جس میں نمی بھی شامل ہوتی ہے) heat-stress سطحوں تک پہنچتا ہے — وہ پیمانہ جو عوامی گرمی کے انتباہات استعمال کرتے ہیں۔ apparent-temperature dataset درکار ہے۔",
   "footer": "تیار کیا گیا {date} · ڈیٹا <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) سے · <a href=\"https://github.com/YASoftwareDev/temperatury\">source on GitHub</a>",
   "intro": "1940 سے دنیا کے بڑے شہر کیسے گرم ہوئے — ERA5 موسمیاتی تجزیے سے روزانہ درجہ حرارت کا ریکارڈ۔",
-  "map_coverage": "اب تک {total} میں سے {done} شہروں کا تجزیہ ہو چکا ہے - باقی روز بروز شامل ہو رہے ہیں۔",
-  "map_coverage_help": "ڈیٹا جمع کرنے میں مدد کریں",
   "qv_nodata": "اس شہر کے لیے ابھی ڈیٹا نہیں ہے۔",
   "qv_nearest": "قریب ترین تجزیہ شدہ شہر",
   "cur_so_far": "{year} اب تک ({day} {month} تک): اوسطاً {v} °C، سال کے انہی دنوں کے 1961-1990 اوسط کے مقابلے میں {d} °C۔",

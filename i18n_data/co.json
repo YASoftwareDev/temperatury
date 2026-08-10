@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / decenniu",
-  "map_coverage": "{done} di {total} cità analizate finu à avà - u restu hè aghjuntu ghjornu per ghjornu.",
   "cur_so_far": "{year} finu à avà (à {day} {month}): {v} °C in media, {d} °C versus a media 1961-1990 per i stessi ghjorni di l'annu.",
   "cmp_title": "Comparate duie cità",
   "cmp_hint": "Ogni curva hè l'anomalia annuale di a cità versus a so propria basa di 1961-1990, cusì i lochi cù climi diffirenti paragunate bè.",
@@ -17,7 +16,6 @@
   "season_summer": "veranu",
   "season_autumn": "vaghjimu",
   "grid_alias_note": "U record di temperatura hè calculatu per ~ 11 km cellula di griglia di dati climatichi. {alias} sparte a so cellula cù {city}, cusì tutti dui mostranu a stessa storia di 1940-presente.",
-  "map_coverage_help": "Aiutate à cullà i dati",
   "qv_nodata": "Nisuna dati per sta cità ancora.",
   "qv_nearest": "A cità analizata più vicina",
   "per_decade_days": "ghjorni / decenniu",

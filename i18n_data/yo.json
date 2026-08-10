@@ -147,8 +147,6 @@
   "heat_danger": "≥ {t:.0f} °C (ewu)",
   "cap_heatindex": "Àwọn ọjọ́ tí ìgbóná tí a ń rí (àmì-ooru, tí ó ní ọ̀rinrin nínú) dé ìpele ìdààmú-ooru, ìwọ̀n tí àwọn ìkìlọ̀ ooru gbogbo ènìyàn ń lò. Ó nílò dátà ìgbóná-tí-a-ń-rí.",
   "footer": "A ṣẹ̀dá {date} · dátà láti <a href=\"https://open-meteo.com/\">Open-Meteo</a> àtúnyẹ̀wò ìtàn (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">orísun lórí GitHub</a>",
-  "map_coverage": "A ti ṣàyẹ̀wò ìlú {done} nínú {total} títí di báyìí - àwọn tó kù ń wọlé lójoojúmọ́.",
-  "map_coverage_help": "Ṣèrànwọ́ láti kó dátà jọ",
   "qv_nodata": "Kò tíì sí dátà fún ìlú yìí.",
   "qv_nearest": "Ìlú tí a ti ṣàyẹ̀wò tó súnmọ́ jùlọ",
   "cur_so_far": "{year} títí di báyìí (títí di {day} {month}): ìpíndọ́gba {v} °C, {d} °C ní ìfiwéra pẹ̀lú ìpíndọ́gba 1961-1990 fún àwọn ọjọ́ kan náà nínú ọdún.",

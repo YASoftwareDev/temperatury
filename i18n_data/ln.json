@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / mbula zomi",
-  "map_coverage": "{done} ya {total} bingumba oyo etalelami kino sikoyo - oyo etikali ebakisami mokolo na mokolo.",
   "cur_so_far": "{year} kino sikoyo (na {day} {month}): {v} °C na mwayene, {d} °C vs moyenne ya 1961-1990 mpo na mikolo ndenge moko ya mbula.",
   "cmp_title": "Kokanisa bingumba mibale",
   "cmp_hint": "Courbe moko na moko ezali anomalie annuelle ya ville wana vs base na yango moko ya 1961-1990, yango wana bisika oyo ezali na ba climats ekeseni ekokanisi na bosembo.",
@@ -17,7 +16,6 @@
   "season_summer": "eleko ya molunge",
   "season_autumn": "na eleko ya ɔtɔnɛ",
   "grid_alias_note": "Enregistrement ya température e calculer na cellule ya grille climat-données ya ~11 km. {alias} ekabolaka cellule na yango na {city}, yango wana bango mibale balakisaka histoire moko ya 1940 ya lelo.",
-  "map_coverage_help": "Bosalisa na kosangisa ba données",
   "qv_nodata": "Ba données ya ville oyo nanu te.",
   "qv_nearest": "Ville oyo e analysé oyo ezali pene",
   "per_decade_days": "mikolo / mibu zomi",

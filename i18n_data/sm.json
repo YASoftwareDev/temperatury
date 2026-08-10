@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / sefulu tausaga",
-  "map_coverage": "{done} o le {total} aai ua au'ili'ili i le taimi nei - o isi o lo'o fa'aopoopo i lea aso ma lea aso.",
   "cur_so_far": "{year} i le taimi nei (i le {day} {month}): {v} °C i le averesi, {d} °C ma le 1961-1990 uiga mo aso lava e tasi o le tausaga.",
   "cmp_title": "Faatusatusa aai e lua",
   "cmp_hint": "O pi'o ta'itasi o le fa'aletausaga fa'aletausaga a le taulaga ma lona lava laina fa'avae 1961-1990, o lea e fa'atusatusa lelei ai nofoaga e eseese tau.",
@@ -17,7 +16,6 @@
   "season_summer": "taumafanafana",
   "season_autumn": "autumn",
   "grid_alias_note": "O le fa'amaumauga o le vevela e fa'atatau i le ~11 kilomita o le tau-data grid cell. {alias} fa'asoa lana sela i le {city}, o lea e fa'aalia uma ai le tala fa'asolopito o le 1940-o le taimi nei.",
-  "map_coverage_help": "Fesoasoani e aoina faʻamatalaga",
   "qv_nodata": "E leai se fa'amatalaga mo lenei aai.",
   "qv_nearest": "A'ai su'esu'e lata ane",
   "per_decade_days": "aso / sefulu tausaga",

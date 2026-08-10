@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / kümnend",
-  "map_coverage": "Seni analüüsitud linnast {done} {total}-st – ülejäänud lisatakse päevast päeva.",
   "cur_so_far": "{year} siiani (kuni {day} {month}): {v} °C keskmiselt, {d} °C vs 1961–1990 aasta samade päevade keskmine.",
   "cmp_title": "Võrrelge kahte linna",
   "cmp_hint": "Iga kõver on selle linna iga-aastane anomaalia võrreldes oma 1961–1990 algtasemega, nii et erineva kliimaga kohti võrreldakse õiglaselt.",
@@ -17,7 +16,6 @@
   "season_summer": "suvi",
   "season_autumn": "sügis",
   "grid_alias_note": "Temperatuurirekord arvutatakse ~11 km kliimaandmete ruudustiku lahtri kohta. {alias} jagab oma lahtrit lahtriga {city}, nii et mõlemad näitavad sama 1940. aasta ajalugu.",
-  "map_coverage_help": "Aidake andmeid koguda",
   "qv_nodata": "Selle linna kohta pole veel andmeid.",
   "qv_nearest": "Lähim analüüsitud linn",
   "per_decade_days": "päeva / kümnend",

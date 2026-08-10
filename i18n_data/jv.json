@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / dasawarsa",
-  "map_coverage": "{done} saka {total} kutha sing dianalisis nganti saiki - liyane ditambahake saben dina.",
   "cur_so_far": "{year} nganti saiki (nganti {day} {month}): {v} °C rata-rata, {d} °C vs rata-rata 1961-1990 kanggo dina sing padha ing taun kasebut.",
   "cmp_title": "Bandingake rong kutha",
   "cmp_hint": "Saben kurva minangka anomali tahunan kutha kasebut vs garis dasar 1961-1990 dhewe, mula papan kanthi iklim sing beda-beda bisa dibandhingake.",
@@ -17,7 +16,6 @@
   "season_summer": "mangsa panas",
   "season_autumn": "musim gugur",
   "grid_alias_note": "Cathetan suhu diitung saben ~11 km sel kothak data iklim. {alias} nuduhake sel karo {city}, mula loro-lorone nuduhake sejarah 1940-saiki sing padha.",
-  "map_coverage_help": "Bantuan ngumpulake data",
   "qv_nodata": "Durung ana data kanggo kutha iki.",
   "qv_nearest": "Kutha sing dianalisis paling cedhak",
   "per_decade_days": "dina / dasawarsa",

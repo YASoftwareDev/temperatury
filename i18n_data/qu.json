@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / chunka wata",
-  "map_coverage": "{done} {total} llaqtakunamanta kunankama t’aqwisqa - puchuqtaq p’unchawmanta p’unchaw yapakun.",
   "cur_so_far": "{year} kunankama ({day} {month}kama): {v} °C chawpipi, {d} °C vs 1961-1990 promedio watapi kikin p'unchawkunapaq.",
   "cmp_title": "Iskay llaqtakunata tupachiy",
   "cmp_hint": "Sapa kurvaqa chay llaqtapa wata anomalía vs kikin 1961-1990 base nisqa, chaymi hukniray climayuq sitiokuna allinta tupachinku.",
@@ -17,7 +16,6 @@
   "season_summer": "verano",
   "season_autumn": "otoño",
   "grid_alias_note": "Chay temperatura registro nisqa yupasqa sapa ~11 km clima-datos rejilla celda nisqapi. {alias} {city}wanmi celdanta rakin, chaymi iskayninku 1940 watamanta kunan pacha kaqllata qawachinku.",
-  "map_coverage_help": "Datos huñunapaq yanapay",
   "qv_nodata": "Manaraqmi kay llaqtapaq datukuna kanchu.",
   "qv_nearest": "Aswan qaylla t’aqwisqa llaqta",
   "per_decade_days": "punchaw / chunka wata",

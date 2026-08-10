@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / deh sal",
-  "map_coverage": "{done} ji {total} bajarên ku heya niha hatine analîz kirin - yên mayî roj bi roj têne zêdekirin.",
   "cur_so_far": "{year} heya niha (heta {day} {month}): {v} °C bi navgînî, {d} °C li hember 1961-1990 ji bo heman rojên salê.",
   "cmp_title": "Du bajaran bidin ber hev",
   "cmp_hint": "Her cure anormaliya salane ya wî bajarî li hember bingeha xweya 1961-1990-an e, ji ber vê yekê cîhên bi avhewayên cihêreng bi dadwerî didin ber hev.",
@@ -17,7 +16,6 @@
   "season_summer": "havîn",
   "season_autumn": "payîz",
   "grid_alias_note": "Tomara germahiyê ji ~11 km hucreya tora daneyên avhewa tê hesibandin. {alias} hucreya xwe bi {city} re parve dike, ji ber vê yekê her du jî heman dîroka 1940-anha nîşan didin.",
-  "map_coverage_help": "Alîkariya berhevkirina daneyan bikin",
   "qv_nodata": "Ji bo vî bajarî hêj agahî tune.",
   "qv_nearest": "Bajarê herî nêzîkê analîzkirî",
   "per_decade_days": "roj / deh sal",

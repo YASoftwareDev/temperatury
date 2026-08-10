@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / áratug",
-  "map_coverage": "{done} af {total} borgum sem hafa verið greindar hingað til - restin bætist við dag frá degi.",
   "cur_so_far": "{year} hingað til (til {day} {month}): {v} °C að meðaltali, {d} °C miðað við meðaltal 1961-1990 fyrir sömu daga ársins.",
   "cmp_title": "Bera saman tvær borgir",
   "cmp_hint": "Hver ferill er árlegt frávik borgarinnar samanborið við eigin grunnlínu 1961-1990, þannig að staðir með mismunandi loftslag bera nokkuð saman.",
@@ -17,7 +16,6 @@
   "season_summer": "sumar",
   "season_autumn": "haust",
   "grid_alias_note": "Hitastigið er reiknað á ~11 km loftslagsgagnanetsreiti. {alias} deilir hólfinu sínu með {city}, þannig að báðir sýna sömu söguna frá 1940.",
-  "map_coverage_help": "Hjálpaðu til við að safna gögnum",
   "qv_nodata": "Engin gögn fyrir þessa borg ennþá.",
   "qv_nearest": "Næst greind borg",
   "per_decade_days": "dagar / áratug",

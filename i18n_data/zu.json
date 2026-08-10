@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / ishumi leminyaka",
-  "map_coverage": "{done} kwamadolobha angu-{total} ahlaziywe kuze kube manje - amanye ayengezwa usuku nosuku.",
   "cur_so_far": "{year} kuze kube manje (kuya ku-{day} {month}): {v} °C ngokwesilinganiso, {d} °C uma kuqhathaniswa no-1961-1990 kusho izinsuku ezifanayo zonyaka.",
   "cmp_title": "Qhathanisa amadolobha amabili",
   "cmp_hint": "Ijika ngalinye liwukungahambi kahle kwaminyaka yonke kwalelo dolobha uma liqhathaniswa nesisekelo salo sango-1961-1990, ngakho izindawo ezinesimo sezulu esihlukile ziqhathanisa ngokufanelekile.",
@@ -17,7 +16,6 @@
   "season_summer": "ihlobo",
   "season_autumn": "ikwindla",
   "grid_alias_note": "Irekhodi lokushisa libalwa ~11 km ngeseli yegridi yedatha yesimo sezulu. {alias} yabelana ngeseli layo no-{city}, ngakho-ke zombili zibonisa umlando ofanayo wamanje we-1940.",
-  "map_coverage_help": "Siza ukuqoqa idatha",
   "qv_nodata": "Ayikho idatha yaleli dolobha okwamanje.",
   "qv_nearest": "Idolobha eliseduze elihlaziywe",
   "per_decade_days": "izinsuku / ishumi leminyaka",

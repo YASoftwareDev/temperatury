@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / degawd",
-  "map_coverage": "{done} o {total} dinasoedd wedi'u dadansoddi hyd yn hyn - mae'r gweddill yn cael eu hychwanegu o ddydd i ddydd.",
   "cur_so_far": "{year} hyd yn hyn (hyd at {day} {month}): {v} °C ar gyfartaledd, {d} °C yn erbyn cymedr 1961-1990 ar gyfer yr un dyddiau o'r flwyddyn.",
   "cmp_title": "Cymharwch ddwy ddinas",
   "cmp_hint": "Pob cromlin yw anghysondeb blynyddol y ddinas honno o'i gymharu â'i llinell sylfaen ei hun 1961-1990, felly mae lleoedd â hinsoddau gwahanol yn cymharu'n deg.",
@@ -17,7 +16,6 @@
   "season_summer": "haf",
   "season_autumn": "hydref",
   "grid_alias_note": "Cyfrifir y cofnod tymheredd fesul ~11 km o gell grid data hinsawdd. Mae {alias} yn rhannu ei gell â {city}, felly mae'r ddau yn dangos yr un hanes 1940-presennol.",
-  "map_coverage_help": "Helpwch i gasglu'r data",
   "qv_nodata": "Dim data ar gyfer y ddinas hon eto.",
   "qv_nearest": "Y ddinas agosaf wedi'i dadansoddi",
   "per_decade_days": "dyddiau / degawd",

@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / decennium",
-  "map_coverage": "{done} av {total} städer analyserade hittills - resten läggs till dag för dag.",
   "cur_so_far": "{year} hittills (till {day} {month}): {v} °C i genomsnitt, {d} °C jämfört med medelvärdet 1961-1990 för samma dagar på året.",
   "cmp_title": "Jämför två städer",
   "cmp_hint": "Varje kurva är den stadens årliga anomali jämfört med dess egen baslinje för 1961-1990, så platser med olika klimat jämförs rättvist.",
@@ -17,7 +16,6 @@
   "season_summer": "sommar",
   "season_autumn": "hösten",
   "grid_alias_note": "Temperaturrekordet beräknas per ~11 km klimatdatanätcell. {alias} delar sin cell med {city}, så båda visar samma historia från 1940-talet.",
-  "map_coverage_help": "Hjälp till att samla in data",
   "qv_nodata": "Ingen data för denna stad än.",
   "qv_nearest": "Närmaste analyserade stad",
   "per_decade_days": "dagar/decennium",

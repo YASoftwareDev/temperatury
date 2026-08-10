@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / għaxar snin",
-  "map_coverage": "{done} minn {total} bliet analizzati s'issa - il-bqija huma miżjuda jum b'jum.",
   "cur_so_far": "{year} s'issa (sa {day} {month}): {v} °C bħala medja, {d} °C vs il-medja 1961-1990 għall-istess jiem tas-sena.",
   "cmp_title": "Qabbel żewġt ibliet",
   "cmp_hint": "Kull kurva hija l-anomalija annwali ta' dik il-belt vs il-linja bażi tagħha stess tal-1961-1990, għalhekk postijiet bi klimi differenti jqabblu b'mod ġust.",
@@ -17,7 +16,6 @@
   "season_summer": "is-sajf",
   "season_autumn": "ħarifa",
   "grid_alias_note": "Ir-rekord tat-temperatura huwa kkalkulat għal kull ċellula tal-grilja tad-dejta tal-klima ~ 11 km. {alias} jaqsam iċ-ċellula tiegħu ma' {city}, għalhekk it-tnejn juru l-istess storja tal-1940-preżent.",
-  "map_coverage_help": "Għajnuna tiġbor id-data",
   "qv_nodata": "Għadu l-ebda data għal din il-belt.",
   "qv_nearest": "L-eqreb belt analizzata",
   "per_decade_days": "jiem / għaxar snin",

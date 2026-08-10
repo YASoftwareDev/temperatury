@@ -1,6 +1,5 @@
 {
   "per_decade_c": "° C / onýyllyk",
-  "map_coverage": "Şu wagta çenli seljerilen {total} şäherleriň {done} - galanlary gün-günden goşulýar.",
   "cur_so_far": "Şu wagta çenli {year} ({day} {month} çenli): ortaça {v} ° C, 1961-1990-njy ýyllar aralygynda {d} ° C ýylyň şol günleri üçin ortaça.",
   "cmp_title": "Iki şäheri deňeşdiriň",
   "cmp_hint": "Her bir egrilik, şäheriň ýyllyk anomaliýasy bilen 1961-1990-njy ýyllar aralygydyr, şonuň üçin dürli howa şertleri deňeşdirilýär.",
@@ -17,7 +16,6 @@
   "season_summer": "tomus",
   "season_autumn": "güýz",
   "grid_alias_note": "Temperatura rekordy, km 11 km howa-maglumat gözenek öýjügine hasaplanýar. {alias} öýjügini {city} bilen paýlaşýar, şonuň üçin ikisi hem 1940-njy ýyldaky taryhy görkezýär.",
-  "map_coverage_help": "Maglumatlary ýygnamaga kömek ediň",
   "qv_nodata": "Bu şäher üçin entek maglumat ýok.",
   "qv_nearest": "Iň ýakyn analiz edilen şäher",
   "per_decade_days": "günler / onýyllyk",

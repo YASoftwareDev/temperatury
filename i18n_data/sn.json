@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / gumi",
-  "map_coverage": "{done} ye {total} maguta akaongororwa kusvika zvino - mamwe anowedzerwa zuva nezuva.",
   "cur_so_far": "{year} kusvika zvino (kusvika {day} {month}): {v} °C paavhareji, {d} °C vs iyo 1961-1990 zvinoreva mazuva mamwe chete egore.",
   "cmp_title": "Enzanisa maguta maviri",
   "cmp_hint": "Imwe neimwe curve iguta iro repagore anomaly vs iro rayo 1961-1990 baseline, saka nzvimbo dzine mamiriro ekunze akasiyana anoenzanisa zvakaringana.",
@@ -17,7 +16,6 @@
   "season_summer": "chirimo",
   "season_autumn": "matsutso",
   "grid_alias_note": "Iyo tembiricha rekodhi inoverengerwa pa ~ 11 km mamiriro ekunze-data grid cell. {alias} inogovera sero yayo ne {city}, saka ese ari maviri anoratidza yakafanana 1940-yazvino nhoroondo.",
-  "map_coverage_help": "Batsira kuunganidza data",
   "qv_nodata": "Hapana data yeguta rino parizvino.",
   "qv_nearest": "Guta riri pedyo rakaongororwa",
   "per_decade_days": "mazuva / gumi",

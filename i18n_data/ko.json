@@ -135,8 +135,6 @@
   "cap_heatindex": "체감온도(습도를 반영한 열지수)가 열 스트레스 수준에 도달한 날입니다. 공공 폭염 특보에서 사용하는 지표입니다. 체감온도 데이터셋이 필요합니다.",
   "footer": "{date} 생성 · <a href=\"https://open-meteo.com/\">Open-Meteo</a> 과거 재분석(ERA5) 데이터 · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub의 소스</a>",
   "intro": "1940년 이후 세계 대도시가 어떻게 더워졌는지 — ERA5 기후 재분석의 일별 기온 기록.",
-  "map_coverage": "지금까지 {total}개 도시 중 {done}개 분석 완료 - 나머지는 매일 추가되고 있습니다.",
-  "map_coverage_help": "데이터 수집 돕기",
   "qv_nodata": "이 도시의 데이터는 아직 없습니다.",
   "qv_nearest": "가장 가까운 분석된 도시",
   "cur_so_far": "{year}년 현재까지({month} {day}일 기준): 평균 {v} °C, 같은 기간의 1961-1990년 평균 대비 {d} °C.",

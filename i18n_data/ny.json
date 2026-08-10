@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / zaka khumi",
-  "map_coverage": "{done} mwa {total} mizinda yomwe yawunikidwa mpaka pano - ena onse amawonjezedwa tsiku ndi tsiku.",
   "cur_so_far": "{year} mpaka pano (mpaka {day} {month}): {v} °C pafupifupi, {d} °C vs the 1961-1990 zikutanthauza masiku omwewo a chaka.",
   "cmp_title": "Yerekezerani mizinda iwiri",
   "cmp_hint": "Mphepete mwamtundu uliwonse ndi momwe mzindawu umakhalira chaka chilichonse motsutsana ndi maziko ake a 1961-1990, kotero malo okhala ndi nyengo zosiyanasiyana amafananiza bwino.",
@@ -17,7 +16,6 @@
   "season_summer": "chirimwe",
   "season_autumn": "mphukira",
   "grid_alias_note": "Mbiri ya kutentha imawerengedwa pa ~ 11 km ya grid data grid cell. {alias} imagawana cell yake ndi {city}, kotero onse amawonetsa mbiri yakale ya 1940.",
-  "map_coverage_help": "Thandizani kusonkhanitsa deta",
   "qv_nodata": "Palibe deta yamzindawu panobe.",
   "qv_nearest": "Mzinda wowunikiridwa wapafupi",
   "per_decade_days": "masiku / khumi",

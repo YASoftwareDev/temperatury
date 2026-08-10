@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / dècada",
-  "map_coverage": "{done} de {total} ciutats analitzades fins ara; la resta s'afegeixen dia a dia.",
   "cur_so_far": "{year} fins ara (fins a {day} {month}): {v} °C de mitjana, {d} °C en comparació amb la mitjana de 1961-1990 per als mateixos dies de l'any.",
   "cmp_title": "Compara dues ciutats",
   "cmp_hint": "Cada corba és l'anomalia anual d'aquesta ciutat en comparació amb la seva pròpia línia de base 1961-1990, de manera que els llocs amb diferents climes es comparen de manera justa.",
@@ -17,7 +16,6 @@
   "season_summer": "estiu",
   "season_autumn": "tardor",
   "grid_alias_note": "El rècord de temperatura es calcula per una cel·la de graella de dades climàtiques d'aproximadament 11 km. {alias} comparteix la seva cel·la amb {city}, de manera que tots dos mostren el mateix historial de 1940 fins a l'actualitat.",
-  "map_coverage_help": "Ajuda a recollir les dades",
   "qv_nodata": "Encara no hi ha dades d'aquesta ciutat.",
   "qv_nearest": "Ciutat analitzada més propera",
   "per_decade_days": "dies / dècada",

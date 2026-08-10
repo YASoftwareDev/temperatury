@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / tunka marani",
-  "map_coverage": "{done} {total} markanakat jichhakamax uñakipata - qhipharux urut urur yapxatatawa.",
   "cur_so_far": "{year} jichhakama ({day} {month} ukjakama): {v} °C chika taypinxa, {d} °C vs 1961-1990 maranakanxa pachpa urunaka marana.",
   "cmp_title": "Pä markampi chikachasiña",
   "cmp_hint": "Sapa curva ukax uka markan anomalía anual vs propia línea base 1961-1990 ukawa, ukhamax kunayman climas ukan chiqanakax chiqaparuw uñtasi.",
@@ -17,7 +16,6 @@
   "season_summer": "jallupachanxa",
   "season_autumn": "ukatsti",
   "grid_alias_note": "Uka registro de temperatura ukax sapa ~11 km célula de rejilla climática-datos ukan jakthapitawa. {alias} ukax celulap {city} ukamp chikancht’asi, ukhamax panpachaniw pachpa 1940 marat jichha pachan sarnaqäwip uñacht’ayapxi.",
-  "map_coverage_help": "Uka yatiyawinak apthapiñ yanapt’aña",
   "qv_nodata": "Aka markatakix janiw kuna datos ukanakas utjkiti.",
   "qv_nearest": "Jak’ankir uñakipt’at marka",
   "per_decade_days": "urunaka / tunka maranaka",

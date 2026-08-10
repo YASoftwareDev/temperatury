@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / mfe du",
-  "map_coverage": "{done} wɔ {total} nkuropɔn a wɔayɛ mu nhwehwɛmu de besi nnɛ - wɔde nkaeɛ no ka ho da biara da.",
   "cur_so_far": "{year} de besi nnɛ (kosi {day} {month}): {v} °C sɛ wɔkyekyem pɛpɛɛpɛ a, {d} °C vs 1961-1990 kyerɛ sɛ nna koro no ara wɔ afe no mu.",
   "cmp_title": "Fa nkurow abien toto ho",
   "cmp_hint": "Curve biara yɛ saa kuropɔn no afe afe anomaly vs n’ankasa 1961-1990 mfitiaseɛ, enti mmeaeɛ a ɛsono wim tebea no de toto ho yie.",
@@ -17,7 +16,6 @@
   "season_summer": "awɔw bere mu",
   "season_autumn": "osutɔbere mu",
   "grid_alias_note": "Wɔabu ɔhyew kyerɛwtohɔ no wɔ ~11 km wim tebea-data grid cell biara mu. {alias} ne {city} kyɛ ne nkwammoaa, enti abien no nyinaa kyerɛ 1940-mprempren abakɔsɛm koro.",
-  "map_coverage_help": "Boa ma wɔboaboa data no ano",
   "qv_nodata": "Kurow yi ho data biara nni hɔ de besi nnɛ.",
   "qv_nearest": "Kurow a ɛbɛn hɔ a wɔayɛ mu nhwehwɛmu",
   "per_decade_days": "nna / mfe du",

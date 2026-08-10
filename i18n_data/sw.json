@@ -147,8 +147,6 @@
   "heat_danger": "≥ {t:.0f} °C (hatari)",
   "cap_heatindex": "Siku ambazo joto linalohisiwa (kielelezo cha joto, kinachojumuisha unyevu) hufikia viwango vya mkazo wa joto, kipimo kinachotumiwa na tahadhari za joto za umma. Kinahitaji data ya joto linalohisiwa.",
   "footer": "Imetengenezwa {date} · data kutoka <a href=\"https://open-meteo.com/\">Open-Meteo</a> uchambuzi upya wa kihistoria (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">chanzo kwenye GitHub</a>",
-  "map_coverage": "Miji {done} kati ya {total} imechambuliwa hadi sasa - mingine inaongezwa siku baada ya siku.",
-  "map_coverage_help": "Saidia kukusanya data",
   "qv_nodata": "Bado hakuna data ya jiji hili.",
   "qv_nearest": "Jiji lililochambuliwa lililo karibu zaidi",
   "cur_so_far": "{year} hadi sasa (hadi {day} {month}): wastani wa {v} °C, {d} °C ikilinganishwa na wastani wa 1961-1990 kwa siku zilezile za mwaka.",

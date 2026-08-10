@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C/toban sano",
-  "map_coverage": "{done} of {total} magaalooyinka la falanqeeyay ilaa hadda - inta soo hartay ayaa maalinba maalinta ka dambeysa lagu daraa.",
   "cur_so_far": "{year} ilaa hadda (ilaa {day} {month}): {v} °C celcelis ahaan, {d} °C vs 1961-1990 macnaheedu waa isla maalmaha sanadka.",
   "cmp_title": "Is barbar dhig laba magaalo",
   "cmp_hint": "Qalooca kastaa waa magaaladaas anomaly-ga sannadlaha ah vs iyada u gaar ah 1961-1990 gundhig u gaar ah, si meelaha cimilo kala duwan si caddaalad ah barbardhigaan.",
@@ -17,7 +16,6 @@
   "season_summer": "xagaaga",
   "season_autumn": "dayrta",
   "grid_alias_note": "Diiwaanka heerkulka waxaa lagu xisaabiyaa ~ 11 km unugga xogta cimilada. {alias} waxay la wadaagtaa unugeeda {city}, markaa labaduba waxay muujinayaan isla taariikhda 1940-kii.",
-  "map_coverage_help": "Ka caawi ururinta xogta",
   "qv_nodata": "Wax xog ah lagama hayo magaaladan weli.",
   "qv_nearest": "Magaalada ugu dhow ee la falanqeeyay",
   "per_decade_days": "maalmo/toban sano",

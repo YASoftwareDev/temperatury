@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / tiår",
-  "map_coverage": "{done} av {total} byer analysert så langt - resten legges til dag for dag.",
   "cur_so_far": "{year} så langt (til {day} {month}): {v} °C i gjennomsnitt, {d} °C vs gjennomsnittet for 1961-1990 for de samme dagene i året.",
   "cmp_title": "Sammenlign to byer",
   "cmp_hint": "Hver kurve er byens årlige anomali i forhold til sin egen 1961-1990 grunnlinje, så steder med forskjellige klima sammenlignes ganske.",
@@ -17,7 +16,6 @@
   "season_summer": "sommer",
   "season_autumn": "høst",
   "grid_alias_note": "Temperaturrekorden beregnes per ~11 km klimadatanettcelle. {alias} deler sin celle med {city}, så begge viser den samme 1940-nåtidens historie.",
-  "map_coverage_help": "Hjelp til å samle dataene",
   "qv_nodata": "Ingen data for denne byen ennå.",
   "qv_nearest": "Nærmeste analyserte by",
   "per_decade_days": "dager / tiår",

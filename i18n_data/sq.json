@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / dekadë",
-  "map_coverage": "{done} nga {total} qytete të analizuara deri më tani - pjesa tjetër shtohet dita-ditës.",
   "cur_so_far": "{year} deri më tani (deri në {day} {month}): {v} °C mesatarisht, {d} °C kundrejt mesatares 1961-1990 për të njëjtat ditë të vitit.",
   "cmp_title": "Krahasoni dy qytete",
   "cmp_hint": "Çdo kurbë është anomalia vjetore e atij qyteti kundrejt bazës së tij 1961-1990, kështu që vendet me klimë të ndryshme krahasohen në mënyrë të drejtë.",
@@ -17,7 +16,6 @@
   "season_summer": "verës",
   "season_autumn": "vjeshte",
   "grid_alias_note": "Rekordi i temperaturës llogaritet për ~11 km qelizë të rrjetit të të dhënave klimatike. {alias} ndan qelizën e tij me {city}, kështu që të dyja tregojnë të njëjtën histori të 1940-ës.",
-  "map_coverage_help": "Ndihmoni në mbledhjen e të dhënave",
   "qv_nodata": "Nuk ka ende të dhëna për këtë qytet.",
   "qv_nearest": "Qyteti më i afërt i analizuar",
   "per_decade_days": "ditë / dekadë",

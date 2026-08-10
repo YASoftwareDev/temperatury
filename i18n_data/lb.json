@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / Joerzéngt",
-  "map_coverage": "{done} vun {total} Stied bis elo analyséiert - de Rescht ginn Dag fir Dag bäigefüügt.",
   "cur_so_far": "{year} bis elo (bis {day} {month}): {v} °C am Duerchschnëtt, {d} °C vs 1961-1990 Moyenne fir déiselwecht Deeg vum Joer.",
   "cmp_title": "Vergläichen zwou Stied",
   "cmp_hint": "All Curve ass déi jährlech Anomalie vun där Stad vs seng eege 1961-1990 Baseline, sou datt Plazen mat verschiddene Klimaziler zimlech vergläichen.",
@@ -17,7 +16,6 @@
   "season_summer": "Summer",
   "season_autumn": "Hierscht",
   "grid_alias_note": "Den Temperaturrekord gëtt pro ~ 11 km Klimadatenrasterzelle berechent. {alias} deelt seng Zell mat {city}, sou datt béid déiselwecht 1940-präsent Geschicht weisen.",
-  "map_coverage_help": "Hëlleft d'Donnéeën ze sammelen",
   "qv_nodata": "Keng Daten fir dës Stad nach.",
   "qv_nearest": "Noosten analyséiert Stad",
   "per_decade_days": "Deeg / Joerzéngt",

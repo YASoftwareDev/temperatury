@@ -1,6 +1,5 @@
 {
   "per_decade_c": "Celsius C / afọ",
-  "map_coverage": "{done} nke {total} obodo nyochara ruo ugbu a - a na-agbakwunye ndị ọzọ kwa ụbọchị.",
   "cur_so_far": "{year} dị ugbu a (ka {day} {month}): {v} °C na nkezi, {d} °C vs 1961-1990 pụtara maka otu ụbọchị nke afọ.",
   "cmp_title": "Tụlee obodo abụọ",
   "cmp_hint": "Usoro nke ọ bụla bụ obodo anomaly kwa afọ na nke ya 1961-1990 ntọala, yabụ ebe nwere ihu igwe dị iche iche atụnyere nke ọma.",
@@ -17,7 +16,6 @@
   "season_summer": "oge okpomọkụ",
   "season_autumn": "mgbụsị akwụkwọ",
   "grid_alias_note": "A na-agbakọ ndekọ ọnọdụ okpomọkụ kwa sel data ihu igwe-11km. {alias} na-ekerịta cell ya na {city}, yabụ ha abụọ gosipụtara otu akụkọ ihe mere eme nke 1940-ugbu a.",
-  "map_coverage_help": "Nyere aka ikpokọta data",
   "qv_nodata": "Enweghị data maka obodo a.",
   "qv_nearest": "Obodo nyochara kacha nso",
   "per_decade_days": "ụbọchị / afọ",

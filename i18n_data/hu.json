@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / évtized",
-  "map_coverage": "Eddig {total} városból {done} elemzett – a többit napról napra hozzáadjuk.",
   "cur_so_far": "{year} eddig ({day} {month}-ig): {v} °C átlagosan, {d} °C az 1961-1990 közötti átlaghoz képest az év azonos napjaira.",
   "cmp_title": "Hasonlíts össze két várost",
   "cmp_hint": "Mindegyik görbe az adott város éves anomáliája és a saját 1961-1990 közötti kiindulási pontja, így a különböző éghajlatú helyek meglehetősen összehasonlíthatók.",
@@ -17,7 +16,6 @@
   "season_summer": "nyár",
   "season_autumn": "ősz",
   "grid_alias_note": "A hőmérsékleti rekord ~11 km-es klímaadat-rácscellánként számítható ki. A {alias} celláját megosztja a következővel: {city}, így mindkettő ugyanazt az 1940-es múltat ​​mutatja.",
-  "map_coverage_help": "Segítsen összegyűjteni az adatokat",
   "qv_nodata": "Erre a városra még nincsenek adatok.",
   "qv_nearest": "A legközelebbi elemzett város",
   "per_decade_days": "nap / évtized",
