@@ -97,6 +97,37 @@ def test_shard_arg_parses_and_rejects():
             om_parallel._shard_arg(bad)
 
 
+def _run_args(**over):
+    from tests.test_download_priority import _Args
+    a = _Args()
+    for k, v in over.items():
+        setattr(a, k, v)
+    return a
+
+
+def test_storing_nothing_it_fetched_exits_nonzero(monkeypatch, tmp_path):
+    """Fetching cities and storing NONE of them means the store is broken, and
+    no retry fixes it. Exiting 0 made that read as an ordinary quiet day, so a
+    fleet machine could gather nothing indefinitely - the failure class this
+    project has now hit three times."""
+    monkeypatch.setattr(om_parallel.data, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(om_parallel, "_atomic_write",
+                        lambda f, p: (_ for _ in ()).throw(ValueError("nope")))
+    monkeypatch.setattr(om_parallel.data, "_request",
+                        lambda p, w: [{"daily": {}}] * len(p["latitude"].split(",")))
+    monkeypatch.setattr(om_parallel, "_parse_stub", None, raising=False)
+    assert om_parallel.run(_run_args(max_seconds=5, workers=2)) == 1
+
+
+def test_quota_exhausted_run_stays_successful(monkeypatch):
+    """0 written with 0 failures is a normal spent-quota day, NOT a fault -
+    flagging it would make the real signal meaningless."""
+    monkeypatch.setattr(om_parallel.data, "_request",
+                        lambda p, w: (_ for _ in ()).throw(
+                            om_parallel.data.QuotaExhausted("spent")))
+    assert om_parallel.run(_run_args(max_seconds=5, workers=1)) == 0
+
+
 def test_unknown_group_is_rejected():
     """A typo used to be filtered out silently, leaving an empty group list: the
     run fetched nothing and still exited 0, so an unattended gatherer reported

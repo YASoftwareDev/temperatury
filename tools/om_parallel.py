@@ -181,6 +181,7 @@ def run(args):
     # absent on macOS): once the free quota is spent every remaining chunk only
     # 429-retries, so callers cap the run instead of grinding for hours.
     deadline = time.time() + args.max_seconds if args.max_seconds else None
+    total_written = total_failed = 0
 
     for group in args.groups:
         if deadline and time.time() >= deadline:
@@ -238,11 +239,24 @@ def run(args):
                 print(f"  {group}: time cap ({args.max_seconds}s) reached, stopping")
         print(f"[{group}] done: {done} written, {failed} still missing "
               f"in {time.time() - t0:.0f}s")
+        total_written += done
+        total_failed += failed
         if exhausted:
             # Every later group would only re-hit the same wall, so end the run
             # here rather than logging two more empty passes.
             print(f"[{group}] stopped: {exhausted}")
             break
+
+    # Fetched cities but stored NONE of them: the fetch is fine and the store is
+    # broken (an API precision change, a bad path, a full disk), which no
+    # amount of retrying fixes. A spent quota with nothing to show for it must
+    # not read as an ordinary quiet day, so signal it. A quota-exhausted run
+    # writes nothing WITHOUT failures and stays successful.
+    if total_failed and not total_written:
+        print(f"ERROR: {total_failed} cities fetched, none could be stored - "
+              f"see the !! lines above.")
+        return 1
+    return 0
 
 
 def _shard_arg(value: str):
@@ -299,4 +313,4 @@ def parse_args(argv=None):
 
 
 if __name__ == "__main__":
-    run(parse_args())
+    raise SystemExit(run(parse_args()))
