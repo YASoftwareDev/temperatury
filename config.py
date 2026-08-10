@@ -45,7 +45,12 @@ def slugify(name: str) -> str:
     # every data filename and URL - is pure ASCII. ASCII punctuation the older
     # slugs already relied on (apostrophes, parentheses) is kept unchanged.
     text = text.encode("ascii", "ignore").decode("ascii")
-    return text.lower().replace(" ", "-")
+    # A slash is a PATH SEPARATOR, so a name like "Donostia / San Sebastián"
+    # produced a slug that made its cache path a directory that does not exist:
+    # the fetch spent quota, the write raised, the per-city handler swallowed
+    # it, and the city was silently re-queued forever. Treat it as a space and
+    # collapse runs, so double spaces cannot make an empty slug segment either.
+    return "-".join(text.lower().replace("/", " ").split())
 
 
 @dataclass(frozen=True)
