@@ -84,11 +84,45 @@ def test_extreme_but_real_values():
     pd.testing.assert_frame_equal(f, codec.decode(codec.encode(f)), check_freq=False)
 
 
+def test_empty_frame_round_trips():
+    """The current-year fetch returns an empty frame for a location whose
+    archive has no rows yet, and the caller caches it so the next run does not
+    re-request it. The old CSV writer accepted that; the codec must too."""
+    empty = pd.DataFrame({"temperature_2m_mean": []},
+                         index=pd.DatetimeIndex([], name="date"))
+    back = codec.decode(codec.encode(empty))
+    assert len(back) == 0
+    assert list(back.columns) == ["temperature_2m_mean"]
+    assert back.index.name == "date"
+
+
+def test_body_longer_than_the_header_claims_is_rejected():
+    """Header and body disagreeing about the row count would silently drop the
+    remainder - truncation a measurement store must never do quietly."""
+    import lzma
+    import struct as _struct
+    f = _frame(n=3)
+    raw = lzma.decompress(codec.encode(f))
+    tampered = raw[:6] + _struct.pack("<I", 2) + raw[10:]   # claim 2 of 3 rows
+    with pytest.raises(ValueError, match="does not match its header"):
+        codec.decode(lzma.compress(tampered, preset=1))
+
+
 def test_bytes_are_deterministic():
     """Two contributors fetching the same city must produce identical bytes -
     that is what makes duplicate downloads merge instead of conflict."""
     f = _frame(seed=3)
     assert codec.encode(f) == codec.encode(f.copy())
+
+
+def test_index_with_a_time_of_day_is_rejected():
+    """Only the date is stored, so a timestamp would come back shifted to
+    midnight - the index silently changing, same class as a value changing."""
+    f = pd.DataFrame({"t": [1.0, 2.0]},
+                     index=pd.DatetimeIndex(["2024-01-01 12:00",
+                                             "2024-01-02 12:00"], name="date"))
+    with pytest.raises(ValueError, match="time of day"):
+        codec.encode(f)
 
 
 def test_non_contiguous_index_is_rejected():
@@ -105,6 +139,64 @@ def test_out_of_range_is_rejected():
     f.iloc[0, 0] = 5000.0        # 50,000 tenths - past int16
     with pytest.raises(ValueError, match="int16"):
         codec.encode(f)
+
+
+def test_value_colliding_with_the_missing_sentinel_is_rejected():
+    """-3276.8 quantizes onto MISSING and would decode back as NaN - a real
+    measurement silently becoming "no observation". Must fail loudly instead."""
+    f = _frame(n=3)
+    f.iloc[1, 0] = -3276.8
+    with pytest.raises(ValueError, match="int16"):
+        codec.encode(f)
+
+
+@pytest.mark.parametrize("bad", [np.inf, -np.inf])
+def test_infinity_is_rejected_not_stored_as_missing(bad):
+    """NaN means "no observation"; an infinity means something went wrong
+    upstream. Letting it decode back as NaN would disguise a corrupt value as a
+    legitimate gap."""
+    f = _frame(n=3)
+    f.iloc[1, 0] = bad
+    with pytest.raises(ValueError, match="not a measurement"):
+        codec.encode(f)
+
+
+def test_finer_precision_is_rejected_not_rounded():
+    """"Lossless" has to fail loudly the day a source emits two decimals - a
+    silently rounded measurement is indistinguishable from a real one."""
+    f = _frame(n=3)
+    f.iloc[1, 0] = 12.34
+    with pytest.raises(ValueError, match="precision"):
+        codec.encode(f)
+
+
+def test_float64_representation_error_is_not_mistaken_for_precision():
+    """12.3*10 is 123.00000000000001 in float64; that must still encode."""
+    f = _frame(n=4)
+    f.iloc[:, 0] = [12.3, -0.7, 45.9, 283.2]
+    pd.testing.assert_frame_equal(f, codec.decode(codec.encode(f)),
+                                  check_freq=False)
+
+
+def test_atomic_write_lands_a_readable_file(tmp_path):
+    """Pins the gatherer write path end to end: om_parallel._atomic_write once
+    called codec without importing it, so every fetched city NameError'd into a
+    swallowed handler and the fleet wrote nothing while spending quota."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+    import om_parallel
+    f = _frame(n=12)
+    p = tmp_path / "probe_1940-2025.tpy"
+    om_parallel._atomic_write(f, p)
+    assert p.exists() and not list(tmp_path.glob("*.part"))
+    pd.testing.assert_frame_equal(f, codec.read_frame(p), check_freq=False)
+
+
+@pytest.mark.parametrize("edge", [-3276.7, 3276.7])
+def test_values_just_inside_the_sentinel_still_round_trip(edge):
+    """The sentinel guard must not cost any representable value."""
+    f = _frame(n=3)
+    f.iloc[1, 0] = edge
+    assert codec.decode(codec.encode(f)).iloc[1, 0] == edge
 
 
 def test_reads_legacy_csv_gz(tmp_path):

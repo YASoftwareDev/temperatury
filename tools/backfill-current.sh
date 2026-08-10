@@ -3,7 +3,7 @@
 # for every render-eligible city, so the interactive monthly-range and
 # monthly-records widgets can offer the current year (e.g. 2026) as a
 # selectable year. Mirrors tools/backfill.sh but targets year-01-01..today and
-# caches under the distinct '{slug}_{year}_current[_extremes].csv.gz' key.
+# caches under the distinct '{slug}_{year}_current[_extremes]' key.
 #
 # Run this AFTER tools/backfill.sh has finished (or while it sleeps) — running
 # both at once competes for the Open-Meteo rate limit. It only fetches current-
@@ -13,6 +13,11 @@
 #
 # Usage:  bash tools/backfill-current.sh
 set -u
+# Bracket ranges like [ -~] compare in COLLATION order outside the C locale,
+# so under a UTF-8 locale a plain-ASCII name can fall outside [ -~] and be
+# judged non-ASCII. bash >= 5.0 hides this (globasciiranges defaults on);
+# bash 4.3 does not, where the guard below silently discarded EVERY file.
+shopt -s globasciiranges 2>/dev/null || true
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 PY="$REPO/.venv/bin/python"
 PROBE='https://archive-api.open-meteo.com/v1/archive?latitude=52&longitude=21&start_date=2024-07-01&end_date=2024-07-02&daily=temperature_2m_max&timezone=auto'
@@ -27,10 +32,12 @@ for round in $(seq 1 96); do
   fi
 
   "$PY" -c "
-import os, config, data
-# Only cities that already have historical mean data (page is built for them).
+import os, codec, config, data
+# Only cities that already have historical mean data (page is built for them),
+# in EITHER encoding - keyed off .csv.gz alone this selected nothing at all
+# once the cache was migrated.
 locs = [l for l in config.LOCATIONS.values()
-        if os.path.exists(f'data/{l.slug}_1940-2025.csv.gz')]
+        if codec.cached_path(data._cache_path(l, 1940, 2025))]
 cur = data.load_current_bulk(locs)
 ext = data.load_current_extremes_bulk(locs)
 mc = sum(1 for l in locs if l.slug not in cur)
@@ -40,7 +47,7 @@ open('/tmp/backfill_current_remaining.txt','w').write(str(mc+ec))
 "
   remaining=$(cat /tmp/backfill_current_remaining.txt 2>/dev/null || echo 99)
 
-  for f in data/*_current*.csv.gz; do
+  for f in data/*_current*.tpy data/*_current*.csv.gz; do
     [ -e "$f" ] || continue
     case "$f" in *[!\ -~]*) : ;; *) git add "$f" ;; esac
   done

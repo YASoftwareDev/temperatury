@@ -10,7 +10,7 @@ would flag a bug *before* we trust 757 cities of ERA5 data.
 Read-only. ERA5 comes from the extractor's staging pickles ({key}_{year}.pkl,
 date×slug) — which contain **every** city, including the ~287 that also have an
 Open-Meteo cache — so we compare wherever the two overlap at zero CDS cost.
-Open-Meteo comes from the committed data/{slug}_1940-2025[...].csv.gz caches.
+Open-Meteo comes from the committed data/{slug}_1940-2025[...] caches.
 
 For each city/variable we align on common dates and report bias (ERA5−OM), MAE,
 RMSE, Pearson r and the annual-mean difference, then summarise the distribution
@@ -34,6 +34,7 @@ import pandas as pd
 _HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(_HERE.parent))
 sys.path.insert(0, str(_HERE))
+import codec  # noqa: E402
 import config  # noqa: E402
 import era5_extract as ex  # noqa: E402  (GROUPS + unit conversions + staging)
 
@@ -72,8 +73,15 @@ def _stats(era: pd.Series, om: pd.Series):
     }
 
 
-def _om_path(slug: str, suffix: str) -> Path:
-    return DATA_DIR / f"{slug}_1940-2025{suffix}.csv.gz"
+def _om_path(slug: str, suffix: str) -> Path | None:
+    """The Open-Meteo cache for this city in whichever encoding exists.
+
+    Keyed off ``.csv.gz`` alone this found nothing once the cache was migrated,
+    and the cross-check would then report "no overlapping cities" and validate
+    NOTHING - failing silent exactly where the point is to catch bad data.
+    """
+    return codec.cached_path(
+        DATA_DIR / f"{slug}_1940-2025{suffix}{codec.SUFFIX}")
 
 
 def run(args):
@@ -97,9 +105,9 @@ def run(args):
         rows = []
         for slug in slugs:
             om_path = _om_path(slug, suffix)
-            if not om_path.exists():
+            if om_path is None:
                 continue
-            om = pd.read_csv(om_path, parse_dates=["date"]).set_index("date")
+            om = codec.read_frame(om_path)
             for col in cols:
                 if col not in om.columns or slug not in era[col].columns:
                     continue

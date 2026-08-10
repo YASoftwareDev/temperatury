@@ -9,8 +9,8 @@ auto-scales to the available quota:
   * paid key  (OPENMETEO_API_KEY set → customer endpoint, no rate cap): 16 workers
   * free tier (measured ceiling ~5-6 concurrent heavy 86-yr requests):  5 workers
 
-Writes the same data/{slug}_1940-2025[...].csv.gz files main.py reads, FILL-ONLY
-(never overwrites an existing cache) and ATOMICALLY (temp + os.replace) so a
+Writes the same data/{slug}_1940-2025[...] cache files main.py reads, FILL-ONLY
+(never overwrites an existing cache) and ATOMICALLY (temp + replace) so a
 concurrent git-add or reader never sees a half-written file. Does NOT commit —
 run alongside the ERA5 CDS worker (which writes staging pickles, not data/), then
 commit once from the main session. Priority mean → precip → extremes: mean
@@ -39,6 +39,7 @@ from concurrent.futures import TimeoutError as _FuturesTimeout
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import codec  # noqa: E402
 import config  # noqa: E402
 import countries  # noqa: E402
 import data  # noqa: E402  (reuses its request/parse/cache-path helpers)
@@ -165,7 +166,7 @@ def run(args):
         # that priority irrelevant on the only pass that spends real quota.
         locs = [l for l in locs
                 if getattr(l, "kind", "city") == "city"
-                and data.codec.cached_path(
+                and codec.cached_path(
                     data._cache_path(l, args.start, args.end)) is not None]
         print(f"enrich scope: {len(locs)} already-rendered cities, in priority order")
     workers = args.workers or (16 if data._API_KEY else 5)
@@ -186,7 +187,7 @@ def run(args):
         # already hold in the legacy encoding would burn hourly quota to
         # produce a file that is already on disk.
         missing = [l for l in locs
-                   if data.codec.cached_path(
+                   if codec.cached_path(
                        path_fn(l, args.start, args.end)) is None]
         if not missing:
             print(f"[{group}] nothing missing")
