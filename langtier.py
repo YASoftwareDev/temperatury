@@ -111,12 +111,45 @@ def languages_for(loc: Location, full: bool, site_langs: list[str]) -> list[str]
 # it to widen crawlable-language coverage at a proportional storage cost.
 SEO_PRERENDER = 2
 
+# --- size tiering (roster >> 1 GB Pages cap) ---------------------------------
+# Measured 2026-08-10 on a clean build: 24 MB fixed + ~161 KB per rendered city
+# (49 KB chart JSON, 31 KB English shell, 73 KB other-language shells, 8 KB OG
+# card). At the >=10k-population roster (32,671 primaries) that projects to
+# ~5.3 GB - five times the 1 GB cap. Capping the roster or dropping languages
+# site-wide are both worse than spending the bytes where they are actually
+# read, so cities are tiered by population:
+#
+#   * the top RICH_TIER cities keep the full treatment (SEO_PRERENDER shells,
+#     an OG card, the complete chart payload) - these are what people open and
+#     what gets shared;
+#   * every other city gets ONE prerendered shell, no OG card, and a lite chart
+#     payload. Nothing is lost to a visitor: the language switcher, every chart
+#     the lite payload carries, search and the map all still work client-side.
+#
+# Ranking is by GeoNames population over the FULL roster, so a city's tier never
+# changes as the data cache grows.
+RICH_TIER = 2000
 
-def seo_languages_for(loc: Location, site_langs: list[str]) -> list[str]:
+
+def rich_tier_slugs(locations: list[Location], top: int = RICH_TIER) -> set[str]:
+    """Slugs that get the full-size treatment (see RICH_TIER)."""
+    cities = [l for l in locations if getattr(l, "kind", "city") == "city"]
+    cities.sort(key=lambda l: _POP.get(l.slug) or 0, reverse=True)
+    return {l.slug for l in cities[:top]}
+
+
+def seo_languages_for(loc: Location, site_langs: list[str],
+                      rich: bool = True) -> list[str]:
     """Which languages to PRE-RENDER (static shell) for this location: English
     first, then the country's languages, capped at SEO_PRERENDER. Every OTHER
     site language is reachable in the browser via the language switcher, at no
-    per-city storage cost."""
+    per-city storage cost.
+
+    ``rich=False`` (a size-tier tail city) prerenders only the FIRST of those.
+    English stays first deliberately: other code treats a city's first shell as
+    the link target for languages it was not built in, and English is the one
+    language every visitor's switcher can fall back through.
+    """
     cc = countries.country_code(loc) or ""
     ordered = ["en"] if "en" in site_langs else []
     for lg in COUNTRY_LANGS.get(cc, ()):
@@ -124,4 +157,5 @@ def seo_languages_for(loc: Location, site_langs: list[str]) -> list[str]:
             ordered.append(lg)
     if not ordered:
         ordered = list(site_langs[:1])
-    return ordered[:max(1, SEO_PRERENDER)] or [site_langs[0]]
+    cap = SEO_PRERENDER if rich else 1
+    return ordered[:max(1, cap)] or [site_langs[0]]

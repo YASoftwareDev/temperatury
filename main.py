@@ -367,7 +367,9 @@ def main() -> None:
     # --location build never prunes another city), and non-city pages (index,
     # embed) are keyed by name, not a city slug, so they are never matched.
     if CLIENT_I18N:
-        _seo = {loc.slug: set(langtier.seo_languages_for(loc, i18n.LANGUAGES))
+        _rich_prune = langtier.rich_tier_slugs(list(LOCATIONS.values()))
+        _seo = {loc.slug: set(langtier.seo_languages_for(
+                    loc, i18n.LANGUAGES, loc.slug in _rich_prune))
                 for loc in locations
                 if getattr(loc, "kind", "city") == "city"}
         _pruned = 0
@@ -417,7 +419,12 @@ def main() -> None:
     # shells; every language is reachable in the browser. Otherwise fall back to
     # storage-tiering (full langs for popular cities, en+local for the tail).
     if CLIENT_I18N:
-        g_citylangs = {loc.slug: langtier.seo_languages_for(loc, i18n.LANGUAGES)
+        # Size tiering: only the top cities pre-render every SEO language; the
+        # tail gets one shell (see langtier.RICH_TIER). Ranked over the FULL
+        # roster so a city's tier is stable as the data cache grows.
+        _rich = langtier.rich_tier_slugs(list(LOCATIONS.values()))
+        g_citylangs = {loc.slug: langtier.seo_languages_for(
+                           loc, i18n.LANGUAGES, loc.slug in _rich)
                        for loc in locations}
     else:
         _full = langtier.full_tier_slugs(list(LOCATIONS.values()))
