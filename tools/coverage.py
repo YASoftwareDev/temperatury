@@ -17,8 +17,13 @@ n = len(locs)
 DATA = Path(__file__).resolve().parent.parent / "data"
 
 
+def _cached(stem: str) -> bool:
+    """Present in either encoding - see codec.cached_path."""
+    return (DATA / f"{stem}.tpy").exists() or (DATA / f"{stem}.csv.gz").exists()
+
+
 def have(suffix: str) -> list:
-    return [l for l in locs if (DATA / f"{l.slug}_1940-2025{suffix}.csv.gz").exists()]
+    return [l for l in locs if _cached(f"{l.slug}_1940-2025{suffix}")]
 
 
 def current_year() -> int:
@@ -43,7 +48,8 @@ for label, suffix in datasets:
     print(f"  {label:24s} {bar(len(got), n)} {len(got):>4}/{n}")
 
 cur = current_year()
-cur_files = len(list(DATA.glob(f"*_{cur}_current.csv.gz")))
+cur_files = (len(list(DATA.glob(f"*_{cur}_current.tpy")))
+             + len(list(DATA.glob(f"*_{cur}_current.csv.gz"))))
 print(f"  {f'current year ({cur})':24s} {bar(cur_files, n)} {cur_files:>4}/{n}")
 
 mean_have = have("")

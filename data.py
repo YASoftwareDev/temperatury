@@ -20,6 +20,7 @@ from pathlib import Path
 import requests
 import pandas as pd
 
+import codec
 from config import ARCHIVE_URL, DATA_DIR, Location
 
 # Offline mode (set in CI): render only from the committed cache, never fetch.
@@ -84,7 +85,7 @@ def _retry_after(response: requests.Response, attempt: int) -> float:
 
 def _cache_path(location: Location, start_year: int, end_year: int) -> Path:
     """Return the on-disk cache path (gzipped CSV) for a location and span."""
-    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}.csv.gz"
+    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}{codec.SUFFIX}"
 
 
 def _request(params: dict, what: str):
@@ -159,8 +160,9 @@ def load_temperatures(
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     path = _cache_path(location, start_year, end_year)
 
-    if path.exists() and not refresh:
-        frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+    _hit = codec.cached_path(path)
+    if _hit is not None and not refresh:
+        frame = codec.read_frame(_hit)
     else:
         params = {
             "latitude": location.latitude,
@@ -171,7 +173,7 @@ def load_temperatures(
             "timezone": location.timezone,
         }
         frame = _parse_daily(_request(params, location.name).get("daily"), location.name)
-        frame.to_csv(path)
+        codec.write_frame(frame, path)
 
     return _clean(frame, location.name)
 
@@ -195,8 +197,9 @@ def load_temperatures_bulk(
 
     for location in locations:
         path = _cache_path(location, start_year, end_year)
-        if path.exists() and not refresh:
-            frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+        _hit = codec.cached_path(path)
+        if _hit is not None and not refresh:
+            frame = codec.read_frame(_hit)
             result[location.slug] = _clean(frame, location.name)
         else:
             to_fetch.append(location)
@@ -229,7 +232,7 @@ def load_temperatures_bulk(
         items = payload if isinstance(payload, list) else [payload]
         for location, item in zip(chunk, items):
             frame = _parse_daily(item.get("daily"), location.name)
-            frame.to_csv(_cache_path(location, start_year, end_year))
+            codec.write_frame(frame, _cache_path(location, start_year, end_year))
             result[location.slug] = _clean(frame, location.name)
 
     return result
@@ -243,7 +246,7 @@ _EXTREME_CHUNK = 7
 
 def _extremes_cache_path(location: Location, start_year: int, end_year: int) -> Path:
     """Cache path for the daily max/min dataset (separate from the means)."""
-    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}_extremes.csv.gz"
+    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}_extremes{codec.SUFFIX}"
 
 
 def _parse_extremes(daily: dict | None, name: str) -> pd.DataFrame:
@@ -281,8 +284,9 @@ def load_extremes_bulk(
 
     for location in locations:
         path = _extremes_cache_path(location, start_year, end_year)
-        if path.exists() and not refresh:
-            frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+        _hit = codec.cached_path(path)
+        if _hit is not None and not refresh:
+            frame = codec.read_frame(_hit)
             result[location.slug] = frame.dropna(subset=list(_EXTREME_COLS))
         else:
             to_fetch.append(location)
@@ -312,7 +316,7 @@ def load_extremes_bulk(
         items = payload if isinstance(payload, list) else [payload]
         for location, item in zip(chunk, items):
             frame = _parse_extremes(item.get("daily"), location.name)
-            frame.to_csv(_extremes_cache_path(location, start_year, end_year))
+            codec.write_frame(frame, _extremes_cache_path(location, start_year, end_year))
             result[location.slug] = frame.dropna(subset=list(_EXTREME_COLS))
 
     return result
@@ -321,7 +325,7 @@ def load_extremes_bulk(
 # --- precipitation ---------------------------------------------------------
 def _precip_cache_path(location: Location, start_year: int, end_year: int) -> Path:
     """Cache path for the daily precipitation dataset."""
-    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}_precip.csv.gz"
+    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}_precip{codec.SUFFIX}"
 
 
 def _parse_precip(daily: dict | None, name: str) -> pd.DataFrame:
@@ -354,8 +358,9 @@ def load_precip_bulk(
 
     for location in locations:
         path = _precip_cache_path(location, start_year, end_year)
-        if path.exists() and not refresh:
-            frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+        _hit = codec.cached_path(path)
+        if _hit is not None and not refresh:
+            frame = codec.read_frame(_hit)
             result[location.slug] = frame.dropna(subset=["precipitation_sum"])
         else:
             to_fetch.append(location)
@@ -385,7 +390,7 @@ def load_precip_bulk(
         items = payload if isinstance(payload, list) else [payload]
         for location, item in zip(chunk, items):
             frame = _parse_precip(item.get("daily"), location.name)
-            frame.to_csv(_precip_cache_path(location, start_year, end_year))
+            codec.write_frame(frame, _precip_cache_path(location, start_year, end_year))
             result[location.slug] = frame.dropna(subset=["precipitation_sum"])
 
     return result
@@ -394,7 +399,7 @@ def load_precip_bulk(
 # --- apparent temperature (heat index) -------------------------------------
 def _apparent_cache_path(location: Location, start_year: int, end_year: int) -> Path:
     """Cache path for the daily apparent-temperature (heat-index) dataset."""
-    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}_apparent.csv.gz"
+    return DATA_DIR / f"{location.slug}_{start_year}-{end_year}_apparent{codec.SUFFIX}"
 
 
 def _parse_apparent(daily: dict | None, name: str) -> pd.DataFrame:
@@ -430,8 +435,9 @@ def load_apparent_bulk(
 
     for location in locations:
         path = _apparent_cache_path(location, start_year, end_year)
-        if path.exists() and not refresh:
-            frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+        _hit = codec.cached_path(path)
+        if _hit is not None and not refresh:
+            frame = codec.read_frame(_hit)
             result[location.slug] = frame.dropna(subset=["apparent_temperature_max"])
         else:
             to_fetch.append(location)
@@ -461,7 +467,7 @@ def load_apparent_bulk(
         items = payload if isinstance(payload, list) else [payload]
         for location, item in zip(chunk, items):
             frame = _parse_apparent(item.get("daily"), location.name)
-            frame.to_csv(_apparent_cache_path(location, start_year, end_year))
+            codec.write_frame(frame, _apparent_cache_path(location, start_year, end_year))
             result[location.slug] = frame.dropna(subset=["apparent_temperature_max"])
 
     return result
@@ -484,9 +490,10 @@ def cache_signature(location: Location, start_year: int, end_year: int) -> str:
         _precip_cache_path(location, start_year, end_year),
         _apparent_cache_path(location, start_year, end_year),
     ):
-        if path.exists():
-            digest.update(path.name.encode())
-            digest.update(path.read_bytes())
+        hit = codec.cached_path(path)
+        if hit is not None:
+            digest.update(hit.name.encode())
+            digest.update(hit.read_bytes())
     return digest.hexdigest()[:16]
 
 
@@ -512,7 +519,7 @@ def _current_span() -> tuple[int, str, str]:
 def _current_cache_path(location: Location, year: int, suffix: str = "") -> Path:
     """Cache path for the current-year partial dataset (mean or extremes)."""
     tail = f"_current{suffix}"
-    return DATA_DIR / f"{location.slug}_{year}{tail}.csv.gz"
+    return DATA_DIR / f"{location.slug}_{year}{tail}{codec.SUFFIX}"
 
 
 def _load_current(
@@ -536,8 +543,9 @@ def _load_current(
 
     for location in locations:
         path = _current_cache_path(location, year, suffix)
-        if path.exists() and not refresh:
-            frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+        _hit = codec.cached_path(path)
+        if _hit is not None and not refresh:
+            frame = codec.read_frame(_hit)
             frame = frame.dropna(subset=list(columns))
             if not frame.empty:
                 result[location.slug] = frame
@@ -569,7 +577,7 @@ def _load_current(
         items = payload if isinstance(payload, list) else [payload]
         for location, item in zip(group, items):
             frame = parse(item.get("daily"), location.name)
-            frame.to_csv(_current_cache_path(location, year, suffix))
+            codec.write_frame(frame, _current_cache_path(location, year, suffix))
             frame = frame.dropna(subset=list(columns))
             if not frame.empty:
                 result[location.slug] = frame

@@ -1,0 +1,140 @@
+"""The cache encoding must round-trip climate data EXACTLY.
+
+Every number the site shows is derived from these files, so a lossy or
+misaligned codec would silently corrupt published trends rather than fail
+loudly. These tests pin the properties the format depends on: exact values at
+the API's own 0.1 precision, the missing-day sentinel surviving as NaN, the
+implied date index landing on the right days, deterministic bytes (so two
+contributors fetching the same city produce identical files and never
+conflict), and the legacy .csv.gz path still loading during the migration.
+"""
+import gzip
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+import codec
+
+
+def _frame(n=800, cols=("temperature_2m_mean",), seed=0):
+    rng = np.random.default_rng(seed)
+    idx = pd.date_range("1940-01-01", periods=n, freq="D", name="date")
+    data = {c: np.round(rng.uniform(-40, 45, n), 1) for c in cols}
+    return pd.DataFrame(data, index=idx)
+
+
+def test_round_trip_is_exact():
+    f = _frame()
+    back = codec.decode(codec.encode(f))
+    pd.testing.assert_frame_equal(f, back, check_freq=False)
+
+
+def test_missing_days_survive_as_nan():
+    f = _frame(n=50)
+    f.iloc[0, 0] = np.nan
+    f.iloc[7, 0] = np.nan
+    f.iloc[-1, 0] = np.nan
+    back = codec.decode(codec.encode(f))
+    assert np.array_equal(np.isnan(f.iloc[:, 0].to_numpy()),
+                          np.isnan(back.iloc[:, 0].to_numpy()))
+    pd.testing.assert_frame_equal(f, back, check_freq=False)
+
+
+def test_all_missing_column():
+    """A city the API had nothing for must not decode as zeros."""
+    f = _frame(n=30)
+    f.iloc[:, 0] = np.nan
+    assert codec.decode(codec.encode(f)).iloc[:, 0].isna().all()
+
+
+def test_multi_column_order_preserved():
+    f = _frame(cols=("temperature_2m_max", "temperature_2m_min"))
+    back = codec.decode(codec.encode(f))
+    assert list(back.columns) == ["temperature_2m_max", "temperature_2m_min"]
+    pd.testing.assert_frame_equal(f, back, check_freq=False)
+
+
+def test_dates_are_reconstructed_not_stored():
+    """Dropping the date column is only safe if the index comes back identical."""
+    f = _frame(n=400)
+    back = codec.decode(codec.encode(f))
+    assert back.index[0] == f.index[0] and back.index[-1] == f.index[-1]
+    assert back.index.name == "date"
+    assert back.index.equals(f.index)
+    assert back.index.freq is None, "must match the legacy read_csv behaviour"
+
+
+def test_leap_day_alignment():
+    """An off-by-one in the implied index would silently shift every value."""
+    idx = pd.date_range("2024-02-27", periods=5, freq="D", name="date")
+    f = pd.DataFrame({"temperature_2m_mean": [1.0, 2.0, 3.0, 4.0, 5.0]}, index=idx)
+    back = codec.decode(codec.encode(f))
+    assert str(back.index[2].date()) == "2024-02-29"
+    assert back.loc["2024-02-29", "temperature_2m_mean"] == 3.0
+
+
+def test_extreme_but_real_values():
+    f = _frame(n=6)
+    f.iloc[:, 0] = [-89.2, 56.7, 0.0, -0.1, 0.1, 283.2]   # records + heavy rain
+    pd.testing.assert_frame_equal(f, codec.decode(codec.encode(f)), check_freq=False)
+
+
+def test_bytes_are_deterministic():
+    """Two contributors fetching the same city must produce identical bytes -
+    that is what makes duplicate downloads merge instead of conflict."""
+    f = _frame(seed=3)
+    assert codec.encode(f) == codec.encode(f.copy())
+
+
+def test_non_contiguous_index_is_rejected():
+    """Dates are implied, so a gappy frame must fail loudly, never silently
+    re-date its own values."""
+    idx = pd.DatetimeIndex(["1940-01-01", "1940-01-03"], name="date")
+    f = pd.DataFrame({"temperature_2m_mean": [1.0, 2.0]}, index=idx)
+    with pytest.raises(ValueError, match="contiguous"):
+        codec.encode(f)
+
+
+def test_out_of_range_is_rejected():
+    f = _frame(n=3)
+    f.iloc[0, 0] = 5000.0        # 50,000 tenths - past int16
+    with pytest.raises(ValueError, match="int16"):
+        codec.encode(f)
+
+
+def test_reads_legacy_csv_gz(tmp_path):
+    """A half-migrated cache (or a gatherer that has not pulled) must load."""
+    f = _frame(n=20)
+    old = tmp_path / "x_1940-2025.csv.gz"
+    f.to_csv(old, compression={"method": "gzip", "mtime": 0})
+    pd.testing.assert_frame_equal(f, codec.read_frame(old), check_freq=False)
+
+
+def test_cached_path_accepts_either_format(tmp_path):
+    new = tmp_path / "x_1940-2025.tpy"
+    old = tmp_path / "x_1940-2025.csv.gz"
+    assert codec.cached_path(new) is None
+    old.write_bytes(gzip.compress(b"date,t\n"))
+    assert codec.cached_path(new) == old          # legacy counts as cached
+    codec.write_frame(_frame(n=5), new)
+    assert codec.cached_path(new) == new          # current wins once present
+
+
+def test_write_frame_is_atomic(tmp_path):
+    """No .part file may survive, or `git add` would stage a partial blob."""
+    p = tmp_path / "c_1940-2025.tpy"
+    codec.write_frame(_frame(n=10), p)
+    assert p.exists()
+    assert not list(tmp_path.glob("*.part"))
+
+
+def test_smaller_than_legacy():
+    """The whole point: the compact form must actually beat gzipped CSV."""
+    f = _frame(n=31413)
+    legacy = len(gzip.compress(f.to_csv().encode(), 9))
+    assert len(codec.encode(f)) < legacy / 2

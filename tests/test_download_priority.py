@@ -89,12 +89,16 @@ class _Args:
     shard = None
 
 
-class _NeverCached:
+def _NeverCached():
     """Stand-in cache path that reports every city as still missing, so the
-    scheduled order does not depend on how full this checkout's data/ is."""
+    scheduled order does not depend on how full this checkout's data/ is.
 
-    def exists(self):
-        return False
+    A REAL Path under a directory that cannot exist, not a stub object: the
+    scheduler asks codec.cached_path() whether either encoding is on disk, so a
+    bare .exists() duck-type would not exercise the code path that actually
+    runs in production.
+    """
+    return Path("/nonexistent-temperatury-cache/never_1940-2025.tpy")
 
 
 def _scheduled_slugs(monkeypatch, **overrides):
