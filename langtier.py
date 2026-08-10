@@ -85,7 +85,13 @@ def full_tier_slugs(locations: list[Location], top: int = FULL_TIER) -> set[str]
     """The slugs that keep every language: the ``top`` most-populous cities of
     the FULL roster (stable across deploys as the data cache grows)."""
     cities = [l for l in locations if getattr(l, "kind", "city") == "city"]
-    cities.sort(key=lambda l: _POP.get(l.slug) or 0, reverse=True)
+    # Slug breaks ties, NOT insertion order: most of the roster has no
+    # population entry, so ties decide hundreds of tier slots, and ordering
+    # them by arrival reshuffled all of them whenever any city was added.
+    # By slug the assignment is a pure function of the roster, so adding a
+    # city moves at most the cities either side of the cutoff instead of
+    # scattering pages in and out of their SEO shells.
+    cities.sort(key=lambda l: (-(_POP.get(l.slug) or 0), l.slug))
     return {l.slug for l in cities[:top]}
 
 
@@ -138,7 +144,13 @@ RICH_TIER = 2000
 def rich_tier_slugs(locations: list[Location], top: int = RICH_TIER) -> set[str]:
     """Slugs that get the full-size treatment (see RICH_TIER)."""
     cities = [l for l in locations if getattr(l, "kind", "city") == "city"]
-    cities.sort(key=lambda l: _POP.get(l.slug) or 0, reverse=True)
+    # Slug breaks ties, NOT insertion order: most of the roster has no
+    # population entry, so ties decide hundreds of tier slots, and ordering
+    # them by arrival reshuffled all of them whenever any city was added.
+    # By slug the assignment is a pure function of the roster, so adding a
+    # city moves at most the cities either side of the cutoff instead of
+    # scattering pages in and out of their SEO shells.
+    cities.sort(key=lambda l: (-(_POP.get(l.slug) or 0), l.slug))
     return {l.slug for l in cities[:top]}
 
 

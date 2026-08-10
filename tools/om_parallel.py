@@ -146,8 +146,12 @@ def _fetch_chunk(chunk, daily, parse, path_fn, start, end):
             frame = parse(item.get("daily"), loc.name)
             _atomic_write(frame, path_fn(loc, start, end))
             written += 1
-        except Exception:  # noqa: BLE001 — one bad city shouldn't drop the chunk
-            pass
+        except Exception as exc:  # noqa: BLE001 — one bad city shouldn't drop the chunk
+            # SAY SO. Staying silent here has twice turned a total failure into
+            # something that reads like ordinary pending work: a missing import
+            # made every write raise, and a slug containing "/" made two cities
+            # unwritable for the life of the project. Quota was spent both times.
+            print(f"  !! {loc.slug}: {type(exc).__name__}: {exc}")
     return written, len(chunk) - written
 
 
@@ -282,7 +286,15 @@ def parse_args(argv=None):
             args.shard = _shard_arg(os.environ["TEMPERATURY_SHARD"])
         except argparse.ArgumentTypeError as e:
             ap.error(f"TEMPERATURY_SHARD: {e}")
-    args.groups = [g.strip() for g in args.groups.split(",") if g.strip() in GROUPS]
+    # An unknown group used to be dropped silently, so a typo meant a run that
+    # fetched nothing and still exited 0 - the same invisible-no-op the bad
+    # shard value produced. Fail the invocation instead.
+    wanted = [g.strip() for g in args.groups.split(",") if g.strip()]
+    unknown = [g for g in wanted if g not in GROUPS]
+    if unknown or not wanted:
+        ap.error(f"--groups must name at least one of {', '.join(GROUPS)}"
+                 + (f" (unknown: {', '.join(unknown)})" if unknown else ""))
+    args.groups = wanted
     return args
 
 

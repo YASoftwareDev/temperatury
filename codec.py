@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import lzma
+import os
 import struct
 from pathlib import Path
 
@@ -164,11 +165,20 @@ def read_frame(path: Path) -> pd.DataFrame:
 
 def write_frame(frame: pd.DataFrame, path: Path) -> None:
     """Write a cache file ATOMICALLY, so a concurrent reader or `git add` never
-    sees a partial file (the gatherers rely on this - see om_parallel)."""
+    sees a partial file (the gatherers rely on this - see om_parallel).
+
+    The temp name carries the writer's pid: two gatherer processes on one
+    machine (an overrunning cron round overlapping the next) can be fetching
+    the same city, and a shared temp name would let one truncate the other's
+    buffer and then publish the result as complete.
+    """
     path = Path(path)
-    tmp = path.with_suffix(path.suffix + ".part")
-    tmp.write_bytes(encode(frame))
-    tmp.replace(path)
+    tmp = path.with_suffix(f"{path.suffix}.{os.getpid()}.part")
+    try:
+        tmp.write_bytes(encode(frame))
+        tmp.replace(path)
+    finally:
+        tmp.unlink(missing_ok=True)      # encode() raised: leave no stray temp
 
 
 def legacy_path(path: Path) -> Path:

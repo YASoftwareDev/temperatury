@@ -97,6 +97,33 @@ def test_shard_arg_parses_and_rejects():
             om_parallel._shard_arg(bad)
 
 
+def test_unknown_group_is_rejected():
+    """A typo used to be filtered out silently, leaving an empty group list: the
+    run fetched nothing and still exited 0, so an unattended gatherer reported
+    "Nothing new to send" forever. Same invisible no-op as a bad shard value."""
+    with pytest.raises(SystemExit):
+        om_parallel.parse_args(["--groups", "means"])
+    assert om_parallel.parse_args(["--groups", "mean,precip"]).groups == \
+        ["mean", "precip"]
+
+
+def test_per_city_write_failure_names_the_city(monkeypatch, capsys):
+    """Silence here has twice disguised a total failure as ordinary pending
+    work, after quota was already spent: a missing import made every write
+    raise, and a slug containing "/" made two cities permanently unwritable."""
+    loc = next(l for l in LOCS)
+    monkeypatch.setattr(om_parallel.data, "_request", lambda p, w: {"daily": {}})
+    monkeypatch.setattr(om_parallel, "_atomic_write",
+                        lambda frame, path: (_ for _ in ()).throw(
+                            ValueError("cannot write")))
+    written, failed = om_parallel._fetch_chunk(
+        [loc], "temperature_2m_mean", lambda d, n: None,
+        lambda l, s, e: Path("/nonexistent/x.tpy"), 1940, 2025)
+    out = capsys.readouterr().out
+    assert (written, failed) == (0, 1)
+    assert loc.slug in out and "cannot write" in out, out
+
+
 def test_env_var_feeds_default(monkeypatch):
     monkeypatch.setenv("TEMPERATURY_SHARD", "3/4")
     assert om_parallel.parse_args([]).shard == (3, 4)

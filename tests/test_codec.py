@@ -225,6 +225,35 @@ def test_write_frame_is_atomic(tmp_path):
     assert not list(tmp_path.glob("*.part"))
 
 
+def test_temp_name_is_unique_per_process(tmp_path, monkeypatch):
+    """Two gatherer processes on one machine (an overrunning cron round meeting
+    the next) can fetch the same city; a shared temp name would let one truncate
+    the other's buffer and publish the result as complete.
+
+    Observes the ACTUAL temp path write_frame uses - asserting on a name the
+    test builds itself would pass even if the shared name came back.
+    """
+    import os
+
+    seen = []
+    real_replace = Path.replace
+    monkeypatch.setattr(Path, "replace",
+                        lambda self, target: (seen.append(self), real_replace(self, target))[1])
+    p = tmp_path / "c_1940-2025.tpy"
+    codec.write_frame(_frame(n=5), p)
+    assert seen, "write_frame did not go through a temp file"
+    assert str(os.getpid()) in seen[0].name, seen[0].name
+
+
+def test_failed_encode_leaves_no_stray_temp(tmp_path):
+    p = tmp_path / "c_1940-2025.tpy"
+    bad = _frame(n=3)
+    bad.iloc[0, 0] = 12.34                      # rejected by the precision guard
+    with pytest.raises(ValueError):
+        codec.write_frame(bad, p)
+    assert not list(tmp_path.glob("*.part")) and not p.exists()
+
+
 def test_smaller_than_legacy():
     """The whole point: the compact form must actually beat gzipped CSV."""
     f = _frame(n=31413)
