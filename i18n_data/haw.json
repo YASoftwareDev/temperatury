@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / ʻumi makahiki",
-  "map_coverage": "{done} o {total} kūlanakauhale i kālailai ʻia a hiki i kēia manawa - hoʻohui ʻia ke koena i kēlā me kēia lā.",
   "cur_so_far": "{year} a hiki i kēia manawa (i ka {day} {month}): {v} °C ma ka awelika, {d} °C vs ka mean 1961-1990 no nā lā like o ka makahiki.",
   "cmp_title": "E hoohalike i na kulanakauhale elua",
   "cmp_hint": "ʻO kēlā me kēia pihi ka anomaly makahiki o kēlā kūlanakauhale a me kāna kumu 1961-1990 ponoʻī, no laila, hoʻohālikelike nā wahi me nā ʻano ʻokoʻa.",
@@ -17,7 +16,6 @@
   "season_summer": "kau wela",
   "season_autumn": "hāʻule",
   "grid_alias_note": "Hoʻopili ʻia ka moʻolelo wela ma kēlā me kēia ~11 km ke aniani-data grid cell. Kaʻana like ʻo {alias} i kāna kelepona me {city}, no laila hōʻike ʻelua i ka moʻolelo like 1940-i kēia manawa.",
-  "map_coverage_help": "Kōkua i ka hōʻiliʻili ʻana i ka ʻikepili",
   "qv_nodata": "ʻAʻohe ʻikepili no kēia kūlanakauhale.",
   "qv_nearest": "kūlanakauhale kālailai kokoke loa",
   "per_decade_days": "lā / ʻumi makahiki",

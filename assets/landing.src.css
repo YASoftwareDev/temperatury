@@ -239,9 +239,6 @@
   .grid-legend .gl-green { background:#16a34a; }
   .grid-legend .gl-amber { background:#f59e0b; }
   .grid-legend .gl-red { background:#dc2626; }
-  /* Coverage note under the map: how far the data gathering has come. */
-  .map-coverage { text-align:center; font-size:.85rem; color:var(--muted);
-                  margin:.6rem auto 0; max-width:70rem; }
   /* KPI band: the landing's headline numbers, dark, right under the map. */
   .kpi-band { display:grid; grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));
               gap:.6rem; background:var(--ink); border-radius:14px;

@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / ishumi leminyaka",
-  "map_coverage": "{done} ye-{total} yezixeko ezihlalutyiweyo ukuza kuthi ga ngoku - ezinye zongezwa usuku nosuku.",
   "cur_so_far": "{year} ukuza kuthi ga ngoku (ukuya ku-{day} {month}): {v} °C ngokomndilili, {d} °C vs 1961-1990 kuthetha iintsuku ezifanayo zonyaka.",
   "cmp_title": "Thelekisa izixeko ezibini",
   "cmp_hint": "Igophe ngalinye seso sixeko sonyaka esingaqhelekanga ngokuchasene nesiseko saso sika-1961-1990, ke iindawo ezinemozulu eyahlukileyo zithelekisa ngokufanelekileyo.",
@@ -17,7 +16,6 @@
   "season_summer": "ihlobo",
   "season_autumn": "ekwindla",
   "grid_alias_note": "Irekhodi yobushushu ibalwa nge ~11 km yeseli yegridi yemozulu-data. {alias} yabelana ngeseli yayo no-{city}, ngoko ke zombini zibonisa imbali efanayo ye-1940-yangoku.",
-  "map_coverage_help": "Nceda ukuqokelela idatha",
   "qv_nodata": "Akukho datha yesi sixeko okwangoku.",
   "qv_nearest": "Isixeko esicazululiweyo esikufutshane",
   "per_decade_days": "iintsuku / ishumi leminyaka",

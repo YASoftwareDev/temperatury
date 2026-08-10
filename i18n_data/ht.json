@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / deseni",
-  "map_coverage": "{done} nan {total} vil yo analize jiskaprezan - yo ajoute rès yo chak jou.",
   "cur_so_far": "{year} jiskaprezan (jiska {day} {month}): {v} °C an mwayèn, {d} °C kont mwayèn 1961-1990 pou menm jou nan ane a.",
   "cmp_title": "Konpare de vil yo",
   "cmp_hint": "Chak koub se anomali chak ane vil sa a kont pwòp baz li 1961-1990, kidonk kote ki gen diferan klima konpare jis.",
@@ -17,7 +16,6 @@
   "season_summer": "ete",
   "season_autumn": "otòn",
   "grid_alias_note": "Dosye tanperati a kalkile pou chak ~11 km selil kadriyaj done klima a. {alias} pataje selil li ak {city}, kidonk tou de montre menm istwa 1940-prezan.",
-  "map_coverage_help": "Ede rasanble done yo",
   "qv_nodata": "Pa gen okenn done pou vil sa a ankò.",
   "qv_nearest": "Ki pi pre vil analize",
   "per_decade_days": "jou / deseni",

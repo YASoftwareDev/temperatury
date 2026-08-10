@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / dekad",
-  "map_coverage": "{done} daripada {total} bandar dianalisis setakat ini - selebihnya ditambah hari demi hari.",
   "cur_so_far": "{year} setakat ini (kepada {day} {month}): {v} °C secara purata, {d} °C berbanding min 1961-1990 untuk hari yang sama dalam setahun.",
   "cmp_title": "Bandingkan dua bandar",
   "cmp_hint": "Setiap lengkung ialah anomali tahunan bandar itu berbanding garis dasar 1961-1990 sendiri, jadi tempat dengan iklim berbeza membandingkan dengan adil.",
@@ -17,7 +16,6 @@
   "season_summer": "musim panas",
   "season_autumn": "musim luruh",
   "grid_alias_note": "Rekod suhu dikira setiap ~11 km sel grid data iklim. {alias} berkongsi selnya dengan {city}, jadi kedua-duanya menunjukkan sejarah 1940-sekarang yang sama.",
-  "map_coverage_help": "Bantu kumpul data",
   "qv_nodata": "Tiada data untuk bandar ini lagi.",
   "qv_nearest": "Bandar analisis terdekat",
   "per_decade_days": "hari / dekad",

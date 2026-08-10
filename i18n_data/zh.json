@@ -135,8 +135,6 @@
   "cap_heatindex": "体感温度（纳入湿度的热指数）达到热应激水平的天数 — 这是公共高温预警使用的指标。需要体感温度数据集。",
   "footer": "生成于 {date} · 数据来自 <a href=\"https://open-meteo.com/\">Open-Meteo</a> 历史再分析（ERA5）· <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub 上的源代码</a>",
   "intro": "自1940年以来世界大城市如何变暖——来自ERA5气候再分析的每日气温记录。",
-  "map_coverage": "目前已分析 {done}/{total} 座城市 - 其余正逐日补充。",
-  "map_coverage_help": "帮助收集数据",
   "qv_nodata": "该城市暂无数据。",
   "qv_nearest": "最近的已分析城市",
   "cur_so_far": "{year} 年至今（截至 {month} {day} 日）：平均 {v} °C，与 1961-1990 年同期均值相比 {d} °C。",

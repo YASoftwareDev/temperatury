@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C/década",
-  "map_coverage": "{done} de {total} cidades analizadas ata agora; o resto engádense día a día.",
   "cur_so_far": "{year} ata o momento (ata {day} {month}): {v} °C de media, {d} °C fronte á media de 1961-1990 para os mesmos días do ano.",
   "cmp_title": "Compara dúas cidades",
   "cmp_hint": "Cada curva é a anomalía anual desa cidade fronte á súa propia liña de base de 1961-1990, polo que lugares con diferentes climas se comparan de forma xusta.",
@@ -17,7 +16,6 @@
   "season_summer": "verán",
   "season_autumn": "outono",
   "grid_alias_note": "O rexistro de temperatura calcúlase por celda de grella de datos climáticos de ~11 km. {alias} comparte a súa cela con {city}, polo que ambos mostran o mesmo historial de 1940 ata a actualidade.",
-  "map_coverage_help": "Axuda a recoller os datos",
   "qv_nodata": "Aínda non hai datos para esta cidade.",
   "qv_nearest": "Cidade analizada máis próxima",
   "per_decade_days": "días/década",

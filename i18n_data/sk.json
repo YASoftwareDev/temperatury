@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / desaťročie",
-  "map_coverage": "Doteraz analyzovaných {done} z {total} miest – ostatné sa pridávajú zo dňa na deň.",
   "cur_so_far": "{year} doteraz (až {day} {month}): {v} °C v priemere, {d} °C v porovnaní s priemerom z rokov 1961-1990 pre rovnaké dni v roku.",
   "cmp_title": "Porovnajte dve mestá",
   "cmp_hint": "Každá krivka predstavuje ročnú anomáliu daného mesta v porovnaní s jeho vlastnou základnou líniou z rokov 1961 – 1990, takže miesta s rôznym podnebím sa porovnávajú spravodlivo.",
@@ -17,7 +16,6 @@
   "season_summer": "leto",
   "season_autumn": "jeseň",
   "grid_alias_note": "Teplotný záznam sa počíta na ~11 km bunky klimaticko-údajovej siete. {alias} zdieľa svoju bunku s {city}, takže obe vykazujú rovnakú históriu od roku 1940 do súčasnosti.",
-  "map_coverage_help": "Pomôžte zhromaždiť údaje",
   "qv_nodata": "Zatiaľ žiadne údaje pre toto mesto.",
   "qv_nearest": "Najbližšie analyzované mesto",
   "per_decade_days": "dní / desaťročí",

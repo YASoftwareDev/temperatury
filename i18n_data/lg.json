@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / emyaka kkumi",
-  "map_coverage": "{done} ku bibuga {total} ebyekenenyeddwa okutuusa kati - ebisigadde byongerwako buli lunaku.",
   "cur_so_far": "{year} okutuusa kati (okutuuka ku {day} {month}): {v} °C ku kigero, {d} °C okusinziira ku 1961-1990 kitegeeza ku nnaku ze zimu ez’omwaka.",
   "cmp_title": "Geraageranya ebibuga bibiri",
   "cmp_hint": "Buli curve ye city’s yearly anomaly vs its own 1961-1990 baseline, kale ebifo ebirina embeera y’obudde ey’enjawulo bigeraageranya mu bwenkanya.",
@@ -17,7 +16,6 @@
   "season_summer": "mu kyeya",
   "season_autumn": "mu biseera by’omusana",
   "grid_alias_note": "Likodi y’ebbugumu ebalirirwa buli ~11 km climate-data grid cell. {alias} egabana akasenge kaayo ne {city}, kale zombi ziraga ebyafaayo bye bimu ebya 1940-kati.",
-  "map_coverage_help": "Yamba okukung’aanya data",
   "qv_nodata": "Tewali data ya kibuga kino n'okutuusa kati.",
   "qv_nearest": "Ekibuga ekisinga okumpi ekyekenenyeddwa",
   "per_decade_days": "ennaku / emyaka kkumi",

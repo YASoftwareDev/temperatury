@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / decenija",
-  "map_coverage": "{done} od {total} gradova analiziranih do sada - ostali se dodaju iz dana u dan.",
   "cur_so_far": "{year} do sada (do {day} {month}): {v} °C u prosjeku, {d} °C u odnosu na srednju vrijednost za 1961-1990 za iste dane u godini.",
   "cmp_title": "Uporedite dva grada",
   "cmp_hint": "Svaka kriva je godišnja anomalija tog grada u odnosu na njegovu osnovnu liniju iz 1961.-1990. godine, tako da se mjesta s različitim klimatskim uvjetima upoređuju pošteno.",
@@ -17,7 +16,6 @@
   "season_summer": "ljeto",
   "season_autumn": "jesen",
   "grid_alias_note": "Temperaturni rekord se izračunava po ~11 km mrežne ćelije sa klimatskim podacima. {alias} dijeli svoju ćeliju sa {city}, tako da oba pokazuju istu istoriju od 1940. godine.",
-  "map_coverage_help": "Pomozite u prikupljanju podataka",
   "qv_nodata": "Još nema podataka za ovaj grad.",
   "qv_nearest": "Najbliži analizirani grad",
   "per_decade_days": "dana / decenije",

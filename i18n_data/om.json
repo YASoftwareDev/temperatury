@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / kurmaana",
-  "map_coverage": "Magaalota {total} hanga ammaatti xiinxalaman keessaa {done} - kanneen hafan guyyaa guyyaan itti dabalama.",
   "cur_so_far": "{year} hanga ammaatti (hanga {day} {month}): {v} °C giddu galeessaan, {d} °C vs giddu galeessa bara 1961-1990 guyyoota walfakkaataa waggaa.",
   "cmp_title": "Magaalota lama wal bira qabi ilaali",
   "cmp_hint": "Tokkoon tokkoon qaxxaamuraa anomaalii waggaa magaalaa sanaa vs bu’uura mataa ishee 1961-1990 waan ta’eef bakkeewwan haala qilleensaa adda addaa qaban haqaan walbira qabu.",
@@ -17,7 +16,6 @@
   "season_summer": "ganna",
   "season_autumn": "birraa",
   "grid_alias_note": "Galmeen ho'aa seelii giiridii haala qilleensaa-daataa ~11 km tokkoof shallagama. {alias} seelii isaa {city} waliin qooddata, kanaaf lamaan isaaniiyyuu seenaa bara 1940-amma wal fakkaatu agarsiisu.",
-  "map_coverage_help": "Daataa walitti qabuuf gargaaraa",
   "qv_nodata": "Magaalaa kanaaf hanga ammaatti daataa hin jiru.",
   "qv_nearest": "Magaalaa xiinxalamte dhiyoo",
   "per_decade_days": "guyyoota / kurmaana",

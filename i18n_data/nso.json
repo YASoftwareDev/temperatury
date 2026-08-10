@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / ngwagasome",
-  "map_coverage": "{done} ya {total} metse e sekaseka ho fihlela joale - ba bang kaofela ba eketswa letsatsi le letsatsi.",
   "cur_so_far": "{year} go fihla ga bjale (go fihla go {day} {month}): {v} °C ka palogare, {d} °C vs 1961-1990 bolela bakeng sa matšatši a swanago a ngwaga.",
   "cmp_title": "Bapetša metse e mebedi",
   "cmp_hint": "Curve ye nngwe le ye nngwe ke anomaly ya ngwaga le ngwaga ya toropo yeo vs motheo wa yona wa 1961-1990, ka fao mafelo ao a nago le tlelaemete ye e fapanego a bapetša ka toka.",
@@ -17,7 +16,6 @@
   "season_summer": "lehlabula",
   "season_autumn": "seruthwane",
   "grid_alias_note": "Rekoto ya themperetšha e balwa ka ~ 11 km tlelaemete-data keriti sele. {alias} e abelana sele ya yona le {city}, ka fao bobedi bja tšona di bontšha histori ye e swanago ya 1940-bjale.",
-  "map_coverage_help": "Thuša go kgoboketša ya data",
   "qv_nodata": "Ga go na data ya motse wo ga bjale.",
   "qv_nearest": "Motse o hlahlobjago kudu",
   "per_decade_days": "matšatši / ngwagasome",

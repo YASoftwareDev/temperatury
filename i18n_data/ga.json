@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / deich mbliana",
-  "map_coverage": "{done} de {total} cathracha a ndearnadh anailís orthu go dtí seo - cuirtear an chuid eile leis ó lá go lá.",
   "cur_so_far": "{year} go dtí seo (go {day} {month}): {v} °C ar an meán, {d} °C vs meán 1961-1990 do na laethanta céanna den bhliain.",
   "cmp_title": "Déan comparáid idir dhá chathair",
   "cmp_hint": "Is ionann gach cuar agus aimhrialtacht bhliantúil na cathrach sin i gcomparáid lena bunlíne féin 1961-1990, agus mar sin déantar comparáid idir áiteanna le haeráidí éagsúla.",
@@ -17,7 +16,6 @@
   "season_summer": "samhradh",
   "season_autumn": "fómhar",
   "grid_alias_note": "Ríomhtar an taifead teochta in aghaidh na ~11 km de chill eangaí sonraí aeráide. Roinneann {alias} a chill le {city}, mar sin léiríonn an dá cheann an stair chéanna ó 1940-láthair.",
-  "map_coverage_help": "Cabhrú leis na sonraí a bhailiú",
   "qv_nodata": "Níl aon sonraí don chathair seo fós.",
   "qv_nearest": "An chathair is cóngaraí a ndearnadh anailís uirthi",
   "per_decade_days": "laethanta/deich mbliana",

@@ -135,8 +135,6 @@
   "cap_heatindex": "体感温度（湿度を組み込んだ暑さ指数）が暑熱ストレス水準に達した日数 — 公的な暑熱注意情報で使われる指標です。体感温度データセットが必要です。",
   "footer": "生成日 {date} · データ: <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub のソース</a>",
   "intro": "1940年以降、世界の大都市がどのように温暖化してきたか——ERA5気候再解析による日別気温記録。",
-  "map_coverage": "これまでに {total} 都市中 {done} 都市を分析済み - 残りは日々追加されています。",
-  "map_coverage_help": "データ収集に協力する",
   "qv_nodata": "この都市のデータはまだありません。",
   "qv_nearest": "最寄りの分析済み都市",
   "cur_so_far": "{year}年これまで（{month}{day}日まで）：平均 {v} °C、年の同じ期間の1961-1990年平均比 {d} °C。",

@@ -1537,7 +1537,6 @@ ${topbar}
     <span class="gl"><i class="gl-amber"></i>${grid_some}</span>
     <span class="gl"><i class="gl-red"></i>${grid_none}</span>
   </div>
-  ${coverage_note}
   ${kpi_band}
     </section><!-- /tp-map -->
     <section class="tabpanel" role="tabpanel" id="tp-ranking-cities" aria-labelledby="tab-ranking-cities" tabindex="0" hidden>
@@ -3277,23 +3276,6 @@ def build_map_page(
                     + ('<div class="zone-cards">' + "".join(_cards) + '</div>'
                        if _cards else ''))
 
-    # Coverage note under the map: how far the data gathering has come, with a
-    # pointer to CONTRIBUTING. Both numbers are computed, never estimated; the
-    # note only appears while there is actually a gap to report.
-    n_analysed = n_analysed_early
-    coverage_note = ""
-    if target_cities and target_cities > n_analysed:
-        _cov = tr.get(
-            "map_coverage",
-            "{done} of {total} cities analysed so far - the rest are added "
-            "day by day.")
-        coverage_note = (
-            '<p class="map-coverage">'
-            + _esc(_cov.format(done=n_analysed, total=target_cities)) + ' '
-            + '<a href="https://github.com/YASoftwareDev/temperatury/blob/main/'
-              'CONTRIBUTING.md" target="_blank" rel="noopener">'
-            + _esc(tr.get("map_coverage_help", "Help gather the data"))
-            + '</a></p>')
     _rank_by_slug = {r["s"]: r for r in (ranking or [])}
     _all_trends = sorted(r["t"] for r in (ranking or []))
     # The city the "your region" tab opens on before geolocation resolves.
@@ -3557,7 +3539,6 @@ def build_map_page(
         map_region_buttons=map_region_buttons,
         map_filter_label=tr.get("map_filter", "Continent or country"),
         qv_json=qv_json,
-        coverage_note=coverage_note,
         kpi_band=kpi_band,
         cmp_title=tr.get("cmp_title", "Compare two cities"),
         cmp_hint=tr.get(

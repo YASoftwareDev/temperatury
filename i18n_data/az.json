@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / onillik",
-  "map_coverage": "İndiyə qədər təhlil edilən {total} şəhərdən {done} - qalanları günbəgün əlavə olunur.",
   "cur_so_far": "{year} indiyə qədər ({day} {month}-a qədər): orta hesabla {v} °C, ilin eyni günləri üçün 1961-1990-cı illərin orta göstəricisi ilə müqayisədə {d} °C.",
   "cmp_title": "İki şəhəri müqayisə edin",
   "cmp_hint": "Hər bir əyri həmin şəhərin illik anomaliyasını öz 1961-1990-cı illərin ilkin göstəricisi ilə ifadə edir, ona görə də fərqli iqlimi olan yerlər kifayət qədər müqayisə olunur.",
@@ -17,7 +16,6 @@
   "season_summer": "yay",
   "season_autumn": "payız",
   "grid_alias_note": "Temperatur rekordu ~11 km iqlim-məlumat şəbəkəsi hüceyrəsi üçün hesablanır. {alias} hücrəsini {city} ilə paylaşır, ona görə də hər ikisi eyni 1940-cı ildən indiki tarixi göstərir.",
-  "map_coverage_help": "Məlumatların toplanmasına kömək edin",
   "qv_nodata": "Bu şəhər üçün hələ məlumat yoxdur.",
   "qv_nearest": "Ən yaxın təhlil edilən şəhər",
   "per_decade_days": "gün / onillik",

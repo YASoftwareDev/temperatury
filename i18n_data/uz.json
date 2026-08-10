@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / o'n yil",
-  "map_coverage": "Hozirgacha tahlil qilingan {total} shaharlardan {done} - qolganlari kundan-kunga qo'shiladi.",
   "cur_so_far": "{year} hozirgacha ({day} {month} gacha): oʻrtacha {v} °C, yilning shu kunlari uchun 1961-1990-yillarning oʻrtacha koʻrsatkichiga nisbatan {d} °C.",
   "cmp_title": "Ikki shaharni solishtiring",
   "cmp_hint": "Har bir egri chiziq o'sha shaharning yillik anomaliyasi bilan 1961-1990 yillardagi o'ziga xos ko'rsatkichdir, shuning uchun iqlimi har xil bo'lgan joylar adolatli taqqoslanadi.",
@@ -17,7 +16,6 @@
   "season_summer": "yoz",
   "season_autumn": "kuz",
   "grid_alias_note": "Harorat rekordi ~ 11 km iqlim ma'lumotlari tarmoq hujayrasi uchun hisoblanadi. {alias} oʻz hujayrasini {city} bilan baham koʻradi, shuning uchun ikkalasi ham bir xil 1940-hozirgi tarixni koʻrsatadi.",
-  "map_coverage_help": "Ma'lumotlarni yig'ishga yordam bering",
   "qv_nodata": "Bu shahar uchun hozircha maʼlumot yoʻq.",
   "qv_nearest": "Eng yaqin tahlil qilingan shahar",
   "per_decade_days": "kun / o'n yil",

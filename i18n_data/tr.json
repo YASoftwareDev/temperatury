@@ -137,8 +137,6 @@
   "cap_heatindex": "Hissedilen sıcaklığın (nemi de hesaba katan ısı endeksi) sıcaklık stresi düzeylerine ulaştığı günler — kamu sıcak hava uyarılarında kullanılan metrik. Hissedilen sıcaklık veri seti gerektirir.",
   "footer": "{date} tarihinde oluşturuldu · veriler <a href=\"https://open-meteo.com/\">Open-Meteo</a> tarihsel yeniden analizinden (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub üzerinde kaynak</a>",
   "intro": "Dünyanın büyük şehirleri 1940'tan bu yana nasıl ısındı — ERA5 iklim yeniden analizinden günlük sıcaklık kayıtları.",
-  "map_coverage": "Şimdiye dek {total} şehirden {done} tanesi analiz edildi - kalanlar gün be gün ekleniyor.",
-  "map_coverage_help": "Veri toplamaya yardım et",
   "qv_nodata": "Bu şehir için henüz veri yok.",
   "qv_nearest": "En yakın analiz edilmiş şehir",
   "cur_so_far": "{year} şu ana dek ({day} {month} itibarıyla): ortalama {v} °C, yılın aynı günleri için 1961-1990 ortalamasına göre {d} °C.",

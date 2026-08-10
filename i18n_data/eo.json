@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / jardeko",
-  "map_coverage": "{done} el {total} urboj analizitaj ĝis nun - la ceteraj estas aldonitaj tago post tago.",
   "cur_so_far": "{year} ĝis nun (al {day} {month}): {v} °C averaĝe, {d} °C kontraŭ la 1961-1990 meznombro por la samaj tagoj de la jaro.",
   "cmp_title": "Komparu du urbojn",
   "cmp_hint": "Ĉiu kurbo estas la ĉiujara anomalio de tiu urbo kontraŭ sia propra bazlinio 1961-1990, do lokoj kun malsamaj klimatoj kompariĝas juste.",
@@ -17,7 +16,6 @@
   "season_summer": "somero",
   "season_autumn": "aŭtuno",
   "grid_alias_note": "La temperaturrekordo estas kalkulita per ~11 km klimat-datuma kradĉelo. {alias} dividas sian ĉelon kun {city}, do ambaŭ montras la saman 1940-nuna historio.",
-  "map_coverage_help": "Helpu kolekti la datumojn",
   "qv_nodata": "Ankoraŭ neniuj datumoj por ĉi tiu urbo.",
   "qv_nearest": "Plej proksima analizita urbo",
   "per_decade_days": "tagoj/jardeko",

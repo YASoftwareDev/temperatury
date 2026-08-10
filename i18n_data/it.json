@@ -137,8 +137,6 @@
   "cap_heatindex": "Giorni in cui la temperatura percepita (indice di calore, che include l'umidità) raggiunge livelli di stress da calore — la metrica usata negli avvisi pubblici sul caldo. Richiede il dataset della temperatura percepita.",
   "footer": "Generato {date} · dati dalla rianalisi storica <a href=\"https://open-meteo.com/\">Open-Meteo</a> (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">sorgente su GitHub</a>",
   "intro": "Come si sono riscaldate le grandi città del mondo dal 1940 — dati giornalieri di temperatura dalla rianalisi climatica ERA5.",
-  "map_coverage": "Finora analizzate {done} città su {total} - il resto arriva giorno per giorno.",
-  "map_coverage_help": "Aiuta a raccogliere i dati",
   "qv_nodata": "Non ci sono ancora dati per questa città.",
   "qv_nearest": "Città analizzata più vicina",
   "cur_so_far": "{year} finora (al {day} {month}): {v} °C in media, {d} °C rispetto alla media 1961-1990 per gli stessi giorni dell'anno.",

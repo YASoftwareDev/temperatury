@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / década",
-  "map_coverage": "{done} {total} táva oñehesa’ỹijova’ekue ko’áĝa peve - hembýva oñembojoapy ára ha ára.",
   "cur_so_far": "{year} ko’áĝa peve ({day} {month} peve): {v} °C promedio-pe, {d} °C vs 1961-1990 promedio umi ára peteĩchagua ary pukukue.",
   "cmp_title": "Ñambojoja mokõi táva",
   "cmp_hint": "Káda curva ha'e upe tavaguasu anomalía anual vs línea base propia 1961-1990, upéicha umi tenda orekóva clima iñambuéva ombojoja hekoitépe.",
@@ -17,7 +16,6 @@
   "season_summer": "verano rehegua",
   "season_autumn": "otoño rehegua",
   "grid_alias_note": "Pe registro temperatura rehegua oñekomputa peteĩ ~11 km célula rejilla climática-datos rehegua. {alias} okomparti icélula {city} ndive, upévare mokõivéva ohechauka peteĩchagua tembiasakue 1940-pegua koꞌag̃agua.",
-  "map_coverage_help": "Oipytyvõ oñembyaty haguã umi dato",
   "qv_nodata": "Ndaipóri gueteri dato ko távape guarã.",
   "qv_nearest": "Táva oñeanalisáva hi'aguĩvéva",
   "per_decade_days": "ára / década",

@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / tsien jier",
-  "map_coverage": "{done} fan {total} stêden analysearre oant no - de rest wurdt dei ta dei tafoege.",
   "cur_so_far": "{year} oant no ta (oant {day} {month}): {v} °C gemiddeld, {d} °C tsjin it gemiddelde fan 1961-1990 foar deselde dagen fan it jier.",
   "cmp_title": "Ferlykje twa stêden",
   "cmp_hint": "Elke kromme is de jierlikse anomaly fan dy stêd tsjin syn eigen basisline fan 1961-1990, sadat plakken mei ferskate klimaten frijwat fergelykje.",
@@ -17,7 +16,6 @@
   "season_summer": "simmer",
   "season_autumn": "hjerst",
   "grid_alias_note": "It temperatuerrekord wurdt berekkene per ~11 km klimaat-gegevensrastersel. {alias} dielt syn sel mei {city}, sadat beide deselde skiednis fan 1940-oanwêzich sjen litte.",
-  "map_coverage_help": "Help sammelje de gegevens",
   "qv_nodata": "Der binne noch gjin gegevens foar dizze stêd.",
   "qv_nearest": "Dichtstby analysearre stêd",
   "per_decade_days": "dagen / tsien jier",

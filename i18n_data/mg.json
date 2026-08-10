@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / folo taona",
-  "map_coverage": "{done} amin'ny {total} tanàna nodinihina hatreto - ampiana isan'andro ny ambiny.",
   "cur_so_far": "{year} hatreto (hatramin'ny {day} {month}): {v} °C amin'ny antsalany, {d} °C vs ny 1961-1990 midika ho an'ny andro mitovy amin'ny taona.",
   "cmp_title": "Ampitahao tanàna roa",
   "cmp_hint": "Ny fiolahana tsirairay dia ny anomaliana isan-taona an'ny tanàna vs ny fotony manokana tamin'ny 1961-1990, noho izany dia mampitaha tsara ny toerana misy toetr'andro samihafa.",
@@ -17,7 +16,6 @@
   "season_summer": "fahavaratra",
   "season_autumn": "fararano",
   "grid_alias_note": "Ny firaketana ny mari-pana dia kajy isaky ny ~ 11 km selan-tsarimihetsika momba ny toetr'andro. {alias} mizara ny selany amin'ny {city}, ka samy mampiseho ny tantara 1940-ankehitriny mitovy.",
-  "map_coverage_help": "Ampio hanangona ny angona",
   "qv_nodata": "Tsy mbola misy angona momba ity tanàna ity.",
   "qv_nearest": "Tanàna namakafaka akaiky indrindra",
   "per_decade_days": "andro / folo taona",

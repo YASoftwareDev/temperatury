@@ -147,8 +147,6 @@
   "heat_danger": "≥ {t:.0f} °C (አደጋ)",
   "cap_heatindex": "የሚሰማው የሙቀት መጠን (እርጥበትን የሚያካትት የሙቀት ጠቋሚ) የሙቀት-ጭንቀት ደረጃዎች የሚደርስባቸው ቀናት፣ የሕዝብ የሙቀት ማስጠንቀቂያዎች የሚጠቀሙበት መለኪያ። የሚሰማው-ሙቀት ውሂብ ያስፈልጋል።",
   "footer": "የተፈጠረው {date} · ውሂብ ከ<a href=\"https://open-meteo.com/\">Open-Meteo</a> ታሪካዊ ዳግም ትንተና (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">በGitHub ላይ ምንጭ</a>",
-  "map_coverage": "እስካሁን ከ{total} ከተሞች {done} ተተንትነዋል - የቀሩት በየቀኑ እየታከሉ ነው።",
-  "map_coverage_help": "መረጃ በመሰብሰብ ያግዙ",
   "qv_nodata": "ለዚህ ከተማ ገና መረጃ የለም።",
   "qv_nearest": "በጣም ቅርብ የተተነተነ ከተማ",
   "cur_so_far": "{year} እስካሁን (እስከ {month} {day}): በአማካይ {v} °C፣ ለተመሳሳይ የዓመቱ ቀናት ከ1961-1990 አማካይ ጋር ሲነጻጸር {d} °C።",

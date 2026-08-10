@@ -1,6 +1,5 @@
 {
   "per_decade_c": "℃/十年",
-  "map_coverage": "到目前為止已分析了 {total} 個城市中的 {done} - 其餘的城市每天都會添加。",
   "cur_so_far": "到目前為止 {year}（至 {day} {month}）：平均值 {v} °C，與 1961-1990 年同一天的平均值相比，{d} °C。",
   "cmp_title": "比較兩個城市",
   "cmp_hint": "每條曲線都是該城市的年度異常與其 1961-1990 年基線的比較，因此不同氣候的地方可以公平地進行比較。",
@@ -17,7 +16,6 @@
   "season_summer": "夏天",
   "season_autumn": "秋天",
   "grid_alias_note": "溫度記錄是按約 11 公里氣候資料網格單元計算的。 {alias} 與 {city} 共享單元格，因此兩者顯示相同的 1940 年至今的歷史記錄。",
-  "map_coverage_help": "幫助收集數據",
   "qv_nodata": "還沒有這個城市的數據。",
   "qv_nearest": "最近分析的城市",
   "per_decade_days": "天/十年",

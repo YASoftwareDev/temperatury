@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / xyoo",
-  "map_coverage": "{done} ntawm {total} cov nroog txheeb xyuas txog tam sim no - tus so tau ntxiv ib hnub.",
   "cur_so_far": "{year} txog tam sim no (rau {day} {month}): {v}°C qhov nruab nrab, {d}°C vs xyoo 1961-1990 txhais tau tias tib hnub ntawm lub xyoo.",
   "cmp_title": "Muab piv ob lub nroog",
   "cmp_hint": "Txhua qhov nkhaus yog lub nroog qhov tsis sib xws txhua xyoo vs nws tus kheej 1961-1990 lub hauv paus, yog li cov chaw uas muaj huab cua sib txawv sib piv.",
@@ -17,7 +16,6 @@
   "season_summer": "lub caij ntuj sov",
   "season_autumn": "caij nplooj zeeg",
   "grid_alias_note": "Cov ntaub ntawv ntsuas kub yog xam rau ~ 11 km huab cua-cov ntaub ntawv kab sib chaws ntawm tes. {alias} qhia nws lub xov tooj nrog {city}, yog li ob leeg qhia tib yam 1940-tam sim no keeb kwm.",
-  "map_coverage_help": "Pab sau cov ntaub ntawv",
   "qv_nodata": "Tsis muaj ntaub ntawv rau lub nroog no.",
   "qv_nearest": "Lub nroog txheeb ze ze tshaj plaws",
   "per_decade_days": "hnub / xyoo caum",

@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / ƒe ewo",
-  "map_coverage": "{done} le {total} du siwo ŋu woda akɔ ɖo vaseɖe fifia - wotsɔa susɔeawo kpena ɖe eŋu gbesiagbe.",
   "cur_so_far": "{year} vaseɖe fifia (vaseɖe {day} {month}): {v} °C le mama dedie nu, {d} °C tsɔ wu ƒe 1961-1990 ƒe mama dedie na ƒea ƒe ŋkeke mawo ke.",
   "cmp_title": "Tsɔ du eve sɔ kple wo nɔewo",
   "cmp_hint": "Curve ɖesiaɖe nye du ma ƒe ƒe sia ƒe anomaly vs eya ŋutɔ ƒe 1961-1990 gɔmedzedze, eyata teƒe siwo yame ƒe nɔnɔme to vovo la sɔ kple wo nɔewo dzɔdzɔe.",
@@ -17,7 +16,6 @@
   "season_summer": "dzomeŋɔli",
   "season_autumn": "adame",
   "grid_alias_note": "Wobu dzoxɔxɔ ƒe nuŋlɔɖi le ~11 km yame ƒe nɔnɔme-nyatakaka grid cell ɖesiaɖe me. {alias} ma eƒe lãmenugbagbevi kple {city}, eyata wo ame evea siaa ɖe ƒe 1940-fifi ŋutinya ɖeka fia.",
-  "map_coverage_help": "Kpe asi ɖe nyatakakaawo nuƒoƒoƒu ŋu",
   "qv_nodata": "Du sia ŋuti nyatakaka aɖeke meli haɖe o.",
   "qv_nearest": "Du si me wodzro si te ɖe eŋu wu",
   "per_decade_days": "ŋkeke / ƒe ewo",

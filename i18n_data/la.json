@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / decade",
-  "map_coverage": "{done} of {total} cities analysed so far - the rest are added day by day.",
   "cur_so_far": "{year} so far (to {day} {month}): {v} °C on average, {d} °C vs the 1961-1990 mean for the same days of the year.",
   "cmp_title": "Confer duas civitates",
   "cmp_hint": "Quaelibet curva est illius civitatis anomalia annua sua nobis 1961-1990 baselinea, ut loca diversis climatibus satis comparent.",
@@ -17,7 +16,6 @@
   "season_summer": "aestas",
   "season_autumn": "autumnus",
   "grid_alias_note": "The temperature record is computed per ~11 km climate-data grid cell. {alias} shares its cell with {city}, so both show the same 1940-present history.",
-  "map_coverage_help": "Auxilium colligentes notitia",
   "qv_nodata": "Nulla sed mauris enim.",
   "qv_nearest": "Proxima exponi civitatem",
   "per_decade_days": "dies / decennium",

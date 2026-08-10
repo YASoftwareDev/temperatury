@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / desmitgade",
-  "map_coverage": "{done} no {total} līdz šim analizētajām pilsētām — pārējās tiek pievienotas katru dienu.",
   "cur_so_far": "{year} līdz šim (līdz {day} {month}): {v} °C vidēji, {d} °C salīdzinājumā ar 1961.–1990. gada vidējo rādītāju tajās pašās gada dienās.",
   "cmp_title": "Salīdziniet divas pilsētas",
   "cmp_hint": "Katra līkne ir šīs pilsētas gada anomālija salīdzinājumā ar tās 1961.–1990. gada bāzes līniju, tāpēc vietas ar atšķirīgu klimatu ir salīdzināmas.",
@@ -17,7 +16,6 @@
   "season_summer": "vasara",
   "season_autumn": "rudens",
   "grid_alias_note": "Temperatūras rekords tiek aprēķināts uz ~ 11 km klimata datu tīkla šūnu. {alias} koplieto savu šūnu ar {city}, tāpēc abās tiek rādīta viena un tā pati 1940. gada vēsture.",
-  "map_coverage_help": "Palīdziet apkopot datus",
   "qv_nodata": "Par šo pilsētu vēl nav datu.",
   "qv_nearest": "Tuvākā analizētā pilsēta",
   "per_decade_days": "dienas / desmitgade",

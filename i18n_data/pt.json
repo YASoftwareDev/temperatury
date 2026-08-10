@@ -137,8 +137,6 @@
   "cap_heatindex": "Dias em que a temperatura aparente (índice de calor, que incorpora a humidade) atinge níveis de stress térmico — a métrica usada nos avisos públicos de calor. Requer o conjunto de dados de temperatura aparente.",
   "footer": "Gerado em {date} · dados da reanálise histórica <a href=\"https://open-meteo.com/\">Open-Meteo</a> (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">código-fonte no GitHub</a>",
   "intro": "Como as grandes cidades do mundo aqueceram desde 1940 — registros diários de temperatura da reanálise climática ERA5.",
-  "map_coverage": "{done} de {total} cidades analisadas até agora - o resto chega dia a dia.",
-  "map_coverage_help": "Ajude a recolher os dados",
   "qv_nodata": "Ainda não há dados para esta cidade.",
   "qv_nearest": "Cidade analisada mais próxima",
   "cur_so_far": "{year} até agora (até {day} de {month}): {v} °C em média, {d} °C face à média de 1961-1990 para os mesmos dias do ano.",

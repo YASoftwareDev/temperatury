@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / kum sawm chhung",
-  "map_coverage": "Tun thlenga khawpui {total} thlirlet zinga {done} - a bak zawng chu nitin an belh zel a ni.",
   "cur_so_far": "{year} tun thlenga ({day} {month} thleng): {v} °C a vaiin, {d} °C vs 1961-1990 mean kum khat chhunga ni inang.",
   "cmp_title": "Khawpui pahnih tehkhin rawh",
   "cmp_hint": "Curve tin hi chu khawpui kum tin anomaly vs a mah 1961-1990 baseline a ni a, chuvangin climate hrang hrang awmna hmunte chu a fair takin an khaikhin a ni.",
@@ -17,7 +16,6 @@
   "season_summer": "thlasik lai a ni",
   "season_autumn": "thlasik lai a ni",
   "grid_alias_note": "Temperature record hi ~11 km climate-data grid cell khatah chhut a ni. {alias} hian a cell chu {city} nen a insem a, chuvangin an pahnih hian 1940-tuna history inang an lantir a ni.",
-  "map_coverage_help": "Data khawlkhawmnaah tanpui rawh",
   "qv_nodata": "He khawpui tan hian data a la awm lo.",
   "qv_nearest": "Khawpui analyzed hnai ber",
   "per_decade_days": "ni / kum sawm chhung",

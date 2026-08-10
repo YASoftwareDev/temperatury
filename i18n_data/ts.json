@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / khume ra malembe",
-  "map_coverage": "{done} ya {total} madoroba lama kambisisiweke ku fikela sweswi - lama seleke ya engeteriwa siku na siku.",
   "cur_so_far": "{year} kufikela sweswi (kufika eka {day} {month}): {v} °C hi xiringaniso, {d} °C vs 1961-1990 mean ya masiku lawa ya fanaka ya lembe.",
   "cmp_title": "Ringanisa madoroba mambirhi",
   "cmp_hint": "Curve yin’wana na yin’wana i anomaly ya lembe na lembe ya doroba rero vs baseline ya yona ya 1961-1990, hikokwalaho tindzhawu letingana maxelo yohambana hambana ti pimanisa kahle.",
@@ -17,7 +16,6 @@
   "season_summer": "ximumu",
   "season_autumn": "ximun’wana",
   "grid_alias_note": "Rhekhodo ya mahiselo yi hlayeriwa hi ~11 km climate-data grid cell. {alias} yi avelana sele ya yona na {city}, kutani havumbirhi bya tona ti kombisa matimu lama fanaka ya 1940-sweswi.",
-  "map_coverage_help": "Pfuna ku hlengeleta data",
   "qv_nodata": "Ku hava data ya doroba leri ku fikela sweswi.",
   "qv_nearest": "Doroba ra le kusuhi leri kambisisiweke",
   "per_decade_days": "masiku / khume ra malembe",

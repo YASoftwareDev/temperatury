@@ -135,8 +135,6 @@
   "cap_heatindex": "যেসব দিনে apparent temperature (heat index, যাতে আর্দ্রতা ধরা হয়) heat-stress স্তরে পৌঁছে — জনস্বাস্থ্য heat advisory-তে ব্যবহৃত মেট্রিক। apparent-temperature dataset প্রয়োজন।",
   "footer": "তৈরি হয়েছে {date} · ডেটা <a href=\"https://open-meteo.com/\">Open-Meteo</a> historical reanalysis (ERA5) থেকে · <a href=\"https://github.com/YASoftwareDev/temperatury\">GitHub-এ source</a>",
   "intro": "১৯৪০ সাল থেকে বিশ্বের বড় শহরগুলো কীভাবে উষ্ণ হয়েছে — ERA5 জলবায়ু পুনর্বিশ্লেষণ থেকে দৈনিক তাপমাত্রার রেকর্ড।",
-  "map_coverage": "{total}টির মধ্যে {done}টি শহর বিশ্লেষণ করা হয়েছে - বাকিগুলো দিনে দিনে যুক্ত হচ্ছে।",
-  "map_coverage_help": "ডেটা সংগ্রহে সাহায্য করুন",
   "qv_nodata": "এই শহরের জন্য এখনও কোনো ডেটা নেই।",
   "qv_nearest": "নিকটতম বিশ্লেষিত শহর",
   "cur_so_far": "{year} এ পর্যন্ত ({day} {month} পর্যন্ত): গড়ে {v} °C, বছরের একই দিনগুলির 1961-1990 গড়ের তুলনায় {d} °C।",

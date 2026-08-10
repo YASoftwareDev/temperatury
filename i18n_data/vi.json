@@ -137,8 +137,6 @@
   "cap_heatindex": "Những ngày nhiệt độ cảm nhận (chỉ số nhiệt, có tính đến độ ẩm) đạt mức gây căng thẳng nhiệt — thước đo được dùng trong các cảnh báo nóng công cộng. Cần bộ dữ liệu nhiệt độ cảm nhận.",
   "footer": "Tạo ngày {date} · dữ liệu từ tái phân tích lịch sử <a href=\"https://open-meteo.com/\">Open-Meteo</a> (ERA5) · <a href=\"https://github.com/YASoftwareDev/temperatury\">mã nguồn trên GitHub</a>",
   "intro": "Các thành phố lớn trên thế giới đã ấm lên như thế nào từ năm 1940 — dữ liệu nhiệt độ hằng ngày từ tái phân tích khí hậu ERA5.",
-  "map_coverage": "Đã phân tích {done} trong số {total} thành phố - phần còn lại được bổ sung từng ngày.",
-  "map_coverage_help": "Giúp thu thập dữ liệu",
   "qv_nodata": "Chưa có dữ liệu cho thành phố này.",
   "qv_nearest": "Thành phố đã phân tích gần nhất",
   "cur_so_far": "{year} đến nay (tới {day} {month}): trung bình {v} °C, {d} °C so với trung bình 1961-1990 cho cùng những ngày trong năm.",

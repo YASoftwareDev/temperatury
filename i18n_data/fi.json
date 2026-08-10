@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / vuosikymmen",
-  "map_coverage": "{done} / {total} kaupunkia analysoitu tähän mennessä – loput lisätään päivä päivältä.",
   "cur_so_far": "{year} tähän mennessä ({day} {month}): {v} °C keskimäärin, {d} °C vs. vuosien 1961-1990 keskiarvo samoilla vuodenpäivillä.",
   "cmp_title": "Vertaa kahta kaupunkia",
   "cmp_hint": "Jokainen käyrä on kyseisen kaupungin vuotuinen poikkeama verrattuna sen omaan 1961-1990 perusviivaan, joten paikkoja, joissa on erilainen ilmasto, voidaan verrata reilusti.",
@@ -17,7 +16,6 @@
   "season_summer": "kesä",
   "season_autumn": "syksy",
   "grid_alias_note": "Lämpötilaennätys on laskettu ~11 km ilmastotietoruudukon solua kohden. {alias} jakaa solunsa numeron {city} kanssa, joten molemmissa näkyy sama historia vuodesta 1940 lähtien.",
-  "map_coverage_help": "Auta keräämään tietoja",
   "qv_nodata": "Tästä kaupungista ei ole vielä tietoja.",
   "qv_nearest": "Lähin analysoitu kaupunki",
   "per_decade_days": "päivää / vuosikymmen",

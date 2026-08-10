@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / tekau tau",
-  "map_coverage": "{done} o {total} taone kua tātarihia i tenei wa - ko te toenga ka taapirihia ia ra.",
   "cur_so_far": "{year} tae noa ki tenei wa (ki te {day} {month}): {v} °C i te toharite, {d} °C ki te tikanga 1961-1990 mo nga ra ano o te tau.",
   "cmp_title": "Whakatauritea nga taone e rua",
   "cmp_hint": "Ko ia kurupae ko te rerekeetanga o ia tau o te taone nui me ona ake turanga o te tau 1961-1990, no reira ka whakatauritea nga waahi rerekee o te rangi.",
@@ -17,7 +16,6 @@
   "season_summer": "raumati",
   "season_autumn": "ngahuru",
   "grid_alias_note": "Ka tatauhia te rekoata pāmahana mo ia ~11 kiromita te pūtau mātiti rangi-raraunga. Ka tiri a {alias} i tana pūtau ki te {city}, no reira e whakaatu ana nga mea e rua i te hitori o 1940-naianei.",
-  "map_coverage_help": "Awhina ki te kohi raraunga",
   "qv_nodata": "Kaore ano he raraunga mo tenei taone nui.",
   "qv_nearest": "Patata tata kua tātarihia",
   "per_decade_days": "nga ra / tekau tau",

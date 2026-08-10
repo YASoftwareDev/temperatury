@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / hamarkada",
-  "map_coverage": "Orain arte aztertutako {total} hirietatik {done}; gainerakoak egunez egun gehitzen dira.",
   "cur_so_far": "{year} orain arte ({day} {month} arte): {v} °C batez beste, {d} °C eta 1961-1990 urteko batez bestekoa urteko egun bereko.",
   "cmp_title": "Konparatu bi hiri",
   "cmp_hint": "Kurba bakoitza hiri horren urteko anomalia eta bere 1961-1990 oinarri-lerroa da, beraz, klima desberdinak dituzten lekuak nahiko alderatzen dira.",
@@ -17,7 +16,6 @@
   "season_summer": "udara",
   "season_autumn": "udazkena",
   "grid_alias_note": "Tenperatura-erregistroa ~11 km-ko klima-datuen sareko gelaxka bakoitzeko kalkulatzen da. {alias} bere gelaxka {city}rekin partekatzen du, beraz, biek 1940-gaur egungo historia bera erakusten dute.",
-  "map_coverage_help": "Lagundu datuak biltzen",
   "qv_nodata": "Oraindik ez dago hiri honetarako daturik.",
   "qv_nearest": "Hurbilen aztertutako hiria",
   "per_decade_days": "egun / hamarkada",

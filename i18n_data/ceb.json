@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / dekada",
-  "map_coverage": "{done} sa {total} mga siyudad nga gisusi hangtod karon - ang uban gidugang adlaw-adlaw.",
   "cur_so_far": "{year} sa pagkakaron (hangtod sa {day} {month}): {v} °C sa aberids, {d} °C batok sa 1961-1990 mean para sa samang mga adlaw sa tuig.",
   "cmp_title": "Itandi ang duha ka siyudad",
   "cmp_hint": "Ang matag kurba mao ang tinuig nga anomaliya sa siyudad batok sa kaugalingong 1961-1990 nga baseline, busa ang mga dapit nga adunay lain-laing mga klima itandi sa patas.",
@@ -17,7 +16,6 @@
   "season_summer": "ting-init",
   "season_autumn": "tingdagdag",
   "grid_alias_note": "Ang rekord sa temperatura gikuwenta kada ~11 km nga climate-data grid cell. Ang {alias} nag-ambit sa iyang selyula sa {city}, mao nga ang duha nagpakita sa parehas nga 1940-karon nga kasaysayan.",
-  "map_coverage_help": "Tabang sa pagkolekta sa datos",
   "qv_nodata": "Wala pa’y datos alang sa kini nga lungsod.",
   "qv_nearest": "Pinakaduol nga naanalisa nga siyudad",
   "per_decade_days": "mga adlaw / dekada",

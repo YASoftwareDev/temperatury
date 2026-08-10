@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / dasawarsa",
-  "map_coverage": "{done} tina {total} kota dianalisis sajauh ieu - sésana ditambahkeun unggal poé.",
   "cur_so_far": "{year} sajauh ieu (ka {day} {month}): {v} °C rata-rata, {d} °C vs rata-rata 1961-1990 pikeun poé anu sarua dina sataun.",
   "cmp_title": "Bandingkeun dua kota",
   "cmp_hint": "Unggal kurva nyaéta anomali taunan kota éta vs garis dasar 1961-1990 sorangan, janten tempat-tempat anu iklimna béda-béda ngabandingkeun sacara adil.",
@@ -17,7 +16,6 @@
   "season_summer": "usum panas",
   "season_autumn": "usum gugur",
   "grid_alias_note": "Catetan suhu diitung per ~11 km sél grid data iklim. {alias} ngabagi sélna sareng {city}, janten duanana nunjukkeun sajarah 1940-ayeuna anu sami.",
-  "map_coverage_help": "Mantuan ngumpulkeun data",
   "qv_nodata": "Henteu aya data pikeun kota ieu.",
   "qv_nearest": "Kota dianalisis pangcaketna",
   "per_decade_days": "poé / dasawarsa",

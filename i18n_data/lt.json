@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C per dešimtmetį",
-  "map_coverage": "{done} iš {total} iki šiol analizuotų miestų – likusieji pridedami kiekvieną dieną.",
   "cur_so_far": "{year} iki šiol (iki {day} {month}): {v} °C vidutiniškai, {d} °C, palyginti su 1961–1990 m. vidurkiu tomis pačiomis metų dienomis.",
   "cmp_title": "Palyginkite du miestus",
   "cmp_hint": "Kiekviena kreivė yra to miesto metinė anomalija, palyginti su jo paties 1961–1990 m. bazine linija, todėl vietos su skirtingu klimatu palyginamos gana.",
@@ -17,7 +16,6 @@
   "season_summer": "vasara",
   "season_autumn": "rudens",
   "grid_alias_note": "Temperatūros rekordas skaičiuojamas ~11 km klimato duomenų tinklelio langeliui. {alias} dalijasi savo langeliu su {city}, todėl abu rodo tą pačią 1940 m. dabartinę istoriją.",
-  "map_coverage_help": "Padėkite surinkti duomenis",
   "qv_nodata": "Duomenų apie šį miestą kol kas nėra.",
   "qv_nearest": "Artimiausias analizuotas miestas",
   "per_decade_days": "dienos / dešimtmetis",

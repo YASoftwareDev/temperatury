@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / dekada",
-  "map_coverage": "{done} kadagiti {total} a siudad a naanalisar agingga ita - dagiti dadduma ket mainayon iti inaldaw.",
   "cur_so_far": "{year} aginggana ita (aginggana iti {day} {month}): {v} °C iti promedio, {d} °C vs ti 1961-1990 a kaibuksilan para kadagiti isu met laeng nga aldaw ti tawen.",
   "cmp_title": "Idiligyo ti dua a siudad",
   "cmp_hint": "Tunggal kurba ket ti tinawen nga anomalia dayta a siudad vs ti bukodna a 1961-1990 a batayan, isu a dagiti lugar nga addaan kadagiti nadumaduma a klima ket maipada a patas.",
@@ -17,7 +16,6 @@
   "season_summer": "kalgaw ti kalgaw",
   "season_autumn": "otonio",
   "grid_alias_note": "Ti rekord ti temperatura ket nakuenta iti tunggal maysa a ~11 km a selula ti grid ti klima-datos. Ti {alias} ket makibingbingay ti selulana iti {city}, isu nga agpada a mangipakita ti isu met laeng a 1940-agdama a pakasaritaan.",
-  "map_coverage_help": "Tumulong a mangurnong iti datos",
   "qv_nodata": "Awan pay ti datos para iti daytoy a siudad.",
   "qv_nearest": "Kaasitgan a naanalisar a siudad",
   "per_decade_days": "aldaw / dekada",

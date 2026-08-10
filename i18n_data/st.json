@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / lilemo tse leshome",
-  "map_coverage": "{done} ea {total} litoropo tse hlahlobiloeng ho fihlela joale - tse ling kaofela li eketsoa letsatsi le letsatsi.",
   "cur_so_far": "{year} ho fihlela joale (ho {day} {month}): {v} °C ka karolelano, {d} °C vs 1961-1990 e bolela matsatsi a tšoanang a selemo.",
   "cmp_title": "Bapisa metse e 'meli",
   "cmp_hint": "Mokokotlo o mong le o mong ke boemo ba toropo boo ba selemo le selemo khahlano le motheo oa eona oa 1961-1990, kahoo libaka tse nang le maemo a leholimo a fapaneng li bapisoa hantle.",
@@ -17,7 +16,6 @@
   "season_summer": "lehlabula",
   "season_autumn": "hoetla",
   "grid_alias_note": "Rekote ea mocheso e baloa ka ~ 11 km ea seleng ea data ea boemo ba leholimo. {alias} e arolelana sele ea eona le {city}, kahoo ka bobeli li bontša nalane e tšoanang ea 1940.",
-  "map_coverage_help": "Thusa ho bokella lintlha",
   "qv_nodata": "Ha ho na lintlha tsa toropo ena.",
   "qv_nearest": "Toropo e haufi e hlahlobiloeng",
   "per_decade_days": "matsatsi / lilemo tse leshome",

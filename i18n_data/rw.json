@@ -1,6 +1,5 @@
 {
   "per_decade_c": "° C / imyaka icumi",
-  "map_coverage": "{done} yimijyi {total} yasesenguwe kugeza ubu - ahasigaye hiyongeraho umunsi kumunsi.",
   "cur_so_far": "{year} kugeza ubu (kugeza {day} {month}): {v} ° C ugereranije, {d} ° C vs 1961-1990 bivuze iminsi imwe yumwaka.",
   "cmp_title": "Gereranya imigi ibiri",
   "cmp_hint": "Buri murongo niwo mujyi wa buri mwaka anomaly vs ibyingenzi 1961-1990, bityo ahantu hamwe nikirere gitandukanye ugereranije neza.",
@@ -17,7 +16,6 @@
   "season_summer": "icyi",
   "season_autumn": "igihe cy'izuba",
   "grid_alias_note": "Ubushyuhe bwanditse bubarwa kuri ~ 11 km ikirere-data grid selile. {alias} isangira selile yayo na {city}, byombi rero byerekana amateka amwe 1940-yubu.",
-  "map_coverage_help": "Fasha gukusanya amakuru",
   "qv_nodata": "Nta makuru yuyu mujyi.",
   "qv_nearest": "Umujyi wasesenguwe hafi",
   "per_decade_days": "iminsi / imyaka icumi",

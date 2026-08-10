@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / deichead",
-  "map_coverage": "{done} de {total} bailtean-mòra air an sgrùdadh gu ruige seo - tha an còrr air an cur ris bho latha gu latha.",
   "cur_so_far": "{year} gu ruige seo (gu {day} {month}): {v} °C gu cuibheasach, {d} °C vs cuibheasachd 1961-1990 airson na h-aon làithean den bhliadhna.",
   "cmp_title": "Dèan coimeas eadar dà bhaile-mòr",
   "cmp_hint": "Is e gach lùb an neo-riaghailteachd bliadhnail a’ bhaile sin an aghaidh a bhun-loidhne fhèin 1961-1990, agus mar sin bidh àiteachan le gnàth-shìde eadar-dhealaichte a’ coimeas gu cothromach.",
@@ -17,7 +16,6 @@
   "season_summer": "samhradh",
   "season_autumn": "foghar",
   "grid_alias_note": "Tha an clàr teòthachd air a thomhas a rèir ~ 11 km cealla clèithe dàta gnàth-shìde. Bidh {alias} a’ roinn a chill le {city}, agus mar sin tha an dithis a’ nochdadh an aon eachdraidh 1940-an-diugh.",
-  "map_coverage_help": "Cuidich le bhith a’ cruinneachadh an dàta",
   "qv_nodata": "Chan eil dàta ann airson a’ bhaile-mhòr seo fhathast.",
   "qv_nearest": "Am baile as fhaisge air a bheil mion-sgrùdadh",
   "per_decade_days": "làithean/deichead",

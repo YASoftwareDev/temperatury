@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / årti",
-  "map_coverage": "{done} af {total} byer analyseret indtil videre - resten tilføjes dag for dag.",
   "cur_so_far": "{year} indtil videre (til {day} {month}): {v} °C i gennemsnit, {d} °C vs. gennemsnittet for 1961-1990 for de samme dage i året.",
   "cmp_title": "Sammenlign to byer",
   "cmp_hint": "Hver kurve er den bys årlige anomali i forhold til dens egen 1961-1990 basislinje, så steder med forskellige klimaer sammenlignes rimeligt.",
@@ -17,7 +16,6 @@
   "season_summer": "sommer",
   "season_autumn": "efterår",
   "grid_alias_note": "Temperaturrekorden beregnes pr. ~11 km klimadatagittercelle. {alias} deler sin celle med {city}, så begge viser den samme 1940-nuværende historie.",
-  "map_coverage_help": "Hjælp med at indsamle data",
   "qv_nodata": "Ingen data for denne by endnu.",
   "qv_nearest": "Nærmeste analyserede by",
   "per_decade_days": "dage / årti",

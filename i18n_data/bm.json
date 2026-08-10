@@ -1,6 +1,5 @@
 {
   "per_decade_c": "°C / san tan",
-  "map_coverage": "{done} dugu {total} minnu sɛgɛsɛgɛra fo ka na se bi ma - tɔw bɛ fara ɲɔgɔn kan don o don.",
   "cur_so_far": "{year} fo ka na se bi ma (ka se {day} {month} ma): {v} °C cɛmancɛ la, {d} °C ni san 1961-1990 kɔrɔ ye san don kelenw na.",
   "cmp_title": "Aw ye dugu fila suma ɲɔgɔn na",
   "cmp_hint": "Kuru kelen-kelen bɛɛ ye o dugu ka san o san anomali ye vs a yɛrɛ ka 1961-1990 basigi, o la, yɔrɔ minnu ka waati cogoya tɛ kelen ye, olu bɛ sanga ɲɔgɔn ma cogo bɛnnen na.",
@@ -17,7 +16,6 @@
   "season_summer": "samiyɛ fɛ",
   "season_autumn": "tilebin fɛ",
   "grid_alias_note": "Funteni hakɛ jatebɔ bɛ Kɛ ~11 km waati-daɲɛ-sɛbɛnni-seli kelen na. {alias} b’a ka selilɛri tila ni {city} ye, o la u fila bɛɛ bɛ san 1940-bi tariku kelen jira.",
-  "map_coverage_help": "Aw ye dɛmɛ don ka kunnafoniw lajɛ",
   "qv_nodata": "Donan si ma sɔrɔ dugu in kan fɔlɔ.",
   "qv_nearest": "Dugu sɛgɛsɛgɛlen min ka surun",
   "per_decade_days": "tile / san tan",
