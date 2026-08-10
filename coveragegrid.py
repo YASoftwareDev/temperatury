@@ -7,7 +7,7 @@ cities already have a committed mean data file. The map renders these cells as a
 green/amber/red overlay so it is obvious which regions still need downloading.
 
 Coverage is derived purely from the presence of committed cache files
-(``data/<slug>_<start>-<end>.csv.gz``) - never from live requests - so the
+(``data/<slug>_<start>-<end>.tpy``) - never from live requests - so the
 overlay reflects exactly what offline processing currently covers. The result is
 written once to ``charts/_coverage.json`` and coloured client-side; the browser
 never recomputes cell state from the full city list.
@@ -17,6 +17,7 @@ from __future__ import annotations
 import math
 from collections import Counter
 
+import codec
 import config
 import countries
 
@@ -47,7 +48,8 @@ def compute_cells(start_year: int, end_year: int,
         cell["m"] += 1
         # Same file-existence test as tools/coverage.py, so per-cell counts sum to
         # its totals exactly (no live request, no dependency on the render list).
-        if (data_dir / f"{loc.slug}_{start_year}-{end_year}.csv.gz").exists():
+        if codec.cached_path(
+                data_dir / f"{loc.slug}_{start_year}-{end_year}{codec.SUFFIX}"):
             cell["n"] += 1
         cell["r"][loc.region] += 1
         cc = countries.country_code(loc) or ""

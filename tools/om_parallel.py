@@ -57,16 +57,15 @@ GROUPS = {
 
 
 def _atomic_write(frame, path: Path) -> None:
-    """Write a gzipped CSV atomically so readers never see a partial file.
+    """Write the compact cache blob atomically so readers never see a partial file.
 
-    mtime=0 makes the bytes deterministic: everyone who fetches a given city
-    writes an identical file, so overlapping downloads across contributors merge
-    without a git conflict. The explicit method also forces gzip on the ``.part``
-    temp name (pandas would otherwise infer no compression from it).
+    The encoding carries no timestamp, so the bytes are deterministic: everyone
+    who fetches a given city writes an identical file, and overlapping downloads
+    across contributors merge without a git conflict. That property is
+    load-bearing (it is why duplicate work is harmless) - do not introduce any
+    time- or host-dependent field into the format.
     """
-    tmp = path.with_suffix(path.suffix + ".part")
-    frame.to_csv(tmp, compression={"method": "gzip", "mtime": 0})
-    os.replace(tmp, path)
+    codec.write_frame(frame, path)
 
 
 def _shard_of(slug: str, total: int) -> int:
@@ -166,7 +165,8 @@ def run(args):
         # that priority irrelevant on the only pass that spends real quota.
         locs = [l for l in locs
                 if getattr(l, "kind", "city") == "city"
-                and data._cache_path(l, args.start, args.end).exists()]
+                and data.codec.cached_path(
+                    data._cache_path(l, args.start, args.end)) is not None]
         print(f"enrich scope: {len(locs)} already-rendered cities, in priority order")
     workers = args.workers or (16 if data._API_KEY else 5)
     endpoint = "PAID (uncapped)" if data._API_KEY else "free tier"
@@ -182,7 +182,12 @@ def run(args):
             print(f"[{group}] skipped: time cap reached")
             break
         daily, parse, path_fn, chunk_sz = GROUPS[group]
-        missing = [l for l in locs if not path_fn(l, args.start, args.end).exists()]
+        # Cached in EITHER format counts as present: re-fetching a city we
+        # already hold in the legacy encoding would burn hourly quota to
+        # produce a file that is already on disk.
+        missing = [l for l in locs
+                   if data.codec.cached_path(
+                       path_fn(l, args.start, args.end)) is None]
         if not missing:
             print(f"[{group}] nothing missing")
             continue

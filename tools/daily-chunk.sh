@@ -122,13 +122,15 @@ for group in $ORDER; do
   fi
 done
 
-# The genuinely-new data files: untracked, ASCII-named .csv.gz files not already
+# The genuinely-new data files: untracked, ASCII-named cache files not already
 # on origin/main. (A feature branch keeps already-pushed files untracked in the
 # working tree, so filter those out to avoid re-sending them.) We deliberately do
 # NOT commit these onto the checked-out branch - see build_data_commit below.
 NEWFILES=()
 while IFS= read -r f; do
-  case "$f" in *.csv.gz) ;; *) continue ;; esac
+  # Both encodings count: a machine that gathered before the format migration
+  # still holds unsent .csv.gz files, and skipping them would lose real work.
+  case "$f" in *.tpy|*.csv.gz) ;; *) continue ;; esac
   case "$f" in *[!\ -~]*) continue ;; esac              # skip non-ASCII names
   git cat-file -e "origin/main:$f" 2>/dev/null && continue   # already on main
   NEWFILES+=("$f")
