@@ -31,7 +31,11 @@ export GH_PROMPT_DISABLED=1
 
 mktmp() { mktemp "${TMPDIR:-/tmp}/temps.XXXXXX"; }
 NEWLIST="$(mktmp)"; PUSHERR="$(mktmp)"
-trap 'rm -f "$NEWLIST" "$PUSHERR"' EXIT
+# store_failed is honoured HERE, once, rather than at each exit site: this
+# script has six ways to finish, and patching them one at a time is how the
+# 'already on main' path was missed. It only ever upgrades a SUCCESS to a
+# failure, so an interrupt still reports 130 and real errors keep their code.
+trap 'rc=$?; rm -f "$NEWLIST" "$PUSHERR"; [ "$rc" -eq 0 ] && [ "${store_failed:-0}" -eq 1 ] && exit 1' EXIT
 trap 'echo; echo "Interrupted. Nothing is lost - just run this again." >&2; exit 130' INT TERM
 
 command -v git >/dev/null 2>&1 || {
@@ -105,6 +109,7 @@ if [ -n "${TEMPERATURY_SHARD:-}" ]; then
   export TEMPERATURY_SHARD
   echo "fleet shard: $TEMPERATURY_SHARD"
 fi
+store_failed=0
 for group in $ORDER; do
   # Only the enrich groups are restricted to already-rendered cities; `mean` is
   # what widens the roster, so it must see every city.
@@ -116,9 +121,16 @@ for group in $ORDER; do
   # TEMPERATURY_SHARD value, most likely. Without this check every group's
   # pass fails the same way and the run ends in "Nothing new to send" with
   # exit 0: a fleet machine silently gathering nothing, indefinitely.
-  if [ $? -eq 2 ]; then
+  rc=$?
+  if [ "$rc" -eq 2 ]; then
     echo "ERROR: the fetcher rejected its arguments - check .gather-shard / TEMPERATURY_SHARD. Aborting." >&2
     exit 1
+  elif [ "$rc" -ne 0 ]; then
+    # The fetcher stored nothing it fetched. Do NOT abort: files from an
+    # earlier group may be waiting, and skipping the send would strand them.
+    # Carry the failure to the exit code instead, so cron surfaces it.
+    echo "ERROR: '$group' fetched cities but stored none (rc=$rc)." >&2
+    store_failed=1
   fi
 done
 
@@ -137,6 +149,14 @@ while IFS= read -r f; do
 done < <(git ls-files --others --exclude-standard -- data)
 
 if [ "${#NEWFILES[@]}" -eq 0 ]; then
+  # THIS is the path a total store failure takes, so the flag has to be read
+  # here too: "nothing new" after a spent quota is a normal quiet day, but
+  # "nothing new" after fetching cities we could not store is a broken machine.
+  if [ "$store_failed" -eq 1 ]; then
+    echo "ERROR: nothing to send because nothing could be STORED, not because" >&2
+    echo "       the quota ran out. This machine will gather nothing until fixed." >&2
+    exit 1
+  fi
   echo "Nothing new to send - today's quota is already spent (resets 00:00 UTC)."
   exit 0
 fi
