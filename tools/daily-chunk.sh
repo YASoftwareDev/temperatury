@@ -91,6 +91,20 @@ case $(( 10#$(date -u +%j) % 3 )) in
   *) ORDER="extremes mean precip" ;;
 esac
 echo "today's group order: $ORDER"
+
+# Fleet sharding: a machine that owns shard I of N (a `.gather-shard` file
+# containing e.g. "2/4", or $TEMPERATURY_SHARD) fetches its own hash-bucket of
+# cities before anyone else's, so concurrently running fleet machines never
+# collide while each still has owned work - a guarantee, where staggered cron
+# times were only a probability. Machines without a shard (volunteers) keep the
+# plain shuffled queue. The file is per-machine state, never sent anywhere.
+if [ -z "${TEMPERATURY_SHARD:-}" ] && [ -f "$REPO/.gather-shard" ]; then
+  TEMPERATURY_SHARD="$(tr -d '[:space:]' < "$REPO/.gather-shard")"
+fi
+if [ -n "${TEMPERATURY_SHARD:-}" ]; then
+  export TEMPERATURY_SHARD
+  echo "fleet shard: $TEMPERATURY_SHARD"
+fi
 for group in $ORDER; do
   # Only the enrich groups are restricted to already-rendered cities; `mean` is
   # what widens the roster, so it must see every city.

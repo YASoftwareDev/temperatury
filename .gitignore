@@ -5,3 +5,5 @@ __pycache__/
 *.pyc
 .ruff_cache/
 era5_staging/
+# per-machine fleet shard assignment (see tools/daily-chunk.sh)
+.gather-shard
