@@ -23,7 +23,8 @@
       catch (e) {}
     }
     if (window.__cityNames && window.__lang)
-      return window.__cityNames[window.__lang] || window.__cityNames.en;
+      return window.__cityNames[window.__lang]
+          || window.__cityNames["*"] || window.__cityNames.en;
     return null;
   }
   function resolveRefs(vars) {
