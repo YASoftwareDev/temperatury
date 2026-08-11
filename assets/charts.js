@@ -667,6 +667,37 @@
     return q;
   }
 
+  // Inverse of chartpack.py: {"_p": b64, "d": decimals, "w": 2|4} -> number
+  // array (sentinel -> null). Walks the whole payload in place. Must run
+  // before __expandYears and before any chart reads the payload. Idempotent
+  // (a decoded payload has no _p dicts left).
+  window.__unpackCharts = function (obj) {
+    function dec(p) {
+      var bin = atob(p._p), w = p.w, d = p.d, n = bin.length / w;
+      var buf = new ArrayBuffer(bin.length), u8 = new Uint8Array(buf);
+      for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      var dv = new DataView(buf), out = new Array(n);
+      var sent = (w === 2) ? -32768 : -2147483648, k = Math.pow(10, d);
+      for (var j = 0; j < n; j++) {
+        var v = (w === 2) ? dv.getInt16(j * w, true) : dv.getInt32(j * w, true);
+        out[j] = (v === sent) ? null : v / k;
+      }
+      return out;
+    }
+    function walk(x) {
+      if (Array.isArray(x)) {
+        for (var i = 0; i < x.length; i++) x[i] = walk(x[i]);
+        return x;
+      }
+      if (x && typeof x === "object") {
+        if (typeof x._p === "string") return dec(x);
+        for (var k in x) x[k] = walk(x[k]);
+      }
+      return x;
+    }
+    return walk(obj);
+  };
+
   // A city's charts nearly always share one year axis, so the build stores it once
   // as _years and leaves the string "_years" in each chart's years/x slot (see
   // chartdata.dedupe_year_axes). Put the list back before anything reads a

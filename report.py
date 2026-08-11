@@ -484,7 +484,9 @@ window.__crz = ${rz_label_json};
       }),
     window.__ready
   ])
-    .then(function (both) { return window.__expandYears(both[0]); })
+    .then(function (both) {
+      return window.__expandYears(window.__unpackCharts(both[0]));
+    })
     .then(draw)
     .catch(function (e) {
       if (window.chartsUnavailable) window.chartsUnavailable(e);
@@ -2386,7 +2388,9 @@ ${topbar}
             return r.json();
           }),
           window.__ready
-        ]).then(function (both) { return window.__expandYears(both[0]); });
+        ]).then(function (both) {
+          return window.__expandYears(window.__unpackCharts(both[0]));
+        });
       return cache[slug];
     }
     function rankRow(slug) {
