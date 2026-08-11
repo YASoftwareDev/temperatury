@@ -306,7 +306,35 @@ ${topbar}
 <main>
   ${curyear}
 
-  <div class="share-row">
+${share_guide}
+
+${chart_story}
+
+  ${deep_history}
+</main>
+${footer_block}
+
+${stub_cfg}<script>
+  // Only what is truly city-specific stays inline: this page's chart-label map
+  // and its slug. Everything shared across a language's 2000+ city pages lives
+  // once in _page.js (bootstrap, share button, topbar behaviour, month names) -
+  // the single biggest lever on total site size.
+  window.__ci18n = ${chart_i18n};
+  window.__slug = ${slug_js};
+</script>
+<script src="_page.js"></script>
+${i18n_head}
+</body>
+</html>
+"""
+)
+
+# The three body blocks shared by every city of a language. Rendered twice
+# from the same mapping: with real values into each full page, and with the
+# __S__ (slug) / __N__ (display name) sentinels into the per-language
+# _citybody.js that rebuilds them client-side on stub (tail-tier) pages.
+_SHARE_GUIDE = Template(
+    """  <div class="share-row">
     <button type="button" class="share-btn" id="share-btn" data-copied="${copied_label}">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none"
            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -330,9 +358,11 @@ ${topbar}
   <details class="guide">
     <summary${guide_title_attr}>${guide_title}</summary>
     <ul${guide_body_attr}>${guide_body}</ul>
-  </details>
+  </details>"""
+)
 
-  <section class="charts story">
+_CHART_STORY = Template(
+    """  <section class="charts story">
     <figure>
       <div class="chart-wrap"><canvas id="c-${slug}-yearly-trend"></canvas></div>
       <figcaption>${cap_yearly}</figcaption>
@@ -387,26 +417,114 @@ ${topbar}
     ${coldspell_figure}
     ${heavyrain_figure}
     ${heatindex_figure}
-  </section>
-
-  ${deep_history}
-</main>
-<footer>${footer_html} · <a href="../embed.html?mode=city&amp;city=${slug}">${widget_label_html}</a></footer>
-
-<script>
-  // Only what is truly city-specific stays inline: this page's chart-label map
-  // and its slug. Everything shared across a language's 2000+ city pages lives
-  // once in _page.js (bootstrap, share button, topbar behaviour, month names) -
-  // the single biggest lever on total site size.
-  window.__ci18n = ${chart_i18n};
-  window.__slug = ${slug_js};
-</script>
-<script src="_page.js"></script>
-${i18n_head}
-</body>
-</html>
-"""
+  </section>"""
 )
+
+_FOOTER_BLOCK = Template(
+    '<footer>${footer_html} · <a href="../embed.html?mode=city&amp;'
+    'city=${slug}">${widget_label_html}</a></footer>'
+)
+
+
+def _chrome_mapping(tr: dict, lang: str, slug: str, disp: str,
+                    city_name: str, *, has_precip: bool, has_dtr: bool,
+                    has_appheat: bool, has_records: bool,
+                    sentinel: bool = False) -> dict:
+    """Every substitution the three shared body blocks need.
+
+    Called with real values by build_site (full pages) and with
+    slug=__S__/disp=__N__ by write_citybody_js (the stub rebuild source).
+    ``sentinel`` renders ALL optional pieces (records widget, dtr/precip/
+    heat-index figures) - the stub script prunes by the page's own flags -
+    and leaves the news href for the script to build (the city name would
+    otherwise need URL-encoding around the sentinel).
+    """
+    def _titled(title_key: str, cap_key: str, **fmt) -> str:
+        title = tr[title_key].format(name=disp, **fmt)
+        desc = tr[cap_key]
+        if _CLIENT_I18N:
+            tattr = _i18n_attr(title_key, {k: v for k, v in fmt.items()} or None)
+            return (f'<strong class="fig-title"{tattr}>{title}</strong>'
+                    f'<br><span{_i18n_attr(cap_key)}>{desc}</span>')
+        return f'<strong class="fig-title">{title}</strong><br>{desc}'
+
+    def _fig(name: str, title_key: str, cap_key: str) -> str:
+        return (
+            f'<figure>\n      <div class="chart-wrap">'
+            f'<canvas id="c-{slug}-{name}"></canvas></div>\n'
+            f'      <figcaption>{_titled(title_key, cap_key)}</figcaption>\n    </figure>'
+        )
+
+    return dict(
+        slug=slug,
+        share_label=tr.get("share", "Share"),
+        copied_label=tr.get("share_copied", "Link copied"),
+        share_label_attr=_i18n_attr("share"),
+        news_url=("#" if sentinel else
+                  "https://news.google.com/search?q="
+                  + quote(f'"{city_name}" '
+                          + tr.get("extreme_weather", "extreme weather"))
+                  + f"&hl={lang}"),
+        news_data=(f' data-news="1" data-city="{_esc(city_name, quote=True)}"'
+                   if _CLIENT_I18N else ""),
+        news_label=tr.get("extreme_weather", "Extreme weather"),
+        news_label_attr=_i18n_attr("extreme_weather"),
+        guide_title=tr["guide_title"],
+        guide_title_attr=_i18n_attr("guide_title"),
+        guide_body=tr["guide_body"],
+        guide_body_attr=_i18n_attr("guide_body", html=True),
+        cap_yearly=_titled("yearly_title", "cap_yearly"),
+        cap_anomalies=_titled("anomaly_title", "cap_anomalies"),
+        cap_heatmap=_titled("heatmap_title", "cap_heatmap"),
+        cap_anom_heatmap=_titled("anom_heatmap_title", "cap_anom_heatmap",
+                                 base=f"{BASELINE[0]}-{BASELINE[1]}"),
+        cap_threshold=_titled("threshold_title", "cap_threshold"),
+        cap_volatility=_titled("volatility_title", "cap_volatility"),
+        cap_stripes=_titled("stripes_title", "cap_stripes"),
+        cap_season=_titled("season_title", "cap_season"),
+        cap_seasonshift=_titled("seasonshift_title", "cap_seasonshift"),
+        cap_degreedays=_titled("degreedays_title", "cap_degreedays"),
+        range_widget=interactive.range_widget_html(
+            slug, tr["range_title"].format(name=disp), tr["cap_range"],
+            tr["year"], None, tr["months"],
+            title_attr=_i18n_attr("range_title"),
+            cap_attr=_i18n_attr("cap_range"), year_attr=_i18n_attr("year")),
+        records_widget=(
+            interactive.records_widget_html(
+                slug, tr["record_title"].format(name=disp),
+                tr["cap_records"], tr["year"], None, tr["months"],
+                title_attr=_i18n_attr("record_title"),
+                cap_attr=_i18n_attr("cap_records"),
+                year_attr=_i18n_attr("year"))
+            if (has_records or sentinel) else ""),
+        dtr_figure=(_fig("diurnal-range", "dtr_title", "cap_dtr")
+                    if (has_dtr or sentinel) else ""),
+        precip_figure=(_fig("precipitation", "precip_title", "cap_precip")
+                       if (has_precip or sentinel) else ""),
+        heatwave_figure=(_fig("heatwave", "heatwave_title", "cap_heatwave")
+                         if (has_dtr or sentinel) else ""),
+        tropic_figure=(_fig("tropical-nights", "tropic_title", "cap_tropic")
+                       if (has_dtr or sentinel) else ""),
+        coldspell_figure=(_fig("cold-spells", "coldspell_title",
+                               "cap_coldspell")
+                          if (has_dtr or sentinel) else ""),
+        heavyrain_figure=(_fig("heavy-rain", "heavyrain_title",
+                               "cap_heavyrain")
+                          if (has_precip or sentinel) else ""),
+        heatindex_figure=(_fig("heat-index", "heatindex_title",
+                               "cap_heatindex")
+                          if (has_appheat or sentinel) else ""),
+        health_heading=tr["health_heading"],
+        health_heading_attr=_i18n_attr("health_heading"),
+        health_sub=tr["health_sub"],
+        health_sub_attr=_i18n_attr("health_sub"),
+        footer_html=_i18n_span(
+            tr["footer"].format(date=dt.date.today().isoformat()),
+            "footer", {"date": dt.date.today().isoformat()}, html=True),
+        widget_label_html=_i18n_span(
+            _WIDGET_LABEL.get(lang, _WIDGET_LABEL["en"]), "widget_label"),
+    )
+
 
 # Per-language shared city-page runtime (written once per language folder).
 # Holds every script that used to be inlined into each city page but does not
@@ -642,6 +760,82 @@ def write_page_js(output_dir: Path, tr: dict, lang: str) -> Path:
                        if _CLIENT_I18N else ""),
     ), encoding="utf-8")
     return path
+
+
+# Stub (tail-tier) pages carry only head + hero; this per-language script
+# rebuilds the shared body chrome around them before _page.js initialises.
+# The fragments are the SAME sub-templates full pages render, substituted with
+# the __S__ (slug) / __N__ (display name) sentinels; every optional piece is
+# included and pruned client-side by the page's window.__stub flags.
+_CITYBODY_JS = Template(
+    """// Stub city pages: shared body chrome for every city of this language.
+(function () {
+  var f = window.__stub;
+  if (!f) return;
+  var S = f.s;      // window.__slug is not set yet at this point
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+  }
+  function sub(t) {
+    return t.split("__S__").join(S).split("__N__").join(esc(f.n));
+  }
+  var hero = document.querySelector("header.region-hero");
+  hero.insertAdjacentHTML("beforebegin", sub(${topbar_js}));
+  var main = document.querySelector("main");
+  var dh = main.querySelector(".deephist-note");
+  var html = sub(${share_guide_js}) + sub(${chart_story_js});
+  if (dh) dh.insertAdjacentHTML("beforebegin", html);
+  else main.insertAdjacentHTML("beforeend", html);
+  function drop(id) {
+    var el = document.getElementById(id);
+    var fig = el && el.closest("figure");
+    if (fig) fig.parentNode.removeChild(fig);
+  }
+  if (!f.rec) drop("rec-" + S);
+  if (!f.dtr) ["diurnal-range", "heatwave", "tropical-nights", "cold-spells"]
+    .forEach(function (n) { drop("c-" + S + "-" + n); });
+  if (!f.precip) ["precipitation", "heavy-rain"]
+    .forEach(function (n) { drop("c-" + S + "-" + n); });
+  if (!f.app) drop("c-" + S + "-heat-index");
+  document.body.insertAdjacentHTML("beforeend", sub(${footer_js}));
+  // The news link's href needs the real (URL-encoded) canonical city name.
+  var news = document.querySelector(".news-btn");
+  if (news) {
+    news.setAttribute("data-city", f.cn);
+    news.href = "https://news.google.com/search?q="
+      + encodeURIComponent('"' + f.cn + '" ' + ${news_phrase_js})
+      + "&hl=" + ${lang_js};
+  }
+})();
+""")
+
+
+def write_citybody_js(output_dir: Path, tr: dict, lang: str,
+                      switch_langs: list[str]) -> Path:
+    """Write the per-language stub body builder (``_citybody.js``)."""
+    tr = captions.overlay(tr, lang)
+    chrome = _chrome_mapping(tr, lang, "__S__", "__N__", "__N__",
+                             has_precip=True, has_dtr=True, has_appheat=True,
+                             has_records=True, sentinel=True)
+    topbar = _topbar("index.html", _lang_nav(lang, switch_langs, "__S__"),
+                     search_html=_city_picker(tr, lang))
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path = output_dir / "_citybody.js"
+    path.write_text(_CITYBODY_JS.substitute(
+        topbar_js=json.dumps(topbar, ensure_ascii=False),
+        share_guide_js=json.dumps(_SHARE_GUIDE.substitute(chrome),
+                                  ensure_ascii=False),
+        chart_story_js=json.dumps(_CHART_STORY.substitute(chrome),
+                                  ensure_ascii=False),
+        footer_js=json.dumps(_FOOTER_BLOCK.substitute(chrome),
+                             ensure_ascii=False),
+        news_phrase_js=json.dumps(
+            tr.get("extreme_weather", "extreme weather"), ensure_ascii=False),
+        lang_js=json.dumps(lang),
+    ), encoding="utf-8")
+    return path
+
 
 _REDIRECT = Template(
     """<!DOCTYPE html>
@@ -1013,8 +1207,14 @@ def build_site(
     og_card_ccs: frozenset | set = frozenset(),
     df_cur=None,
     season: tuple | None = None,
+    stub: bool = False,
 ) -> Path:
-    """Write ``<slug>.html`` (localised) into ``output_dir``; return its path."""
+    """Write ``<slug>.html`` (localised) into ``output_dir``; return its path.
+
+    ``stub=True`` (tail-tier cities) keeps only the SEO surface static - full
+    <head>, hero header, per-city prose (current-year note, deep-history) -
+    and loads _citybody.js, which rebuilds the shared chrome (topbar, share
+    row, guide, chart sections, footer) client-side before _page.js runs."""
     output_dir.mkdir(parents=True, exist_ok=True)
     tr = captions.overlay(tr, lang)
     slug = location.slug
@@ -1099,49 +1299,29 @@ def build_site(
           'dist/chartjs-plugin-zoom.min.js"></script>'
         + '<script defer src="../charts.js"></script>'
     )
-    range_widget = interactive.range_widget_html(
-        slug, tr["range_title"].format(name=disp), tr["cap_range"],
-        tr["year"], range_data, tr["months"],
-        title_attr=_i18n_attr("range_title"), cap_attr=_i18n_attr("cap_range"),
-        year_attr=_i18n_attr("year"))
-    records_widget = (
-        interactive.records_widget_html(
-            slug, tr["record_title"].format(name=disp),
-            tr["cap_records"], tr["year"], records_data, tr["months"],
-            title_attr=_i18n_attr("record_title"),
-            cap_attr=_i18n_attr("cap_records"), year_attr=_i18n_attr("year"))
-        if records_data else ""
-    )
-    # Charts are shared/language-neutral, so the localised title lives in the
-    # HTML caption (bold) above the description, and images come from ../charts.
-    def _titled(title_key: str, cap_key: str, **fmt) -> str:
-        title = tr[title_key].format(name=disp, **fmt)
-        desc = tr[cap_key]
-        if _CLIENT_I18N:
-            # {name} is auto-provided by the runtime; any other fmt vars are
-            # per-city, so bake them. The description wraps in a <span> so its
-            # text node becomes keyable (text-only, so parity is unaffected).
-            tattr = _i18n_attr(title_key, {k: v for k, v in fmt.items()} or None)
-            return (f'<strong class="fig-title"{tattr}>{title}</strong>'
-                    f'<br><span{_i18n_attr(cap_key)}>{desc}</span>')
-        return f'<strong class="fig-title">{title}</strong><br>{desc}'
-
-    def _fig(name: str, title_key: str, cap_key: str) -> str:
-        return (
-            f'<figure>\n      <div class="chart-wrap">'
-            f'<canvas id="c-{slug}-{name}"></canvas></div>\n'
-            f'      <figcaption>{_titled(title_key, cap_key)}</figcaption>\n    </figure>'
-        )
-
-    precip_figure = _fig("precipitation", "precip_title", "cap_precip") if has_precip else ""
-    dtr_figure = _fig("diurnal-range", "dtr_title", "cap_dtr") if has_dtr else ""
-
-    # Health-impact panels, each gated on the dataset it needs.
-    heatwave_figure = _fig("heatwave", "heatwave_title", "cap_heatwave") if has_dtr else ""
-    tropic_figure = _fig("tropical-nights", "tropic_title", "cap_tropic") if has_dtr else ""
-    coldspell_figure = _fig("cold-spells", "coldspell_title", "cap_coldspell") if has_dtr else ""
-    heavyrain_figure = _fig("heavy-rain", "heavyrain_title", "cap_heavyrain") if has_precip else ""
-    heatindex_figure = _fig("heat-index", "heatindex_title", "cap_heatindex") if has_appheat else ""
+    # The captions, figure scaffolding, share/guide chrome, and footer come
+    # from the same mapping the per-language _citybody.js is rendered from
+    # (with sentinels), so a stub page's client rebuild matches this exactly.
+    chrome = _chrome_mapping(tr, lang, slug, disp, location.name,
+                             has_precip=has_precip, has_dtr=has_dtr,
+                             has_appheat=has_appheat,
+                             has_records=records_data is not None)
+    if stub:
+        share_guide = chart_story = footer_block = ""
+        # "s" rides along because _citybody.js runs BEFORE the inline script
+        # that sets window.__slug (the chrome must exist before _page.js).
+        stub_cfg = (
+            '<script>window.__stub='
+            + json.dumps({"s": slug, "n": disp, "cn": location.name,
+                          "rec": records_data is not None, "dtr": has_dtr,
+                          "precip": has_precip, "app": has_appheat},
+                         ensure_ascii=False, separators=(",", ":"))
+            + ';</script>\n<script src="_citybody.js"></script>\n')
+    else:
+        share_guide = _SHARE_GUIDE.substitute(chrome)
+        chart_story = _CHART_STORY.substitute(chrome)
+        footer_block = _FOOTER_BLOCK.substitute(chrome)
+        stub_cfg = ""
 
     # "Why is there no data before 1940?" is ANSWERED IN THE Q&A TAB (_ABOUT_QA q3),
     # so the city page no longer repeats it - it was the same question twice, in two
@@ -1279,24 +1459,16 @@ def build_site(
                   else f"{SITE_BASE}/og/{_cc}.png" if _cc in og_card_ccs
                   else f"{SITE_BASE}/og/world.png"),
         og_url=f"{SITE_BASE}/{lang}/{slug}.html",
-        share_label=tr.get("share", "Share"),
-        copied_label=tr.get("share_copied", "Link copied"),
         analog_html=analog_html,
         curyear=curyear_html,
-        # Live extreme-weather news search for this city - runs in the visitor's
-        # browser (Google News), so results are always current and nothing is
-        # stored. The localized "extreme weather" phrase is both the button label
-        # and the query term, so the search reads naturally in the visitor's tongue.
-        news_url=("https://news.google.com/search?q="
-                  + quote(f'"{location.name}" '
-                          + tr.get("extreme_weather", "extreme weather"))
-                  + f"&hl={lang}"),
-        # Client-i18n: the runtime rebuilds this href for the switched language
-        # (localized phrase + hl) from the city name baked here; "" when flag off.
-        news_data=(f' data-news="1" data-city="{_esc(location.name, quote=True)}"'
-                   if _CLIENT_I18N else ""),
-        news_label=tr.get("extreme_weather", "Extreme weather"),
         subtitle=_subtitle,
+        # The share row/guide, chart sections, and footer render from the same
+        # chrome mapping _citybody.js is built from; "" on stub pages, where
+        # stub_cfg loads the client-side rebuild instead.
+        share_guide=share_guide,
+        chart_story=chart_story,
+        footer_block=footer_block,
+        stub_cfg=stub_cfg,
         # For an alias arrival (#as=<name>): the primary's own display name and a
         # localized "same grid cell as {city}" note, read by charts.js to relabel
         # the heading. ``_esc`` keeps quotes/brackets safe inside the attribute.
@@ -1328,8 +1500,9 @@ def build_site(
         map_icon=_MAP_ICON,
         picker=_city_picker(tr, lang),
         lang_nav=_lang_nav(lang, _switch_langs, slug),
-        topbar=_topbar("index.html", _lang_nav(lang, _switch_langs, slug),
-                       search_html=_city_picker(tr, lang)),
+        topbar=("" if stub else
+                _topbar("index.html", _lang_nav(lang, _switch_langs, slug),
+                        search_html=_city_picker(tr, lang))),
         trend=_t(stats['trend_per_decade'], "delta", 2, 2),
         trend_unit=tr["per_decade_c"],
         trend_unit_attr=_i18n_attr("per_decade_c"),
@@ -1350,47 +1523,12 @@ def build_site(
         card_mean_attr=_i18n_attr("card_mean"),
         card_warmest_attr=_i18n_attr("card_warmest"),
         card_coldest_attr=_i18n_attr("card_coldest"),
-        share_label_attr=_i18n_attr("share"),
-        news_label_attr=_i18n_attr("extreme_weather"),
-        guide_title_attr=_i18n_attr("guide_title"),
-        guide_body_attr=_i18n_attr("guide_body", html=True),
-        health_heading_attr=_i18n_attr("health_heading"),
-        health_sub_attr=_i18n_attr("health_sub"),
         place_head=place_head,
         card_mean=tr["card_mean"],
         card_warmest=tr["card_warmest"],
         card_coldest=tr["card_coldest"],
-        cap_yearly=_titled("yearly_title", "cap_yearly"),
-        cap_anomalies=_titled("anomaly_title", "cap_anomalies"),
-        cap_heatmap=_titled("heatmap_title", "cap_heatmap"),
-        cap_anom_heatmap=_titled("anom_heatmap_title", "cap_anom_heatmap",
-                                 base=f"{BASELINE[0]}-{BASELINE[1]}"),
         chart_js=chart_js,
-        range_widget=range_widget,
-        records_widget=records_widget,
-        cap_threshold=_titled("threshold_title", "cap_threshold"),
-        cap_volatility=_titled("volatility_title", "cap_volatility"),
-        cap_stripes=_titled("stripes_title", "cap_stripes"),
-        cap_season=_titled("season_title", "cap_season"),
-        cap_seasonshift=_titled("seasonshift_title", "cap_seasonshift"),
-        dtr_figure=dtr_figure,
-        precip_figure=precip_figure,
-        health_heading=tr["health_heading"],
-        health_sub=tr["health_sub"],
-        cap_degreedays=_titled("degreedays_title", "cap_degreedays"),
-        heatwave_figure=heatwave_figure,
-        tropic_figure=tropic_figure,
-        coldspell_figure=coldspell_figure,
-        heavyrain_figure=heavyrain_figure,
-        heatindex_figure=heatindex_figure,
-        guide_title=tr["guide_title"],
-        guide_body=tr["guide_body"],
         deep_history=deep_history,
-        footer_html=_i18n_span(
-            tr["footer"].format(date=dt.date.today().isoformat()),
-            "footer", {"date": dt.date.today().isoformat()}, html=True),
-        widget_label_html=_i18n_span(
-            _WIDGET_LABEL.get(lang, _WIDGET_LABEL["en"]), "widget_label"),
         slug=slug,
     )
 
