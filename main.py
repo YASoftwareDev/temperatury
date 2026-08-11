@@ -41,6 +41,7 @@ from data import (
     load_temperatures_bulk,
 )
 import chartdata
+import chartpack
 import countries
 import globaldata
 import globaltext
@@ -225,8 +226,12 @@ def _render_city(task) -> tuple[str, int]:
         shared["_labels"] = [pair for cs in specs.values() for pair in cs]
     charts_dir = OUTPUT_DIR / "charts"
     charts_dir.mkdir(parents=True, exist_ok=True)
+    # Numeric arrays ship as verified-lossless packed ints (chartpack) - the
+    # Pages cap counts uncompressed bytes, so this on-disk encoding is what
+    # actually shrinks the artifact. charts.js __unpackCharts is the inverse.
     (charts_dir / f"{location.slug}.json").write_text(
-        json.dumps(shared, ensure_ascii=False), encoding="utf-8")
+        json.dumps(chartpack.pack_tree(shared), ensure_ascii=False),
+        encoding="utf-8")
     n = 0
     for lang in languages:
         tr = i18n.get(lang)

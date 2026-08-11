@@ -24,6 +24,7 @@ import threading
 import pytest
 from playwright.sync_api import sync_playwright
 
+import chartpack
 import i18n
 from plots import compose_label, to_f
 from tests.conftest import ROOT, build
@@ -128,7 +129,9 @@ def _src(pg, sel):
 
 
 def _payload_first(chart, key="raw"):
-    p = json.loads((ROOT / f"output/charts/{SLUG}.json").read_text("utf-8"))[chart]
+    # Arrays ship packed (chartpack); unpack exactly like the browser does.
+    p = chartpack.unpack_tree(json.loads(
+        (ROOT / f"output/charts/{SLUG}.json").read_text("utf-8")))[chart]
     vals = p[key]["data"] if isinstance(p.get(key), dict) else p[key]
     return next(v for v in vals if v is not None)
 
@@ -153,8 +156,8 @@ def test_fahrenheit_page_and_charts():
 
         # The figures are the Celsius source converted by their own class: the
         # annual mean is an absolute temperature, the trend a rate.
-        srv = json.loads(
-            (ROOT / f"output/charts/{SLUG}.json").read_text("utf-8"))
+        srv = chartpack.unpack_tree(json.loads(
+            (ROOT / f"output/charts/{SLUG}.json").read_text("utf-8")))
         mean_c = _src(pg, ".rh-chip .tval")
         rate_c = _src(pg, ".rh-figure .tval")
         assert float(t["mean"]) == pytest.approx(to_f(mean_c, "abs"), abs=0.051)
