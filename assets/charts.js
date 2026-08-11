@@ -698,6 +698,34 @@
     return walk(obj);
   };
 
+  // Fields identical across cities are stripped from per-city JSON against
+  // charts/_spec.json (chartspec.strip); this is the inverse. Missing keys
+  // only - a city that kept its own divergent value wins. The spec is fetched
+  // once per page and cached; a missing spec file merges nothing.
+  var __specP = null;
+  window.__chartSpec = function (base) {
+    if (!__specP) {
+      __specP = fetch(base + "_spec.json")
+        .then(function (r) { return r.ok ? r.json() : {}; })
+        .catch(function () { return {}; });
+    }
+    return __specP;
+  };
+  window.__mergeChartSpec = function (city, spec) {
+    function fill(dst, src) {
+      for (var k in src) {
+        if (!(k in dst)) dst[k] = src[k];
+        else if (dst[k] && src[k] && typeof dst[k] === "object"
+                 && !Array.isArray(dst[k]) && typeof src[k] === "object"
+                 && !Array.isArray(src[k])) fill(dst[k], src[k]);
+      }
+    }
+    for (var id in spec) {
+      if (city[id] && typeof city[id] === "object") fill(city[id], spec[id]);
+    }
+    return city;
+  };
+
   // A city's charts nearly always share one year axis, so the build stores it once
   // as _years and leaves the string "_years" in each chart's years/x slot (see
   // chartdata.dedupe_year_axes). Put the list back before anything reads a
