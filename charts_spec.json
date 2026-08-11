@@ -1,0 +1,239 @@
+{
+ "anomalies": {
+  "kind": "anomalybars",
+  "negColor": "#2c7fb8",
+  "posColor": "#d62728",
+  "tk": "delta",
+  "x": "_years",
+  "xlabel": "Year"
+ },
+ "cold-spells": {
+  "kind": "trend",
+  "loess": {
+   "color": "#1d4ed8",
+   "label": "smoothed (LOESS)"
+  },
+  "raw": {
+   "color": "#1d4ed8",
+   "label": "cold-spell days",
+   "style": "points"
+  },
+  "tk": null,
+  "trend": {
+   "color": "#334155"
+  },
+  "xlabel": "Year",
+  "ylabel": "Cold-spell days per year"
+ },
+ "degree-days": {
+  "kind": "multitrend",
+  "tk": "ddays",
+  "x": "_years",
+  "xlabel": "Year",
+  "ylabel": "Degree-days per year (°C·days)"
+ },
+ "diurnal-range": {
+  "kind": "trend",
+  "loess": {
+   "color": "#7c3aed",
+   "label": "smoothed (LOESS)"
+  },
+  "raw": {
+   "color": "#7c3aed",
+   "label": "annual mean range",
+   "style": "points"
+  },
+  "tk": "delta",
+  "trend": {
+   "color": "#b45309"
+  },
+  "xlabel": "Year",
+  "ylabel": "Mean daily max − min (°C)"
+ },
+ "growing-season": {
+  "kind": "trend",
+  "loess": {
+   "color": "#15803d",
+   "label": "smoothed (LOESS)"
+  },
+  "raw": {
+   "color": "#15803d",
+   "label": "season length",
+   "style": "points"
+  },
+  "tk": null,
+  "trend": {
+   "color": "#b45309"
+  },
+  "xlabel": "Year",
+  "ylabel": "Growing-season length (days)"
+ },
+ "heat-index": {
+  "kind": "multitrend",
+  "tk": null,
+  "x": "_years",
+  "xlabel": "Year",
+  "ylabel": "Days per year"
+ },
+ "heatwave": {
+  "kind": "trend",
+  "loess": {
+   "color": "#b91c1c",
+   "label": "smoothed (LOESS)"
+  },
+  "raw": {
+   "color": "#b91c1c",
+   "label": "heat-wave days",
+   "style": "points"
+  },
+  "tk": null,
+  "trend": {
+   "color": "#334155"
+  },
+  "xlabel": "Year",
+  "ylabel": "Heat-wave days per year"
+ },
+ "heavy-rain": {
+  "kind": "trend",
+  "loess": {
+   "color": "#0f766e",
+   "label": "smoothed (LOESS)"
+  },
+  "raw": {
+   "color": "#0f766e",
+   "label": "days ≥ 20 mm",
+   "style": "points"
+  },
+  "tk": null,
+  "trend": {
+   "color": "#334155"
+  },
+  "xlabel": "Year",
+  "ylabel": "Days per year"
+ },
+ "monthly-anomaly": {
+  "cbarLabel": "Anomaly vs. 1961-1990 (°C)",
+  "diverging": true,
+  "kind": "matrix",
+  "monthsKey": "months",
+  "step": 0.5,
+  "tk": "delta",
+  "xlabel": "Month",
+  "years": "_years",
+  "ylabel": "Year"
+ },
+ "monthly-heatmap": {
+  "cbarLabel": "Monthly mean (°C)",
+  "diverging": false,
+  "kind": "matrix",
+  "monthsKey": "months",
+  "step": 2,
+  "tk": "abs",
+  "xlabel": "Month",
+  "years": "_years",
+  "ylabel": "Year"
+ },
+ "precipitation": {
+  "kind": "trend",
+  "loess": {
+   "color": "#0f766e",
+   "label": "smoothed (LOESS)"
+  },
+  "raw": {
+   "color": "#2c7fb8",
+   "label": "annual total",
+   "style": "bars"
+  },
+  "tk": null,
+  "trend": {
+   "color": "#d62728"
+  },
+  "xlabel": "Year",
+  "ylabel": "Precipitation (mm / year)"
+ },
+ "seasonal-shift": {
+  "early": {
+   "color": "#2c7fb8",
+   "label": "1940-1949"
+  },
+  "kind": "seasonshift",
+  "late": {
+   "color": "#d62728",
+   "label": "2016-2025"
+  },
+  "monthsKey": "months",
+  "tk": "abs",
+  "xlabel": "Month",
+  "ylabel": "Monthly mean temperature (°C)"
+ },
+ "threshold-days": {
+  "kind": "multitrend",
+  "tk": null,
+  "x": "_years",
+  "xlabel": "Year",
+  "ylabel": "Days per year"
+ },
+ "tropical-nights": {
+  "kind": "trend",
+  "loess": {
+   "color": "#c2410c",
+   "label": "smoothed (LOESS)"
+  },
+  "raw": {
+   "color": "#c2410c",
+   "label": "nights ≥ 20 °C",
+   "style": "points"
+  },
+  "tk": null,
+  "trend": {
+   "color": "#334155"
+  },
+  "xlabel": "Year",
+  "ylabel": "Nights per year"
+ },
+ "volatility": {
+  "kind": "trend",
+  "loess": {
+   "color": "#7c3aed",
+   "label": "smoothed (LOESS)"
+  },
+  "raw": {
+   "color": "#7c3aed",
+   "label": null,
+   "style": "points"
+  },
+  "tk": null,
+  "trend": {
+   "color": "#334155"
+  },
+  "x": "_years",
+  "xlabel": "Year",
+  "ylabel": "Days with a big jump"
+ },
+ "warming-stripes": {
+  "cbarLabel": "Anomaly vs. 1961-1990 (°C)",
+  "kind": "stripes",
+  "tk": "delta",
+  "xlabel": "Year",
+  "years": "_years"
+ },
+ "yearly-trend": {
+  "kind": "trend",
+  "loess": {
+   "color": "#d62728",
+   "label": "smoothed (LOESS)"
+  },
+  "raw": {
+   "color": "#2c7fb8",
+   "label": "annual mean",
+   "style": "points"
+  },
+  "tk": "abs",
+  "trend": {
+   "color": "#334155"
+  },
+  "x": "_years",
+  "xlabel": "Year",
+  "ylabel": "Annual mean temperature (°C)"
+ }
+}

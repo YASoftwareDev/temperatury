@@ -42,6 +42,8 @@ from data import (
 )
 import chartdata
 import chartpack
+import chartspec
+import config
 import countries
 import globaldata
 import globaltext
@@ -64,6 +66,14 @@ from report import (
     write_lang_redirect,
     write_page_js,
 )
+
+
+# Cross-city constant chart fields, hoisted out of every per-city JSON into
+# one committed file (regenerate: tools/gen_chart_spec.py after a full build).
+# Missing file = no stripping, so a fresh clone still builds correct output.
+_SPEC_PATH = config.ROOT / "charts_spec.json"
+CHART_SPEC = (json.loads(_SPEC_PATH.read_text(encoding="utf-8"))
+              if _SPEC_PATH.exists() else {})
 
 
 def _last_full_year() -> int:
@@ -226,11 +236,15 @@ def _render_city(task) -> tuple[str, int]:
         shared["_labels"] = [pair for cs in specs.values() for pair in cs]
     charts_dir = OUTPUT_DIR / "charts"
     charts_dir.mkdir(parents=True, exist_ok=True)
-    # Numeric arrays ship as verified-lossless packed ints (chartpack) - the
-    # Pages cap counts uncompressed bytes, so this on-disk encoding is what
-    # actually shrinks the artifact. charts.js __unpackCharts is the inverse.
+    # Cross-city constant fields are stripped against the committed spec
+    # (chartspec; charts.js merges them back), then numeric arrays ship as
+    # verified-lossless packed ints (chartpack) - the Pages cap counts
+    # uncompressed bytes, so this on-disk encoding is what actually shrinks
+    # the artifact. charts.js __unpackCharts is the inverse. Strip precedes
+    # pack: the spec matches unpacked scalar values.
     (charts_dir / f"{location.slug}.json").write_text(
-        json.dumps(chartpack.pack_tree(shared), ensure_ascii=False),
+        json.dumps(chartpack.pack_tree(chartspec.strip(shared, CHART_SPEC)),
+                   ensure_ascii=False),
         encoding="utf-8")
     n = 0
     for lang in languages:
@@ -290,6 +304,14 @@ def main() -> None:
     locations = [loc for loc in locations if loc.slug in frames]
     if not locations:
         raise SystemExit("No location data available - nothing to build.")
+
+    # Per-city payloads are stripped against the spec, so EVERY build path that
+    # writes city charts must also publish the spec the client merges back in -
+    # single-city test builds included, not just --all.
+    if CHART_SPEC:
+        (OUTPUT_DIR / "charts").mkdir(parents=True, exist_ok=True)
+        (OUTPUT_DIR / "charts" / "_spec.json").write_text(
+            json.dumps(CHART_SPEC, ensure_ascii=False), encoding="utf-8")
 
     # Daily max/min (record highs/lows) - optional add-on dataset; a city
     # without it simply skips the record chart.

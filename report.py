@@ -485,7 +485,10 @@ window.__crz = ${rz_label_json};
     window.__ready
   ])
     .then(function (both) {
-      return window.__expandYears(window.__unpackCharts(both[0]));
+      window.__unpackCharts(both[0]);
+      return window.__chartSpec('../charts/').then(function (spec) {
+        return window.__expandYears(window.__mergeChartSpec(both[0], spec));
+      });
     })
     .then(draw)
     .catch(function (e) {
@@ -2389,7 +2392,11 @@ ${topbar}
           }),
           window.__ready
         ]).then(function (both) {
-          return window.__expandYears(window.__unpackCharts(both[0]));
+          window.__unpackCharts(both[0]);
+          return window.__chartSpec('../charts/').then(function (spec) {
+            return window.__expandYears(
+              window.__mergeChartSpec(both[0], spec));
+          });
         });
       return cache[slug];
     }
