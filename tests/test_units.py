@@ -24,6 +24,8 @@ import threading
 import pytest
 from playwright.sync_api import sync_playwright
 
+import chartpack
+import chartspec
 import i18n
 from plots import compose_label, to_f
 from tests.conftest import ROOT, build
@@ -127,8 +129,19 @@ def _src(pg, sel):
     return float(pg.eval_on_selector(sel, "el => el.getAttribute('data-c')"))
 
 
+def _city_payload():
+    """The city's chart payload exactly as the browser sees it: unpacked
+    (chartpack) and with the shared spec merged back in (chartspec)."""
+    city = chartpack.unpack_tree(json.loads(
+        (ROOT / f"output/charts/{SLUG}.json").read_text("utf-8")))
+    spec_path = ROOT / "output/charts/_spec.json"
+    if spec_path.exists():
+        chartspec.merge(city, json.loads(spec_path.read_text("utf-8")))
+    return city
+
+
 def _payload_first(chart, key="raw"):
-    p = json.loads((ROOT / f"output/charts/{SLUG}.json").read_text("utf-8"))[chart]
+    p = _city_payload()[chart]
     vals = p[key]["data"] if isinstance(p.get(key), dict) else p[key]
     return next(v for v in vals if v is not None)
 
@@ -153,8 +166,7 @@ def test_fahrenheit_page_and_charts():
 
         # The figures are the Celsius source converted by their own class: the
         # annual mean is an absolute temperature, the trend a rate.
-        srv = json.loads(
-            (ROOT / f"output/charts/{SLUG}.json").read_text("utf-8"))
+        srv = _city_payload()
         mean_c = _src(pg, ".rh-chip .tval")
         rate_c = _src(pg, ".rh-figure .tval")
         assert float(t["mean"]) == pytest.approx(to_f(mean_c, "abs"), abs=0.051)
