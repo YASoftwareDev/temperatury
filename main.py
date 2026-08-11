@@ -228,10 +228,18 @@ def _render_city(task) -> tuple[str, int]:
     # Charts only: range_data/records_data are handed to build_site below as well,
     # so they must not be rewritten here. They carry no duplicated year axis anyway.
     _years = chartdata.dedupe_year_axes(payloads)
-    shared = {**payloads, "_range": range_data}
+    # The monthly-range/records widgets are rich-tier only: their payloads are
+    # over half a tail city's chart JSON (~17 KB of ~30 KB measured), and the
+    # stub page drops the two widget figures to match (report._CITYBODY_JS
+    # prunes on the same flags this write is gated on).
+    _rich_set = _WORKER.get("richslugs")
+    _stub = bool(_rich_set) and location.slug not in _rich_set
+    shared = dict(payloads)
+    if not _stub:
+        shared["_range"] = range_data
     if _years:
         shared["_years"] = _years
-    if records_data is not None:
+    if records_data is not None and not _stub:
         shared["_records"] = records_data
     # Client-i18n serves one shell per city, so the {english: localized} chart-
     # label map cannot be baked per page. Ship each label's serialisable recipe
@@ -253,8 +261,7 @@ def _render_city(task) -> tuple[str, int]:
                    ensure_ascii=False),
         encoding="utf-8")
     n = 0
-    _rich = _WORKER.get("richslugs")
-    stub = bool(_rich) and location.slug not in _rich
+    stub = _stub
     for lang in languages:
         tr = i18n.get(lang)
         chart_i18n: dict[str, str] = {}
