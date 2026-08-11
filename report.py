@@ -49,7 +49,12 @@ def _i18n_head(slug: str, lang: str, languages: list[str], name: str) -> str:
     applies them on DOMContentLoaded."""
     if not _CLIENT_I18N:
         return ""
-    names = json.dumps({lg: _local_name(slug, lg, name) for lg in languages},
+    # Delta-encoded: most languages share the same exonym, so ship one default
+    # under "*" plus only the languages that differ (i18n-runtime falls back).
+    base = _local_name(slug, "en", name)
+    over = {lg: n for lg in languages
+            if (n := _local_name(slug, lg, name)) != base}
+    names = json.dumps({"*": base, **over},
                        ensure_ascii=False, separators=(",", ":"))
     return (f"<script>window.__cityNames={names};</script>\n"
             f'<script src="../i18n/{lang}.js"></script>\n'
@@ -301,7 +306,35 @@ ${topbar}
 <main>
   ${curyear}
 
-  <div class="share-row">
+${share_guide}
+
+${chart_story}
+
+  ${deep_history}
+</main>
+${footer_block}
+
+${stub_cfg}<script>
+  // Only what is truly city-specific stays inline: this page's chart-label map
+  // and its slug. Everything shared across a language's 2000+ city pages lives
+  // once in _page.js (bootstrap, share button, topbar behaviour, month names) -
+  // the single biggest lever on total site size.
+  window.__ci18n = ${chart_i18n};
+  window.__slug = ${slug_js};
+</script>
+<script src="_page.js"></script>
+${i18n_head}
+</body>
+</html>
+"""
+)
+
+# The three body blocks shared by every city of a language. Rendered twice
+# from the same mapping: with real values into each full page, and with the
+# __S__ (slug) / __N__ (display name) sentinels into the per-language
+# _citybody.js that rebuilds them client-side on stub (tail-tier) pages.
+_SHARE_GUIDE = Template(
+    """  <div class="share-row">
     <button type="button" class="share-btn" id="share-btn" data-copied="${copied_label}">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none"
            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -325,9 +358,11 @@ ${topbar}
   <details class="guide">
     <summary${guide_title_attr}>${guide_title}</summary>
     <ul${guide_body_attr}>${guide_body}</ul>
-  </details>
+  </details>"""
+)
 
-  <section class="charts story">
+_CHART_STORY = Template(
+    """  <section class="charts story">
     <figure>
       <div class="chart-wrap"><canvas id="c-${slug}-yearly-trend"></canvas></div>
       <figcaption>${cap_yearly}</figcaption>
@@ -382,26 +417,114 @@ ${topbar}
     ${coldspell_figure}
     ${heavyrain_figure}
     ${heatindex_figure}
-  </section>
-
-  ${deep_history}
-</main>
-<footer>${footer_html} · <a href="../embed.html?mode=city&amp;city=${slug}">${widget_label_html}</a></footer>
-
-<script>
-  // Only what is truly city-specific stays inline: this page's chart-label map
-  // and its slug. Everything shared across a language's 2000+ city pages lives
-  // once in _page.js (bootstrap, share button, topbar behaviour, month names) -
-  // the single biggest lever on total site size.
-  window.__ci18n = ${chart_i18n};
-  window.__slug = ${slug_js};
-</script>
-<script src="_page.js"></script>
-${i18n_head}
-</body>
-</html>
-"""
+  </section>"""
 )
+
+_FOOTER_BLOCK = Template(
+    '<footer>${footer_html} · <a href="../embed.html?mode=city&amp;'
+    'city=${slug}">${widget_label_html}</a></footer>'
+)
+
+
+def _chrome_mapping(tr: dict, lang: str, slug: str, disp: str,
+                    city_name: str, *, has_precip: bool, has_dtr: bool,
+                    has_appheat: bool, has_records: bool,
+                    sentinel: bool = False) -> dict:
+    """Every substitution the three shared body blocks need.
+
+    Called with real values by build_site (full pages) and with
+    slug=__S__/disp=__N__ by write_citybody_js (the stub rebuild source).
+    ``sentinel`` renders ALL optional pieces (records widget, dtr/precip/
+    heat-index figures) - the stub script prunes by the page's own flags -
+    and leaves the news href for the script to build (the city name would
+    otherwise need URL-encoding around the sentinel).
+    """
+    def _titled(title_key: str, cap_key: str, **fmt) -> str:
+        title = tr[title_key].format(name=disp, **fmt)
+        desc = tr[cap_key]
+        if _CLIENT_I18N:
+            tattr = _i18n_attr(title_key, {k: v for k, v in fmt.items()} or None)
+            return (f'<strong class="fig-title"{tattr}>{title}</strong>'
+                    f'<br><span{_i18n_attr(cap_key)}>{desc}</span>')
+        return f'<strong class="fig-title">{title}</strong><br>{desc}'
+
+    def _fig(name: str, title_key: str, cap_key: str) -> str:
+        return (
+            f'<figure>\n      <div class="chart-wrap">'
+            f'<canvas id="c-{slug}-{name}"></canvas></div>\n'
+            f'      <figcaption>{_titled(title_key, cap_key)}</figcaption>\n    </figure>'
+        )
+
+    return dict(
+        slug=slug,
+        share_label=tr.get("share", "Share"),
+        copied_label=tr.get("share_copied", "Link copied"),
+        share_label_attr=_i18n_attr("share"),
+        news_url=("#" if sentinel else
+                  "https://news.google.com/search?q="
+                  + quote(f'"{city_name}" '
+                          + tr.get("extreme_weather", "extreme weather"))
+                  + f"&hl={lang}"),
+        news_data=(f' data-news="1" data-city="{_esc(city_name, quote=True)}"'
+                   if _CLIENT_I18N else ""),
+        news_label=tr.get("extreme_weather", "Extreme weather"),
+        news_label_attr=_i18n_attr("extreme_weather"),
+        guide_title=tr["guide_title"],
+        guide_title_attr=_i18n_attr("guide_title"),
+        guide_body=tr["guide_body"],
+        guide_body_attr=_i18n_attr("guide_body", html=True),
+        cap_yearly=_titled("yearly_title", "cap_yearly"),
+        cap_anomalies=_titled("anomaly_title", "cap_anomalies"),
+        cap_heatmap=_titled("heatmap_title", "cap_heatmap"),
+        cap_anom_heatmap=_titled("anom_heatmap_title", "cap_anom_heatmap",
+                                 base=f"{BASELINE[0]}-{BASELINE[1]}"),
+        cap_threshold=_titled("threshold_title", "cap_threshold"),
+        cap_volatility=_titled("volatility_title", "cap_volatility"),
+        cap_stripes=_titled("stripes_title", "cap_stripes"),
+        cap_season=_titled("season_title", "cap_season"),
+        cap_seasonshift=_titled("seasonshift_title", "cap_seasonshift"),
+        cap_degreedays=_titled("degreedays_title", "cap_degreedays"),
+        range_widget=interactive.range_widget_html(
+            slug, tr["range_title"].format(name=disp), tr["cap_range"],
+            tr["year"], None, tr["months"],
+            title_attr=_i18n_attr("range_title"),
+            cap_attr=_i18n_attr("cap_range"), year_attr=_i18n_attr("year")),
+        records_widget=(
+            interactive.records_widget_html(
+                slug, tr["record_title"].format(name=disp),
+                tr["cap_records"], tr["year"], None, tr["months"],
+                title_attr=_i18n_attr("record_title"),
+                cap_attr=_i18n_attr("cap_records"),
+                year_attr=_i18n_attr("year"))
+            if (has_records or sentinel) else ""),
+        dtr_figure=(_fig("diurnal-range", "dtr_title", "cap_dtr")
+                    if (has_dtr or sentinel) else ""),
+        precip_figure=(_fig("precipitation", "precip_title", "cap_precip")
+                       if (has_precip or sentinel) else ""),
+        heatwave_figure=(_fig("heatwave", "heatwave_title", "cap_heatwave")
+                         if (has_dtr or sentinel) else ""),
+        tropic_figure=(_fig("tropical-nights", "tropic_title", "cap_tropic")
+                       if (has_dtr or sentinel) else ""),
+        coldspell_figure=(_fig("cold-spells", "coldspell_title",
+                               "cap_coldspell")
+                          if (has_dtr or sentinel) else ""),
+        heavyrain_figure=(_fig("heavy-rain", "heavyrain_title",
+                               "cap_heavyrain")
+                          if (has_precip or sentinel) else ""),
+        heatindex_figure=(_fig("heat-index", "heatindex_title",
+                               "cap_heatindex")
+                          if (has_appheat or sentinel) else ""),
+        health_heading=tr["health_heading"],
+        health_heading_attr=_i18n_attr("health_heading"),
+        health_sub=tr["health_sub"],
+        health_sub_attr=_i18n_attr("health_sub"),
+        footer_html=_i18n_span(
+            tr["footer"].format(date=dt.date.today().isoformat()),
+            "footer", {"date": dt.date.today().isoformat()}, html=True),
+        widget_label_html=_i18n_span(
+            _WIDGET_LABEL.get(lang, _WIDGET_LABEL["en"]), "widget_label"),
+    )
+
 
 # Per-language shared city-page runtime (written once per language folder).
 # Holds every script that used to be inlined into each city page but does not
@@ -484,7 +607,12 @@ window.__crz = ${rz_label_json};
       }),
     window.__ready
   ])
-    .then(function (both) { return window.__expandYears(both[0]); })
+    .then(function (both) {
+      window.__unpackCharts(both[0]);
+      return window.__chartSpec('../charts/').then(function (spec) {
+        return window.__expandYears(window.__mergeChartSpec(both[0], spec));
+      });
+    })
     .then(draw)
     .catch(function (e) {
       if (window.chartsUnavailable) window.chartsUnavailable(e);
@@ -633,6 +761,85 @@ def write_page_js(output_dir: Path, tr: dict, lang: str) -> Path:
     ), encoding="utf-8")
     return path
 
+
+# Stub (tail-tier) pages carry only head + hero; this per-language script
+# rebuilds the shared body chrome around them before _page.js initialises.
+# The fragments are the SAME sub-templates full pages render, substituted with
+# the __S__ (slug) / __N__ (display name) sentinels; every optional piece is
+# included and pruned client-side by the page's window.__stub flags.
+_CITYBODY_JS = Template(
+    """// Stub city pages: shared body chrome for every city of this language.
+(function () {
+  var f = window.__stub;
+  if (!f) return;
+  var S = f.s;      // window.__slug is not set yet at this point
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+  }
+  function sub(t) {
+    return t.split("__S__").join(S).split("__N__").join(esc(f.n));
+  }
+  var hero = document.querySelector("header.region-hero");
+  hero.insertAdjacentHTML("beforebegin", sub(${topbar_js}));
+  var main = document.querySelector("main");
+  var dh = main.querySelector(".deephist-note");
+  var html = sub(${share_guide_js}) + sub(${chart_story_js});
+  if (dh) dh.insertAdjacentHTML("beforebegin", html);
+  else main.insertAdjacentHTML("beforeend", html);
+  function drop(id) {
+    var el = document.getElementById(id);
+    var fig = el && el.closest("figure");
+    if (fig) fig.parentNode.removeChild(fig);
+  }
+  if (!f.dtr) ["diurnal-range", "heatwave", "tropical-nights", "cold-spells"]
+    .forEach(function (n) { drop("c-" + S + "-" + n); });
+  if (!f.precip) ["precipitation", "heavy-rain"]
+    .forEach(function (n) { drop("c-" + S + "-" + n); });
+  if (!f.app) drop("c-" + S + "-heat-index");
+  document.body.insertAdjacentHTML("beforeend", sub(${footer_js}));
+  // The news link's href needs the real (URL-encoded) canonical city name.
+  var news = document.querySelector(".news-btn");
+  if (news) {
+    news.setAttribute("data-city", f.cn);
+    news.href = "https://news.google.com/search?q="
+      + encodeURIComponent('"' + f.cn + '" ' + ${news_phrase_js})
+      + "&hl=" + ${lang_js};
+  }
+})();
+""")
+
+
+def write_citybody_js(output_dir: Path, tr: dict, lang: str,
+                      switch_langs: list[str]) -> Path:
+    """Write the per-language stub body builder (``_citybody.js``)."""
+    tr = captions.overlay(tr, lang)
+    chrome = _chrome_mapping(tr, lang, "__S__", "__N__", "__N__",
+                             has_precip=True, has_dtr=True, has_appheat=True,
+                             has_records=True, sentinel=True)
+    # Stub pages ship no _range/_records payload (rich-tier only), so the
+    # rebuilt chrome carries neither widget figure.
+    chrome["range_widget"] = ""
+    chrome["records_widget"] = ""
+    topbar = _topbar("index.html", _lang_nav(lang, switch_langs, "__S__"),
+                     search_html=_city_picker(tr, lang))
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path = output_dir / "_citybody.js"
+    path.write_text(_CITYBODY_JS.substitute(
+        topbar_js=json.dumps(topbar, ensure_ascii=False),
+        share_guide_js=json.dumps(_SHARE_GUIDE.substitute(chrome),
+                                  ensure_ascii=False),
+        chart_story_js=json.dumps(_CHART_STORY.substitute(chrome),
+                                  ensure_ascii=False),
+        footer_js=json.dumps(_FOOTER_BLOCK.substitute(chrome),
+                             ensure_ascii=False),
+        news_phrase_js=json.dumps(
+            tr.get("extreme_weather", "extreme weather"), ensure_ascii=False),
+        lang_js=json.dumps(lang),
+    ), encoding="utf-8")
+    return path
+
+
 _REDIRECT = Template(
     """<!DOCTYPE html>
 <html lang="${lang}">
@@ -683,51 +890,60 @@ _LANG_REDIRECT = Template(
 )
 
 
-def _picker_data(city_locs: list[Location], tr: dict, url_of=None) -> list[list[str]]:
-    """The searchable city list: [name, url, localized-continent] per city.
+def write_roster_base(path: Path, locations: list[Location],
+                      city_langs: dict, preview_locs=None) -> None:
+    """The language-neutral city roster, written ONCE per build.
 
-    The secondary label is the localized continent, to tell apart same-named
-    places when searching. Sorted case-insensitively by name. ``url_of(loc)``
-    resolves each city's link (defaults to ``<slug>.html`` in the same folder);
-    client-i18n passes a resolver that points cross-language cities at an
-    existing shell.
-    """
+    Replaces the language-invariant bulk of the per-language _map.json /
+    _omni.json / _cities.json sidecars (which repeated coords, zones, URLs and
+    canonical names 132 times, ~46 KB per city across the site). Row:
+    ``[slug, lat, lon, zone, kind, region, cc, canonical-name, shells]`` where
+    ``shells`` (comma-joined) is the city's pre-rendered language set - the
+    client rebuilds the tier-aware URL from it (charts.js __rosterData, the
+    same rule as _dot_url_slug). ``a`` carries the alias rows (rendered
+    primaries only), ``r`` the region keys, ``p`` any preview markers."""
+    rows = [[loc.slug, round(loc.latitude, 4), round(loc.longitude, 4),
+             zone_of(loc.latitude), getattr(loc, "kind", "city"), loc.region,
+             countries.country_code(loc) or "", loc.name,
+             ",".join(city_langs.get(loc.slug, []) or [])]
+            for loc in locations]
+    built = {loc.slug for loc in locations
+             if getattr(loc, "kind", "city") == "city"}
+    payload = {"c": rows,
+               "a": [[a, p, r] for a, p, r in ALIASES if p in built],
+               "r": list(REGIONS)}
+    if preview_locs:
+        payload["p"] = [[l.name, round(l.latitude, 4), round(l.longitude, 4),
+                         zone_of(l.latitude)] for l in preview_locs]
+    path.write_text(json.dumps(payload, ensure_ascii=False,
+                               separators=(",", ":")), encoding="utf-8")
+
+
+def write_roster_delta(path: Path, lang: str,
+                       locations: list[Location], tr: dict) -> None:
+    """One language's roster overrides: only the localized names that differ
+    from the canonical name, plus this language's region labels. The client
+    layers this over charts/_base.json (charts.js __rosterData)."""
+    over = {}
+    for loc in locations:
+        n = _local_name(loc.slug, lang, loc.name)
+        if n != loc.name:
+            over[loc.slug] = n
     rnames = (tr or {}).get("regions", {})
-    items = sorted(city_locs, key=lambda loc: loc.name.casefold())
-    return [[loc.name,
-             url_of(loc) if url_of else f"{loc.slug}.html",
-             rnames.get(loc.region, loc.region)]
-            for loc in items]
-
-
-def write_cities_json(path: Path, city_locs: list[Location], tr: dict,
-                      url_of=None) -> None:
-    """Write the shared per-language city list used by the topbar search.
-
-    A DATA sidecar (``_cities.json``), fetched by charts.js on first use - not a
-    ``<script>``. At full roster the list is ~22 KB gzipped, larger than the page
-    carrying it, and it serves only the search box, which most visits never open.
-    Measured before the change: as a blocking mid-body script it cost nothing in
-    first paint (aborting the request left FCP identical at 536 ms), so this buys
-    entry-path bytes and ~87 ms of DOMContentLoaded, not paint.
-
-    Regenerated each build so the search stays current even on incrementally
-    cached pages. ``url_of`` resolves each city's link (see :func:`_picker_data`).
-    """
-    path.write_text(
-        json.dumps({"c": _picker_data(city_locs, tr, url_of)}, ensure_ascii=False),
-        encoding="utf-8")
+    labels = {r: rnames[r] for r in REGIONS if rnames.get(r)}
+    path.write_text(json.dumps({"n": over, "r": labels}, ensure_ascii=False,
+                               separators=(",", ":")), encoding="utf-8")
 
 
 def _city_picker(tr: dict, lang: str) -> str:
     """A single searchable combobox over every city.
 
     A type-to-filter search over the full city list: filtered client-side
-    (accent-insensitive), navigable by keyboard or click. The list itself is not
-    inlined here and no longer ships as a ``<script>`` either - charts.js fetches
-    ``_cities.json`` when the box is first used (see :func:`write_cities_json`),
-    so this markup is tiny and identical on every page. ``lang`` is accepted for
-    call-site symmetry with the other pieces.
+    (accent-insensitive), navigable by keyboard or click. The list itself is
+    not inlined - charts.js derives it from the shared roster
+    (charts/_base.json + _delta.json, see :func:`write_roster_base`) when the
+    box is first used, so this markup is tiny and identical on every page.
+    ``lang`` is accepted for call-site symmetry with the other pieces.
     """
     placeholder = tr["choose_city"]
     # Client-i18n: re-localize both the placeholder and the aria-label on a switch
@@ -1003,8 +1219,14 @@ def build_site(
     og_card_ccs: frozenset | set = frozenset(),
     df_cur=None,
     season: tuple | None = None,
+    stub: bool = False,
 ) -> Path:
-    """Write ``<slug>.html`` (localised) into ``output_dir``; return its path."""
+    """Write ``<slug>.html`` (localised) into ``output_dir``; return its path.
+
+    ``stub=True`` (tail-tier cities) keeps only the SEO surface static - full
+    <head>, hero header, per-city prose (current-year note, deep-history) -
+    and loads _citybody.js, which rebuilds the shared chrome (topbar, share
+    row, guide, chart sections, footer) client-side before _page.js runs."""
     output_dir.mkdir(parents=True, exist_ok=True)
     tr = captions.overlay(tr, lang)
     slug = location.slug
@@ -1089,49 +1311,31 @@ def build_site(
           'dist/chartjs-plugin-zoom.min.js"></script>'
         + '<script defer src="../charts.js"></script>'
     )
-    range_widget = interactive.range_widget_html(
-        slug, tr["range_title"].format(name=disp), tr["cap_range"],
-        tr["year"], range_data, tr["months"],
-        title_attr=_i18n_attr("range_title"), cap_attr=_i18n_attr("cap_range"),
-        year_attr=_i18n_attr("year"))
-    records_widget = (
-        interactive.records_widget_html(
-            slug, tr["record_title"].format(name=disp),
-            tr["cap_records"], tr["year"], records_data, tr["months"],
-            title_attr=_i18n_attr("record_title"),
-            cap_attr=_i18n_attr("cap_records"), year_attr=_i18n_attr("year"))
-        if records_data else ""
-    )
-    # Charts are shared/language-neutral, so the localised title lives in the
-    # HTML caption (bold) above the description, and images come from ../charts.
-    def _titled(title_key: str, cap_key: str, **fmt) -> str:
-        title = tr[title_key].format(name=disp, **fmt)
-        desc = tr[cap_key]
-        if _CLIENT_I18N:
-            # {name} is auto-provided by the runtime; any other fmt vars are
-            # per-city, so bake them. The description wraps in a <span> so its
-            # text node becomes keyable (text-only, so parity is unaffected).
-            tattr = _i18n_attr(title_key, {k: v for k, v in fmt.items()} or None)
-            return (f'<strong class="fig-title"{tattr}>{title}</strong>'
-                    f'<br><span{_i18n_attr(cap_key)}>{desc}</span>')
-        return f'<strong class="fig-title">{title}</strong><br>{desc}'
-
-    def _fig(name: str, title_key: str, cap_key: str) -> str:
-        return (
-            f'<figure>\n      <div class="chart-wrap">'
-            f'<canvas id="c-{slug}-{name}"></canvas></div>\n'
-            f'      <figcaption>{_titled(title_key, cap_key)}</figcaption>\n    </figure>'
-        )
-
-    precip_figure = _fig("precipitation", "precip_title", "cap_precip") if has_precip else ""
-    dtr_figure = _fig("diurnal-range", "dtr_title", "cap_dtr") if has_dtr else ""
-
-    # Health-impact panels, each gated on the dataset it needs.
-    heatwave_figure = _fig("heatwave", "heatwave_title", "cap_heatwave") if has_dtr else ""
-    tropic_figure = _fig("tropical-nights", "tropic_title", "cap_tropic") if has_dtr else ""
-    coldspell_figure = _fig("cold-spells", "coldspell_title", "cap_coldspell") if has_dtr else ""
-    heavyrain_figure = _fig("heavy-rain", "heavyrain_title", "cap_heavyrain") if has_precip else ""
-    heatindex_figure = _fig("heat-index", "heatindex_title", "cap_heatindex") if has_appheat else ""
+    # The captions, figure scaffolding, share/guide chrome, and footer come
+    # from the same mapping the per-language _citybody.js is rendered from
+    # (with sentinels), so a stub page's client rebuild matches this exactly.
+    chrome = _chrome_mapping(tr, lang, slug, disp, location.name,
+                             has_precip=has_precip, has_dtr=has_dtr,
+                             has_appheat=has_appheat,
+                             has_records=records_data is not None)
+    if stub:
+        share_guide = chart_story = footer_block = ""
+        # "s" rides along because _citybody.js runs BEFORE the inline script
+        # that sets window.__slug (the chrome must exist before _page.js).
+        # No rec/range flags: stub pages ship no _range/_records payload
+        # (rich-tier only), so _citybody.js includes neither widget.
+        stub_cfg = (
+            '<script>window.__stub='
+            + json.dumps({"s": slug, "n": disp, "cn": location.name,
+                          "dtr": has_dtr, "precip": has_precip,
+                          "app": has_appheat},
+                         ensure_ascii=False, separators=(",", ":"))
+            + ';</script>\n<script src="_citybody.js"></script>\n')
+    else:
+        share_guide = _SHARE_GUIDE.substitute(chrome)
+        chart_story = _CHART_STORY.substitute(chrome)
+        footer_block = _FOOTER_BLOCK.substitute(chrome)
+        stub_cfg = ""
 
     # "Why is there no data before 1940?" is ANSWERED IN THE Q&A TAB (_ABOUT_QA q3),
     # so the city page no longer repeats it - it was the same question twice, in two
@@ -1269,24 +1473,16 @@ def build_site(
                   else f"{SITE_BASE}/og/{_cc}.png" if _cc in og_card_ccs
                   else f"{SITE_BASE}/og/world.png"),
         og_url=f"{SITE_BASE}/{lang}/{slug}.html",
-        share_label=tr.get("share", "Share"),
-        copied_label=tr.get("share_copied", "Link copied"),
         analog_html=analog_html,
         curyear=curyear_html,
-        # Live extreme-weather news search for this city - runs in the visitor's
-        # browser (Google News), so results are always current and nothing is
-        # stored. The localized "extreme weather" phrase is both the button label
-        # and the query term, so the search reads naturally in the visitor's tongue.
-        news_url=("https://news.google.com/search?q="
-                  + quote(f'"{location.name}" '
-                          + tr.get("extreme_weather", "extreme weather"))
-                  + f"&hl={lang}"),
-        # Client-i18n: the runtime rebuilds this href for the switched language
-        # (localized phrase + hl) from the city name baked here; "" when flag off.
-        news_data=(f' data-news="1" data-city="{_esc(location.name, quote=True)}"'
-                   if _CLIENT_I18N else ""),
-        news_label=tr.get("extreme_weather", "Extreme weather"),
         subtitle=_subtitle,
+        # The share row/guide, chart sections, and footer render from the same
+        # chrome mapping _citybody.js is built from; "" on stub pages, where
+        # stub_cfg loads the client-side rebuild instead.
+        share_guide=share_guide,
+        chart_story=chart_story,
+        footer_block=footer_block,
+        stub_cfg=stub_cfg,
         # For an alias arrival (#as=<name>): the primary's own display name and a
         # localized "same grid cell as {city}" note, read by charts.js to relabel
         # the heading. ``_esc`` keeps quotes/brackets safe inside the attribute.
@@ -1318,8 +1514,9 @@ def build_site(
         map_icon=_MAP_ICON,
         picker=_city_picker(tr, lang),
         lang_nav=_lang_nav(lang, _switch_langs, slug),
-        topbar=_topbar("index.html", _lang_nav(lang, _switch_langs, slug),
-                       search_html=_city_picker(tr, lang)),
+        topbar=("" if stub else
+                _topbar("index.html", _lang_nav(lang, _switch_langs, slug),
+                        search_html=_city_picker(tr, lang))),
         trend=_t(stats['trend_per_decade'], "delta", 2, 2),
         trend_unit=tr["per_decade_c"],
         trend_unit_attr=_i18n_attr("per_decade_c"),
@@ -1340,47 +1537,12 @@ def build_site(
         card_mean_attr=_i18n_attr("card_mean"),
         card_warmest_attr=_i18n_attr("card_warmest"),
         card_coldest_attr=_i18n_attr("card_coldest"),
-        share_label_attr=_i18n_attr("share"),
-        news_label_attr=_i18n_attr("extreme_weather"),
-        guide_title_attr=_i18n_attr("guide_title"),
-        guide_body_attr=_i18n_attr("guide_body", html=True),
-        health_heading_attr=_i18n_attr("health_heading"),
-        health_sub_attr=_i18n_attr("health_sub"),
         place_head=place_head,
         card_mean=tr["card_mean"],
         card_warmest=tr["card_warmest"],
         card_coldest=tr["card_coldest"],
-        cap_yearly=_titled("yearly_title", "cap_yearly"),
-        cap_anomalies=_titled("anomaly_title", "cap_anomalies"),
-        cap_heatmap=_titled("heatmap_title", "cap_heatmap"),
-        cap_anom_heatmap=_titled("anom_heatmap_title", "cap_anom_heatmap",
-                                 base=f"{BASELINE[0]}-{BASELINE[1]}"),
         chart_js=chart_js,
-        range_widget=range_widget,
-        records_widget=records_widget,
-        cap_threshold=_titled("threshold_title", "cap_threshold"),
-        cap_volatility=_titled("volatility_title", "cap_volatility"),
-        cap_stripes=_titled("stripes_title", "cap_stripes"),
-        cap_season=_titled("season_title", "cap_season"),
-        cap_seasonshift=_titled("seasonshift_title", "cap_seasonshift"),
-        dtr_figure=dtr_figure,
-        precip_figure=precip_figure,
-        health_heading=tr["health_heading"],
-        health_sub=tr["health_sub"],
-        cap_degreedays=_titled("degreedays_title", "cap_degreedays"),
-        heatwave_figure=heatwave_figure,
-        tropic_figure=tropic_figure,
-        coldspell_figure=coldspell_figure,
-        heavyrain_figure=heavyrain_figure,
-        heatindex_figure=heatindex_figure,
-        guide_title=tr["guide_title"],
-        guide_body=tr["guide_body"],
         deep_history=deep_history,
-        footer_html=_i18n_span(
-            tr["footer"].format(date=dt.date.today().isoformat()),
-            "footer", {"date": dt.date.today().isoformat()}, html=True),
-        widget_label_html=_i18n_span(
-            _WIDGET_LABEL.get(lang, _WIDGET_LABEL["en"]), "widget_label"),
         slug=slug,
     )
 
@@ -1696,27 +1858,42 @@ ${topbar}
 <!-- maplibre-gl (~207 KB) is loaded lazily by __initMap on the first Map-tab
      open, not on every visit - most visitors never open the map. -->
 <script>
-  var cities = [], PREVIEW = [];      // filled by __loadMapData (see _map.json)
+  var cities = [], PREVIEW = [];      // filled by __loadMapData (shared roster)
   var QV = ${qv_json};                // quick-view card strings (localized)
   var ZONE_COLOR = ${zone_color_json};
   var ZONE_BANDS = ${zone_bands_json};
   var GRID_TIP = ${grid_tip_js};      // "{n} of {m} cities with data" (localized)
-  // The marker list lives in _map.json, not inline: ~295 KB of it, and the two
-  // things that read it (the map itself, the compare pickers) are both behind
-  // tabs. Whoever needs it first awaits this promise; later callers get the
-  // resolved one. window.__mapCities is the real (analysed) subset - no regions,
-  // no ocean reference points - which is what the compare pickers list.
+  // Start the roster fetches NOW, while the document still parses - the omni
+  // index below joins them with __ready, and losing that overlap would put a
+  // whole round trip back on first paint. charts.js (__rosterData) adopts this
+  // pending pair instead of refetching. Errors are re-handled by the adopter.
+  window.__rosterRaw = Promise.all([
+    fetch('../charts/_base.json').then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }),
+    fetch('_delta.json').then(function (r) { return r.ok ? r.json() : {}; })
+                        .catch(function () { return {}; })
+  ]);
+  window.__rosterRaw.catch(function () {});   // no unhandled-rejection noise
+  // The marker list derives from the shared roster (charts/_base.json +
+  // _delta.json), not a per-language _map.json - the two things that read it
+  // (the map itself, the compare pickers) are both behind tabs. Whoever needs
+  // it first awaits this promise; later callers get the resolved one.
+  // window.__mapCities is the real (analysed) subset - no regions, no ocean
+  // reference points - which is what the compare pickers list.
   window.__loadMapData = function () {
     if (!window.__mapDataP) {
-      window.__mapDataP = fetch('_map.json')
-        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-        .then(function (d) {
-          cities = d.c || [];
-          PREVIEW = d.p || [];
+      window.__mapDataP = window.__rosterData()
+        .then(function (R) {
+          cities = R.rows;
+          PREVIEW = (R.preview || []).map(function (p) {
+            return { n: p[0], lat: p[1], lon: p[2], z: p[3] };
+          });
           window.__mapCities = cities.filter(function (c) {
             return c.k !== 'region' && c.k !== 'ocean';
           });
-          return d;
+          return { c: cities, p: PREVIEW };
         })
         // Drop the cached promise on failure, else one transient error would
         // hand every later caller the same rejection - permanently dead map AND
@@ -2316,8 +2493,12 @@ ${topbar}
     // page that may have been pruned. renderGlobal drives every one of those
     // renders, so resolving all three together is what keeps that link honest.
     var NO_OMNI = { c: [], r: [], g: [] };
-    var omni = fetch('_omni.json')
-      .then(function (r) { return r.ok ? r.json() : NO_OMNI; })
+    // Rebuilt from the shared roster (fetches already in flight, see
+    // __rosterRaw above); __rosterData/__omniFrom live in deferred charts.js,
+    // so join __ready first. Same {c, r, g} shape _omni.json used to carry.
+    var omni = window.__ready
+      .then(function () { return window.__rosterData(); })
+      .then(function (R) { return window.__omniFrom(R); })
       .catch(function () { return NO_OMNI; });
     // __ready joins the fetches: initOmni and renderGlobal live in the deferred
     // charts.js, which a fast payload would otherwise beat. Called UNGUARDED on
@@ -2386,7 +2567,13 @@ ${topbar}
             return r.json();
           }),
           window.__ready
-        ]).then(function (both) { return window.__expandYears(both[0]); });
+        ]).then(function (both) {
+          window.__unpackCharts(both[0]);
+          return window.__chartSpec('../charts/').then(function (spec) {
+            return window.__expandYears(
+              window.__mergeChartSpec(both[0], spec));
+          });
+        });
       return cache[slug];
     }
     function rankRow(slug) {
@@ -3332,24 +3519,9 @@ def build_map_page(
         # Strip whatever separator precedes {name} (dash, colon, comma, ...).
         return tr[key].split("{name}")[0].format(**fmt).strip().rstrip("---:,;· ").strip()
 
-    # Each city dot is coloured by its climate zone; the map paints matching
-    # latitude bands + a legend, so the geography reads against the dashboard.
-    markers = [
-        {"n": _local_name(loc.slug, lang, loc.name), "s": _dot_url(loc),
-         "lat": loc.latitude, "lon": loc.longitude, "z": zone_of(loc.latitude),
-         "k": getattr(loc, "kind", "city"),
-         # Geographic continent + ISO-2 country, so the map dots can be filtered
-         # to a region or a single country (ocean/region points have no country).
-         "r": loc.region, "cc": (countries.country_code(loc) or "")}
-        for loc in locations
-    ]
-    # Faint dots for cities awaiting data (preview build): position + zone + a
-    # localized name, so the quick-view card can say which city has no data yet.
-    preview_markers = [
-        {"n": _local_name(loc.slug, lang, loc.name),
-         "lat": loc.latitude, "lon": loc.longitude, "z": zone_of(loc.latitude)}
-        for loc in (preview_locs or [])
-    ]
+    # The city dots and the omni/search indexes derive client-side from the
+    # shared roster (charts/_base.json + <lang>/_delta.json, see
+    # write_roster_base) - no per-language marker sidecars anymore.
     zone_legend = "".join(
         f'<span class="zl"><i style="background:{_ZONE_COLOR[k]}"></i>'
         f'{tr[_ZONE_NAME_KEY[k]]}</span>'
@@ -3431,42 +3603,10 @@ def build_map_page(
         "faster": tr.get("lookup_faster", "warming faster than {pct}% of the world's cities"),
         "cooling": tr.get("lookup_cooling", "Cooling, against the global trend"),
         "news": tr.get("extreme_weather", "Extreme weather")}
-    # Omni search: one box that finds cities, countries, regions or any place. The
-    # city + region lists are embedded (localized) for instant offline search;
-    # countries are localized client-side from the loaded ranking. Each city row is
-    # [display, url, region-label, original-name?] (original kept for search only).
-    _omni_cities = []
-    for loc in sorted(city_locs, key=lambda l: _local_name(l.slug, lang, l.name).casefold()):
-        _dn = _local_name(loc.slug, lang, loc.name)
-        # Tier-aware URL (like the map dots): a city with no shell in this
-        # language links to one it has, not a 404 same-folder link.
-        _row = [_dn, _dot_url(loc), _rnames.get(loc.region, loc.region)]
-        if _dn != loc.name:
-            _row.append(loc.name)
-        _omni_cities.append(_row)
-    # Alias cities share a built primary's grid cell (identical record): offer each
-    # as a search entry that opens the primary's page relabelled to this name via
-    # a #as= hash. Only aliases whose primary actually rendered (has data) qualify,
-    # so the count grows automatically as the backfill fills more primaries. These
-    # are APPENDED after the real cities, so an exact-named city still ranks first.
-    _built_slugs = {loc.slug for loc in city_locs}
-    for _aname, _pslug, _aregion in ALIASES:
-        if _pslug not in _built_slugs:
-            continue
-        # Resolve the PRIMARY's shell tier-aware, then relabel via #as=, so an
-        # alias in a language the primary wasn't pre-rendered in still opens.
-        _url = _dot_url_slug(_pslug) + "#as=" + quote(_aname)
-        _omni_cities.append([_aname, _url, _rnames.get(_aregion, _aregion)])
-    _omni_regions = [[r, _rnames.get(r, r)] for r in REGIONS]
-    # Coordinates of every covered (data-backed) city, so a freeform "check any
-    # place" lookup can snap a geocoded point to the nearest city we ALREADY have
-    # data for (same grid cell -> identical record) and open that page instead of
-    # firing a live 85-year fetch. Makes any place near a covered city instant and
-    # quota-proof - not just the pre-listed >15k aliases. [lat, lon, slug].
-    _omni_geo = [[round(loc.latitude, 3), round(loc.longitude, 3), loc.slug]
-                 for loc in city_locs]
-    omni_data = json.dumps({"c": _omni_cities, "r": _omni_regions, "g": _omni_geo},
-                           ensure_ascii=False)
+    # The omni search index (cities incl. aliases, regions, and the geo table
+    # the "check any place" lookup snaps against) is rebuilt client-side from
+    # the shared roster (charts.js __omniFrom) - it used to be a ~590 KB
+    # per-language _omni.json sidecar.
     _omni_labels = dict(_lookup_labels)
     _omni_labels.update({
         "g_cities": tr.get("omni_cities", "Cities"),
@@ -3485,7 +3625,6 @@ def build_map_page(
                            _map_desc, _map_jsonld),
         omni_i18n=omni_i18n,
         omni_ph=omni_ph,
-        omni_data=omni_data,
         # "Your region" hero (seeded with the default city; JS swaps in the
         # visitor's nearest covered city on geolocation).
         hero_eyebrow=hero_eyebrow,
@@ -3631,17 +3770,11 @@ def build_map_page(
     )
     path = output_dir / "index.html"
     path.write_text(html, encoding="utf-8")
-    # The map's marker list (~295 KB raw / ~53 KB gzipped for the full roster)
-    # goes in a SIDECAR, not inline: maplibre already loads on the first Map-tab
-    # open, and the compare pickers are behind their own tab, so no visitor needs
-    # these bytes to see the landing page. Fetched by __loadMapData().
-    (output_dir / "_map.json").write_text(
-        json.dumps({"c": markers, "p": preview_markers}, ensure_ascii=False),
-        encoding="utf-8")
-    # The omni search index, likewise a sidecar rather than inline: it is localized
-    # (region names, tier-aware cross-folder URLs) so it stays per-language, but it
-    # no longer has to be parsed before the page can paint.
-    (output_dir / "_omni.json").write_text(omni_data, encoding="utf-8")
+    # The marker/search sidecars (_map.json, _omni.json) are gone - the client
+    # derives both from the shared roster. A restored cache may still hold the
+    # old per-language files; they would deploy unreferenced, so drop them.
+    (output_dir / "_map.json").unlink(missing_ok=True)
+    (output_dir / "_omni.json").unlink(missing_ok=True)
     return path
 
 

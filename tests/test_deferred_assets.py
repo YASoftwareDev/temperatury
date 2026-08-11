@@ -209,7 +209,8 @@ def test_a_failed_map_fetch_does_not_kill_the_session():
     disabled both, silently and with no retry.
     """
     out = build(SLUG, "en", client_i18n=True)
-    assert (out / "en" / "_map.json").is_file(), "the marker sidecar should be written"
+    assert (out / "charts" / "_base.json").is_file(), \
+        "the shared roster base should be written"
     errors = []
     with _serve(out) as base, _page(errors) as pg:
         state = {"fail": True, "n": 0}
@@ -218,7 +219,7 @@ def test_a_failed_map_fetch_does_not_kill_the_session():
             state["n"] += 1
             r.abort() if state["fail"] else r.continue_()
 
-        pg.route("**/_map.json", route)
+        pg.route("**/_base.json", route)
         # Aborting a request logs "Failed to load resource"; that IS the scenario.
         expected = "Failed to load resource"
         pg.goto(f"{base}/en/index.html", wait_until="load")
@@ -252,7 +253,8 @@ def test_city_search_list_is_lazy_and_still_finds_cities():
     fetch does not disable the search for the rest of the visit.
     """
     out = build(SLUG, "en", client_i18n=True)
-    assert (out / "en" / "_cities.json").is_file(), "the city list sidecar is missing"
+    assert (out / "charts" / "_base.json").is_file(), \
+        "the shared roster base is missing"
     html = (out / "en" / f"{SLUG}.html").read_text(encoding="utf-8")
     assert "_cities.js" not in html, "the city list is a blocking <script> again"
 
@@ -264,7 +266,7 @@ def test_city_search_list_is_lazy_and_still_finds_cities():
             reqs.append(1)
             r.abort() if state["fail"] else r.continue_()
 
-        pg.route("**/_cities.json", route)
+        pg.route("**/_base.json", route)
         pg.goto(f"{base}/en/{SLUG}.html", wait_until="load")
         pg.wait_for_timeout(1200)
         assert not reqs, "the city list is on the entry path; it should load on first use"
@@ -295,16 +297,17 @@ def test_search_index_is_a_sidecar_and_still_searchable():
     out = build(SLUG, "en", client_i18n=True)
     index = (out / "en" / "index.html").read_text(encoding="utf-8")
     assert "window.__omniData=" not in index, "the search index is inline again"
-    assert (out / "en" / "_omni.json").is_file(), "_omni.json was not written"
+    assert (out / "charts" / "_base.json").is_file(), \
+        "the shared roster base was not written"
 
     errors, fetched, failed = [], [], []
     with _serve(out) as base, _page(errors) as pg:
-        pg.on("response", lambda r: fetched.append(r.url) if "_omni.json" in r.url else None)
+        pg.on("response", lambda r: fetched.append(r.url) if "_base.json" in r.url else None)
         pg.on("response",
               lambda r: failed.append(r.url) if r.status >= 400 else None)
         pg.goto(f"{base}/en/index.html", wait_until="load")
         pg.wait_for_timeout(3000)
-        assert fetched, "the page never fetched _omni.json"
+        assert fetched, "the page never fetched the roster base"
         assert pg.evaluate("((window.__omniData || {}).c || []).length") >= 1
         assert pg.evaluate("!!document.getElementById('omni-input').__wired"), \
             "the search was never wired to the loaded index"

@@ -12,7 +12,7 @@ import pytest
 from playwright.sync_api import sync_playwright
 
 import i18ndict
-from tests.conftest import ROOT, build
+from tests.conftest import ROOT, build, roster
 
 _CHROME_JS = """() => {
   const q = s => document.querySelector(s);
@@ -92,9 +92,11 @@ def test_search_lists_all_cities_cross_language():
     build("tokyo", "en,pl,ja", client_i18n=True)
 
     def _cities(lang):
-        data = json.loads(
-            (ROOT / f"output/{lang}/_cities.json").read_text(encoding="utf-8"))
-        return {row[0]: row[1] for row in data["c"]}
+        # The search derives from the shared roster (charts/_base.json +
+        # <lang>/_delta.json) exactly as charts.js does - conftest.roster is
+        # that mirror. Rows: canonical name -> tier-aware URL.
+        R = roster(ROOT / "output", lang)
+        return {x["cn"]: x["s"] for x in R["rows"] if x["k"] == "city"}
 
     pl = _cities("pl")   # Tokyo has no PL shell
     en = _cities("en")   # Tokyo always has an EN shell
@@ -128,16 +130,19 @@ def test_landing_omni_no_cross_language_404():
     """The landing omni search must link a city/alias with no shell in this
     language to one it has (tier-aware), not a 404 same-folder URL.
 
-    The index lives in ``<lang>/_omni.json`` (it was inline in the landing HTML
-    until it turned out to be three quarters of that file and ~380 ms of first
-    paint), so this asserts on the rows themselves rather than on HTML substrings.
+    The index derives client-side from the shared roster (charts.js
+    __omniFrom over __rosterData); conftest.roster mirrors that layering, so
+    this asserts on the derived rows rather than on HTML substrings.
     """
     build("tokyo", "en,pl,ja", client_i18n=True)
 
     def tokyo_urls(lang: str) -> list[str]:
-        data = json.loads((ROOT / f"output/{lang}/_omni.json")
-                          .read_text(encoding="utf-8"))
-        return [row[1] for row in data["c"] if "tokyo.html" in row[1]]
+        R = roster(ROOT / "output", lang)
+        urls = [x["s"] for x in R["rows"] if x["slug"] == "tokyo"]
+        # Alias rows resolve through the primary's tier-aware URL + #as=.
+        urls += [R["by_slug"][pslug]["s"] + "#as=" + name
+                 for name, pslug, _r in R["aliases"] if pslug == "tokyo"]
+        return urls
 
     pl_urls, ja_urls = tokyo_urls("pl"), tokyo_urls("ja")
     assert pl_urls, "PL omni index should still offer Tokyo (cross-folder)"

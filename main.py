@@ -41,6 +41,9 @@ from data import (
     load_temperatures_bulk,
 )
 import chartdata
+import chartpack
+import chartspec
+import config
 import countries
 import globaldata
 import globaltext
@@ -59,10 +62,20 @@ from report import (
     SITE_BASE,
     build_map_page,
     build_site,
-    write_cities_json,
+    write_citybody_js,
     write_lang_redirect,
     write_page_js,
+    write_roster_base,
+    write_roster_delta,
 )
+
+
+# Cross-city constant chart fields, hoisted out of every per-city JSON into
+# one committed file (regenerate: tools/gen_chart_spec.py after a full build).
+# Missing file = no stripping, so a fresh clone still builds correct output.
+_SPEC_PATH = config.ROOT / "charts_spec.json"
+CHART_SPEC = (json.loads(_SPEC_PATH.read_text(encoding="utf-8"))
+              if _SPEC_PATH.exists() else {})
 
 
 def _last_full_year() -> int:
@@ -130,12 +143,17 @@ def _init_render_worker(locations: list[Location], languages: list[str],
                         rankpct: dict | None = None,
                         citylangs: dict | None = None,
                         cardslugs: set | None = None,
-                        cardccs: set | None = None) -> None:
+                        cardccs: set | None = None,
+                        richslugs: set | None = None) -> None:
     _WORKER["locations"] = locations
     _WORKER["languages"] = languages
     _WORKER["analogs"] = analogs or {}
     _WORKER["rankpct"] = rankpct or {}
     _WORKER["citylangs"] = citylangs or {}
+    # Size tiering (langtier.RICH_TIER): cities outside this set render as
+    # stub pages (head + hero static, chrome injected from _citybody.js).
+    # None/empty = no stubbing at all (server-i18n parity builds).
+    _WORKER["richslugs"] = richslugs or None
     # Which cities ogcards gave a personal share card, and which countries got one
     # at all (small countries miss the country ranking's minimum-cities threshold).
     # Passed in rather than recomputed so og:image cannot name a PNG that is absent.
@@ -211,10 +229,18 @@ def _render_city(task) -> tuple[str, int]:
     # Charts only: range_data/records_data are handed to build_site below as well,
     # so they must not be rewritten here. They carry no duplicated year axis anyway.
     _years = chartdata.dedupe_year_axes(payloads)
-    shared = {**payloads, "_range": range_data}
+    # The monthly-range/records widgets are rich-tier only: their payloads are
+    # over half a tail city's chart JSON (~17 KB of ~30 KB measured), and the
+    # stub page drops the two widget figures to match (report._CITYBODY_JS
+    # prunes on the same flags this write is gated on).
+    _rich_set = _WORKER.get("richslugs")
+    _stub = bool(_rich_set) and location.slug not in _rich_set
+    shared = dict(payloads)
+    if not _stub:
+        shared["_range"] = range_data
     if _years:
         shared["_years"] = _years
-    if records_data is not None:
+    if records_data is not None and not _stub:
         shared["_records"] = records_data
     # Client-i18n serves one shell per city, so the {english: localized} chart-
     # label map cannot be baked per page. Ship each label's serialisable recipe
@@ -225,9 +251,18 @@ def _render_city(task) -> tuple[str, int]:
         shared["_labels"] = [pair for cs in specs.values() for pair in cs]
     charts_dir = OUTPUT_DIR / "charts"
     charts_dir.mkdir(parents=True, exist_ok=True)
+    # Cross-city constant fields are stripped against the committed spec
+    # (chartspec; charts.js merges them back), then numeric arrays ship as
+    # verified-lossless packed ints (chartpack) - the Pages cap counts
+    # uncompressed bytes, so this on-disk encoding is what actually shrinks
+    # the artifact. charts.js __unpackCharts is the inverse. Strip precedes
+    # pack: the spec matches unpacked scalar values.
     (charts_dir / f"{location.slug}.json").write_text(
-        json.dumps(shared, ensure_ascii=False), encoding="utf-8")
+        json.dumps(chartpack.pack_tree(chartspec.strip(shared, CHART_SPEC)),
+                   ensure_ascii=False),
+        encoding="utf-8")
     n = 0
+    stub = _stub
     for lang in languages:
         tr = i18n.get(lang)
         chart_i18n: dict[str, str] = {}
@@ -241,7 +276,8 @@ def _render_city(task) -> tuple[str, int]:
                    chart_i18n=chart_i18n, analog=analog, rank_pct=rank_pct,
                    df_cur=df_cur, season=season,
                    has_og_card=location.slug in _WORKER.get("cardslugs", ()),
-                   og_card_ccs=_WORKER.get("cardccs", frozenset()))
+                   og_card_ccs=_WORKER.get("cardccs", frozenset()),
+                   stub=stub)
         n += 1
     return location.slug, n
 
@@ -285,6 +321,14 @@ def main() -> None:
     locations = [loc for loc in locations if loc.slug in frames]
     if not locations:
         raise SystemExit("No location data available - nothing to build.")
+
+    # Per-city payloads are stripped against the spec, so EVERY build path that
+    # writes city charts must also publish the spec the client merges back in -
+    # single-city test builds included, not just --all.
+    if CHART_SPEC:
+        (OUTPUT_DIR / "charts").mkdir(parents=True, exist_ok=True)
+        (OUTPUT_DIR / "charts" / "_spec.json").write_text(
+            json.dumps(CHART_SPEC, ensure_ascii=False), encoding="utf-8")
 
     # Daily max/min (record highs/lows) - optional add-on dataset; a city
     # without it simply skips the record chart.
@@ -528,9 +572,12 @@ def main() -> None:
     jobs = int(os.environ.get("TEMPERATURY_JOBS") or 0) or (os.cpu_count() or 1)
     jobs = max(1, min(jobs, len(tasks)))
     written = 0
+    # Stub tiering only exists in the client-i18n build (_citybody.js relies on
+    # the client runtime); the server-i18n parity build renders full pages.
+    g_richslugs = _rich if CLIENT_I18N else None
     if jobs == 1:
         _init_render_worker(locations, i18n.LANGUAGES, g_analogs, g_rankpct,
-                            g_citylangs, g_cardslugs, g_cardccs)
+                            g_citylangs, g_cardslugs, g_cardccs, g_richslugs)
         for task in tasks:
             written += _render_city(task)[1]
     else:
@@ -543,7 +590,8 @@ def main() -> None:
                                  initializer=_init_render_worker,
                                  initargs=(locations, i18n.LANGUAGES, g_analogs,
                                            g_rankpct, g_citylangs,
-                                           g_cardslugs, g_cardccs)) as pool:
+                                           g_cardslugs, g_cardccs,
+                                           g_richslugs)) as pool:
             for _slug, n in pool.map(_render_city, tasks):
                 written += n
 
@@ -556,6 +604,12 @@ def main() -> None:
         preview_locs = [l for l in LOCATIONS.values()
                         if getattr(l, "kind", "city") == "city" and l.slug not in _built]
         print(f"Preview: {len(preview_locs)} cities awaiting data shown as faint dots.")
+
+    # The language-neutral roster, written ONCE: coords, zones, kinds, regions,
+    # canonical names and each city's shell set. The per-language _delta.json
+    # (written in the loop below) layers localized names/labels over it.
+    write_roster_base(OUTPUT_DIR / "charts" / "_base.json", locations,
+                      g_citylangs, preview_locs)
 
     # Each language's index.html is the world map (climate zones) with the
     # world/regional dashboard embedded below it; root redirects to it.
@@ -579,40 +633,28 @@ def main() -> None:
                        # language link to the city's first built language.
                        city_langs=g_citylangs,
                        kpis=g_kpis)
-        # Shared per-language city list for the topbar search - written once here
-        # and referenced by every city page (browser-cached), instead of inlining
-        # ~35 KB into each of the (cities x languages) pages. Regenerated each
-        # build so the search stays current even on incrementally-cached pages.
-        _cities = [loc for loc in locations
-                   if getattr(loc, "kind", "city") == "city"]
-        if CLIENT_I18N:
-            # Every language reaches every city (a switch is client-side), so the
-            # search lists ALL cities; a city with no shell in this language links
-            # to one it does have (its first SEO shell, always including en), which
-            # then auto-localizes to the visitor's saved language on arrival.
-            def _url_of(loc, _lang=lang):
-                shells = g_citylangs.get(loc.slug, [])
-                if _lang in shells:
-                    return f"{loc.slug}.html"
-                folder = shells[0] if shells else "en"
-                return f"../{folder}/{loc.slug}.html"
-            write_cities_json(OUTPUT_DIR / lang / "_cities.json", _cities,
-                              i18n.get(lang), url_of=_url_of)
-        else:
-            # Storage-tiering: only cities whose page exists in THIS language, so
-            # the search never links a 404.
-            write_cities_json(
-                OUTPUT_DIR / lang / "_cities.json",
-                [loc for loc in _cities
-                 if lang in g_citylangs.get(loc.slug, [])],
-                i18n.get(lang))
-        # The list used to ship as a blocking <script> (_cities.js). A restored
-        # cache still holds that file, and CI uploads output/ wholesale, so it
-        # would keep deploying unreferenced.
-        (OUTPUT_DIR / lang / "_cities.js").unlink(missing_ok=True)
+        # Per-language roster overrides: only the localized names/labels that
+        # differ from the language-neutral charts/_base.json (written once,
+        # after this loop). The topbar search, map dots and omni index all
+        # derive from that pair client-side - the old per-language
+        # _cities.json/_map.json/_omni.json sidecars repeated the
+        # language-invariant bulk once per language (~46 KB per city site-wide).
+        write_roster_delta(OUTPUT_DIR / lang / "_delta.json", lang, locations,
+                           i18n.get(lang))
+        # The old sidecars (and the even older blocking _cities.js) linger in a
+        # restored cache, and CI uploads output/ wholesale - drop them so they
+        # cannot keep deploying unreferenced. (_map/_omni are dropped in
+        # build_map_page.)
+        for _legacy_sidecar in ("_cities.js", "_cities.json"):
+            (OUTPUT_DIR / lang / _legacy_sidecar).unlink(missing_ok=True)
         # Shared city-page runtime: everything that used to be inlined into
         # every city page but is identical across a language's cities.
         write_page_js(OUTPUT_DIR / lang, i18n.get(lang), lang)
+        # Stub (tail-tier) pages rebuild their body chrome from this script;
+        # only meaningful in the client-i18n build.
+        if CLIENT_I18N:
+            write_citybody_js(OUTPUT_DIR / lang, i18n.get(lang), lang,
+                              i18n.LANGUAGES)
         written += 1
     # Root index auto-picks the visitor's language folder (saved choice →
     # location via timezone → browser language → default).
