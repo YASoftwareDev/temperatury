@@ -1,8 +1,11 @@
 #!/usr/bin/env python
-"""Regenerate cities750k.tsv — every city with population > 100,000.
+"""Regenerate cities750k.tsv — every city with population > 25,000.
 
-(The filename is historical — the threshold was lowered 750k -> 250k -> 100k to
-broaden global coverage; cities render as their Open-Meteo data is backfilled.)
+(The filename is historical — the threshold was lowered 750k -> 250k -> 100k ->
+25k to broaden global coverage; cities render as their Open-Meteo data is
+backfilled. 25k is the size-model fit against the 1 GB Pages cap: ~21k
+primaries x ~35 KB/tail city projects to ~0.8 GB, where the >=10k roster's
+32,671 would overshoot at ~1.37 GB.)
 
 Sources (download + unzip from https://download.geonames.org/export/dump/):
   - ``cities15000.txt`` — every city with population > 15,000.
@@ -32,7 +35,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import config  # noqa: E402
 
-MIN_POP = 100_000
+MIN_POP = 25_000
 # ~5.5 km: only merge near-identical points (a GeoNames duplicate entry, or the
 # curated "Warszawa" vs GeoNames "Warsaw"), not genuinely distinct adjacent
 # cities like Yokohama next to Tokyo - so the set approaches ALL >100k cities.
@@ -205,6 +208,28 @@ def main() -> None:
 
     rows.sort(key=lambda r: (r[0], r[1]))
     out = Path(__file__).resolve().parent.parent / "cities750k.tsv"
+    # A city already in the committed TSV keeps its OLD timezone even when
+    # upstream GeoNames reassigns it (seen live: Bole, Xinjiang moved
+    # Asia/Urumqi -> Asia/Shanghai). The committed cache was fetched and
+    # day-aggregated on the old zone's boundary; silently switching the zone
+    # would make future current-year fetches aggregate on a different day
+    # boundary than the city's own history.
+    if out.exists():
+        prev_tz = {}
+        for line in out.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                f = line.split("\t")
+                prev_tz[(f[1], f[2], f[3])] = f[4]
+        kept = 0
+        rows = [tuple(r) for r in rows]
+        for i, r in enumerate(rows):
+            old = prev_tz.get((r[1], r[2], r[3]))
+            if old and old != r[4]:
+                rows[i] = (r[0], r[1], r[2], r[3], old, r[5])
+                kept += 1
+        if kept:
+            print(f"kept the committed timezone for {kept} city(ies) "
+                  "reassigned upstream")
     out.write_text("".join("\t".join(r) + "\n" for r in rows), encoding="utf-8")
     print(f"wrote {len(rows)} cities to {out} (skipped {skipped})")
     print("by region:", dict(Counter(r[0] for r in rows)))
