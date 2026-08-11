@@ -792,7 +792,6 @@ _CITYBODY_JS = Template(
     var fig = el && el.closest("figure");
     if (fig) fig.parentNode.removeChild(fig);
   }
-  if (!f.rec) drop("rec-" + S);
   if (!f.dtr) ["diurnal-range", "heatwave", "tropical-nights", "cold-spells"]
     .forEach(function (n) { drop("c-" + S + "-" + n); });
   if (!f.precip) ["precipitation", "heavy-rain"]
@@ -818,6 +817,10 @@ def write_citybody_js(output_dir: Path, tr: dict, lang: str,
     chrome = _chrome_mapping(tr, lang, "__S__", "__N__", "__N__",
                              has_precip=True, has_dtr=True, has_appheat=True,
                              has_records=True, sentinel=True)
+    # Stub pages ship no _range/_records payload (rich-tier only), so the
+    # rebuilt chrome carries neither widget figure.
+    chrome["range_widget"] = ""
+    chrome["records_widget"] = ""
     topbar = _topbar("index.html", _lang_nav(lang, switch_langs, "__S__"),
                      search_html=_city_picker(tr, lang))
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -1310,11 +1313,13 @@ def build_site(
         share_guide = chart_story = footer_block = ""
         # "s" rides along because _citybody.js runs BEFORE the inline script
         # that sets window.__slug (the chrome must exist before _page.js).
+        # No rec/range flags: stub pages ship no _range/_records payload
+        # (rich-tier only), so _citybody.js includes neither widget.
         stub_cfg = (
             '<script>window.__stub='
             + json.dumps({"s": slug, "n": disp, "cn": location.name,
-                          "rec": records_data is not None, "dtr": has_dtr,
-                          "precip": has_precip, "app": has_appheat},
+                          "dtr": has_dtr, "precip": has_precip,
+                          "app": has_appheat},
                          ensure_ascii=False, separators=(",", ":"))
             + ';</script>\n<script src="_citybody.js"></script>\n')
     else:
