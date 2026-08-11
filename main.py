@@ -63,6 +63,7 @@ from report import (
     build_map_page,
     build_site,
     write_cities_json,
+    write_citybody_js,
     write_lang_redirect,
     write_page_js,
 )
@@ -141,12 +142,17 @@ def _init_render_worker(locations: list[Location], languages: list[str],
                         rankpct: dict | None = None,
                         citylangs: dict | None = None,
                         cardslugs: set | None = None,
-                        cardccs: set | None = None) -> None:
+                        cardccs: set | None = None,
+                        richslugs: set | None = None) -> None:
     _WORKER["locations"] = locations
     _WORKER["languages"] = languages
     _WORKER["analogs"] = analogs or {}
     _WORKER["rankpct"] = rankpct or {}
     _WORKER["citylangs"] = citylangs or {}
+    # Size tiering (langtier.RICH_TIER): cities outside this set render as
+    # stub pages (head + hero static, chrome injected from _citybody.js).
+    # None/empty = no stubbing at all (server-i18n parity builds).
+    _WORKER["richslugs"] = richslugs or None
     # Which cities ogcards gave a personal share card, and which countries got one
     # at all (small countries miss the country ranking's minimum-cities threshold).
     # Passed in rather than recomputed so og:image cannot name a PNG that is absent.
@@ -247,6 +253,8 @@ def _render_city(task) -> tuple[str, int]:
                    ensure_ascii=False),
         encoding="utf-8")
     n = 0
+    _rich = _WORKER.get("richslugs")
+    stub = bool(_rich) and location.slug not in _rich
     for lang in languages:
         tr = i18n.get(lang)
         chart_i18n: dict[str, str] = {}
@@ -260,7 +268,8 @@ def _render_city(task) -> tuple[str, int]:
                    chart_i18n=chart_i18n, analog=analog, rank_pct=rank_pct,
                    df_cur=df_cur, season=season,
                    has_og_card=location.slug in _WORKER.get("cardslugs", ()),
-                   og_card_ccs=_WORKER.get("cardccs", frozenset()))
+                   og_card_ccs=_WORKER.get("cardccs", frozenset()),
+                   stub=stub)
         n += 1
     return location.slug, n
 
@@ -555,9 +564,12 @@ def main() -> None:
     jobs = int(os.environ.get("TEMPERATURY_JOBS") or 0) or (os.cpu_count() or 1)
     jobs = max(1, min(jobs, len(tasks)))
     written = 0
+    # Stub tiering only exists in the client-i18n build (_citybody.js relies on
+    # the client runtime); the server-i18n parity build renders full pages.
+    g_richslugs = _rich if CLIENT_I18N else None
     if jobs == 1:
         _init_render_worker(locations, i18n.LANGUAGES, g_analogs, g_rankpct,
-                            g_citylangs, g_cardslugs, g_cardccs)
+                            g_citylangs, g_cardslugs, g_cardccs, g_richslugs)
         for task in tasks:
             written += _render_city(task)[1]
     else:
@@ -570,7 +582,8 @@ def main() -> None:
                                  initializer=_init_render_worker,
                                  initargs=(locations, i18n.LANGUAGES, g_analogs,
                                            g_rankpct, g_citylangs,
-                                           g_cardslugs, g_cardccs)) as pool:
+                                           g_cardslugs, g_cardccs,
+                                           g_richslugs)) as pool:
             for _slug, n in pool.map(_render_city, tasks):
                 written += n
 
@@ -640,6 +653,11 @@ def main() -> None:
         # Shared city-page runtime: everything that used to be inlined into
         # every city page but is identical across a language's cities.
         write_page_js(OUTPUT_DIR / lang, i18n.get(lang), lang)
+        # Stub (tail-tier) pages rebuild their body chrome from this script;
+        # only meaningful in the client-i18n build.
+        if CLIENT_I18N:
+            write_citybody_js(OUTPUT_DIR / lang, i18n.get(lang), lang,
+                              i18n.LANGUAGES)
         written += 1
     # Root index auto-picks the visitor's language folder (saved choice →
     # location via timezone → browser language → default).
