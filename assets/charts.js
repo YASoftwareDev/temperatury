@@ -698,6 +698,85 @@
     return walk(obj);
   };
 
+  // --- shared roster (base + per-language delta) ---------------------------
+  // The city roster used to ship per language as _map.json/_omni.json/
+  // _cities.json - ~1.2 MB x 132 languages of mostly language-invariant rows.
+  // Now charts/_base.json holds the language-neutral roster ONCE
+  // ([slug, lat, lon, zone, kind, region, cc, canonical-name, shells]) and
+  // <lang>/_delta.json only the names/labels that differ ({n: {slug: name},
+  // r: {region: label}}). The tier-aware URL is computed here exactly like
+  // report._dot_url_slug: same-folder when this language is one of the city's
+  // shells, else the city's first shell's folder. A landing page may start the
+  // two fetches early via window.__rosterRaw; the cached promise is dropped on
+  // failure so a transient error retries instead of killing map+search.
+  var __rosterP = null;
+  window.__rosterData = function () {
+    if (!__rosterP) {
+      var raw = window.__rosterRaw || Promise.all([
+        fetch("../charts/_base.json").then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        }),
+        fetch("_delta.json").then(function (r) { return r.ok ? r.json() : {}; })
+                            .catch(function () { return {}; })
+      ]);
+      window.__rosterRaw = null;      // a retry after failure refetches
+      __rosterP = raw.then(function (bd) {
+        var base = bd[0] || {}, delta = bd[1] || {};
+        var over = delta.n || {}, rl = delta.r || {};
+        var folder = location.pathname.split("/").slice(-2, -1)[0] || "en";
+        var bySlug = {};
+        var rows = (base.c || []).map(function (a) {
+          var slug = a[0], shells = a[8] ? a[8].split(",") : [];
+          var url = (!shells.length || shells.indexOf(folder) >= 0)
+            ? slug + ".html" : "../" + shells[0] + "/" + slug + ".html";
+          var row = { slug: slug, lat: a[1], lon: a[2], z: a[3], k: a[4],
+                      r: a[5], cc: a[6], cn: a[7], n: over[slug] || a[7],
+                      s: url };
+          bySlug[slug] = row;
+          return row;
+        });
+        return {
+          rows: rows,
+          aliases: base.a || [],
+          regionKeys: base.r || [],
+          preview: base.p || [],
+          rlabel: function (r) { return rl[r] || r; },
+          urlOf: function (slug) {
+            return bySlug[slug] ? bySlug[slug].s : null;
+          }
+        };
+      }).catch(function (e) { __rosterP = null; throw e; });
+    }
+    return __rosterP;
+  };
+  // The landing's omni index {c, r, g}, rebuilt from the roster in the same
+  // shape report.build_map_page used to write to _omni.json: city rows
+  // [display, url, region-label, canonical?] sorted by display name, then
+  // alias rows (primary's tier-aware URL + #as= relabel hash).
+  window.__omniFrom = function (R) {
+    var rows = R.rows.filter(function (x) { return x.k === "city"; })
+      .slice().sort(function (a, b) {
+        var an = a.n.toLowerCase(), bn = b.n.toLowerCase();
+        return an < bn ? -1 : an > bn ? 1 : 0;
+      });
+    var c = rows.map(function (x) {
+      var row = [x.n, x.s, R.rlabel(x.r)];
+      if (x.n !== x.cn) row.push(x.cn);
+      return row;
+    });
+    R.aliases.forEach(function (a) {
+      var u = R.urlOf(a[1]);
+      if (u) c.push([a[0], u + "#as=" + encodeURIComponent(a[0]),
+                     R.rlabel(a[2])]);
+    });
+    return {
+      c: c,
+      r: R.regionKeys.map(function (k) { return [k, R.rlabel(k)]; }),
+      g: rows.map(function (x) { return [x.lat, x.lon, x.slug]; })
+    };
+  };
+
   // Fields identical across cities are stripped from per-city JSON against
   // charts/_spec.json (chartspec.strip); this is the inverse. Missing keys
   // only - a city that kept its own divergent value wins. The spec is fetched
@@ -2323,19 +2402,22 @@
       return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     }
     var N = C.c.map(function (c) { return norm(c[0]); });
-    // Fetched on first use, not shipped as a blocking <script>: at full roster the
-    // list is ~22 KB gzipped, bigger than the page, and only this box needs it.
-    // `ready` is CLEARED on failure so a later keystroke retries - caching the
-    // rejection would leave the search dead for the rest of the visit.
+    // Fetched on first use, not shipped as a blocking <script>: only this box
+    // needs the list. Rows come from the shared roster (base + delta), in the
+    // same [canonical-name, tier-aware-url, region-label] shape _cities.json
+    // used to carry. `ready` is CLEARED on failure so a later keystroke
+    // retries - caching the rejection would leave the search dead all visit.
     function load() {
       if (ready) return ready;
-      ready = fetch("_cities.json")
-        .then(function (r) {
-          if (!r.ok) throw new Error("HTTP " + r.status);
-          return r.json();
-        })
-        .then(function (d) {
-          C = (d && d.c) ? d : { c: [] };
+      ready = window.__rosterData()
+        .then(function (R) {
+          var rows = R.rows.filter(function (x) { return x.k === "city"; })
+            .slice().sort(function (a, b) {
+              var an = a.cn.toLowerCase(), bn = b.cn.toLowerCase();
+              return an < bn ? -1 : an > bn ? 1 : 0;
+            })
+            .map(function (x) { return [x.cn, x.s, R.rlabel(x.r)]; });
+          C = { c: rows };
           N = C.c.map(function (c) { return norm(c[0]); });
         })
         .catch(function (e) { ready = null; throw e; });

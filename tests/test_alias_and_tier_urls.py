@@ -44,10 +44,6 @@ def test_alias_pick_keeps_embed_mode_and_a_clean_alias():
     and every keyed caption carried the query string as part of the town name.
     """
     out = build(SLUG, "en", client_i18n=True)
-    omni = json.loads((out / "en" / "_omni.json").read_text(encoding="utf-8"))
-    alias = next((c for c in omni["c"] if "#as=" in c[1]), None)
-    assert alias, "build produced no alias entries, so this test proves nothing"
-    alias_name, alias_url = alias[0], alias[1]
 
     with _serve(out) as base, sync_playwright() as p:
         b = p.chromium.launch()
@@ -57,6 +53,14 @@ def test_alias_pick_keeps_embed_mode_and_a_clean_alias():
             pg.wait_for_function(
                 "window.__omniData && (window.__omniData.c||[]).length > 0",
                 timeout=8000)
+            # The omni index is client-derived from the shared roster now, so
+            # pick a real alias row from the browser's own __omniData.
+            alias = pg.evaluate(
+                "window.__omniData.c.find(function (c) {"
+                " return c[1].indexOf('#as=') >= 0; }) || null")
+            assert alias, \
+                "build produced no alias entries, so this test proves nothing"
+            alias_name, alias_url = alias[0], alias[1]
             pg.evaluate("(u) => window.__regionShow(u)", alias_url)
 
             src = pg.evaluate("document.getElementById('region-frame').src")
