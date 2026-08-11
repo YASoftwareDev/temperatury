@@ -49,7 +49,12 @@ def _i18n_head(slug: str, lang: str, languages: list[str], name: str) -> str:
     applies them on DOMContentLoaded."""
     if not _CLIENT_I18N:
         return ""
-    names = json.dumps({lg: _local_name(slug, lg, name) for lg in languages},
+    # Delta-encoded: most languages share the same exonym, so ship one default
+    # under "*" plus only the languages that differ (i18n-runtime falls back).
+    base = _local_name(slug, "en", name)
+    over = {lg: n for lg in languages
+            if (n := _local_name(slug, lg, name)) != base}
+    names = json.dumps({"*": base, **over},
                        ensure_ascii=False, separators=(",", ":"))
     return (f"<script>window.__cityNames={names};</script>\n"
             f'<script src="../i18n/{lang}.js"></script>\n'
