@@ -24,3 +24,25 @@ def build(location: str, langs: str, client_i18n: bool) -> Path:
 @pytest.fixture(scope="session")
 def root() -> Path:
     return ROOT
+
+
+def roster(out: Path, lang: str) -> dict:
+    """The client-side roster view for ``lang``, mirroring charts.js
+    __rosterData: base rows layered with the language's name overrides, and
+    tier-aware URLs (same-folder when ``lang`` is one of the city's shells,
+    else the first shell's folder)."""
+    import json
+    base = json.loads((out / "charts" / "_base.json").read_text("utf-8"))
+    dpath = out / lang / "_delta.json"
+    delta = json.loads(dpath.read_text("utf-8")) if dpath.exists() else {}
+    over, rl = delta.get("n", {}), delta.get("r", {})
+    rows = []
+    for slug, lat, lon, z, k, r, cc, cn, shells in base["c"]:
+        sh = shells.split(",") if shells else []
+        url = (f"{slug}.html" if not sh or lang in sh
+               else f"../{sh[0]}/{slug}.html")
+        rows.append(dict(slug=slug, lat=lat, lon=lon, z=z, k=k, r=r, cc=cc,
+                         cn=cn, n=over.get(slug, cn), s=url))
+    by_slug = {x["slug"]: x for x in rows}
+    return {"rows": rows, "aliases": base.get("a", []), "by_slug": by_slug,
+            "rlabel": lambda key: rl.get(key, key)}

@@ -890,51 +890,60 @@ _LANG_REDIRECT = Template(
 )
 
 
-def _picker_data(city_locs: list[Location], tr: dict, url_of=None) -> list[list[str]]:
-    """The searchable city list: [name, url, localized-continent] per city.
+def write_roster_base(path: Path, locations: list[Location],
+                      city_langs: dict, preview_locs=None) -> None:
+    """The language-neutral city roster, written ONCE per build.
 
-    The secondary label is the localized continent, to tell apart same-named
-    places when searching. Sorted case-insensitively by name. ``url_of(loc)``
-    resolves each city's link (defaults to ``<slug>.html`` in the same folder);
-    client-i18n passes a resolver that points cross-language cities at an
-    existing shell.
-    """
+    Replaces the language-invariant bulk of the per-language _map.json /
+    _omni.json / _cities.json sidecars (which repeated coords, zones, URLs and
+    canonical names 132 times, ~46 KB per city across the site). Row:
+    ``[slug, lat, lon, zone, kind, region, cc, canonical-name, shells]`` where
+    ``shells`` (comma-joined) is the city's pre-rendered language set - the
+    client rebuilds the tier-aware URL from it (charts.js __rosterData, the
+    same rule as _dot_url_slug). ``a`` carries the alias rows (rendered
+    primaries only), ``r`` the region keys, ``p`` any preview markers."""
+    rows = [[loc.slug, round(loc.latitude, 4), round(loc.longitude, 4),
+             zone_of(loc.latitude), getattr(loc, "kind", "city"), loc.region,
+             countries.country_code(loc) or "", loc.name,
+             ",".join(city_langs.get(loc.slug, []) or [])]
+            for loc in locations]
+    built = {loc.slug for loc in locations
+             if getattr(loc, "kind", "city") == "city"}
+    payload = {"c": rows,
+               "a": [[a, p, r] for a, p, r in ALIASES if p in built],
+               "r": list(REGIONS)}
+    if preview_locs:
+        payload["p"] = [[l.name, round(l.latitude, 4), round(l.longitude, 4),
+                         zone_of(l.latitude)] for l in preview_locs]
+    path.write_text(json.dumps(payload, ensure_ascii=False,
+                               separators=(",", ":")), encoding="utf-8")
+
+
+def write_roster_delta(path: Path, lang: str,
+                       locations: list[Location], tr: dict) -> None:
+    """One language's roster overrides: only the localized names that differ
+    from the canonical name, plus this language's region labels. The client
+    layers this over charts/_base.json (charts.js __rosterData)."""
+    over = {}
+    for loc in locations:
+        n = _local_name(loc.slug, lang, loc.name)
+        if n != loc.name:
+            over[loc.slug] = n
     rnames = (tr or {}).get("regions", {})
-    items = sorted(city_locs, key=lambda loc: loc.name.casefold())
-    return [[loc.name,
-             url_of(loc) if url_of else f"{loc.slug}.html",
-             rnames.get(loc.region, loc.region)]
-            for loc in items]
-
-
-def write_cities_json(path: Path, city_locs: list[Location], tr: dict,
-                      url_of=None) -> None:
-    """Write the shared per-language city list used by the topbar search.
-
-    A DATA sidecar (``_cities.json``), fetched by charts.js on first use - not a
-    ``<script>``. At full roster the list is ~22 KB gzipped, larger than the page
-    carrying it, and it serves only the search box, which most visits never open.
-    Measured before the change: as a blocking mid-body script it cost nothing in
-    first paint (aborting the request left FCP identical at 536 ms), so this buys
-    entry-path bytes and ~87 ms of DOMContentLoaded, not paint.
-
-    Regenerated each build so the search stays current even on incrementally
-    cached pages. ``url_of`` resolves each city's link (see :func:`_picker_data`).
-    """
-    path.write_text(
-        json.dumps({"c": _picker_data(city_locs, tr, url_of)}, ensure_ascii=False),
-        encoding="utf-8")
+    labels = {r: rnames[r] for r in REGIONS if rnames.get(r)}
+    path.write_text(json.dumps({"n": over, "r": labels}, ensure_ascii=False,
+                               separators=(",", ":")), encoding="utf-8")
 
 
 def _city_picker(tr: dict, lang: str) -> str:
     """A single searchable combobox over every city.
 
     A type-to-filter search over the full city list: filtered client-side
-    (accent-insensitive), navigable by keyboard or click. The list itself is not
-    inlined here and no longer ships as a ``<script>`` either - charts.js fetches
-    ``_cities.json`` when the box is first used (see :func:`write_cities_json`),
-    so this markup is tiny and identical on every page. ``lang`` is accepted for
-    call-site symmetry with the other pieces.
+    (accent-insensitive), navigable by keyboard or click. The list itself is
+    not inlined - charts.js derives it from the shared roster
+    (charts/_base.json + _delta.json, see :func:`write_roster_base`) when the
+    box is first used, so this markup is tiny and identical on every page.
+    ``lang`` is accepted for call-site symmetry with the other pieces.
     """
     placeholder = tr["choose_city"]
     # Client-i18n: re-localize both the placeholder and the aria-label on a switch
@@ -1849,27 +1858,42 @@ ${topbar}
 <!-- maplibre-gl (~207 KB) is loaded lazily by __initMap on the first Map-tab
      open, not on every visit - most visitors never open the map. -->
 <script>
-  var cities = [], PREVIEW = [];      // filled by __loadMapData (see _map.json)
+  var cities = [], PREVIEW = [];      // filled by __loadMapData (shared roster)
   var QV = ${qv_json};                // quick-view card strings (localized)
   var ZONE_COLOR = ${zone_color_json};
   var ZONE_BANDS = ${zone_bands_json};
   var GRID_TIP = ${grid_tip_js};      // "{n} of {m} cities with data" (localized)
-  // The marker list lives in _map.json, not inline: ~295 KB of it, and the two
-  // things that read it (the map itself, the compare pickers) are both behind
-  // tabs. Whoever needs it first awaits this promise; later callers get the
-  // resolved one. window.__mapCities is the real (analysed) subset - no regions,
-  // no ocean reference points - which is what the compare pickers list.
+  // Start the roster fetches NOW, while the document still parses - the omni
+  // index below joins them with __ready, and losing that overlap would put a
+  // whole round trip back on first paint. charts.js (__rosterData) adopts this
+  // pending pair instead of refetching. Errors are re-handled by the adopter.
+  window.__rosterRaw = Promise.all([
+    fetch('../charts/_base.json').then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }),
+    fetch('_delta.json').then(function (r) { return r.ok ? r.json() : {}; })
+                        .catch(function () { return {}; })
+  ]);
+  window.__rosterRaw.catch(function () {});   // no unhandled-rejection noise
+  // The marker list derives from the shared roster (charts/_base.json +
+  // _delta.json), not a per-language _map.json - the two things that read it
+  // (the map itself, the compare pickers) are both behind tabs. Whoever needs
+  // it first awaits this promise; later callers get the resolved one.
+  // window.__mapCities is the real (analysed) subset - no regions, no ocean
+  // reference points - which is what the compare pickers list.
   window.__loadMapData = function () {
     if (!window.__mapDataP) {
-      window.__mapDataP = fetch('_map.json')
-        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-        .then(function (d) {
-          cities = d.c || [];
-          PREVIEW = d.p || [];
+      window.__mapDataP = window.__rosterData()
+        .then(function (R) {
+          cities = R.rows;
+          PREVIEW = (R.preview || []).map(function (p) {
+            return { n: p[0], lat: p[1], lon: p[2], z: p[3] };
+          });
           window.__mapCities = cities.filter(function (c) {
             return c.k !== 'region' && c.k !== 'ocean';
           });
-          return d;
+          return { c: cities, p: PREVIEW };
         })
         // Drop the cached promise on failure, else one transient error would
         // hand every later caller the same rejection - permanently dead map AND
@@ -2469,8 +2493,12 @@ ${topbar}
     // page that may have been pruned. renderGlobal drives every one of those
     // renders, so resolving all three together is what keeps that link honest.
     var NO_OMNI = { c: [], r: [], g: [] };
-    var omni = fetch('_omni.json')
-      .then(function (r) { return r.ok ? r.json() : NO_OMNI; })
+    // Rebuilt from the shared roster (fetches already in flight, see
+    // __rosterRaw above); __rosterData/__omniFrom live in deferred charts.js,
+    // so join __ready first. Same {c, r, g} shape _omni.json used to carry.
+    var omni = window.__ready
+      .then(function () { return window.__rosterData(); })
+      .then(function (R) { return window.__omniFrom(R); })
       .catch(function () { return NO_OMNI; });
     // __ready joins the fetches: initOmni and renderGlobal live in the deferred
     // charts.js, which a fast payload would otherwise beat. Called UNGUARDED on
@@ -3491,24 +3519,9 @@ def build_map_page(
         # Strip whatever separator precedes {name} (dash, colon, comma, ...).
         return tr[key].split("{name}")[0].format(**fmt).strip().rstrip("---:,;· ").strip()
 
-    # Each city dot is coloured by its climate zone; the map paints matching
-    # latitude bands + a legend, so the geography reads against the dashboard.
-    markers = [
-        {"n": _local_name(loc.slug, lang, loc.name), "s": _dot_url(loc),
-         "lat": loc.latitude, "lon": loc.longitude, "z": zone_of(loc.latitude),
-         "k": getattr(loc, "kind", "city"),
-         # Geographic continent + ISO-2 country, so the map dots can be filtered
-         # to a region or a single country (ocean/region points have no country).
-         "r": loc.region, "cc": (countries.country_code(loc) or "")}
-        for loc in locations
-    ]
-    # Faint dots for cities awaiting data (preview build): position + zone + a
-    # localized name, so the quick-view card can say which city has no data yet.
-    preview_markers = [
-        {"n": _local_name(loc.slug, lang, loc.name),
-         "lat": loc.latitude, "lon": loc.longitude, "z": zone_of(loc.latitude)}
-        for loc in (preview_locs or [])
-    ]
+    # The city dots and the omni/search indexes derive client-side from the
+    # shared roster (charts/_base.json + <lang>/_delta.json, see
+    # write_roster_base) - no per-language marker sidecars anymore.
     zone_legend = "".join(
         f'<span class="zl"><i style="background:{_ZONE_COLOR[k]}"></i>'
         f'{tr[_ZONE_NAME_KEY[k]]}</span>'
@@ -3590,42 +3603,10 @@ def build_map_page(
         "faster": tr.get("lookup_faster", "warming faster than {pct}% of the world's cities"),
         "cooling": tr.get("lookup_cooling", "Cooling, against the global trend"),
         "news": tr.get("extreme_weather", "Extreme weather")}
-    # Omni search: one box that finds cities, countries, regions or any place. The
-    # city + region lists are embedded (localized) for instant offline search;
-    # countries are localized client-side from the loaded ranking. Each city row is
-    # [display, url, region-label, original-name?] (original kept for search only).
-    _omni_cities = []
-    for loc in sorted(city_locs, key=lambda l: _local_name(l.slug, lang, l.name).casefold()):
-        _dn = _local_name(loc.slug, lang, loc.name)
-        # Tier-aware URL (like the map dots): a city with no shell in this
-        # language links to one it has, not a 404 same-folder link.
-        _row = [_dn, _dot_url(loc), _rnames.get(loc.region, loc.region)]
-        if _dn != loc.name:
-            _row.append(loc.name)
-        _omni_cities.append(_row)
-    # Alias cities share a built primary's grid cell (identical record): offer each
-    # as a search entry that opens the primary's page relabelled to this name via
-    # a #as= hash. Only aliases whose primary actually rendered (has data) qualify,
-    # so the count grows automatically as the backfill fills more primaries. These
-    # are APPENDED after the real cities, so an exact-named city still ranks first.
-    _built_slugs = {loc.slug for loc in city_locs}
-    for _aname, _pslug, _aregion in ALIASES:
-        if _pslug not in _built_slugs:
-            continue
-        # Resolve the PRIMARY's shell tier-aware, then relabel via #as=, so an
-        # alias in a language the primary wasn't pre-rendered in still opens.
-        _url = _dot_url_slug(_pslug) + "#as=" + quote(_aname)
-        _omni_cities.append([_aname, _url, _rnames.get(_aregion, _aregion)])
-    _omni_regions = [[r, _rnames.get(r, r)] for r in REGIONS]
-    # Coordinates of every covered (data-backed) city, so a freeform "check any
-    # place" lookup can snap a geocoded point to the nearest city we ALREADY have
-    # data for (same grid cell -> identical record) and open that page instead of
-    # firing a live 85-year fetch. Makes any place near a covered city instant and
-    # quota-proof - not just the pre-listed >15k aliases. [lat, lon, slug].
-    _omni_geo = [[round(loc.latitude, 3), round(loc.longitude, 3), loc.slug]
-                 for loc in city_locs]
-    omni_data = json.dumps({"c": _omni_cities, "r": _omni_regions, "g": _omni_geo},
-                           ensure_ascii=False)
+    # The omni search index (cities incl. aliases, regions, and the geo table
+    # the "check any place" lookup snaps against) is rebuilt client-side from
+    # the shared roster (charts.js __omniFrom) - it used to be a ~590 KB
+    # per-language _omni.json sidecar.
     _omni_labels = dict(_lookup_labels)
     _omni_labels.update({
         "g_cities": tr.get("omni_cities", "Cities"),
@@ -3644,7 +3625,6 @@ def build_map_page(
                            _map_desc, _map_jsonld),
         omni_i18n=omni_i18n,
         omni_ph=omni_ph,
-        omni_data=omni_data,
         # "Your region" hero (seeded with the default city; JS swaps in the
         # visitor's nearest covered city on geolocation).
         hero_eyebrow=hero_eyebrow,
@@ -3790,17 +3770,11 @@ def build_map_page(
     )
     path = output_dir / "index.html"
     path.write_text(html, encoding="utf-8")
-    # The map's marker list (~295 KB raw / ~53 KB gzipped for the full roster)
-    # goes in a SIDECAR, not inline: maplibre already loads on the first Map-tab
-    # open, and the compare pickers are behind their own tab, so no visitor needs
-    # these bytes to see the landing page. Fetched by __loadMapData().
-    (output_dir / "_map.json").write_text(
-        json.dumps({"c": markers, "p": preview_markers}, ensure_ascii=False),
-        encoding="utf-8")
-    # The omni search index, likewise a sidecar rather than inline: it is localized
-    # (region names, tier-aware cross-folder URLs) so it stays per-language, but it
-    # no longer has to be parsed before the page can paint.
-    (output_dir / "_omni.json").write_text(omni_data, encoding="utf-8")
+    # The marker/search sidecars (_map.json, _omni.json) are gone - the client
+    # derives both from the shared roster. A restored cache may still hold the
+    # old per-language files; they would deploy unreferenced, so drop them.
+    (output_dir / "_map.json").unlink(missing_ok=True)
+    (output_dir / "_omni.json").unlink(missing_ok=True)
     return path
 
 

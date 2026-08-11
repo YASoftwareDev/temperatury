@@ -62,10 +62,11 @@ from report import (
     SITE_BASE,
     build_map_page,
     build_site,
-    write_cities_json,
     write_citybody_js,
     write_lang_redirect,
     write_page_js,
+    write_roster_base,
+    write_roster_delta,
 )
 
 
@@ -604,6 +605,12 @@ def main() -> None:
                         if getattr(l, "kind", "city") == "city" and l.slug not in _built]
         print(f"Preview: {len(preview_locs)} cities awaiting data shown as faint dots.")
 
+    # The language-neutral roster, written ONCE: coords, zones, kinds, regions,
+    # canonical names and each city's shell set. The per-language _delta.json
+    # (written in the loop below) layers localized names/labels over it.
+    write_roster_base(OUTPUT_DIR / "charts" / "_base.json", locations,
+                      g_citylangs, preview_locs)
+
     # Each language's index.html is the world map (climate zones) with the
     # world/regional dashboard embedded below it; root redirects to it.
     for lang in i18n.LANGUAGES:
@@ -626,37 +633,20 @@ def main() -> None:
                        # language link to the city's first built language.
                        city_langs=g_citylangs,
                        kpis=g_kpis)
-        # Shared per-language city list for the topbar search - written once here
-        # and referenced by every city page (browser-cached), instead of inlining
-        # ~35 KB into each of the (cities x languages) pages. Regenerated each
-        # build so the search stays current even on incrementally-cached pages.
-        _cities = [loc for loc in locations
-                   if getattr(loc, "kind", "city") == "city"]
-        if CLIENT_I18N:
-            # Every language reaches every city (a switch is client-side), so the
-            # search lists ALL cities; a city with no shell in this language links
-            # to one it does have (its first SEO shell, always including en), which
-            # then auto-localizes to the visitor's saved language on arrival.
-            def _url_of(loc, _lang=lang):
-                shells = g_citylangs.get(loc.slug, [])
-                if _lang in shells:
-                    return f"{loc.slug}.html"
-                folder = shells[0] if shells else "en"
-                return f"../{folder}/{loc.slug}.html"
-            write_cities_json(OUTPUT_DIR / lang / "_cities.json", _cities,
-                              i18n.get(lang), url_of=_url_of)
-        else:
-            # Storage-tiering: only cities whose page exists in THIS language, so
-            # the search never links a 404.
-            write_cities_json(
-                OUTPUT_DIR / lang / "_cities.json",
-                [loc for loc in _cities
-                 if lang in g_citylangs.get(loc.slug, [])],
-                i18n.get(lang))
-        # The list used to ship as a blocking <script> (_cities.js). A restored
-        # cache still holds that file, and CI uploads output/ wholesale, so it
-        # would keep deploying unreferenced.
-        (OUTPUT_DIR / lang / "_cities.js").unlink(missing_ok=True)
+        # Per-language roster overrides: only the localized names/labels that
+        # differ from the language-neutral charts/_base.json (written once,
+        # after this loop). The topbar search, map dots and omni index all
+        # derive from that pair client-side - the old per-language
+        # _cities.json/_map.json/_omni.json sidecars repeated the
+        # language-invariant bulk once per language (~46 KB per city site-wide).
+        write_roster_delta(OUTPUT_DIR / lang / "_delta.json", lang, locations,
+                           i18n.get(lang))
+        # The old sidecars (and the even older blocking _cities.js) linger in a
+        # restored cache, and CI uploads output/ wholesale - drop them so they
+        # cannot keep deploying unreferenced. (_map/_omni are dropped in
+        # build_map_page.)
+        for _legacy_sidecar in ("_cities.js", "_cities.json"):
+            (OUTPUT_DIR / lang / _legacy_sidecar).unlink(missing_ok=True)
         # Shared city-page runtime: everything that used to be inlined into
         # every city page but is identical across a language's cities.
         write_page_js(OUTPUT_DIR / lang, i18n.get(lang), lang)
