@@ -262,7 +262,6 @@ def _render_city(task) -> tuple[str, int]:
                    ensure_ascii=False),
         encoding="utf-8")
     n = 0
-    stub = _stub
     for lang in languages:
         tr = i18n.get(lang)
         chart_i18n: dict[str, str] = {}
@@ -277,7 +276,7 @@ def _render_city(task) -> tuple[str, int]:
                    df_cur=df_cur, season=season,
                    has_og_card=location.slug in _WORKER.get("cardslugs", ()),
                    og_card_ccs=_WORKER.get("cardccs", frozenset()),
-                   stub=stub)
+                   stub=_stub)
         n += 1
     return location.slug, n
 

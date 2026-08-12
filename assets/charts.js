@@ -2385,9 +2385,9 @@
     }
   }
 
-  // Type-to-filter city search in the top bar. The list comes from the shared,
-  // browser-cached _cities.json, fetched on first use (see load() below). No-ops
-  // on pages without the search box (e.g. the map/index page).
+  // Type-to-filter city search in the top bar. The list derives from the
+  // shared roster (__rosterData), fetched on first use (see load() below).
+  // No-ops on pages without the search box (e.g. the map/index page).
   function initCityPicker() {
     var inp = document.getElementById("cp-search");
     var box = document.getElementById("cp-results");
@@ -2964,9 +2964,10 @@
   function applyHeroCache() {
     // Needs the search index first: heroCityUrl builds the tier-aware cross-folder
     // URL out of it, and without it would guess "<slug>.html" - a page this
-    // language may not have. This runs at DOMContentLoaded, before _omni.json
-    // lands; renderGlobal calls it again once it has, so until then the visitor
-    // keeps the correct server-rendered default rather than a link that 404s.
+    // language may not have. This runs at DOMContentLoaded, before the roster
+    // resolves into __omniData; renderGlobal calls it again once it has, so until
+    // then the visitor keeps the correct server-rendered default rather than a
+    // link that 404s.
     if (!window.__omniData) return false;
     // A poisoned cache must never break page init, so the whole read is guarded.
     try {

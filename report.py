@@ -1599,12 +1599,12 @@ ${topbar}
     <p class="lookup-status" id="lookup-status" role="status"></p>
     <div class="lookup-result" id="lookup-result" hidden></div>
   </section>
-  <!-- The search index (~320 KB raw / 91 KB gzipped: every city, its localized
-       name, region and tier-aware URL) lives in _omni.json, not inline. Inline it
-       was three quarters of this page's HTML, and HTML has to arrive and parse
-       before anything paints - moving it cut first paint by ~380 ms. It is fetched
-       alongside the ranking payload below, so it lands at about the same moment it
-       used to, without standing between the visitor and the first pixel. -->
+  <!-- The search index derives from the shared roster (charts/_base.json +
+       _delta.json), never inline. Inline it was three quarters of this page's
+       HTML, and HTML has to arrive and parse before anything paints - moving
+       it out cut first paint by ~380 ms. The roster fetches start while the
+       document parses (see __rosterRaw), so it lands at about the same moment
+       it used to, without standing between the visitor and the first pixel. -->
 </div>
 <!-- "Did you know" hook, on the main view above the tabs so it greets every
      visitor. Filled by charts.js from the loaded ranking (window.__gd) - every
@@ -1884,7 +1884,12 @@ ${topbar}
   // reference points - which is what the compare pickers list.
   window.__loadMapData = function () {
     if (!window.__mapDataP) {
-      window.__mapDataP = window.__rosterData()
+      // __rosterData lives in DEFERRED charts.js, but a #cmp= deep link calls
+      // this at parse time (cmpReady runs inline) - join __ready first. The
+      // network is already in flight (__rosterRaw above), so this delays only
+      // the processing, never the fetch.
+      window.__mapDataP = window.__ready
+        .then(function () { return window.__rosterData(); })
         .then(function (R) {
           cities = R.rows;
           PREVIEW = (R.preview || []).map(function (p) {
@@ -1914,10 +1919,11 @@ ${topbar}
   // shown, so first paint isn't blocked on MapLibre + the coverage grid fetch.
   window.__initMap = function () {
     if (window.__mapReady) return;
-    // The markers (_map.json) and maplibre-gl are two INDEPENDENT round trips, so
-    // both start in this same invocation and whichever finishes last re-enters to
-    // find the other ready. Gating one on the other would put a whole round trip
-    // back on the Map tab - the thing this deferral exists to avoid. Each branch
+    // The markers (shared roster) and maplibre-gl are two INDEPENDENT round
+    // trips, so both start in this same invocation and whichever finishes last
+    // re-enters to find the other ready. Gating one on the other would put a
+    // whole round trip back on the Map tab - the thing this deferral exists to
+    // avoid. Each branch
     // clears its flag on failure so a later tab open retries.
     var waiting = false;
     if (!window.__mapDataReady) {
@@ -2537,7 +2543,7 @@ ${topbar}
     // The city list is a fetch (see __loadMapData) and building ~2300 <option>
     // nodes is real main-thread work, so both wait until Compare is actually
     // used. Every entry point below goes through cmpReady(); the promise is
-    // shared with the map, so opening both tabs still fetches _map.json once.
+    // shared with the map, so opening both tabs resolves the roster once.
     var bySlug = {}, byVal = {}, cmpReadyP = null;
     function cmpReady() {
       if (!cmpReadyP) {
@@ -2637,7 +2643,8 @@ ${topbar}
         stats.appendChild(statRow(sa, DOTVARS[0]));
         stats.appendChild(statRow(sb, DOTVARS[1]));
         if (history.replaceState)
-          history.replaceState(null, '', '#cmp=' + sa + ',' + sb);
+          history.replaceState(null, '', '#cmp=' + encodeURIComponent(sa)
+            + ',' + encodeURIComponent(sb));
       }).catch(function () {});
     }
     a.addEventListener('change', function () { cmpReady().then(draw); });
@@ -2655,14 +2662,21 @@ ${topbar}
     document.addEventListener('DOMContentLoaded', function () {
       if (window.__unitHooks) window.__unitHooks.push(draw);
     });
-    var m = (location.hash || '').match(/cmp=([a-z0-9'-]+),([a-z0-9'-]+)/);
+    // Slugs are not [a-z0-9-]: the roster disambiguates homonyms as
+    // "newcastle-(za)" and a few names carry dots or apostrophes, so match
+    // anything up to the comma separator and decode (the writer encodes, so
+    // even a comma inside a slug survives; plain old-format links still parse).
+    var m = (location.hash || '').match(/cmp=([^,&]+),([^&]+)/);
     var cmpPrefilled = false;
     // A #cmp= deep link is the one case that needs the list immediately.
     if (m) {
       cmpReady().then(function () {
-        if (!bySlug[m[1]] || !bySlug[m[2]]) return;
-        a.value = bySlug[m[1]].val;
-        b.value = bySlug[m[2]].val;
+        var s1, s2;
+        try { s1 = decodeURIComponent(m[1]); s2 = decodeURIComponent(m[2]); }
+        catch (e) { return; }
+        if (!bySlug[s1] || !bySlug[s2]) return;
+        a.value = bySlug[s1].val;
+        b.value = bySlug[s2].val;
         cmpPrefilled = true;
         draw();
       });
