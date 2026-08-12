@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-"""Regenerate cities750k.tsv — every city with population > 25,000.
+"""Regenerate cities750k.tsv — every city with population > 10,000.
 
-(The filename is historical — the threshold was lowered 750k -> 250k -> 100k ->
-25k to broaden global coverage; cities render as their Open-Meteo data is
-backfilled. 25k is the size-model fit against the 1 GB Pages cap: ~21k
-primaries x ~35 KB/tail city projects to ~0.8 GB, where the >=10k roster's
-32,671 would overshoot at ~1.37 GB.)
+(The filename is historical — the threshold was lowered 750k -> 250k ->
+100k -> 25k -> 10k to broaden global coverage; cities render as their
+Open-Meteo data is backfilled. 10k fits since per-city payloads moved to
+their own sharded Pages origins (see report.PAYLOAD_BASES): the main
+artifact carries only shells+indexes, ~0.6 GB projected at this roster.)
 
 Sources (download + unzip from https://download.geonames.org/export/dump/):
   - ``cities15000.txt`` — every city with population > 15,000.
@@ -16,7 +16,7 @@ list in config.py by proximity (~20 km), so e.g. GeoNames "Warsaw" doesn't
 duplicate the curated "Warszawa".
 
 Writes two files:
-  - ``cities750k.tsv``   — the primaries (>25k, deduped). Columns: region, name,
+  - ``cities750k.tsv``   — the primaries (>10k, deduped). Columns: region, name,
     lat, lon, tz, cc.
   - ``city_aliases.tsv`` — every smaller city that shares a primary's ~11 km
     Open-Meteo grid cell (identical record), so it is searchable by its own name
@@ -35,10 +35,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import config  # noqa: E402
 
-MIN_POP = 25_000
+MIN_POP = 10_000
 # ~5.5 km: only merge near-identical points (a GeoNames duplicate entry, or the
 # curated "Warszawa" vs GeoNames "Warsaw"), not genuinely distinct adjacent
-# cities like Yokohama next to Tokyo - so the set approaches ALL >25k cities.
+# cities like Yokohama next to Tokyo - so the set approaches ALL >10k cities.
 NEAR_DEG = 0.05
 
 # ~11 km: one ERA5-Land reanalysis cell. Any GeoNames city (down to the 15k
