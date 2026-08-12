@@ -3626,7 +3626,7 @@ Asia	Chīpurupalle	18.3114	83.5685	Asia/Kolkata	in
 Asia	Chīrāla	15.8239	80.3522	Asia/Kolkata	in
 Asia	Chītāpur	17.1236	77.0824	Asia/Kolkata	in
 Asia	Chōfu	35.6592	139.5484	Asia/Tokyo	jp
-Asia	Chŏngju	39.6933	125.2103	Asia/Pyongyang	kp
+Asia	Chŏngju-si	39.6925	125.2135	Asia/Pyongyang	kp
 Asia	Chũ	21.3738	106.5665	Asia/Bangkok	vn
 Asia	Chūru	28.3041	74.9672	Asia/Kolkata	in
 Asia	Chơn Thành	11.4282	106.6354	Asia/Ho_Chi_Minh	vn
@@ -4915,7 +4915,7 @@ Asia	Jinhua (CN)	26.5380	99.9172	Asia/Shanghai	cn
 Asia	Jining	35.4050	116.5814	Asia/Shanghai	cn
 Asia	Jinji	23.2281	110.8261	Asia/Shanghai	cn
 Asia	Jinjiang	24.8198	118.5742	Asia/Shanghai	cn
-Asia	Jinjiang (CN)	19.7288	110.0085	Asia/Shanghai	cn
+Asia	Jinjiang (CN)	19.7378	110.0093	Asia/Shanghai	cn
 Asia	Jinniu	25.8006	100.5743	Asia/Shanghai	cn
 Asia	Jinqiao	31.2709	121.5933	Asia/Shanghai	cn
 Asia	Jinsha	32.0898	121.0735	Asia/Shanghai	cn
@@ -5035,7 +5035,7 @@ Asia	Kalasin	16.4328	103.5066	Asia/Bangkok	th
 Asia	Kalat	29.0266	66.5936	Asia/Karachi	pk
 Asia	Kalaw	20.6346	96.5645	Asia/Yangon	mm
 Asia	Kalemyo	23.1901	94.0640	Asia/Yangon	mm
-Asia	Kalibo	11.7061	122.3644	Asia/Manila	ph
+Asia	Kalibo	11.7086	122.3648	Asia/Manila	ph
 Asia	Kallakurichi	11.7338	78.9592	Asia/Kolkata	in
 Asia	Kallam	18.5751	76.0219	Asia/Kolkata	in
 Asia	Kalmunai	7.4090	81.8347	Asia/Colombo	lk
@@ -11768,7 +11768,7 @@ Europe	Sopron	47.6850	16.5905	Europe/Budapest	hu
 Europe	Soria	41.7640	-2.4688	Europe/Madrid	es
 Europe	Soroca	48.1566	28.2849	Europe/Chisinau	md
 Europe	Sorochinsk	52.4288	53.1502	Asia/Yekaterinburg	ru
-Europe	Sorokyne	48.2933	39.7333	Europe/Kyiv	ua
+Europe	Sorokyne	48.2933	39.7332	Europe/Kyiv	ua
 Europe	Sosnogorsk	63.5967	53.8918	Europe/Moscow	ru
 Europe	Sosnovoborsk	56.1218	93.3381	Asia/Krasnoyarsk	ru
 Europe	Sosnovyy Bor	59.8996	29.0857	Europe/Moscow	ru
@@ -12670,7 +12670,7 @@ Middle East	Bāghestān	35.6471	51.1338	Asia/Tehran	ir
 Middle East	Bājil	15.0590	43.2873	Asia/Aden	ye
 Middle East	Bāneh	35.9975	45.8853	Asia/Tehran	ir
 Middle East	Bāniyās	35.1819	35.9487	Asia/Damascus	sy
-Middle East	Bāqa el Gharbīya	32.4181	35.0431	Asia/Jerusalem	il
+Middle East	Bāqa el Gharbīya	32.4206	35.0427	Asia/Jerusalem	il
 Middle East	Bāqershahr	35.5316	51.4048	Asia/Tehran	ir
 Middle East	Bījār	35.8668	47.6051	Asia/Tehran	ir
 Middle East	Bīrjand	32.8663	59.2211	Asia/Tehran	ir
@@ -13019,7 +13019,7 @@ Middle East	Nazilli	37.9163	28.3223	Europe/Istanbul	tr
 Middle East	Naz̧arābād	35.9541	50.6061	Asia/Tehran	ir
 Middle East	Naţanz	33.5112	51.9181	Asia/Tehran	ir
 Middle East	Nekā	36.6508	53.2991	Asia/Tehran	ir
-Middle East	Netanya	32.3329	34.8599	Asia/Jerusalem	il
+Middle East	Netanya	32.3329	34.8592	Asia/Jerusalem	il
 Middle East	Netivot	31.4230	34.5891	Asia/Jerusalem	il
 Middle East	Nevşehir	38.6250	34.7122	Europe/Istanbul	tr
 Middle East	Neyrīz	29.1988	54.3278	Asia/Tehran	ir
@@ -13375,7 +13375,7 @@ North America	Abington	40.1207	-75.1179	America/New_York	us
 North America	Acapulco de Juárez	16.8494	-99.9089	America/Mexico_City	mx
 North America	Acatzingo	18.9820	-97.7836	America/Mexico_City	mx
 North America	Acayucan	17.9498	-94.9139	America/Mexico_City	mx
-North America	Actopan	20.2696	-98.9438	America/Mexico_City	mx
+North America	Actopan	20.2690	-98.9422	America/Mexico_City	mx
 North America	Acámbaro	20.0325	-100.7243	America/Mexico_City	mx
 North America	Adelanto	34.5828	-117.4092	America/Los_Angeles	us
 North America	Agua Caliente	38.3241	-122.4880	America/Los_Angeles	us
@@ -13425,7 +13425,7 @@ North America	Annapolis	38.9786	-76.4918	America/New_York	us
 North America	Antigua Guatemala	14.5564	-90.7332	America/Guatemala	gt
 North America	Antioch	38.0049	-121.8058	America/Los_Angeles	us
 North America	Apache Junction	33.4151	-111.5496	America/Phoenix	us
-North America	Apan	19.7113	-98.4509	America/Mexico_City	mx
+North America	Apan	19.7105	-98.4511	America/Mexico_City	mx
 North America	Apaseo el Alto	20.4563	-100.6213	America/Mexico_City	mx
 North America	Apaseo el Grande	20.5455	-100.6879	America/Mexico_City	mx
 North America	Apatzingán	19.0886	-102.3570	America/Mexico_City	mx
@@ -13744,7 +13744,6 @@ North America	Ciudad Melchor Múzquiz	27.8793	-101.5161	America/Monterrey	mx
 North America	Ciudad Obregón	27.4864	-109.9408	America/Hermosillo	mx
 North America	Ciudad Río Bravo	25.9851	-98.0896	America/Monterrey	mx
 North America	Ciudad Sabinas Hidalgo	26.5019	-100.1812	America/Monterrey	mx
-North America	Ciudad Sahagun	19.7756	-98.5747	America/Mexico_City	mx
 North America	Ciudad Sandino	12.1589	-86.3442	America/Managua	ni
 North America	Ciudad Valles	21.9963	-99.0109	America/Mexico_City	mx
 North America	Ciudad Victoria	23.7406	-99.1436	America/Monterrey	mx
@@ -13838,7 +13837,7 @@ North America	Crown Point	41.4170	-87.3653	America/Chicago	us
 North America	Crystal Lake	42.2411	-88.3162	America/Chicago	us
 North America	Cuauhtémoc	28.4063	-106.8667	America/Chihuahua	mx
 North America	Cuautitlán Izcalli	19.6439	-99.2160	America/Mexico_City	mx
-North America	Cuautla	18.8106	-98.9352	America/Mexico_City	mx
+North America	Cuautla	18.8130	-98.9551	America/Mexico_City	mx
 North America	Cuernavaca	18.9261	-99.2308	America/Mexico_City	mx
 North America	Cueto	20.6486	-75.9297	America/Havana	cu
 North America	Cuilapa	14.2754	-90.2986	America/Guatemala	gt
@@ -14039,6 +14038,7 @@ North America	Francisco I. Madero	25.7730	-103.2713	America/Monterrey	mx
 North America	Frankfort (US)	38.2009	-84.8733	America/New_York	us
 North America	Franklin	35.9251	-86.8689	America/Chicago	us
 North America	Franklin (US)	42.8886	-88.0384	America/Chicago	us
+North America	Fray Bernardino de Sahagún	19.7727	-98.5823	America/Mexico_City	mx
 North America	Frederick	39.4143	-77.4105	America/New_York	us
 North America	Fredericksburg	38.3032	-77.4605	America/New_York	us
 North America	Fredericton	45.9454	-66.6656	America/Moncton	ca
@@ -14244,7 +14244,7 @@ North America	Irving	32.8140	-96.9489	America/Chicago	us
 North America	Isla	18.0278	-95.5295	America/Mexico_City	mx
 North America	Issaquah	47.5301	-122.0326	America/Los_Angeles	us
 North America	Ithaca	42.4406	-76.4966	America/New_York	us
-North America	Ixmiquilpan	20.4784	-99.2170	America/Mexico_City	mx
+North America	Ixmiquilpan	20.4840	-99.2185	America/Mexico_City	mx
 North America	Ixtapa	20.7160	-105.2051	America/Mexico_City	mx
 North America	Ixtapa-Zihuatanejo	17.6434	-101.5521	America/Mexico_City	mx
 North America	Ixtapaluca	19.3156	-98.8828	America/Mexico_City	mx
@@ -14595,7 +14595,7 @@ North America	Mississauga	43.5789	-79.6583	America/Toronto	ca
 North America	Missoula	46.8721	-113.9940	America/Denver	us
 North America	Missouri City	29.6186	-95.5377	America/Chicago	us
 North America	Mixco	14.6308	-90.6071	America/Guatemala	gt
-North America	Mixquiahuala de Juarez	20.2303	-99.2140	America/Mexico_City	mx
+North America	Mixquiahuala de Juárez	20.2300	-99.2143	America/Mexico_City	mx
 North America	Moa	20.6578	-74.9507	America/Havana	cu
 North America	Mobile	30.6944	-88.0430	America/Chicago	us
 North America	Moca	19.3929	-70.5235	America/Santo_Domingo	do
@@ -15319,7 +15319,7 @@ North America	Tenosique	17.4729	-91.4236	America/Mexico_City	mx
 North America	Teoloyucan	19.7442	-99.1811	America/Mexico_City	mx
 North America	Tepatitlán de Morelos	20.8169	-102.7635	America/Mexico_City	mx
 North America	Tepeaca	18.9669	-97.8998	America/Mexico_City	mx
-North America	Tepeji del Río de Ocampo	19.9048	-99.3438	America/Mexico_City	mx
+North America	Tepeji del Río de Ocampo	19.9055	-99.3423	America/Mexico_City	mx
 North America	Tepexpan	19.6139	-98.9364	America/Mexico_City	mx
 North America	Tepic	21.5073	-104.8933	America/Mazatlan	mx
 North America	Tequila	20.8820	-103.8360	America/Mexico_City	mx
@@ -15352,7 +15352,7 @@ North America	Timmins	48.4669	-81.3331	America/Toronto	ca
 North America	Tinley Park	41.5734	-87.7845	America/Chicago	us
 North America	Tipitapa	12.1973	-86.0971	America/Managua	ni
 North America	Titusville	28.6122	-80.8076	America/New_York	us
-North America	Tizayuca	19.8372	-98.9761	America/Mexico_City	mx
+North America	Tizayuca	19.8419	-98.9810	America/Mexico_City	mx
 North America	Tizimín	21.1430	-88.1519	America/Merida	mx
 North America	Tlajomulco de Zúñiga	20.4742	-103.4465	America/Mexico_City	mx
 North America	Tlalnepantla	19.5401	-99.1954	America/Mexico_City	mx
@@ -15386,8 +15386,8 @@ North America	Trumbull	41.2429	-73.2007	America/New_York	us
 North America	Tuckahoe	37.5902	-77.5564	America/New_York	us
 North America	Tucker	33.8546	-84.2171	America/New_York	us
 North America	Tucson	32.2217	-110.9265	America/Phoenix	us
-North America	Tula de Allende	20.0516	-99.3440	America/Mexico_City	mx
-North America	Tulancingo	20.0835	-98.3629	America/Mexico_City	mx
+North America	Tula de Allende	20.0556	-99.3440	America/Mexico_City	mx
+North America	Tulancingo	20.0805	-98.3683	America/Mexico_City	mx
 North America	Tulare	36.2077	-119.3473	America/Los_Angeles	us
 North America	Tulsa	36.1540	-95.9928	America/Chicago	us
 North America	Tupelo	34.2581	-88.7046	America/Chicago	us
@@ -15777,7 +15777,6 @@ South America	Arenillas	-3.5540	-80.0668	America/Guayaquil	ec
 South America	Arequipa	-16.3990	-71.5375	America/Lima	pe
 South America	Arica	-18.4755	-70.3006	America/Santiago	cl
 South America	Ariguaní	10.2500	-74.0000	America/Bogota	co
-South America	Aripuanã	-10.1765	-59.4491	America/Cuiaba	br
 South America	Ariquemes	-9.9133	-63.0408	America/Porto_Velho	br
 South America	Arjona	10.2544	-75.3439	America/Bogota	co
 South America	Armação dos Búzios	-22.7469	-41.8817	America/Sao_Paulo	br
@@ -15794,6 +15793,7 @@ South America	Astorga	-23.2325	-51.6656	America/Sao_Paulo	br
 South America	Atalaia	-9.5019	-36.0228	America/Maceio	br
 South America	Atibaia	-23.1169	-46.5503	America/Sao_Paulo	br
 South America	Augusto Corrêa	-1.0217	-46.6350	America/Belem	br
+South America	Aurora do Pará	-2.1339	-47.5589	America/Belem	br
 South America	Autazes	-3.5797	-59.1306	America/Manaus	br
 South America	Avaré	-23.0986	-48.9258	America/Sao_Paulo	br
 South America	Avellaneda	-34.6602	-58.3674	America/Argentina/Buenos_Aires	ar
@@ -15997,8 +15997,8 @@ South America	Campos Novos	-27.4017	-51.2250	America/Sao_Paulo	br
 South America	Campos Sales	-7.0744	-40.3761	America/Fortaleza	br
 South America	Campos do Jordão	-22.7394	-45.5914	America/Sao_Paulo	br
 South America	Campos dos Goytacazes	-21.7523	-41.3304	America/Sao_Paulo	br
-South America	Canarana	-13.5522	-52.2683	America/Cuiaba	br
-South America	Canarana (BR)	-11.6847	-41.7689	America/Bahia	br
+South America	Canarana	-11.6847	-41.7689	America/Bahia	br
+South America	Canarana (BR)	-13.5522	-52.2683	America/Cuiaba	br
 South America	Canavieiras	-15.6750	-38.9472	America/Bahia	br
 South America	Canaã dos Carajás	-6.5239	-49.8517	America/Belem	br
 South America	Candeias	-12.6678	-38.5506	America/Bahia	br
@@ -16136,8 +16136,8 @@ South America	Ciénaga	11.0070	-74.2476	America/Bogota	co
 South America	Cláudio	-20.4433	-44.7658	America/Sao_Paulo	br
 South America	Coari	-4.0850	-63.1414	America/Manaus	br
 South America	Cocal	-3.4719	-41.5575	America/Fortaleza	br
-South America	Cocalzinho de Goiás	-15.7944	-48.7758	America/Sao_Paulo	br
 South America	Cochabamba	-17.3819	-66.1599	America/La_Paz	bo
+South America	Codajás	-3.8367	-62.0569	America/Manaus	br
 South America	Codó	-4.4553	-43.8856	America/Fortaleza	br
 South America	Coelho Neto	-4.2567	-43.0128	America/Fortaleza	br
 South America	Coihueco	-36.6279	-71.8307	America/Santiago	cl
@@ -16283,6 +16283,7 @@ South America	Embu das Artes	-23.6489	-46.8522	America/Sao_Paulo	br
 South America	Embu-Guaçu	-23.8322	-46.8114	America/Sao_Paulo	br
 South America	Encarnación	-27.3318	-55.8666	America/Asuncion	py
 South America	Encontrados	9.0598	-72.2346	America/Caracas	ve
+South America	Encruzilhada do Sul	-30.5439	-52.5219	America/Sao_Paulo	br
 South America	Entre Rios	-11.9419	-38.0844	America/Bahia	br
 South America	Erechim	-27.6346	-52.2754	America/Sao_Paulo	br
 South America	Escada	-8.3592	-35.2236	America/Recife	br
@@ -16346,7 +16347,7 @@ South America	Gama	-16.0251	-48.0712	America/Sao_Paulo	br
 South America	Gandu	-13.7439	-39.4867	America/Bahia	br
 South America	Garanhuns	-8.8820	-36.5022	America/Recife	br
 South America	Garibaldi	-29.2561	-51.5336	America/Sao_Paulo	br
-South America	Garopaba	-28.0233	-48.6133	America/Sao_Paulo	br
+South America	Garrafão do Norte	-1.9342	-47.0525	America/Belem	br
 South America	Garupá	-27.4831	-55.8292	America/Argentina/Cordoba	ar
 South America	Garzón	2.1959	-75.6278	America/Bogota	co
 South America	Garça	-22.2106	-49.6561	America/Sao_Paulo	br
@@ -16913,6 +16914,7 @@ South America	Nova Serrana	-19.8761	-44.9836	America/Sao_Paulo	br
 South America	Nova Soure	-11.2333	-38.4833	America/Bahia	br
 South America	Nova Venécia	-18.7106	-40.4006	America/Sao_Paulo	br
 South America	Nova Viçosa	-17.8919	-39.3719	America/Bahia	br
+South America	Novo Aripuanã	-5.1206	-60.3797	America/Manaus	br
 South America	Novo Cruzeiro	-17.4681	-41.8753	America/Sao_Paulo	br
 South America	Novo Hamburgo	-29.6783	-51.1306	America/Sao_Paulo	br
 South America	Novo Horizonte	-21.4681	-49.2208	America/Sao_Paulo	br
@@ -16984,7 +16986,6 @@ South America	Paraipaba	-3.4394	-39.1483	America/Fortaleza	br
 South America	Parambu	-6.2111	-40.6944	America/Fortaleza	br
 South America	Paramonga	-10.6667	-77.8333	America/Lima	pe
 South America	Paranaguá	-25.5163	-48.5254	America/Sao_Paulo	br
-South America	Paranatinga	-14.4317	-54.0511	America/Cuiaba	br
 South America	Paranavaí	-23.0731	-52.4653	America/Sao_Paulo	br
 South America	Paranaíba	-19.6772	-51.1908	America/Campo_Grande	br
 South America	Paraná	-31.7327	-60.5290	America/Argentina/Cordoba	ar
@@ -17180,7 +17181,6 @@ South America	Queimadas	-7.3583	-35.8983	America/Fortaleza	br
 South America	Queimadas (BR)	-10.9783	-39.6264	America/Bahia	br
 South America	Queimados	-22.7161	-43.5553	America/Sao_Paulo	br
 South America	Querecotillo	-4.8378	-80.6456	America/Lima	pe
-South America	Querência	-12.5969	-52.1997	America/Cuiaba	br
 South America	Quevedo	-1.0288	-79.4626	America/Guayaquil	ec
 South America	Quibdó	5.6919	-76.6583	America/Bogota	co
 South America	Quijingue	-10.7525	-39.2092	America/Bahia	br
@@ -17370,6 +17370,7 @@ South America	Santa Helena de Goiás	-17.8136	-50.5969	America/Sao_Paulo	br
 South America	Santa Inês	-3.6667	-45.3800	America/Fortaleza	br
 South America	Santa Isabel	-23.3156	-46.2214	America/Sao_Paulo	br
 South America	Santa Isabel do Pará	-1.2986	-48.1606	America/Belem	br
+South America	Santa Isabel do Rio Negro	-0.4139	-65.0192	America/Manaus	br
 South America	Santa Luzia	-19.7697	-43.8514	America/Sao_Paulo	br
 South America	Santa Luzia (BR)	-3.9633	-45.6583	America/Fortaleza	br
 South America	Santa Maria	-29.6842	-53.8069	America/Sao_Paulo	br
@@ -17378,6 +17379,7 @@ South America	Santa Maria da Vitória	-13.3881	-44.1987	America/Bahia	br
 South America	Santa Maria de Jetibá	-20.0275	-40.7434	America/Sao_Paulo	br
 South America	Santa Marta	11.2386	-74.1943	America/Bogota	co
 South America	Santa Quitéria	-4.3319	-40.1567	America/Fortaleza	br
+South America	Santa Quitéria do Maranhão	-3.4959	-42.5620	America/Fortaleza	br
 South America	Santa Rita	-7.1139	-34.9781	America/Fortaleza	br
 South America	Santa Rita (BR)	-3.1390	-44.3252	America/Fortaleza	br
 South America	Santa Rita (VE)	10.5364	-71.5110	America/Caracas	ve
@@ -17409,7 +17411,6 @@ South America	Santo Antônio da Platina	-23.2950	-50.0772	America/Sao_Paulo	br
 South America	Santo Antônio de Jesus	-12.9689	-39.2614	America/Bahia	br
 South America	Santo Antônio de Pádua	-21.5394	-42.1803	America/Sao_Paulo	br
 South America	Santo Antônio do Descoberto	-15.9397	-48.2550	America/Sao_Paulo	br
-South America	Santo Antônio do Içá	-3.1022	-67.9397	America/Manaus	br
 South America	Santo Antônio do Monte	-20.0872	-45.2936	America/Sao_Paulo	br
 South America	Santo Antônio do Sudoeste	-26.0736	-53.7253	America/Sao_Paulo	br
 South America	Santo Antônio do Tauá	-1.1519	-48.1294	America/Belem	br
@@ -17574,6 +17575,7 @@ South America	Tanguá	-22.7303	-42.7142	America/Sao_Paulo	br
 South America	Taquara	-29.6506	-50.7806	America/Sao_Paulo	br
 South America	Taquari	-29.7997	-51.8644	America/Sao_Paulo	br
 South America	Taquaritinga	-21.4061	-48.5047	America/Sao_Paulo	br
+South America	Taquaritinga do Norte	-7.9031	-36.0442	America/Recife	br
 South America	Tarauacá	-8.1614	-70.7656	America/Rio_Branco	br
 South America	Tarija	-21.5355	-64.7296	America/La_Paz	bo
 South America	Tarma	-11.4190	-75.6899	America/Lima	pe
@@ -17774,6 +17776,7 @@ South America	Zarzal	4.3946	-76.0715	America/Bogota	co
 South America	Zipaquirá	5.0221	-74.0048	America/Bogota	co
 South America	Zárate	-34.0958	-59.0242	America/Argentina/Buenos_Aires	ar
 South America	Zé Doca	-3.2747	-45.6583	America/Fortaleza	br
+South America	Água Azul do Norte	-6.7911	-50.4669	America/Belem	br
 South America	Água Boa	-14.0500	-52.1586	America/Cuiaba	br
 South America	Água Preta	-8.7075	-35.5306	America/Recife	br
 South America	Água Rasa	-20.4333	-45.1667	America/Sao_Paulo	br
