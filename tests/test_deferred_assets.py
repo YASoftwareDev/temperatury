@@ -328,28 +328,42 @@ def test_compare_deep_link_prefills_before_charts_js_runs():
     before deferred charts.js has defined __rosterData. The map-data loader
     must therefore join __ready first; calling __rosterData synchronously
     threw a TypeError that killed the whole compare block (found in review).
-    The roster also disambiguates homonyms as "name-(cc)", so the hash parser
-    must accept more than [a-z0-9-] (both raw and percent-encoded forms).
+    The roster also disambiguates homonyms as "name-(cc)" and one slug even
+    carries literal commas, so the hash parser must accept more than
+    [a-z0-9-] and resolve the separator by lookup (raw and percent-encoded
+    forms both).
     """
-    # A "(cc)"-disambiguated slug with committed data exercises the parser
-    # beyond [a-z0-9-]; a build has at most the cities it was built with, so
-    # the deep link compares the city to itself.
+    # Slugs with committed data whose shape stresses the parser: a
+    # "(cc)"-disambiguated one and (when covered) the comma-bearing one. A
+    # build has at most the cities it was built with, so each deep link
+    # compares the city to itself - for the comma slug that also puts a
+    # comma on BOTH sides of the real separator.
     import codec
     import config
-    slug = next((l.slug for l in config.LOCATIONS.values()
-                 if "(" in l.slug and codec.cached_path(
-                     config.DATA_DIR / f"{l.slug}_1940-2025{codec.SUFFIX}")),
-                SLUG)
-    out = build(slug, "en", client_i18n=True)
-    _q = urllib.parse.quote(slug, safe="")
-    for frag in (f"#cmp={slug},{slug}", f"#cmp={_q},{_q}"):
-        errors = []
-        with _serve(out) as base, _page(errors) as pg:
-            pg.goto(f"{base}/en/index.html{frag}", wait_until="load")
-            pg.wait_for_function(
-                "document.getElementById('cmp-a').value !== ''", timeout=8000)
-            assert pg.input_value("#cmp-a") == pg.input_value("#cmp-b") != ""
-        # A single-city build's landing 404s assets of unbuilt cities (the
-        # default region-hero page); only script errors are the regression.
-        real = [e for e in errors if "404" not in e]
-        assert not real, (frag, real[:3])
+
+    def _covered(pred):
+        # Cities only: compare lists __mapCities, which excludes the
+        # region/ocean reference points (vostok,-antarctica is NOT a pick).
+        return next((l.slug for l in config.LOCATIONS.values()
+                     if pred(l.slug)
+                     and getattr(l, "kind", "city") == "city"
+                     and codec.cached_path(
+                         config.DATA_DIR / f"{l.slug}_1940-2025{codec.SUFFIX}")),
+                    None)
+    slugs = [s for s in (_covered(lambda s: "(" in s) or SLUG,
+                         _covered(lambda s: "," in s)) if s]
+    for slug in slugs:
+        out = build(slug, "en", client_i18n=True)
+        _q = urllib.parse.quote(slug, safe="")
+        for frag in (f"#cmp={slug},{slug}", f"#cmp={_q},{_q}"):
+            errors = []
+            with _serve(out) as base, _page(errors) as pg:
+                pg.goto(f"{base}/en/index.html{frag}", wait_until="load")
+                pg.wait_for_function(
+                    "document.getElementById('cmp-a').value !== ''",
+                    timeout=8000)
+                assert pg.input_value("#cmp-a") == pg.input_value("#cmp-b") != ""
+            # A single-city build's landing 404s assets of unbuilt cities (the
+            # default region-hero page); only script errors are the regression.
+            real = [e for e in errors if "404" not in e]
+            assert not real, (slug, frag, real[:3])
