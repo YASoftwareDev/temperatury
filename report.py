@@ -2515,7 +2515,11 @@ ${topbar}
       .then(function (both) {
         window.__names = both[0];
         window.__omniData = both[2];
-        var d = both[1];
+        // The ranking arrives columnar (see chartpack.pack_rows); inflate to
+        // row objects ONCE here - past __ready, so charts.js is loaded - and
+        // every downstream reader (renderGlobal, the quick-view card, the
+        // compare stat rows) sees the same shape as before.
+        var d = window.__inflateGlobal(both[1]);
         window.__gd = d;   // the map's quick-view card reads the ranking here
         window.initOmni();
         window.renderGlobal(d);

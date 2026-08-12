@@ -508,8 +508,21 @@ def main() -> None:
     g_rankpct = ({r["s"]: (100 * (len(_rk) - i - 1)) // len(_rk)
                   for i, r in enumerate(_rk)} if len(_rk) >= 50 else {})
     (OUTPUT_DIR / "charts").mkdir(parents=True, exist_ok=True)
+    # The ranking is _global.json's scaling term (one row per covered city,
+    # measured ~563 KB of a 992 KB payload at 3,548 cities and every landing
+    # visit downloads it); ship it columnar+packed (chartpack.pack_rows,
+    # verified-inverse) and inflate client-side right after the fetch
+    # (charts.js __inflateGlobal; the standalone widget carries its own copy).
+    g_wire = dict(g_payload)
+    # Explicit nulls (a city without population data carries "pop": null) are
+    # dead wire bytes and indistinguishable from an absent key to every
+    # consumer (all guard with typeof/!= null); drop them so the columnar
+    # form's absent-key round trip verifies exactly.
+    g_wire["ranking"] = chartpack.pack_rows(
+        [{k: v for k, v in row.items() if v is not None}
+         for row in (g_payload.get("ranking") or [])])
     (OUTPUT_DIR / "charts" / "_global.json").write_text(
-        json.dumps(g_payload, ensure_ascii=False), encoding="utf-8")
+        json.dumps(g_wire, ensure_ascii=False), encoding="utf-8")
     # Tiny real-data file for the topbar warming badge (fetched by every page).
     # Only the honest, computed world-city aggregates - no fabricated values. With
     # no ranking (e.g. a single custom-location build) emit null, not a bare 0.0,
