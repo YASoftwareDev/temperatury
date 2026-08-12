@@ -286,8 +286,11 @@ def _render_city(task) -> tuple[str, int]:
             encoding="utf-8")
     else:
         # A city promoted to rich keeps its widgets inline again; a stale
-        # sidecar in the CI cache would deploy unreferenced.
+        # sidecar in the CI cache would deploy unreferenced. The cached copy
+        # may already live inside a shard dir (tools/shard_payloads.py).
         _wpath.unlink(missing_ok=True)
+        for _shard_copy in charts_dir.glob(f"shard-*/{location.slug}_w.json"):
+            _shard_copy.unlink(missing_ok=True)
     if charts_dir != OUTPUT_DIR / "charts":
         # Split build over a cache/worktree that once built unsplit: the same
         # payload must not ALSO ship (stale) inside the main site artifact.
