@@ -320,3 +320,22 @@ def test_search_index_is_a_sidecar_and_still_searchable():
                                 .map(li => li.textContent.toLowerCase())""")
         assert any("krak" in h for h in hits), f"search returned no city: {hits[:5]}"
     _assert_only_retired_asset_failed(failed, errors)
+
+
+@pytest.mark.slow
+def test_compare_deep_link_prefills_before_charts_js_runs():
+    """A #cmp= deep link runs cmpReady() INLINE, at document-parse time -
+    before deferred charts.js has defined __rosterData. The map-data loader
+    must therefore join __ready first; calling __rosterData synchronously
+    threw a TypeError that killed the whole compare block (found in review).
+    The slug set also contains "(cc)"-disambiguated names, so the hash parser
+    must accept more than [a-z0-9-] and the writer percent-encodes.
+    """
+    out = build(SLUG, "en", client_i18n=True)
+    errors = []
+    with _serve(out) as base, _page(errors) as pg:
+        pg.goto(f"{base}/en/index.html#cmp={SLUG},{SLUG}", wait_until="load")
+        pg.wait_for_function("document.getElementById('cmp-a').value !== ''",
+                             timeout=8000)
+        assert pg.input_value("#cmp-a") == pg.input_value("#cmp-b") != ""
+    assert not errors, errors[:3]
