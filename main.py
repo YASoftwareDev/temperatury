@@ -77,6 +77,17 @@ _SPEC_PATH = config.ROOT / "charts_spec.json"
 CHART_SPEC = (json.loads(_SPEC_PATH.read_text(encoding="utf-8"))
               if _SPEC_PATH.exists() else {})
 
+# Split publishing: per-city payloads (charts/<slug>.json + <slug>_w.json) are
+# the site's scaling term and can outgrow the main Pages artifact's 1 GB cap,
+# so CI writes them to a SEPARATE directory (TEMPERATURY_PAYLOAD_DIR) pushed
+# to the temperatury-charts repo's own Pages site, and pages fetch them from
+# TEMPERATURY_PAYLOAD_BASE (see report.PAYLOAD_BASE). Both unset = everything
+# in output/ and fetched relatively, exactly as before - local builds and the
+# test suite need no second origin.
+PAYLOAD_DIR = (config.ROOT / os.environ["TEMPERATURY_PAYLOAD_DIR"]
+               if os.environ.get("TEMPERATURY_PAYLOAD_DIR")
+               else OUTPUT_DIR / "charts")
+
 
 def _last_full_year() -> int:
     """The most recent calendar year that has already ended."""
@@ -242,6 +253,13 @@ def _render_city(task) -> tuple[str, int]:
         shared["_years"] = _years
     if records_data is not None and not _stub:
         shared["_records"] = records_data
+    # Tail (stub) cities keep the monthly-range/records widgets ON DEMAND:
+    # their payload (over half a tail city's chart JSON) rides a separate
+    # <slug>_w.json that _page.js fetches only when the visitor scrolls the
+    # widgets into view - visitors who never reach them cost nothing.
+    widgets = {"_range": range_data} if _stub else None
+    if widgets is not None and records_data is not None:
+        widgets["_records"] = records_data
     # Client-i18n serves one shell per city, so the {english: localized} chart-
     # label map cannot be baked per page. Ship each label's serialisable recipe
     # instead (flattened across charts); the browser rebuilds the map from the
@@ -249,7 +267,7 @@ def _render_city(task) -> tuple[str, int]:
     # so it rides the shared per-city JSON, not the per-language pages.
     if CLIENT_I18N:
         shared["_labels"] = [pair for cs in specs.values() for pair in cs]
-    charts_dir = OUTPUT_DIR / "charts"
+    charts_dir = PAYLOAD_DIR
     charts_dir.mkdir(parents=True, exist_ok=True)
     # Cross-city constant fields are stripped against the committed spec
     # (chartspec; charts.js merges them back), then numeric arrays ship as
@@ -261,6 +279,20 @@ def _render_city(task) -> tuple[str, int]:
         json.dumps(chartpack.pack_tree(chartspec.strip(shared, CHART_SPEC)),
                    ensure_ascii=False),
         encoding="utf-8")
+    _wpath = charts_dir / f"{location.slug}_w.json"
+    if widgets is not None:
+        _wpath.write_text(
+            json.dumps(chartpack.pack_tree(widgets), ensure_ascii=False),
+            encoding="utf-8")
+    else:
+        # A city promoted to rich keeps its widgets inline again; a stale
+        # sidecar in the CI cache would deploy unreferenced.
+        _wpath.unlink(missing_ok=True)
+    if charts_dir != OUTPUT_DIR / "charts":
+        # Split build over a cache/worktree that once built unsplit: the same
+        # payload must not ALSO ship (stale) inside the main site artifact.
+        for _stale in (f"{location.slug}.json", f"{location.slug}_w.json"):
+            (OUTPUT_DIR / "charts" / _stale).unlink(missing_ok=True)
     n = 0
     for lang in languages:
         tr = i18n.get(lang)
