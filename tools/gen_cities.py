@@ -208,6 +208,36 @@ def main() -> None:
 
     rows.sort(key=lambda r: (r[0], r[1]))
     out = Path(__file__).resolve().parent.parent / "cities750k.tsv"
+    # A city whose slug has COMMITTED DATA keeps its identity (name -> slug,
+    # coords) when upstream GeoNames renames or drops it (seen live: Jinghong
+    # became "Yunjinghong"). The slug is the data-file key and the page URL -
+    # following the rename would orphan the fetched record, re-download the
+    # same grid cell under a new name, and 404 the old link. The renamed
+    # upstream row (nearest within ~5.5 km) is replaced by the committed one;
+    # a committed-data city missing entirely is appended back.
+    data_dir = Path(__file__).resolve().parent.parent / "data"
+    if out.exists() and data_dir.is_dir():
+        new_slugs = {config.slugify(r[1]) for r in rows}
+        for line in out.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            f = line.split("\t")
+            slug = config.slugify(f[1])
+            if slug in new_slugs or not any(data_dir.glob(f"{slug}_*")):
+                continue
+            la, lo = float(f[2]), float(f[3])
+            k = math.cos(math.radians(la))
+            near = [i for i, r in enumerate(rows)
+                    if abs(float(r[2]) - la) < NEAR_DEG
+                    and abs(float(r[3]) - lo) * k < NEAR_DEG]
+            if near:
+                print(f"kept committed identity {f[1]!r} over upstream "
+                      f"rename {rows[near[0]][1]!r}")
+                rows[near[0]] = tuple(f)
+            else:
+                print(f"kept committed-data city {f[1]!r} dropped upstream")
+                rows.append(tuple(f))
+        rows.sort(key=lambda r: (r[0], r[1]))
     # A city already in the committed TSV keeps its OLD timezone even when
     # upstream GeoNames reassigns it (seen live: Bole, Xinjiang moved
     # Asia/Urumqi -> Asia/Shanghai). The committed cache was fetched and
