@@ -16,7 +16,7 @@ list in config.py by proximity (~20 km), so e.g. GeoNames "Warsaw" doesn't
 duplicate the curated "Warszawa".
 
 Writes two files:
-  - ``cities750k.tsv``   — the primaries (>100k, deduped). Columns: region, name,
+  - ``cities750k.tsv``   — the primaries (>25k, deduped). Columns: region, name,
     lat, lon, tz, cc.
   - ``city_aliases.tsv`` — every smaller city that shares a primary's ~11 km
     Open-Meteo grid cell (identical record), so it is searchable by its own name
@@ -38,7 +38,7 @@ import config  # noqa: E402
 MIN_POP = 25_000
 # ~5.5 km: only merge near-identical points (a GeoNames duplicate entry, or the
 # curated "Warszawa" vs GeoNames "Warsaw"), not genuinely distinct adjacent
-# cities like Yokohama next to Tokyo - so the set approaches ALL >100k cities.
+# cities like Yokohama next to Tokyo - so the set approaches ALL >25k cities.
 NEAR_DEG = 0.05
 
 # ~11 km: one ERA5-Land reanalysis cell. Any GeoNames city (down to the 15k
@@ -152,7 +152,7 @@ def main() -> None:
         return any(abs(la - a) < NEAR_DEG and abs(lo - o) * k < NEAR_DEG
                    for a, o in coords)
 
-    # Read EVERY city (down to the 15k floor) once: the >100k subset becomes the
+    # Read EVERY city (down to the 15k floor) once: the >MIN_POP subset becomes the
     # primaries written to the TSV; the rest are alias candidates for the grid
     # pass below.
     all_cities = []
@@ -244,7 +244,7 @@ def write_aliases(all_cities: list[tuple], rows: list[tuple],
     reuse the primary's committed Open-Meteo record (same grid cell → identical
     data), so the site can list thousands more small towns without fetching any
     new data. Columns: primary_slug, alias_name, region, lat, lon."""
-    # Primaries = the curated config cities + the >100k rows just generated.
+    # Primaries = the curated config cities + the >MIN_POP rows just generated.
     primaries = [(config.slugify(n), n, la, lo, r)
                  for r, n, la, lo, _ in config._CITIES]
     primaries += [(config.slugify(n), n, float(la), float(lo), r)
