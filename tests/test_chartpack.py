@@ -82,3 +82,52 @@ def test_strings_and_scalars_untouched():
 def test_infinity_and_nan_left_alone():
     a = [math.inf, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
     assert chartpack.pack_tree({"data": a}) == {"data": a}
+
+
+# --- columnar row packing (the _global.json ranking) -----------------------
+
+ROWS = [
+    {"n": "Nuuk", "s": "nuuk", "cc": "gl", "r": "North America",
+     "pop": 14798, "t": 0.56, "dt": 4.8,
+     "st": [-1.08, -0.67, -0.46, -0.01, 0.36, 0.52, 2.11, 2.49, 4.17]},
+    {"n": "Kraków", "s": "krakow", "cc": "pl", "r": "Europe",
+     "pop": 766683, "t": 0.31, "dt": 2.6,
+     "st": [-0.5, -0.4, -0.3, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]},
+] * 8
+
+
+def test_rows_round_trip():
+    packed = chartpack.pack_rows(ROWS)
+    assert isinstance(packed, dict) and "_cols" in packed
+    assert chartpack.unpack_rows(json.loads(json.dumps(packed))) == ROWS
+
+
+def test_rows_with_a_missing_key_round_trip():
+    rows = [dict(r) for r in ROWS]
+    del rows[3]["st"]
+    del rows[5]["pop"]
+    assert chartpack.unpack_rows(
+        json.loads(json.dumps(chartpack.pack_rows(rows)))) == rows
+
+
+def test_rows_numeric_columns_are_packed():
+    packed = chartpack.pack_rows(ROWS)
+    assert "_p" in packed["_cols"]["t"], "numeric column should pack"
+    assert "_p" in packed["_cols"]["st"], "fixed-stride lists should pack flat"
+    assert isinstance(packed["_cols"]["n"], list), "strings stay plain"
+
+
+def test_rows_unpackable_shape_falls_back_to_plain():
+    # A None-valued key and a ragged nested list are both representable -
+    # verified round trip - but a row value the codec cannot express exactly
+    # (5-decimal float) must keep its column plain rather than round.
+    rows = [dict(r) for r in ROWS]
+    rows[0]["t"] = 0.12345
+    packed = chartpack.pack_rows(rows)
+    assert chartpack.unpack_rows(json.loads(json.dumps(packed))) == rows
+
+
+def test_rows_smaller_than_plain():
+    plain = len(json.dumps(ROWS, separators=(",", ":")))
+    packed = len(json.dumps(chartpack.pack_rows(ROWS), separators=(",", ":")))
+    assert packed < plain * 0.8

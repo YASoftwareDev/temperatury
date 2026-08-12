@@ -20,6 +20,48 @@ from pathlib import Path
 
 SITE = "https://yasoftwaredev.github.io/temperatury/"
 
+# _global.json's ranking ships columnar+packed (chartpack.pack_rows); these
+# pages are standalone (no charts.js), so each carries this compact inverse.
+# Mirrors charts.js __inflateGlobal / chartpack.unpack_rows exactly.
+_INFLATE_JS = """
+  function inflate(d) {
+    var r = d && d.ranking;
+    if (!r || !r._cols) return d;
+    function dec(p) {
+      var bin = atob(p._p), w = p.w, n = bin.length / w;
+      var u8 = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      var dv = new DataView(u8.buffer), out = new Array(n);
+      var sent = (w === 2) ? -32768 : -2147483648, k = Math.pow(10, p.d);
+      for (var j = 0; j < n; j++) {
+        var v = (w === 2) ? dv.getInt16(j * w, true) : dv.getInt32(j * w, true);
+        out[j] = (v === sent) ? null : v / k;
+      }
+      return out;
+    }
+    var n = r.n, rows = new Array(n), i;
+    for (i = 0; i < n; i++) rows[i] = {};
+    Object.keys(r._cols).forEach(function (k) {
+      var col = r._cols[k];
+      if (col && typeof col._p === "string" && col.stride) {
+        var gaps = {};
+        (col.gaps || []).forEach(function (g) { gaps[g] = 1; });
+        var flat = dec(col);
+        for (i = 0; i < n; i++) {
+          if (!gaps[i]) rows[i][k] = flat.slice(i * col.stride, (i + 1) * col.stride);
+        }
+        return;
+      }
+      var vals = (col && typeof col._p === "string") ? dec(col) : col;
+      for (i = 0; i < n; i++) {
+        if (vals[i] !== null && vals[i] !== undefined) rows[i][k] = vals[i];
+      }
+    });
+    d.ranking = rows;
+    return d;
+  }
+"""
+
 _WIDGET = """<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -241,7 +283,9 @@ _CITY_WIDGET = """<!DOCTYPE html>
       + "," + Math.round(a[2]+(b[2]-a[2])*k) + ")"; }
   if (!slug) { body.innerHTML = '<div class="cw-err">No city set</div>'; return; }
   card.href = site + lang + "/" + slug + ".html?utm_source=widget";
+INFLATE_JS
   fetch("charts/_global.json").then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(inflate)
     .then(function (d) {
       var rk = (d && d.ranking) || [], e = null;
       for (var i = 0; i < rk.length; i++) if (rk[i].s === slug) { e = rk[i]; break; }
@@ -401,7 +445,9 @@ _EMBED = """<!DOCTYPE html>
   var iq = new URLSearchParams(location.search);
   if (iq.get("mode") === "city") $("mode").value = "city";
   // Populate the city picker from the same ranking the widgets use.
+INFLATE_JS
   fetch("charts/_global.json").then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { return d && inflate(d); })
     .then(function (d) {
       var rk = (d && d.ranking) || [], dl = $("cities"), slugToName = {};
       rk.slice().sort(function (a, b) { return a.n.localeCompare(b.n); }).forEach(function (c) {
@@ -427,7 +473,9 @@ def build_widgets(output_dir: Path) -> int:
     (output_dir / "widget.html").write_text(
         _WIDGET.replace("SITE_URL", SITE), encoding="utf-8")
     (output_dir / "citywidget.html").write_text(
-        _CITY_WIDGET.replace("SITE_URL", SITE), encoding="utf-8")
+        _CITY_WIDGET.replace("SITE_URL", SITE)
+        .replace("INFLATE_JS", _INFLATE_JS), encoding="utf-8")
     (output_dir / "embed.html").write_text(
-        _EMBED.replace("SITE_URL", SITE), encoding="utf-8")
+        _EMBED.replace("SITE_URL", SITE)
+        .replace("INFLATE_JS", _INFLATE_JS), encoding="utf-8")
     return 3

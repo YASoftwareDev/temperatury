@@ -777,6 +777,37 @@
     };
   };
 
+  // Inverse of chartpack.unpack_rows: _global.json's ranking ships columnar
+  // ({_cols: {key: column}, n}) with numeric columns packed and fixed-stride
+  // per-row lists (the st sparkline) packed flat. Rebuilds the original row
+  // objects in place; a plain-array ranking (pack_rows fallback, or an old
+  // cached payload) passes through untouched.
+  window.__inflateGlobal = function (d) {
+    var r = d && d.ranking;
+    if (!r || !r._cols) return d;
+    var n = r.n, rows = new Array(n), i;
+    for (i = 0; i < n; i++) rows[i] = {};
+    Object.keys(r._cols).forEach(function (k) {
+      var col = r._cols[k];
+      if (col && typeof col._p === "string" && col.stride) {
+        var gaps = {};
+        (col.gaps || []).forEach(function (g) { gaps[g] = 1; });
+        var flat = window.__unpackCharts({ v: { _p: col._p, d: col.d, w: col.w } }).v;
+        for (i = 0; i < n; i++) {
+          if (!gaps[i]) rows[i][k] = flat.slice(i * col.stride, (i + 1) * col.stride);
+        }
+        return;
+      }
+      var vals = (col && typeof col._p === "string")
+        ? window.__unpackCharts({ v: col }).v : col;
+      for (i = 0; i < n; i++) {
+        if (vals[i] !== null && vals[i] !== undefined) rows[i][k] = vals[i];
+      }
+    });
+    d.ranking = rows;
+    return d;
+  };
+
   // Fields identical across cities are stripped from per-city JSON against
   // charts/_spec.json (chartspec.strip); this is the inverse. Missing keys
   // only - a city that kept its own divergent value wins. The spec is fetched
