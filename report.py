@@ -2552,7 +2552,10 @@ ${topbar}
           (window.__mapCities || []).forEach(function (c) {
             if (!c.s) return;
             var slug = c.s.split('/').pop().replace('.html', '');
-            var val = c.n + (c.cc ? ' (' + c.cc.toUpperCase() + ')' : '');
+            // Roster homonyms already carry "(CC)" in the name itself
+            // ("Newcastle (ZA)") - don't double it to "Newcastle (ZA) (ZA)".
+            var cc = c.cc ? ' (' + c.cc.toUpperCase() + ')' : '';
+            var val = c.n + (cc && c.n.slice(-cc.length) !== cc ? cc : '');
             bySlug[slug] = { n: c.n, val: val };
             byVal[val] = slug;
             var o = document.createElement('option');
@@ -2663,18 +2666,24 @@ ${topbar}
       if (window.__unitHooks) window.__unitHooks.push(draw);
     });
     // Slugs are not [a-z0-9-]: the roster disambiguates homonyms as
-    // "newcastle-(za)" and a few names carry dots or apostrophes, so match
-    // anything up to the comma separator and decode (the writer encodes, so
-    // even a comma inside a slug survives; plain old-format links still parse).
-    var m = (location.hash || '').match(/cmp=([^,&]+),([^&]+)/);
+    // "newcastle-(za)", a few names carry dots or apostrophes, and one even a
+    // literal comma ("mianzhu,-deyang,-sichuan"). The writer percent-encodes,
+    // but raw (hand-typed or pre-encoding) links must parse too - so try every
+    // comma as the separator until both sides resolve to known cities.
+    var m = (location.hash || '').match(/cmp=([^&]+)/);
     var cmpPrefilled = false;
     // A #cmp= deep link is the one case that needs the list immediately.
     if (m) {
       cmpReady().then(function () {
-        var s1, s2;
-        try { s1 = decodeURIComponent(m[1]); s2 = decodeURIComponent(m[2]); }
-        catch (e) { return; }
-        if (!bySlug[s1] || !bySlug[s2]) return;
+        var raw = m[1], s1, s2, idx = -1, found = false;
+        while (!found && (idx = raw.indexOf(',', idx + 1)) >= 0) {
+          try {
+            s1 = decodeURIComponent(raw.slice(0, idx));
+            s2 = decodeURIComponent(raw.slice(idx + 1));
+          } catch (e) { continue; }
+          found = !!(bySlug[s1] && bySlug[s2]);
+        }
+        if (!found) return;
         a.value = bySlug[s1].val;
         b.value = bySlug[s2].val;
         cmpPrefilled = true;
