@@ -328,14 +328,28 @@ def test_compare_deep_link_prefills_before_charts_js_runs():
     before deferred charts.js has defined __rosterData. The map-data loader
     must therefore join __ready first; calling __rosterData synchronously
     threw a TypeError that killed the whole compare block (found in review).
-    The slug set also contains "(cc)"-disambiguated names, so the hash parser
-    must accept more than [a-z0-9-] and the writer percent-encodes.
+    The roster also disambiguates homonyms as "name-(cc)", so the hash parser
+    must accept more than [a-z0-9-] (both raw and percent-encoded forms).
     """
-    out = build(SLUG, "en", client_i18n=True)
-    errors = []
-    with _serve(out) as base, _page(errors) as pg:
-        pg.goto(f"{base}/en/index.html#cmp={SLUG},{SLUG}", wait_until="load")
-        pg.wait_for_function("document.getElementById('cmp-a').value !== ''",
-                             timeout=8000)
-        assert pg.input_value("#cmp-a") == pg.input_value("#cmp-b") != ""
-    assert not errors, errors[:3]
+    # A "(cc)"-disambiguated slug with committed data exercises the parser
+    # beyond [a-z0-9-]; a build has at most the cities it was built with, so
+    # the deep link compares the city to itself.
+    import codec
+    import config
+    slug = next((l.slug for l in config.LOCATIONS.values()
+                 if "(" in l.slug and codec.cached_path(
+                     config.DATA_DIR / f"{l.slug}_1940-2025{codec.SUFFIX}")),
+                SLUG)
+    out = build(slug, "en", client_i18n=True)
+    _q = urllib.parse.quote(slug, safe="")
+    for frag in (f"#cmp={slug},{slug}", f"#cmp={_q},{_q}"):
+        errors = []
+        with _serve(out) as base, _page(errors) as pg:
+            pg.goto(f"{base}/en/index.html{frag}", wait_until="load")
+            pg.wait_for_function(
+                "document.getElementById('cmp-a').value !== ''", timeout=8000)
+            assert pg.input_value("#cmp-a") == pg.input_value("#cmp-b") != ""
+        # A single-city build's landing 404s assets of unbuilt cities (the
+        # default region-hero page); only script errors are the regression.
+        real = [e for e in errors if "404" not in e]
+        assert not real, (frag, real[:3])
