@@ -33,14 +33,32 @@ from globaldata import _ZONE_COLOR, _ZONE_NAME_KEY, zone_of
 SITE_BASE = "https://yasoftwaredev.github.io/temperatury"
 
 # Per-city chart payloads (charts/<slug>.json, <slug>_w.json) may be served
-# from a second Pages origin with its own 1 GB budget (the temperatury-charts
-# repo) - the scaling term of the site outgrew one artifact. When set (CI:
-# absolute URL ending in /), pages fetch payloads from here; unset = relative
+# from separate Pages origins with their own 1 GB budgets (the
+# temperatury-charts repos) - the scaling term of the site outgrew one
+# artifact, and at the >=10k roster it outgrows one payload origin too. When
+# set (CI: comma-separated absolute URLs ending in /), a slug's payload lives
+# on exactly one origin, picked by payload_shard(); unset = relative
 # "../charts/" exactly as before, so local builds and tests need no second
-# origin. github.io serves Access-Control-Allow-Origin: *, so the cross-origin
-# fetch needs nothing else. Meta files (_global, _spec, _base, _coverage,
-# outlines, _names) stay on the MAIN site - only per-city files scale.
-PAYLOAD_BASE = os.environ.get("TEMPERATURY_PAYLOAD_BASE", "")
+# origin. github.io serves Access-Control-Allow-Origin: *, so the
+# cross-origin fetch needs nothing else. Meta files (_global, _spec, _base,
+# _coverage, outlines, _names) stay on the MAIN site - only per-city files
+# scale.
+PAYLOAD_BASES = [b for b in os.environ.get(
+    "TEMPERATURY_PAYLOAD_BASE", "").split(",") if b.strip()]
+
+
+def payload_shard(slug: str, n: int) -> int:
+    """Which payload origin serves ``slug``: djb2 of the UTF-8 slug, mod n.
+
+    djb2 with explicit 32-bit wrap-around, because the SAME function runs in
+    the browser (the inline __payloadBase helper in _PAGE / _MAP_PAGE) where
+    bitwise ops are 32-bit - crc32 would need a JS implementation, hash()
+    is per-process. Cross-language parity is pinned by a Playwright test.
+    """
+    h = 5381
+    for b in slug.encode("utf-8"):
+        h = (h * 33 + b) & 0xFFFFFFFF
+    return h % n
 _SITE_NAME = "temperatury"
 
 # R1-hybrid client-side i18n: when set, city pages carry data-i18n keys + the
@@ -275,6 +293,18 @@ _PAGE = Template(
 ${seo_head}
 <script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[],P=L[0]||navigator.language||"";/* The VISITOR'S REGION decides, on every language: an American reading the Polish page gets F. Only the PRIMARY locale counts - scanning the whole list gave a Polish visitor F because a SECONDARY entry was en-US, and a region-less tag ("pl", "en") is no evidence of a country. */var m=/-([A-Za-z]{2})(?:$$|-)/.exec(P);if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);if(/[?&]embed=1/.test(location.search))d.setAttribute("data-embed","1");}catch(e){}})();</script>
 <script>window.__chartsBase = ${charts_base_js};
+/* Which payload origin serves a slug: djb2 mod #origins - MUST match
+   report.payload_shard exactly (parity is pinned by a test). null base =
+   relative same-origin fetch (local builds). */
+window.__payloadBase = function (slug) {
+  var B = window.__chartsBase;
+  if (!B) return '../charts/';
+  if (typeof B === 'string') return B;
+  if (B.length === 1) return B[0];
+  var u = unescape(encodeURIComponent(slug)), h = 5381;
+  for (var i = 0; i < u.length; i++) h = (((h << 5) + h) + u.charCodeAt(i)) >>> 0;
+  return B[h % B.length];
+};
 window.__tpref = ${tpref_i18n};window.__units = ${units_on};
 /* charts.js and Chart.js are deferred, so their API exists only from
    DOMContentLoaded on - deferred scripts are guaranteed to run before it. Fetches
@@ -618,7 +648,7 @@ window.__crz = ${rz_label_json};
       function loadWidgets() {
         if (wStarted) return;
         wStarted = true;
-        fetch((window.__chartsBase || '../charts/') + encodeURIComponent(slug) + '_w.json')
+        fetch(window.__payloadBase(slug) + encodeURIComponent(slug) + '_w.json')
           .then(function (r) {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.json();
@@ -644,7 +674,7 @@ window.__crz = ${rz_label_json};
   // and the renderers safe to call - testing for them here would either throw or,
   // worse, quietly skip the year-axis expansion and draw a "_years" axis.
   Promise.all([
-    fetch((window.__chartsBase || '../charts/') + encodeURIComponent(slug) + '.json')
+    fetch(window.__payloadBase(slug) + encodeURIComponent(slug) + '.json')
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
@@ -1551,7 +1581,7 @@ def build_site(
         rz_label_json=json.dumps(_RZ_LABEL.get(lang, _RZ_LABEL["en"]),
                                  ensure_ascii=False),
         tpref_i18n=_tpref_i18n(tr),
-        charts_base_js=json.dumps(PAYLOAD_BASE or None),
+        charts_base_js=json.dumps(PAYLOAD_BASES or None),
         units_on="1" if _CLIENT_I18N else "0",
         slug_js=json.dumps(slug),
         map_label=_map_label(tr),
@@ -1614,6 +1644,18 @@ ${seo_head}
 <!-- world map rendered as SVG with D3 (Equal Earth, an equal-area projection) -->
 <script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[],P=L[0]||navigator.language||"";/* The VISITOR'S REGION decides, on every language: an American reading the Polish page gets F. Only the PRIMARY locale counts - scanning the whole list gave a Polish visitor F because a SECONDARY entry was en-US, and a region-less tag ("pl", "en") is no evidence of a country. */var m=/-([A-Za-z]{2})(?:$$|-)/.exec(P);if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);}catch(e){}})();</script>
 <script>window.__chartsBase = ${charts_base_js};
+/* Which payload origin serves a slug: djb2 mod #origins - MUST match
+   report.payload_shard exactly (parity is pinned by a test). null base =
+   relative same-origin fetch (local builds). */
+window.__payloadBase = function (slug) {
+  var B = window.__chartsBase;
+  if (!B) return '../charts/';
+  if (typeof B === 'string') return B;
+  if (B.length === 1) return B[0];
+  var u = unescape(encodeURIComponent(slug)), h = 5381;
+  for (var i = 0; i < u.length; i++) h = (((h << 5) + h) + u.charCodeAt(i)) >>> 0;
+  return B[h % B.length];
+};
 window.__tpref = ${tpref_i18n};window.__units = ${units_on};
 /* charts.js and Chart.js are deferred, so their API exists only from
    DOMContentLoaded on - deferred scripts are guaranteed to run before it. Fetches
@@ -2621,7 +2663,7 @@ ${topbar}
     function loadCity(slug) {
       if (!cache[slug])
         cache[slug] = Promise.all([
-          fetch((window.__chartsBase || '../charts/') + encodeURIComponent(slug) + '.json').then(function (r) {
+          fetch(window.__payloadBase(slug) + encodeURIComponent(slug) + '.json').then(function (r) {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.json();
           }),
@@ -3839,7 +3881,7 @@ def build_map_page(
         footer=tr["footer"].format(date=dt.date.today().isoformat()),
         widget_label=_WIDGET_LABEL.get(lang, _WIDGET_LABEL["en"]),
         tpref_i18n=_tpref_i18n(tr),
-        charts_base_js=json.dumps(PAYLOAD_BASE or None),
+        charts_base_js=json.dumps(PAYLOAD_BASES or None),
         units_on="1" if _CLIENT_I18N else "0",
     )
     path = output_dir / "index.html"
