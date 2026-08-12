@@ -31,6 +31,16 @@ from globaldata import _ZONE_COLOR, _ZONE_NAME_KEY, zone_of
 # Public site root - Open Graph image/URL tags must be ABSOLUTE for social
 # scrapers (X / Facebook / LinkedIn) to resolve them; relative paths are ignored.
 SITE_BASE = "https://yasoftwaredev.github.io/temperatury"
+
+# Per-city chart payloads (charts/<slug>.json, <slug>_w.json) may be served
+# from a second Pages origin with its own 1 GB budget (the temperatury-charts
+# repo) - the scaling term of the site outgrew one artifact. When set (CI:
+# absolute URL ending in /), pages fetch payloads from here; unset = relative
+# "../charts/" exactly as before, so local builds and tests need no second
+# origin. github.io serves Access-Control-Allow-Origin: *, so the cross-origin
+# fetch needs nothing else. Meta files (_global, _spec, _base, _coverage,
+# outlines, _names) stay on the MAIN site - only per-city files scale.
+PAYLOAD_BASE = os.environ.get("TEMPERATURY_PAYLOAD_BASE", "")
 _SITE_NAME = "temperatury"
 
 # R1-hybrid client-side i18n: when set, city pages carry data-i18n keys + the
@@ -264,7 +274,8 @@ _PAGE = Template(
 <meta name="twitter:card" content="summary_large_image">
 ${seo_head}
 <script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[],P=L[0]||navigator.language||"";/* The VISITOR'S REGION decides, on every language: an American reading the Polish page gets F. Only the PRIMARY locale counts - scanning the whole list gave a Polish visitor F because a SECONDARY entry was en-US, and a region-less tag ("pl", "en") is no evidence of a country. */var m=/-([A-Za-z]{2})(?:$$|-)/.exec(P);if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);if(/[?&]embed=1/.test(location.search))d.setAttribute("data-embed","1");}catch(e){}})();</script>
-<script>window.__tpref = ${tpref_i18n};window.__units = ${units_on};
+<script>window.__chartsBase = ${charts_base_js};
+window.__tpref = ${tpref_i18n};window.__units = ${units_on};
 /* charts.js and Chart.js are deferred, so their API exists only from
    DOMContentLoaded on - deferred scripts are guaranteed to run before it. Fetches
    started while the document parses routinely resolve EARLIER than that, so every
@@ -585,13 +596,46 @@ window.__crz = ${rz_label_json};
       ids.forEach(paint);
     }
     var mo = window.__cmonths;
-    if (C._range && window.buildRange && document.getElementById('rng-' + slug)) {
-      fillYears('rng-' + slug, C._range.years);
-      window.buildRange('rng-' + slug, C._range, mo);
+    function initWidgets(W) {
+      if (W._range && window.buildRange && document.getElementById('rng-' + slug)) {
+        fillYears('rng-' + slug, W._range.years);
+        window.buildRange('rng-' + slug, W._range, mo);
+      }
+      if (W._records && window.buildRecords && document.getElementById('rec-' + slug)) {
+        fillYears('rec-' + slug, W._records.years);
+        window.buildRecords('rec-' + slug, W._records, mo);
+      }
     }
-    if (C._records && window.buildRecords && document.getElementById('rec-' + slug)) {
-      fillYears('rec-' + slug, C._records.years);
-      window.buildRecords('rec-' + slug, C._records, mo);
+    if (C._range || C._records) {
+      initWidgets(C);          // rich page: the payload carries the widgets
+    } else {
+      // Stub (tail) page: the widget shells exist but their data rides a
+      // separate <slug>_w.json, fetched only when a widget nears the
+      // viewport - a visitor who never scrolls that far costs nothing.
+      var wEl = document.getElementById('rng-' + slug)
+             || document.getElementById('rec-' + slug);
+      var wStarted = false;
+      function loadWidgets() {
+        if (wStarted) return;
+        wStarted = true;
+        fetch((window.__chartsBase || '../charts/') + encodeURIComponent(slug) + '_w.json')
+          .then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          })
+          .then(function (W) { initWidgets(window.__unpackCharts(W)); })
+          .catch(function () { wStarted = false; });   // scroll again retries
+      }
+      if (wEl && 'IntersectionObserver' in window) {
+        var wio = new IntersectionObserver(function (es) {
+          es.forEach(function (e) {
+            if (e.isIntersecting) { wio.disconnect(); loadWidgets(); }
+          });
+        }, { rootMargin: '400px 0px' });
+        wio.observe(wEl);
+      } else if (wEl) {
+        loadWidgets();
+      }
     }
   }
   // The payload fetch starts now, but nothing is DRAWN until charts.js has run:
@@ -600,7 +644,7 @@ window.__crz = ${rz_label_json};
   // and the renderers safe to call - testing for them here would either throw or,
   // worse, quietly skip the year-axis expansion and draw a "_years" axis.
   Promise.all([
-    fetch('../charts/' + encodeURIComponent(slug) + '.json')
+    fetch((window.__chartsBase || '../charts/') + encodeURIComponent(slug) + '.json')
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
@@ -792,6 +836,7 @@ _CITYBODY_JS = Template(
     var fig = el && el.closest("figure");
     if (fig) fig.parentNode.removeChild(fig);
   }
+  if (!f.rec) drop("rec-" + S);
   if (!f.dtr) ["diurnal-range", "heatwave", "tropical-nights", "cold-spells"]
     .forEach(function (n) { drop("c-" + S + "-" + n); });
   if (!f.precip) ["precipitation", "heavy-rain"]
@@ -817,10 +862,6 @@ def write_citybody_js(output_dir: Path, tr: dict, lang: str,
     chrome = _chrome_mapping(tr, lang, "__S__", "__N__", "__N__",
                              has_precip=True, has_dtr=True, has_appheat=True,
                              has_records=True, sentinel=True)
-    # Stub pages ship no _range/_records payload (rich-tier only), so the
-    # rebuilt chrome carries neither widget figure.
-    chrome["range_widget"] = ""
-    chrome["records_widget"] = ""
     topbar = _topbar("index.html", _lang_nav(lang, switch_langs, "__S__"),
                      search_html=_city_picker(tr, lang))
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -1322,11 +1363,14 @@ def build_site(
         share_guide = chart_story = footer_block = ""
         # "s" rides along because _citybody.js runs BEFORE the inline script
         # that sets window.__slug (the chrome must exist before _page.js).
-        # No rec/range flags: stub pages ship no _range/_records payload
-        # (rich-tier only), so _citybody.js includes neither widget.
+        # The widget shells ARE injected; their data lives in <slug>_w.json,
+        # fetched on demand when the visitor scrolls them into view
+        # (see _PAGE_JS). "rec" prunes the records widget where no extremes
+        # dataset exists.
         stub_cfg = (
             '<script>window.__stub='
             + json.dumps({"s": slug, "n": disp, "cn": location.name,
+                          "rec": records_data is not None,
                           "dtr": has_dtr, "precip": has_precip,
                           "app": has_appheat},
                          ensure_ascii=False, separators=(",", ":"))
@@ -1507,6 +1551,7 @@ def build_site(
         rz_label_json=json.dumps(_RZ_LABEL.get(lang, _RZ_LABEL["en"]),
                                  ensure_ascii=False),
         tpref_i18n=_tpref_i18n(tr),
+        charts_base_js=json.dumps(PAYLOAD_BASE or None),
         units_on="1" if _CLIENT_I18N else "0",
         slug_js=json.dumps(slug),
         map_label=_map_label(tr),
@@ -1568,7 +1613,8 @@ _MAP_PAGE = Template(
 ${seo_head}
 <!-- world map rendered as SVG with D3 (Equal Earth, an equal-area projection) -->
 <script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[],P=L[0]||navigator.language||"";/* The VISITOR'S REGION decides, on every language: an American reading the Polish page gets F. Only the PRIMARY locale counts - scanning the whole list gave a Polish visitor F because a SECONDARY entry was en-US, and a region-less tag ("pl", "en") is no evidence of a country. */var m=/-([A-Za-z]{2})(?:$$|-)/.exec(P);if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);}catch(e){}})();</script>
-<script>window.__tpref = ${tpref_i18n};window.__units = ${units_on};
+<script>window.__chartsBase = ${charts_base_js};
+window.__tpref = ${tpref_i18n};window.__units = ${units_on};
 /* charts.js and Chart.js are deferred, so their API exists only from
    DOMContentLoaded on - deferred scripts are guaranteed to run before it. Fetches
    started while the document parses routinely resolve EARLIER than that, so every
@@ -2575,7 +2621,7 @@ ${topbar}
     function loadCity(slug) {
       if (!cache[slug])
         cache[slug] = Promise.all([
-          fetch('../charts/' + slug + '.json').then(function (r) {
+          fetch((window.__chartsBase || '../charts/') + encodeURIComponent(slug) + '.json').then(function (r) {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.json();
           }),
@@ -3793,6 +3839,7 @@ def build_map_page(
         footer=tr["footer"].format(date=dt.date.today().isoformat()),
         widget_label=_WIDGET_LABEL.get(lang, _WIDGET_LABEL["en"]),
         tpref_i18n=_tpref_i18n(tr),
+        charts_base_js=json.dumps(PAYLOAD_BASE or None),
         units_on="1" if _CLIENT_I18N else "0",
     )
     path = output_dir / "index.html"

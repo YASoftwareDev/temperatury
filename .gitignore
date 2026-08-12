@@ -7,3 +7,4 @@ __pycache__/
 era5_staging/
 # per-machine fleet shard assignment (see tools/daily-chunk.sh)
 .gather-shard
+payloads/

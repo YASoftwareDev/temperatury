@@ -49,10 +49,23 @@ jobs:
       - name: Restore rendered-charts cache
         uses: actions/cache@v4
         with:
-          path: output
+          path: |
+            output
+            payloads
           key: charts-${{ github.run_id }}
           restore-keys: |
             charts-
+
+      # One-time cutover migration (a no-op once steady): a cache from before
+      # the payload split holds per-city JSON inside output/charts; move it to
+      # payloads/ so the warm cache keeps its value and the main artifact
+      # never ships payload files again. Meta files (_*.json, outline.*) stay.
+      - name: Migrate cached payloads out of the site artifact
+        run: |
+          mkdir -p payloads/charts
+          find output/charts -maxdepth 1 -name '*.json' \
+            ! -name '_*' ! -name 'outline.*' \
+            -exec mv -n {} payloads/charts/ \; 2>/dev/null || true
 
       - name: Generate charts and pages
         run: python main.py --all
@@ -60,6 +73,36 @@ jobs:
           # Render from the committed cache only; CI's shared IP is
           # rate-limited by Open-Meteo. Refresh the cache locally.
           TEMPERATURY_OFFLINE: "1"
+          # Per-city payloads build into payloads/ and are fetched from the
+          # temperatury-charts Pages origin (its own 1 GB budget) — the main
+          # artifact carries everything else. See report.PAYLOAD_BASE.
+          TEMPERATURY_PAYLOAD_DIR: payloads/charts
+          TEMPERATURY_PAYLOAD_BASE: https://yasoftwaredev.github.io/temperatury-charts/charts/
+
+      # Publish the payloads FIRST: if this push fails the job stops and the
+      # live site keeps its old, matching payload set — the main site never
+      # deploys against payloads that did not land.
+      - name: Publish per-city payloads to temperatury-charts
+        env:
+          DEPLOY_KEY: ${{ secrets.CHARTS_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh && printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/charts_key
+          chmod 600 ~/.ssh/charts_key
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/charts_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
+          git clone -q --depth 1 --branch gh-pages \
+            git@github.com:YASoftwareDev/temperatury-charts.git /tmp/charts-repo
+          mkdir -p /tmp/charts-repo/charts
+          # rsync --delete prunes payloads of cities that left the roster.
+          rsync -a --delete payloads/charts/ /tmp/charts-repo/charts/
+          touch /tmp/charts-repo/.nojekyll
+          cd /tmp/charts-repo
+          git add -A
+          if git -c user.email=actions@github.com -c user.name=github-actions \
+               commit -qm "Payloads from ${GITHUB_REPOSITORY}@${GITHUB_SHA::9}"; then
+            git push -q origin gh-pages
+          else
+            echo "payloads unchanged - nothing to publish"
+          fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
