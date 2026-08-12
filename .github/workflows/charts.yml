@@ -26,7 +26,11 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45  # a stuck render fails fast instead of burning the 6h default
+    # A stuck render fails fast instead of burning the 6h default. 90 rather
+    # than 45: the roster enlarged to 18,094 targets (2026-08-12), and render
+    # time grows with data coverage - the charts cache keeps warm runs at
+    # ~7 min, but a cache-miss cold build at high coverage needs the headroom.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v5
 
