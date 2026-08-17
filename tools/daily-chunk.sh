@@ -94,7 +94,18 @@ case $(( 10#$(date -u +%j) % 3 )) in
   1) ORDER="precip extremes mean" ;;
   *) ORDER="extremes mean precip" ;;
 esac
-echo "today's group order: $ORDER"
+# TEMPERATURY_GROUP_ORDER overrides the rotation for THIS machine only. Use it
+# on a gatherer whose shard lags in one dataset (its leading group takes the
+# whole budget, so a machine that gets one scrap of a shared-IP quota per day
+# should spend that scrap where its bucket is behind). The fleet-wide rotation
+# above stays the default; a typo'd group name aborts the run via the rc=2
+# check below rather than gathering nothing silently.
+if [ -n "${TEMPERATURY_GROUP_ORDER:-}" ]; then
+  ORDER="$TEMPERATURY_GROUP_ORDER"
+  echo "group order overridden: $ORDER"
+else
+  echo "today's group order: $ORDER"
+fi
 
 # Fleet sharding: a machine that owns shard I of N (a `.gather-shard` file
 # containing e.g. "2/4", or $TEMPERATURY_SHARD) fetches its own hash-bucket of
@@ -123,7 +134,7 @@ for group in $ORDER; do
   # exit 0: a fleet machine silently gathering nothing, indefinitely.
   rc=$?
   if [ "$rc" -eq 2 ]; then
-    echo "ERROR: the fetcher rejected its arguments - check .gather-shard / TEMPERATURY_SHARD. Aborting." >&2
+    echo "ERROR: the fetcher rejected its arguments - check .gather-shard / TEMPERATURY_SHARD / TEMPERATURY_GROUP_ORDER. Aborting." >&2
     exit 1
   elif [ "$rc" -ne 0 ]; then
     # The fetcher stored nothing it fetched. Do NOT abort: files from an
