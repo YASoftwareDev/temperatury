@@ -37,6 +37,7 @@ _KEYS = [
     "lookup_short", "lookup_since", "lookup_perdec", "lookup_warmtrend",
     "lookup_cooltrend", "lookup_faster", "lookup_cooling", "lookup_busy",
     "grid_toggle", "grid_all", "grid_some", "grid_none", "grid_tip",
+    "dots_toggle",
     "basemap_label", "basemap_map", "basemap_terrain", "basemap_atlas",
     "basemap_sat", "rank_people", "rank_legend",
     # appearance panel (assets/appearance.js, via window.__tpref)

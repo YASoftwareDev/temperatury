@@ -1773,6 +1773,8 @@ ${topbar}
     </select>
     <button type="button" id="grid-toggle" class="grid-toggle" aria-pressed="false">
       ${grid_toggle}</button>
+    <button type="button" id="dots-toggle" class="grid-toggle" aria-pressed="true" hidden>
+      ${dots_toggle}</button>
     <div id="map-basemap" class="basemap-switch" role="group" aria-label="${basemap_label}">
       <button type="button" data-base="map" class="active" aria-pressed="true">${basemap_map}</button>
       <button type="button" data-base="terrain" aria-pressed="false">${basemap_terrain}</button>
@@ -2195,6 +2197,21 @@ ${topbar}
         if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none');
       });
     }
+    // Reading the coverage grid means reading its cell colours, and tens of
+    // thousands of city dots (analysed AND awaiting-data) sit on top of them.
+    // This drops all three dot layers so the gathered-data view is just the grid.
+    function setDotsVisible(on) {
+      ['cities', 'refs', 'preview'].forEach(function (id) {
+        if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none');
+      });
+      // A card or tooltip already open would outlive the dot it belongs to.
+      if (!on) { cancelCardClose(); cardPopup.remove(); popup.remove(); }
+    }
+    // Read-only layer inspector for the tests: the map instance itself stays private.
+    window.__mapLayerVisible = function (id) {
+      if (!map.getLayer(id)) return null;
+      return map.getLayoutProperty(id, 'visibility') || 'visible';
+    };
 
     // --- quick-view card: click a dot for headline stats, not a hard jump -----
     /* closeOnClick is off: the card now opens on hover AND on tap, and the
@@ -2522,8 +2539,10 @@ ${topbar}
 
     // --- coverage-grid toggle (overlays the grid on the dots, adds its legend) -
     var gridToggle = document.getElementById('grid-toggle');
+    var dotsToggle = document.getElementById('dots-toggle');
     var zoneLegend = document.getElementById('zone-legend');
     var gridLegend = document.getElementById('grid-legend');
+    var dotsOn = true;
     if (gridToggle) {
       gridToggle.addEventListener('click', function () {
         gridMode = !gridMode;
@@ -2532,8 +2551,26 @@ ${topbar}
         // alongside the coverage legend rather than swapping one for the other.
         if (zoneLegend) zoneLegend.hidden = false;
         if (gridLegend) gridLegend.hidden = !gridMode;
+        // Hiding the dots only makes sense while the grid is the picture, so the
+        // control comes and goes with coverage mode - and must not leave the map
+        // dot-less once it is gone, with no visible way back.
+        if (dotsToggle) {
+          dotsToggle.hidden = !gridMode;
+          if (!gridMode && !dotsOn) {
+            dotsOn = true;
+            dotsToggle.setAttribute('aria-pressed', 'true');
+            setDotsVisible(true);
+          }
+        }
         popup.remove();
         setGridVisible(gridMode);
+      });
+    }
+    if (dotsToggle) {
+      dotsToggle.addEventListener('click', function () {
+        dotsOn = !dotsOn;
+        dotsToggle.setAttribute('aria-pressed', dotsOn ? 'true' : 'false');
+        setDotsVisible(dotsOn);
       });
     }
 
@@ -3811,6 +3848,9 @@ def build_map_page(
         grid_some=tr.get("grid_some", "Partly downloaded"),
         grid_none=tr.get("grid_none", "Not downloaded yet"),
         grid_tip_js=json.dumps(tr.get("grid_tip", "{n} of {m} cities with data")),
+        # Companion toggle, shown only in coverage mode: drops the city dots so
+        # the coverage cells can be read on their own.
+        dots_toggle=tr.get("dots_toggle", "City dots"),
         # Basemap switch (street map vs satellite tiles).
         basemap_label=tr.get("basemap_label", "Base map"),
         basemap_map=tr.get("basemap_map", "Map"),
