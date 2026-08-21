@@ -237,7 +237,9 @@
   .grid-legend i { width:.85rem; height:.85rem; border-radius:2px; display:inline-block;
                    box-shadow:0 0 0 1px rgba(0,0,0,.12); }
   .grid-legend .gl-green { background:#16a34a; }
-  .grid-legend .gl-amber { background:#f59e0b; }
+  /* Graded like the cells themselves: amber where a cell has barely
+     started, lime where nearly every city in it has data. */
+  .grid-legend .gl-amber { background:linear-gradient(90deg,#f59e0b,#84cc16); }
   .grid-legend .gl-red { background:#dc2626; }
   /* KPI band: the landing's headline numbers, dark, right under the map. */
   .kpi-band { display:grid; grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));
