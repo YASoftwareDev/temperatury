@@ -360,6 +360,9 @@ TRANSLATIONS: dict[str, dict] = {
                     "South America": "Ameryka Południowa", "Oceania": "Oceania"},
         "choose_city": "Wybierz miasto...",
         "region_reset": "📍 Użyj mojej lokalizacji",
+        # Map coverage-mode dot toggle. Curated: overrides the
+        # machine-translated i18n_data/_mapui.json layer.
+        "dots_toggle": "Kropki miast",
         "back_to_map": "🗺 Mapa",
         "range_title": "Zakres miesięcznych temperatur na przestrzeni lat, {name}",
         "range_min_max": "min-maks {start}-{end}",
@@ -602,6 +605,9 @@ TRANSLATIONS: dict[str, dict] = {
                     "South America": "Südamerika", "Oceania": "Ozeanien"},
         "choose_city": "Stadt wählen...",
         "region_reset": "📍 Meinen Standort verwenden",
+        # Map coverage-mode dot toggle. Curated: overrides the
+        # machine-translated i18n_data/_mapui.json layer.
+        "dots_toggle": "Städtepunkte",
         "back_to_map": "🗺 Karte",
         "range_title": "Monatliche Temperaturspanne über die Jahre, {name}",
         "range_min_max": "Min-Max {start}-{end}",
@@ -844,6 +850,9 @@ TRANSLATIONS: dict[str, dict] = {
                     "South America": "Amérique du Sud", "Oceania": "Océanie"},
         "choose_city": "Choisir une ville...",
         "region_reset": "📍 Utiliser ma position",
+        # Map coverage-mode dot toggle. Curated: overrides the
+        # machine-translated i18n_data/_mapui.json layer.
+        "dots_toggle": "Points des villes",
         "back_to_map": "🗺 Carte",
         "range_title": "Amplitude des températures mensuelles au fil des ans, {name}",
         "range_min_max": "min-max {start}-{end}",
@@ -1088,6 +1097,9 @@ TRANSLATIONS: dict[str, dict] = {
                     "South America": "América del Sur", "Oceania": "Oceanía"},
         "choose_city": "Elegir una ciudad...",
         "region_reset": "📍 Usar mi ubicación",
+        # Map coverage-mode dot toggle. Curated: overrides the
+        # machine-translated i18n_data/_mapui.json layer.
+        "dots_toggle": "Puntos de ciudades",
         "back_to_map": "🗺 Mapa",
         "range_title": "Rango de temperaturas mensuales a lo largo de los años, {name}",
         "range_min_max": "mín-máx {start}-{end}",
@@ -1337,6 +1349,9 @@ TRANSLATIONS: dict[str, dict] = {
                     "South America": "Південна Америка", "Oceania": "Океанія"},
         "choose_city": "Оберіть місто...",
         "region_reset": "📍 Використати моє місцезнаходження",
+        # Map coverage-mode dot toggle. Curated: overrides the
+        # machine-translated i18n_data/_mapui.json layer.
+        "dots_toggle": "Точки міст",
         "back_to_map": "🗺 Карта",
         "range_title": "Діапазон місячних температур впродовж років, {name}",
         "range_min_max": "мін-макс {start}-{end}",
