@@ -85,8 +85,7 @@ def test_coverage_mode_can_drop_the_city_dots():
             assert pg.get_attribute("#dots-toggle", "aria-pressed") == "false"
             _assert_dots(pg, shown=False)
             # The grid itself is what is left, and it must still be up.
-            assert pg.evaluate("window.__mapLayerVisible('grid-fill')") in (
-                "visible", None)
+            assert pg.evaluate("window.__mapLayerVisible('grid-fill-0')") == "visible"
 
             # Leaving coverage mode takes the control away, so it has to restore
             # the dots on the way out - otherwise the map reads as broken.
@@ -99,5 +98,65 @@ def test_coverage_mode_can_drop_the_city_dots():
             pg.click("#grid-toggle")
             assert pg.get_attribute("#dots-toggle", "aria-pressed") == "true"
             _assert_dots(pg, shown=True)
+        finally:
+            b.close()
+
+
+@pytest.mark.slow
+def test_coverage_cells_aggregate_as_you_zoom_out():
+    """0.25 deg cells are a third of a pixel wide at world zoom, so 23k of them
+    read as speckle rather than as coverage. Coarser levels sum their member
+    cells - the CITY COUNTS, so n and m keep meaning what they say - and each is
+    shown only where its squares are a few pixels across.
+
+    Asserted through what actually paints at the map centre, not through the
+    level config: same point, two zooms, and the coarse cell must both come from
+    a different layer and cover strictly more cities than the fine one.
+    """
+    out = build(SLUG, "en", client_i18n=True)
+    with _serve(out) as base, sync_playwright() as p:
+        b = p.chromium.launch()
+        try:
+            pg = b.new_page(locale="en-GB",
+                            viewport={"width": 1280, "height": 1000})
+            pg.goto(f"{base}/en/index.html", wait_until="load")
+            pg.wait_for_timeout(800)
+            pg.click("#tab-map")
+            pg.wait_for_function("!!window.__mapGridAtCenter", timeout=20000)
+            pg.click("#grid-toggle")
+            pg.wait_for_function(
+                "window.__mapLayerVisible('grid-fill-0') === 'visible'", timeout=20000)
+
+            def probe(zoom):
+                # Krakow: a covered cell in a dense region, so the aggregate is
+                # unambiguously larger than the single source cell under it.
+                pg.evaluate(f"window.__mapJump(50.0647, 19.945, {zoom})")
+                pg.wait_for_timeout(1200)
+                for _ in range(20):
+                    hit = pg.evaluate("window.__mapGridAtCenter()")
+                    if hit:
+                        return hit
+                    pg.wait_for_timeout(500)
+                raise AssertionError(f"no coverage cell painted at zoom {zoom}")
+
+            fine = probe(6)
+            # Zoom 1.5, not 0: below ~z1 the world is shorter than the canvas and
+            # MapLibre clamps the view to the equator, so a zoom-0 probe reads a
+            # cell thousands of km from the one asked for - and this comparison
+            # only means anything over the SAME place.
+            coarse = probe(1.5)
+            assert fine["layer"] == "grid-fill-0", \
+                f"the source cells should paint at city zoom, got {fine}"
+            assert coarse["layer"] != fine["layer"], \
+                f"zooming out still paints the 0.25 deg cells: {coarse}"
+            assert coarse["m"] > fine["m"], \
+                f"the coarse cell covers no more cities than the fine one: {coarse} vs {fine}"
+            assert coarse["n"] >= fine["n"], \
+                f"aggregation lost downloaded cities: {coarse} vs {fine}"
+            # Counts stay counts: a cell can never claim more data than cities.
+            assert coarse["n"] <= coarse["m"], coarse
+            # World zoom lands on the coarsest level (same-place comparison does
+            # not hold there, per the clamp above - only the level does).
+            assert probe(0)["layer"] == "grid-fill-4"
         finally:
             b.close()

@@ -2159,41 +2159,88 @@ ${topbar}
       return ['case', ['>=', ['get', 'n'], ['get', 'm']], '#16a34a',
                       ['==', ['get', 'n'], 0], '#dc2626', '#f59e0b'];
     }
+    /* Zoom-dependent aggregation. The source cells are 0.25 deg, and a degree is
+       360 / (512 * 2^zoom) pixels wide - a third of a pixel at world zoom, where
+       23k cells render as speckle rather than as coverage. Each level below sums
+       its member cells into a coarser square and is shown only while that square
+       is a few pixels across. What is summed are the CITY COUNTS, so n and m mean
+       the same thing at every level: a coarse cell is green only when every city
+       inside it has data, red only when none does. Ordered fine to coarse, each
+       size exactly double the one above, so a level can be summed from the level
+       above it (exact in floating point, and O(cells) overall). */
+    var GRID_LEVELS = [
+      { deg: 0, minzoom: 4 },                 // 0 = the source cells, unaggregated
+      { deg: 0.5, minzoom: 3, maxzoom: 4 },
+      { deg: 1, minzoom: 2, maxzoom: 3 },
+      { deg: 2, minzoom: 1, maxzoom: 2 },
+      { deg: 4, maxzoom: 1 }
+    ];
+    function coarsen(cells, deg) {
+      var by = {}, out = [];
+      for (var i = 0; i < cells.length; i++) {
+        var d = cells[i];
+        // Cells are addressed by their south-west corner, so snapping is a floor.
+        var la = Math.floor(d.la / deg) * deg, lo = Math.floor(d.lo / deg) * deg;
+        var k = la + '|' + lo, a = by[k];
+        if (!a) { a = by[k] = { la: la, lo: lo, n: 0, m: 0 }; out.push(a); }
+        a.n += d.n; a.m += d.m;
+      }
+      return out;
+    }
+    // Only n and m travel into the features. The payload also carries each source
+    // cell's dominant region/country, but nothing here reads them, and an
+    // aggregate has no honest one to report.
+    function gridFC(cells, cd) {
+      return { type: 'FeatureCollection', features: cells.map(function (d) {
+        return { type: 'Feature', properties: { n: d.n, m: d.m },
+          geometry: { type: 'Polygon', coordinates: [[[d.lo, d.la], [d.lo + cd, d.la],
+                      [d.lo + cd, d.la + cd], [d.lo, d.la + cd], [d.lo, d.la]]] } };
+      }) };
+    }
     function loadGrid() {
       fetch('../charts/_coverage.json').then(function (r) { return r.ok ? r.json() : null; })
         .then(function (cov) {
           if (!cov || !cov.cells || !cov.cells.length) return;
-          var cd = cov.cell || 0.25;
-          var fc = { type: 'FeatureCollection', features: cov.cells.map(function (d) {
-            return { type: 'Feature',
-              properties: { n: d.n, m: d.m, r: d.r || '', cc: d.cc || '' },
-              geometry: { type: 'Polygon', coordinates: [[[d.lo, d.la], [d.lo + cd, d.la],
-                          [d.lo + cd, d.la + cd], [d.lo, d.la + cd], [d.lo, d.la]]] } };
-          }) };
-          map.addSource('grid', { type: 'geojson', data: fc });
-          map.addLayer({ id: 'grid-fill', type: 'fill', source: 'grid',
-            layout: { visibility: 'none' },
-            paint: { 'fill-color': gridColor(), 'fill-opacity': 0.55 } }, 'cities');
-          map.addLayer({ id: 'grid-line', type: 'line', source: 'grid',
-            layout: { visibility: 'none' },
-            paint: { 'line-color': '#ffffff', 'line-width': 0.4, 'line-opacity': 0.7 } }, 'cities');
+          var cd = cov.cell || 0.25, prev = cov.cells;
+          GRID_LEVELS.forEach(function (lv, i) {
+            var cells = lv.deg ? coarsen(prev, lv.deg) : cov.cells;
+            prev = cells;
+            var src = 'grid-' + i;
+            map.addSource(src, { type: 'geojson', data: gridFC(cells, lv.deg || cd) });
+            var fill = { id: 'grid-fill-' + i, type: 'fill', source: src,
+              layout: { visibility: 'none' },
+              paint: { 'fill-color': gridColor(), 'fill-opacity': 0.55 } };
+            var line = { id: 'grid-line-' + i, type: 'line', source: src,
+              layout: { visibility: 'none' },
+              paint: { 'line-color': '#ffffff', 'line-width': 0.4, 'line-opacity': 0.7 } };
+            // Only one level is ever in range, so the levels never stack.
+            if (lv.minzoom != null) { fill.minzoom = lv.minzoom; line.minzoom = lv.minzoom; }
+            if (lv.maxzoom != null) { fill.maxzoom = lv.maxzoom; line.maxzoom = lv.maxzoom; }
+            map.addLayer(fill, 'cities');
+            map.addLayer(line, 'cities');
+            map.on('mousemove', fill.id, function (e) {
+              map.getCanvas().style.cursor = 'crosshair';
+              var p = e.features[0].properties;
+              popup.setLngLat(e.lngLat)
+                   .setText(GRID_TIP.replace('{n}', p.n).replace('{m}', p.m)).addTo(map);
+            });
+            map.on('mouseleave', fill.id, function () {
+              map.getCanvas().style.cursor = ''; popup.remove();
+            });
+          });
           if (gridMode) setGridVisible(true);
-          map.on('mousemove', 'grid-fill', function (e) {
-            map.getCanvas().style.cursor = 'crosshair';
-            var p = e.features[0].properties;
-            popup.setLngLat(e.lngLat)
-                 .setText(GRID_TIP.replace('{n}', p.n).replace('{m}', p.m)).addTo(map);
-          });
-          map.on('mouseleave', 'grid-fill', function () {
-            map.getCanvas().style.cursor = ''; popup.remove();
-          });
         }).catch(function () {});
+    }
+    function gridLayerIds() {
+      return GRID_LEVELS.map(function (_lv, i) { return ['grid-fill-' + i, 'grid-line-' + i]; })
+                        .reduce(function (a, b) { return a.concat(b); }, []);
     }
     function setGridVisible(on) {
       // The grid layers sit below 'cities'/'refs' (beforeId 'cities'), so the
       // coverage heatmap overlays the dots instead of replacing them - the same
       // "narrow the view, never hide places" behaviour as the continent filter.
-      ['grid-fill', 'grid-line'].forEach(function (id) {
+      // Every level is switched together; their zoom ranges pick which one shows.
+      gridLayerIds().forEach(function (id) {
         if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none');
       });
     }
@@ -2207,10 +2254,24 @@ ${topbar}
       // A card or tooltip already open would outlive the dot it belongs to.
       if (!on) { cancelCardClose(); cardPopup.remove(); popup.remove(); }
     }
-    // Read-only layer inspector for the tests: the map instance itself stays private.
+    // Test seams. The map instance stays private; these three read-only-ish
+    // helpers are what the Playwright tests need to see the layer state and the
+    // coverage level that actually paints at a given zoom.
     window.__mapLayerVisible = function (id) {
       if (!map.getLayer(id)) return null;
       return map.getLayoutProperty(id, 'visibility') || 'visible';
+    };
+    window.__mapJump = function (lat, lon, z) {
+      map.jumpTo({ center: [lon, lat], zoom: z });
+    };
+    window.__mapGridAtCenter = function () {
+      var c = map.getCanvas(), pt = [c.clientWidth / 2, c.clientHeight / 2];
+      var ids = gridLayerIds().filter(function (id) {
+        return id.indexOf('grid-fill-') === 0 && map.getLayer(id);
+      });
+      if (!ids.length) return null;
+      var f = map.queryRenderedFeatures(pt, { layers: ids })[0];
+      return f ? { layer: f.layer.id, n: f.properties.n, m: f.properties.m } : null;
     };
 
     // --- quick-view card: click a dot for headline stats, not a hard jump -----
