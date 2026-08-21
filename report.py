@@ -2155,9 +2155,19 @@ ${topbar}
     }
 
     // --- coverage grid (GPU fill layer, so 4600 cells stay smooth) ------------
+    /* The legend's three states, with the middle one graded. None downloaded is
+       still exactly red and complete still exactly green; between them the fill
+       runs from the legend's amber (barely started) to lime (nearly all), so a
+       cell shows HOW MUCH of it is done instead of collapsing 1% and 99% into
+       one amber - which is what aggregation would otherwise hide, since a
+       coarse cell is almost never all-or-nothing. */
     function gridColor() {
-      return ['case', ['>=', ['get', 'n'], ['get', 'm']], '#16a34a',
-                      ['==', ['get', 'n'], 0], '#dc2626', '#f59e0b'];
+      var n = ['to-number', ['get', 'n']], m = ['to-number', ['get', 'm']];
+      return ['case',
+        ['==', n, 0], '#dc2626',
+        ['>=', n, m], '#16a34a',
+        ['interpolate', ['linear'], ['/', n, ['max', m, 1]],
+          0, '#f59e0b', 1, '#84cc16']];
     }
     /* Zoom-dependent aggregation. The source cells are 0.25 deg, and a degree is
        360 / (512 * 2^zoom) pixels wide - a third of a pixel at world zoom, where
