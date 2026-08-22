@@ -3075,7 +3075,7 @@
   }
 
   // --- landing tab controller (WAI-ARIA tabs) --------------------------------
-  // Six panels in one view: deep-linkable (#tab=map), remembered (localStorage),
+  // The landing panels in one view: deep-linkable (#tab=map), remembered (localStorage),
   // keyboard-navigable (ArrowLeft/Right + Home/End over a roving tabindex). The
   // heavy panels init lazily on first show (map, dashboard charts); every panel
   // reflows its Chart.js canvases on show so one laid out while hidden (0x0) is
