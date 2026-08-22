@@ -121,7 +121,10 @@ def collect(start_year: int, end_year: int) -> dict:
     n_files = 0
     years_lo: int | None = None
     years_hi: int | None = None
-    for p in data_dir.iterdir():
+    # A checkout that has not gathered anything yet has no data/ at all. That
+    # is the zero state the page is built to describe, so it must not take the
+    # whole build down on its last step.
+    for p in (data_dir.iterdir() if data_dir.is_dir() else ()):
         if not p.is_file():
             continue
         n_files += 1
@@ -531,7 +534,16 @@ def _overview_panel(d: dict) -> str:
 """
 
 
-def _covmap_panel(map_lang: str) -> str:
+def _covmap_panel(map_lang: str | None) -> str:
+    if map_lang is None:
+        return """
+  <p class="int-note">This tab frames the site's own world map in coverage
+     mode rather than drawing a second one, and this build rendered no
+     language folder for it to point at. Run the build without a
+     <code>TEMPERATURY_LANGS</code> restriction and the map returns; the
+     figures on the other tabs are unaffected, since they are read from the
+     roster and <code>data/</code> directly.</p>
+"""
     src = f"../{map_lang}/index.html?embed=1&amp;grid=1#tab=map"
     return f"""
   <p class="int-note">The site's own world map, opened straight into coverage
@@ -704,9 +716,11 @@ def build_internal_page(output_dir: Path, start_year: int, end_year: int,
     ``languages`` is the set this build rendered; the coverage-map frame points
     at English when it exists (this page is English-only) and otherwise at
     whatever language the build does have, so a restricted TEMPERATURY_LANGS
-    build still gets a working map instead of a broken frame.
+    build still gets a working map instead of a broken frame. With no language
+    at all there is nothing to frame, and the tab says so rather than pointing
+    at an ``en/`` that was never written.
     """
-    map_lang = "en" if "en" in languages else (languages[0] if languages else "en")
+    map_lang = "en" if "en" in languages else (languages[0] if languages else None)
     d = collect(start_year, end_year)
     path = output_dir / "internal" / "index.html"
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -198,12 +198,40 @@ def test_the_region_and_country_tables_reconcile_with_the_totals():
 def test_the_map_frame_falls_back_when_english_was_not_built(tmp_path):
     """A restricted TEMPERATURY_LANGS build has no en/ folder, and a frame
     pointing at one would be a blank panel where the map should be."""
-    for langs, want in ((["en"], "../en/"), (["pl", "de"], "../pl/"),
-                        ([], "../en/")):
-        out = tmp_path / "-".join(langs or ["none"])
+    for langs, want in ((["en"], "../en/"), (["pl", "de"], "../pl/")):
+        out = tmp_path / "-".join(langs)
         page = internal.build_internal_page(out, 1940, 2025, langs)
         html = page.read_text("utf-8")
         assert f'data-src="{want}index.html?embed=1&amp;grid=1#tab=map"' in html, langs
+
+
+def test_a_build_with_no_language_says_so_rather_than_framing_a_missing_page(tmp_path):
+    """With no language at all the fallback had nowhere left to fall: it framed
+    ``../en/``, which such a build never writes, so the tab would have rendered
+    a blank iframe with nothing on the page explaining it."""
+    page = internal.build_internal_page(tmp_path, 1940, 2025, [])
+    html = page.read_text("utf-8")
+    assert "language folder for it to point at." in html
+    assert 'data-src="../' not in html and "int-frame" not in html
+    # The tab is still there and the other tabs still carry their figures - a
+    # missing map is not a reason to publish a page with a hole in it.
+    assert 'id="tp-covmap"' in html and 'class="k-val">' in html
+
+
+def test_a_checkout_with_no_data_directory_still_builds(tmp_path, monkeypatch):
+    """The page is written on the build's last step, after every other file. A
+    checkout that has gathered nothing yet has no data/ at all, and that is the
+    zero state this page exists to describe - not a FileNotFoundError that
+    fails the build once all the real work is already done."""
+    import config
+    monkeypatch.setattr(config, "DATA_DIR", tmp_path / "never-gathered")
+    d = internal.collect(1940, 2025)
+    assert (d["covered"], d["n_files"], d["total_bytes"]) == (0, 0, 0)
+    assert d["targets"] > 0, "the roster comes from the code, not from data/"
+    assert internal._progress({}) == []
+    html = internal.render(d, "en")
+    assert "class=\"k-val\">\u2014<" in html, "no covered years to show"
+    assert "0.0% of the roster" in html
 
 
 def test_progress_series_lands_exactly_on_the_covered_count():
