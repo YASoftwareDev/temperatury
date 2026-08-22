@@ -731,6 +731,18 @@ def main() -> None:
         encoding="utf-8")
     print(f"Wrote sitemap.xml ({len(pages)} URLs) and robots.txt.")
 
+    # Internal data-status page: what the project has gathered so far, rebuilt
+    # every deploy. Deliberately AFTER the sitemap, which lists only pages under
+    # the language folders - this one lives in output/internal/ so it is not in
+    # the sitemap, not in the language switcher, and not in the roster the omni
+    # search index is built from. Unlisted, not secret (see internal.py).
+    import internal
+    _ipath = internal.build_internal_page(OUTPUT_DIR, args.start, args.end,
+                                          list(i18n.LANGUAGES))
+    written += 1
+    print(f"Wrote the internal data-status page "
+          f"({_ipath.stat().st_size / 1024:.0f} KB, unlisted).")
+
     print(f"\nWrote {written} files to {OUTPUT_DIR} "
           f"({len(locations)} cities × {len(i18n.LANGUAGES)} languages).")
 
