@@ -19,6 +19,7 @@ import json
 import re
 import subprocess
 import threading
+import types
 
 import pytest
 
@@ -36,6 +37,28 @@ LINKABLE = ("*.html", "*.js", "*.json", "*.xml", "*.txt", "*.css")
 def built():
     build("krakow", "en", client_i18n=True)
     return PAGE.read_text("utf-8")
+
+
+@pytest.fixture(scope="module")
+def disk(built):
+    """The data/ listing as it stood just after ``built`` rendered.
+
+    A gatherer adds cache files while the suite runs (twice a day on the machine
+    that backfills), so a test that re-lists the directory and compares what it
+    finds against the already-rendered page is comparing two different moments -
+    a failure that reproduces at 02:20 and nowhere else. One listing, taken next
+    to the build, leaves only the build's own duration.
+    """
+    import codec
+    import config
+    sizes = {p: p.stat().st_size
+             for p in config.DATA_DIR.iterdir() if p.is_file()}
+    mean = (codec.cached_path(config.DATA_DIR / f"{l.slug}_1940-2025{codec.SUFFIX}")
+            for l in config.LOCATIONS.values())
+    # codec stays the authority on which format counts as cached; the listing
+    # decides what is IN the snapshot, so the two halves cannot disagree.
+    return types.SimpleNamespace(sizes=sizes,
+                                 mean=[p for p in mean if p in sizes])
 
 
 def _kpis(html: str) -> list[str]:
@@ -110,28 +133,21 @@ def test_the_roster_sublabel_halves_sum_to_the_headline():
             "ocean/region reference points") in html
 
 
-def test_both_cache_figures_are_what_is_on_disk(built):
+def test_both_cache_figures_are_what_is_on_disk(built, disk):
     """Both, not just the headline. The sub-label has to name WHICH files its
     number covers: mean_bytes is the COVERED mean series, while 11 mean files on
     disk belong to slugs that have left the roster. A label reading as a
     partition of all 15,482 files while the number means something narrower is
     the defect, not the number."""
-    import codec
-    import config
-    files = [p for p in config.DATA_DIR.iterdir() if p.is_file()]
-    total = sum(p.stat().st_size for p in files)
-    mean = [codec.cached_path(config.DATA_DIR / f"{loc.slug}_1940-2025{codec.SUFFIX}")
-            for loc in config.LOCATIONS.values()]
-    present = [p for p in mean if p]
-    mean_bytes = sum(p.stat().st_size for p in present)
+    total = sum(disk.sizes.values())
+    mean_bytes = sum(disk.sizes[p] for p in disk.mean)
     assert internal._bytes(total) in built
-    # The whole sentence, because the wording IS the fix: "Cache on disk / of
-    # which X is the mean series" read as a partition of every file in data/,
-    # while X counts only the roster's COVERED mean files - 11 mean files on
-    # disk belong to slugs that have left the roster.
-    assert (f"{len(files):,} files in data/; the {len(present):,} covered mean "
-            f"series account for {internal._bytes(mean_bytes)}") in built
-    assert "Data directory" in built and "Cache on disk" not in built
+    # The whole sentence, because the wording IS the fix: an earlier label read
+    # as a partition of every file in data/ while its number counted only the
+    # roster's COVERED mean files.
+    assert (f"{len(disk.sizes):,} files in data/; the {len(disk.mean):,} covered "
+            f"mean series account for {internal._bytes(mean_bytes)}") in built
+    assert "Data directory" in built
 
 
 def test_the_covered_year_span_reads_dotted_slug_cache_files(tmp_path, monkeypatch):
@@ -149,10 +165,9 @@ def test_the_covered_year_span_reads_dotted_slug_cache_files(tmp_path, monkeypat
     assert (d["years_lo"], d["years_hi"]) == (1900, 2025)
 
 
-def test_the_covered_year_span_on_the_real_cache_matches_the_page(built):
-    import config
+def test_the_covered_year_span_on_the_real_cache_matches_the_page(built, disk):
     spans = [internal._STEM_YEARS.search(internal._stem(p.name))
-             for p in config.DATA_DIR.iterdir() if p.is_file()]
+             for p in disk.sizes]
     spans = [m for m in spans if m]
     lo = min(int(m.group(1)) for m in spans)
     hi = max(int(m.group(2)) for m in spans)
@@ -183,12 +198,40 @@ def test_the_region_and_country_tables_reconcile_with_the_totals():
 def test_the_map_frame_falls_back_when_english_was_not_built(tmp_path):
     """A restricted TEMPERATURY_LANGS build has no en/ folder, and a frame
     pointing at one would be a blank panel where the map should be."""
-    for langs, want in ((["en"], "../en/"), (["pl", "de"], "../pl/"),
-                        ([], "../en/")):
-        out = tmp_path / "-".join(langs or ["none"])
+    for langs, want in ((["en"], "../en/"), (["pl", "de"], "../pl/")):
+        out = tmp_path / "-".join(langs)
         page = internal.build_internal_page(out, 1940, 2025, langs)
         html = page.read_text("utf-8")
         assert f'data-src="{want}index.html?embed=1&amp;grid=1#tab=map"' in html, langs
+
+
+def test_a_build_with_no_language_says_so_rather_than_framing_a_missing_page(tmp_path):
+    """With no language at all the fallback had nowhere left to fall: it framed
+    ``../en/``, which such a build never writes, so the tab would have rendered
+    a blank iframe with nothing on the page explaining it."""
+    page = internal.build_internal_page(tmp_path, 1940, 2025, [])
+    html = page.read_text("utf-8")
+    assert "language folder for it to point at." in html
+    assert 'data-src="../' not in html and "int-frame" not in html
+    # The tab is still there and the other tabs still carry their figures - a
+    # missing map is not a reason to publish a page with a hole in it.
+    assert 'id="tp-covmap"' in html and 'class="k-val">' in html
+
+
+def test_a_checkout_with_no_data_directory_still_builds(tmp_path, monkeypatch):
+    """The page is written on the build's last step, after every other file. A
+    checkout that has gathered nothing yet has no data/ at all, and that is the
+    zero state this page exists to describe - not a FileNotFoundError that
+    fails the build once all the real work is already done."""
+    import config
+    monkeypatch.setattr(config, "DATA_DIR", tmp_path / "never-gathered")
+    d = internal.collect(1940, 2025)
+    assert (d["covered"], d["n_files"], d["total_bytes"]) == (0, 0, 0)
+    assert d["targets"] > 0, "the roster comes from the code, not from data/"
+    assert internal._progress({}) == []
+    html = internal.render(d, "en")
+    assert "class=\"k-val\">\u2014<" in html, "no covered years to show"
+    assert "0.0% of the roster" in html
 
 
 def test_progress_series_lands_exactly_on_the_covered_count():

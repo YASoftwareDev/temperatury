@@ -3,9 +3,9 @@ name: Tests
 # The build-and-deploy workflow runs no tests, so until this existed the whole
 # suite was local-only: a bad merge deployed and nothing said so.
 #
-# This runs the fast half - 151 of 322 tests, ~2 min of pytest. The 171
-# @pytest.mark.slow ones render pages through headless chromium, take ~37
-# minutes serialized, and stay a local pre-merge step (pytest -m slow).
+# This runs the fast half - 153 of 324 tests, ~2.5 min of pytest. The 171
+# @pytest.mark.slow ones render pages through headless chromium and take ~50
+# minutes serialized (measured 2026-08-22); tests-slow.yml runs those nightly.
 #
 # "Fast" is not "no browser": one unmarked test (test_payload_shard_python_js_
 # parity) evaluates the JS sharding resolver in a real browser to pin it against

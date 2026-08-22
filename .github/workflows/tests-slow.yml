@@ -1,0 +1,62 @@
+name: Tests (slow)
+
+# The 171 @pytest.mark.slow tests render real pages through headless chromium
+# and take ~50 minutes serialized (measured 2026-08-22), which is why the PR
+# job (tests.yml) runs only the fast half and these stayed a local pre-merge
+# step. A local step that takes 50 minutes is one people skip, and nothing then
+# notices a browser-side regression until it is deployed.
+#
+# So: once a night, against whatever main holds. Not on PRs - that would put
+# most of an hour in front of every review - and not gating the deploy, for the
+# same reason tests.yml does not. GitHub emails the repo owner when a scheduled
+# run fails, which is the whole notification mechanism this relies on.
+
+on:
+  schedule:
+    # 03:30 UTC: after the nightly backfill commits have landed and well clear
+    # of the 06:00 UTC yearly rebuild, so the two never queue behind each other.
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-slow
+  cancel-in-progress: true
+
+jobs:
+  slow:
+    runs-on: ubuntu-latest
+    # ~50 min on the developer machine (measured 2026-08-22); a runner is
+    # slower per core and the suite grows with the roster. Generous, but still
+    # fails fast against the 6h default if a browser test hangs.
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Same pairing and same reason as the other two workflows: the
+          # internal page's progress series needs real commit history, and
+          # internal._progress refuses a shallow checkout - on a depth-1 clone
+          # the tests covering it would quietly SKIP rather than fail.
+          fetch-depth: 0
+          filter: blob:none
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest playwright
+
+      - name: Install chromium
+        run: playwright install --with-deps chromium
+
+      - name: Run the slow suite
+        # Serialized on purpose: every test writes into the same output/ tree.
+        run: pytest -m slow -q
+        env:
+          # CI's shared IP is rate-limited by Open-Meteo; no test may reach for
+          # the network even if a future one forgets to say so itself.
+          TEMPERATURY_OFFLINE: "1"

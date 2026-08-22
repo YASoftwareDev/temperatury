@@ -36,17 +36,16 @@ jobs:
         with:
           # The internal data-status page derives its progress series from
           # `git log --diff-filter=A --name-only --no-renames -- data/` (the UTC
-          # commit date each cache file was first added on). A depth-1 clone does
-          # not merely hide that history: its single grafted commit has no
-          # parents, so EVERY file reads as an
-          # addition in it. internal.py refuses a shallow checkout for that
-          # reason, so without this the tab would deploy with its "no usable
-          # commit history" note. Blobless keeps it cheap: the whole
-          # commit+tree graph is ~700 objects, while the blobs behind them
-          # are ~1 GB of cached
-          # series, and the log walk compares trees only (--no-renames, so no
-          # rename detection reaches for file contents). Checkout still
-          # materialises HEAD's blobs, which is all the build reads.
+          # commit date each cache file was first added on). A depth-1 clone
+          # does not merely hide that history: its single grafted commit has no
+          # parents, so EVERY file reads as an addition in it. internal.py
+          # refuses a shallow checkout for that reason, so without this the tab
+          # would deploy with its "no usable commit history" note. Blobless
+          # keeps it cheap: the whole commit+tree graph is ~700 objects, while
+          # the blobs behind them are ~1 GB of cached series, and the log walk
+          # compares trees only (--no-renames, so no rename detection reaches
+          # for file contents). Checkout still materialises HEAD's blobs, which
+          # is all the build reads.
           fetch-depth: 0
           filter: blob:none
 
