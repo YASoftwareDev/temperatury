@@ -1,0 +1,79 @@
+name: Tests
+
+# The build-and-deploy workflow runs no tests, so until this existed the whole
+# suite was local-only: a bad merge deployed and nothing said so.
+#
+# This runs the fast half - 151 of 322 tests, ~2 min of pytest. The 171
+# @pytest.mark.slow ones render pages through headless chromium, take ~37
+# minutes serialized, and stay a local pre-merge step (pytest -m slow).
+#
+# "Fast" is not "no browser": one unmarked test (test_payload_shard_python_js_
+# parity) evaluates the JS sharding resolver in a real browser to pin it against
+# report.payload_shard, which is why chromium is installed below. It is a
+# second-scale test and belongs in this half.
+#
+# Deliberately NOT gating the deploy. Most pushes to main are data-only backfill
+# commits (twice daily) that cannot break a test, and gating would put several
+# minutes in front of every one of them. Code changes arrive by PR, where this
+# reports before merge.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push supersedes an in-progress run for the same ref.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Same pairing as the deploy job, and for the same reason: the
+          # internal page's progress series is derived from the data/ commit
+          # history, and internal._progress refuses a shallow checkout. On a
+          # depth-1 clone the tests covering it would quietly SKIP rather than
+          # fail, which is the exact silent degradation they exist to catch.
+          fetch-depth: 0
+          filter: blob:none
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # pytest and playwright are dev-only and deliberately absent from
+      # requirements.txt, which is what the deploy build installs.
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest playwright
+
+      # Ten test modules import playwright at module scope, so the package alone
+      # is required even to COLLECT the deselected ones; the browser itself is
+      # needed by the sharding-parity test named above.
+      - name: Install chromium
+        run: playwright install --with-deps chromium
+
+      # tests/test_ascii_filename_guard.py reproduces a bash bracket-range
+      # misfire that only occurs under a locale whose COLLATION is not ASCII
+      # order. C and C.UTF-8 both collate in ASCII order, so on a runner without
+      # a language locale those tests skip and the guard goes unverified here.
+      - name: Ensure a locale with non-ASCII collation
+        run: sudo locale-gen en_US.UTF-8
+
+      - name: Run the fast suite
+        # Serialized on purpose: every test writes into the same output/ tree.
+        run: pytest -m "not slow" -q
+        env:
+          # CI's shared IP is rate-limited by Open-Meteo; no test may reach for
+          # the network even if a future one forgets to say so itself.
+          TEMPERATURY_OFFLINE: "1"

@@ -18,6 +18,7 @@ These tests pin both halves of the contract under the hostile setting
 (``globasciiranges`` explicitly off), which is what bash 4.3 does natively:
 ordinary names survive, genuinely non-ASCII names are still rejected.
 """
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -52,27 +53,61 @@ case "$1" in *[!\ -~]*) echo NONASCII ;; *) echo ASCII ;; esac
 """
 
 
+def _collating_locale():
+    """A locale whose COLLATION order is not ASCII order - the only kind that
+    reproduces the misfire.
+
+    ``C`` collates in ASCII order by definition, and so does ``C.UTF-8``: being
+    UTF-8 is not enough, the locale has to carry real language collation rules.
+    Under either of them a bare ``[ -~]`` behaves itself and every test in this
+    file passes for the wrong reason. Pinning the locale here rather than
+    inheriting the caller's is what keeps them meaningful on a developer
+    machine, on CI, and under any contributor's LANG.
+    """
+    try:
+        have = subprocess.run(["locale", "-a"], capture_output=True, text=True,
+                              check=True).stdout.split()
+    except (OSError, subprocess.SubprocessError):
+        return None
+    lower = {loc.lower().replace("-", ""): loc for loc in have}
+    for want in ("en_us.utf8", "en_gb.utf8", "de_de.utf8", "fr_fr.utf8"):
+        if want in lower:
+            return lower[want]
+    return None
+
+
+LOCALE = _collating_locale()
+needs_locale = pytest.mark.skipif(
+    LOCALE is None,
+    reason="no locale with non-ASCII collation installed (tried en_US/en_GB/"
+           "de_DE/fr_FR .UTF-8); the bracket-range misfire cannot be reproduced")
+
+
 def _classify(name: str, *, with_fix: bool) -> str:
     fix = "shopt -s globasciiranges 2>/dev/null || true" if with_fix else ""
     out = subprocess.run(
         ["bash", "-c", _GUARD.format(fix=fix), "_", name],
         capture_output=True, text=True, check=True,
+        env={**os.environ, "LC_ALL": LOCALE or "C"},
     )
     return out.stdout.strip()
 
 
+@needs_locale
 @pytest.mark.parametrize("name", ASCII_NAMES)
 def test_ascii_names_survive_the_guard(name):
     """The regression itself: these must never be mistaken for non-ASCII."""
     assert _classify(name, with_fix=True) == "ASCII"
 
 
+@needs_locale
 @pytest.mark.parametrize("name", NON_ASCII_NAMES)
 def test_non_ascii_names_are_still_rejected(name):
     """The fix must not disarm the guard it repairs."""
     assert _classify(name, with_fix=True) == "NONASCII"
 
 
+@needs_locale
 def test_without_the_fix_the_guard_really_does_misfire():
     """Guards the guard: if this stops failing, the test proves nothing.
 
