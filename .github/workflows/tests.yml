@@ -1,0 +1,70 @@
+name: Tests
+
+# The build-and-deploy workflow runs no tests, so until this existed the whole
+# suite was local-only: a bad merge deployed and nothing said so.
+#
+# This runs the NON-browser subset (151 of 322 tests, ~90 s locally). The
+# @pytest.mark.slow half drives headless chromium, takes ~37 minutes serialized
+# and needs a browser download, which is not worth it on every push - it stays a
+# local pre-merge step. Run it with: pytest -m slow
+#
+# Deliberately NOT gating the deploy. Most pushes to main are data-only backfill
+# commits (twice daily) that cannot break a test, and gating would put several
+# minutes in front of every one of them. Code changes arrive by PR, where this
+# reports before merge.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push supersedes an in-progress run for the same ref.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Same pairing as the deploy job, and for the same reason: the
+          # internal page's progress series is derived from the data/ commit
+          # history, and internal._progress refuses a shallow checkout. On a
+          # depth-1 clone the tests covering it would quietly SKIP rather than
+          # fail, which is the exact silent degradation they exist to catch.
+          fetch-depth: 0
+          filter: blob:none
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # pytest is a dev-only dependency, deliberately absent from
+      # requirements.txt (which is what the deploy build installs).
+      #
+      # playwright is needed even though every test that uses it is deselected:
+      # ten test modules import it at module scope, so without the package
+      # pytest fails COLLECTION on all ten and the run exits non-zero having
+      # executed nothing. Verified in a clean venv - "10 errors during
+      # collection, 3 deselected" without it, "151 passed" with it. Only the
+      # Python package is installed; `playwright install` is not run, because
+      # nothing here launches a browser.
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest playwright
+
+      - name: Run the non-browser suite
+        # Serialized on purpose: every test writes into the same output/ tree.
+        run: pytest -m "not slow" -q
+        env:
+          # CI's shared IP is rate-limited by Open-Meteo; no test may reach for
+          # the network even if a future one forgets to say so itself.
+          TEMPERATURY_OFFLINE: "1"
