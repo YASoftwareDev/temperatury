@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     # A stuck render fails fast instead of burning the 6h default. 90 rather
-    # than 45: the roster enlarged to 18,094 targets (2026-08-12), and render
+    # than 45: the roster enlarged to 32,978 targets (2026-08-22), and render
     # time grows with data coverage - the charts cache keeps warm runs at
     # ~7 min, but a cache-miss cold build at high coverage needs the headroom.
     timeout-minutes: 90

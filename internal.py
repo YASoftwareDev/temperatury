@@ -183,6 +183,10 @@ def _progress(covered_path: dict[str, Path | None]) -> list[tuple[str, int]]:
     nothing is covered, and when the history cannot date the files that are -
     the page says so rather than drawing a series it cannot source.
 
+    Every covered file must be datable or the series is refused outright: one
+    built from a subset ends BELOW the covered count, while the panel tells the
+    reader its last value equals the Overview tile by construction.
+
     A shallow clone has to be REJECTED explicitly, not detected by an empty
     result. Its single grafted commit has no parents, so every file in it reads
     as an addition and the walk returns the whole cache dated to one day - a
@@ -209,6 +213,12 @@ def _progress(covered_path: dict[str, Path | None]) -> list[tuple[str, int]]:
     # fold a rename into one R entry, which --diff-filter=A then drops, and it
     # has to read file CONTENTS - blobs the deploy build's blobless checkout
     # deliberately does not fetch.
+    # NOT --first-parent, though it would make a merge's own additions visible:
+    # it also re-dates an ordinary side-branch file to the merge that landed it,
+    # which is not "the commit that first added that file" as the panel says
+    # (measured on this repo: 10 tracked files change attribution). A file only
+    # a merge carries stays undatable, and the completeness check below turns
+    # that into an honest refusal rather than a misdated point.
     log = git("log", "--diff-filter=A", "--name-only", "--no-renames",
               "--format=C %ct", "--", "data/")
     if log is None:
@@ -224,7 +234,7 @@ def _progress(covered_path: dict[str, Path | None]) -> list[tuple[str, int]]:
         name = line[5:]
         if name in want:
             first[name] = ts   # log is newest-first: the last write is the earliest add
-    if not first:
+    if len(first) != len(want):
         return []
     per: Counter = Counter()
     for t in first.values():
