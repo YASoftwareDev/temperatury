@@ -1642,7 +1642,7 @@ _MAP_PAGE = Template(
 <meta name="twitter:card" content="summary_large_image">
 ${seo_head}
 <!-- world map rendered as SVG with D3 (Equal Earth, an equal-area projection) -->
-<script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[],P=L[0]||navigator.language||"";/* The VISITOR'S REGION decides, on every language: an American reading the Polish page gets F. Only the PRIMARY locale counts - scanning the whole list gave a Polish visitor F because a SECONDARY entry was en-US, and a region-less tag ("pl", "en") is no evidence of a country. */var m=/-([A-Za-z]{2})(?:$$|-)/.exec(P);if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);}catch(e){}})();</script>
+<script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[],P=L[0]||navigator.language||"";/* The VISITOR'S REGION decides, on every language: an American reading the Polish page gets F. Only the PRIMARY locale counts - scanning the whole list gave a Polish visitor F because a SECONDARY entry was en-US, and a region-less tag ("pl", "en") is no evidence of a country. */var m=/-([A-Za-z]{2})(?:$$|-)/.exec(P);if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);/* ?embed=1: this page framed inside another one (the internal data-status page frames the Map tab). Drops the standalone chrome - top bar, header, search, tabs, footer - via CSS. */if(/[?&]embed=1/.test(location.search))d.setAttribute("data-embed","1");}catch(e){}})();</script>
 <script>window.__chartsBase = ${charts_base_js};
 /* Which payload origin serves a slug: djb2 mod #origins - MUST match
    report.payload_shard exactly (parity is pinned by a test). null base =
@@ -2637,6 +2637,12 @@ ${topbar}
         setGridVisible(gridMode);
       });
     }
+    // ?grid=1 opens the map straight in coverage mode - what the internal
+    // data-status page frames. Driven through the button, not by setting
+    // gridMode, so the legend, the dots toggle and aria-pressed all follow the
+    // one code path; loadGrid re-applies visibility when the cells land.
+    if (gridToggle && /[?&]grid=1/.test(location.search)
+        && gridToggle.getAttribute('aria-pressed') !== 'true') gridToggle.click();
     if (dotsToggle) {
       dotsToggle.addEventListener('click', function () {
         dotsOn = !dotsOn;
