@@ -3129,7 +3129,13 @@
         if (p) p.hidden = !on;
         if (on && focusTab) t.focus();
       });
-      try { localStorage.setItem("temperatury:tab", id); } catch (e) {}
+      // Not while framed (?embed=1): an embed shows ONE tab chosen by the host
+      // page, so persisting it would overwrite which tab the visitor's own next
+      // visit to this site opens on. The internal data-status page frames the
+      // Map tab, and without this guard opening that page reset the public
+      // site's remembered tab to "map".
+      if (!document.documentElement.hasAttribute("data-embed"))
+        try { localStorage.setItem("temperatury:tab", id); } catch (e) {}
       if (push && window.history && history.replaceState)
         history.replaceState(null, "", "#tab=" + id);
       onShow(id);
