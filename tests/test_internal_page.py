@@ -255,6 +255,90 @@ def test_a_shallow_clone_is_refused_rather_than_charted(tmp_path, monkeypatch):
     assert internal._progress(paths) == []
 
 
+def _repo(path):
+    """A git repo with data/, isolated from the developer's own git config."""
+    (path / "data").mkdir(parents=True)
+    for args in (("init", "-q", "-b", "trunk"),
+                 ("config", "user.email", "t@example.invalid"),
+                 ("config", "user.name", "t"),
+                 ("config", "commit.gpgsign", "false")):
+        subprocess.run(("git", *args), cwd=path, check=True, capture_output=True)
+    return path
+
+
+def _commit(repo, msg):
+    subprocess.run(("git", "add", "-A"), cwd=repo, check=True, capture_output=True)
+    subprocess.run(("git", "commit", "-qm", msg), cwd=repo, check=True,
+                   capture_output=True)
+
+
+def test_a_file_carried_only_by_a_merge_makes_the_series_refuse(tmp_path,
+                                                                monkeypatch):
+    """A merge can introduce a file that is in NEITHER parent, and the walk
+    simplifies such a merge away - so that file is datable nowhere and would be
+    missing from a series drawn anyway, which the panel would then describe as
+    ending on the Overview's count "by construction".
+
+    --first-parent would make the merge's own additions visible, but it also
+    re-dates every ordinary side-branch file to the merge that landed it, which
+    is not "the commit that first added that file" as the panel says (measured
+    on this repo: 10 tracked files change attribution). Refusing is the honest
+    end of that trade: no misdated points, and no series that quietly omits a
+    covered location."""
+    import config
+    repo = _repo(tmp_path / "r")
+    (repo / "data" / "base.tpy").write_text("x")
+    _commit(repo, "base")
+    subprocess.run(("git", "checkout", "-q", "-b", "side"), cwd=repo, check=True,
+                   capture_output=True)
+    (repo / "data" / "side.tpy").write_text("x")
+    _commit(repo, "side add")
+    subprocess.run(("git", "checkout", "-q", "trunk"), cwd=repo, check=True,
+                   capture_output=True)
+    subprocess.run(("git", "merge", "-q", "--no-commit", "--no-ff", "side"),
+                   cwd=repo, capture_output=True)
+    (repo / "data" / "only-in-merge.tpy").write_text("x")
+    _commit(repo, "merge side, plus a file neither parent has")
+
+    # The premise, demonstrated rather than assumed: the file is in no parent.
+    for parent in ("HEAD^1", "HEAD^2"):
+        tree = subprocess.run(("git", "ls-tree", "-r", "--name-only", parent,
+                               "--", "data/"), cwd=repo, check=True,
+                              capture_output=True, text=True).stdout
+        assert "only-in-merge" not in tree, parent
+
+    monkeypatch.setattr(config, "ROOT", repo)
+    paths = {n: repo / "data" / f"{n}.tpy"
+             for n in ("base", "side", "only-in-merge")}
+    assert internal._progress(paths) == []
+    # The refusal is about the undatable file specifically: the two the walk
+    # CAN date still chart, so this is not the repo being unusable.
+    assert internal._progress(
+        {n: paths[n] for n in ("base", "side")})[-1][1] == 2
+
+
+def test_a_series_that_cannot_date_every_covered_file_is_refused(tmp_path,
+                                                                 monkeypatch):
+    """The panel tells the reader its last value equals the Overview tile "by
+    construction". A series built from only the files git can date ends BELOW
+    the covered count, quietly making that sentence false - so it is refused
+    instead, which is what the fallback note has always said would happen to
+    "a cache that was never committed"."""
+    import config
+    repo = _repo(tmp_path / "r")
+    for name in ("a", "b"):
+        (repo / "data" / f"{name}.tpy").write_text("x")
+        _commit(repo, f"add {name}")
+    (repo / "data" / "c.tpy").write_text("x")      # present, never committed
+    monkeypatch.setattr(config, "ROOT", repo)
+    paths = {n: repo / "data" / f"{n}.tpy" for n in ("a", "b", "c")}
+
+    assert internal._progress(paths) == []
+    # ... and the two committed ones on their own still chart, so the refusal is
+    # about the undatable file, not about the repo being unusable.
+    assert internal._progress({n: paths[n] for n in ("a", "b")})[-1][1] == 2
+
+
 def test_no_figure_is_invented():
     """Every number rendered comes from the roster or the data directory, so a
     build with an empty coverage window has nothing to show - and shows nothing
