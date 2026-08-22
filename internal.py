@@ -18,11 +18,17 @@ Every figure is computed here from a source that exists on disk:
                          page's totals and the map's cells agree by construction
 * cache size / years   - ``stat().st_size`` and the ``_<start>-<end>`` stem of
                          the cached files themselves
-* progress over time   - ``git log --diff-filter=A`` over ``data/``: the commit
-                         date each *currently present* cache file first appeared
-                         on. That is what the axis says it is - when the file was
+* progress over time   - ``git log --diff-filter=A --name-only
+                         --no-renames`` over ``data/``: the UTC commit date
+                         each *currently present* cache file first appeared on.
+                         That is what the axis says it is - when the file was
                          committed, not when the measurement was taken - and it
-                         cannot see history predating a rewrite of the branch.
+                         sees only a file's CURRENT name, so a re-encoded or
+                         renamed cache re-dates to the commit that produced that
+                         name. A shallow clone is rejected outright rather than
+                         charted: its one grafted commit reports every file as an
+                         addition, which would read as the whole roster landing
+                         in a single day.
 
 The coverage map is not re-implemented here: the tab frames the site's own map
 page (``../<lang>/index.html?embed=1&grid=1#tab=map``), which already carries the
@@ -74,6 +80,19 @@ def _cached(data_dir: Path, stem: str) -> Path | None:
     return codec.cached_path(data_dir / f"{stem}{codec.SUFFIX}")
 
 
+def _stem(name: str) -> str:
+    """A cache file's name with its encoding suffix removed.
+
+    Not ``name.split(".")[0]``: 24 roster slugs contain a dot ("st.-petersburg",
+    "sault-ste.-marie", "fort-st.-john"), and splitting on the first one dropped
+    16 real cache files out of the covered-year scan below.
+    """
+    for suffix in (codec.LEGACY_SUFFIX, codec.SUFFIX):
+        if name.endswith(suffix):
+            return name[: -len(suffix)]
+    return name
+
+
 def collect(start_year: int, end_year: int) -> dict:
     """Every figure the page shows, read off the roster and the data directory."""
     data_dir = config.DATA_DIR
@@ -107,7 +126,7 @@ def collect(start_year: int, end_year: int) -> dict:
             continue
         n_files += 1
         total_bytes += p.stat().st_size
-        m = _STEM_YEARS.search(p.name.split(".")[0])
+        m = _STEM_YEARS.search(_stem(p.name))
         if m:
             lo, hi = int(m.group(1)), int(m.group(2))
             years_lo = lo if years_lo is None else min(years_lo, lo)
@@ -160,25 +179,43 @@ def _progress(covered_path: dict[str, Path | None]) -> list[tuple[str, int]]:
     Only files present NOW are counted, so the series ends exactly on the
     roster's current covered count - a cumulative count of raw additions
     overshoots it by every file later renamed or dropped (11,300 additions
-    against 7,784 files still present, measured 2026-08-22). Returns [] when the
-    checkout has no usable history (a shallow CI clone, or no git at all), and
+    against 7,784 files still present, measured 2026-08-22). Returns [] when
+    nothing is covered, and when the history cannot date the files that are -
     the page says so rather than drawing a series it cannot source.
+
+    A shallow clone has to be REJECTED explicitly, not detected by an empty
+    result. Its single grafted commit has no parents, so every file in it reads
+    as an addition and the walk returns the whole cache dated to one day - a
+    one-point "series" asserting the entire roster landed at once. Verified on a
+    depth-1 clone of a three-commit repository: all three files reported as
+    added in the one commit, exit status 0.
     """
     want = {p.name for p in covered_path.values() if p is not None}
     if not want:
         return []
-    try:
-        r = subprocess.run(
-            ["git", "-c", "core.quotePath=false", "log", "--diff-filter=A",
-             "--name-only", "--no-renames", "--format=C %ct", "--", "data/"],
-            cwd=config.ROOT, capture_output=True, text=True, timeout=300)
-    except (OSError, subprocess.SubprocessError):
+
+    def git(*args: str) -> str | None:
+        try:
+            r = subprocess.run(["git", "-c", "core.quotePath=false", *args],
+                               cwd=config.ROOT, capture_output=True, text=True,
+                               timeout=300)
+        except (OSError, subprocess.SubprocessError):
+            return None
+        return r.stdout if r.returncode == 0 else None
+
+    if (git("rev-parse", "--is-shallow-repository") or "true").strip() != "false":
         return []
-    if r.returncode != 0:
+    # --no-renames keeps the walk to tree comparison. Rename detection would
+    # fold a rename into one R entry, which --diff-filter=A then drops, and it
+    # has to read file CONTENTS - blobs the deploy build's blobless checkout
+    # deliberately does not fetch.
+    log = git("log", "--diff-filter=A", "--name-only", "--no-renames",
+              "--format=C %ct", "--", "data/")
+    if log is None:
         return []
     first: dict[str, int] = {}
     ts = 0
-    for line in r.stdout.splitlines():
+    for line in log.splitlines():
         if line.startswith("C "):
             ts = int(line[2:])
             continue
@@ -211,8 +248,8 @@ def _bar(n: int, m: int) -> str:
             f'aria-label="{p:.1f} percent"><i style="width:{p:.2f}%"></i></span>')
 
 
-def _cov_row(label_html: str, n: int, m: int, extra: str = "") -> str:
-    return (f"<tr>{label_html}{extra}"
+def _cov_row(label_html: str, n: int, m: int) -> str:
+    return (f"<tr>{label_html}"
             f'<td class="int-num">{_fmt(m)}</td>'
             f'<td class="int-num">{_fmt(n)}</td>'
             f'<td class="int-num">{_pct(n, m):.1f}%</td>'
@@ -290,10 +327,12 @@ _TABS = [("overview", "Overview"), ("covmap", "Coverage map"),
 
 # Small enough to inline: WAI-ARIA tab switching plus click-to-sort on the
 # tables, and the ISO-code -> English-name upgrade. The landing page's own
-# controller (charts.js initTabs) is not reused here because it also boots the
-# landing runtime - hero, city picker, roster fetches - and writes the shared
-# "which tab was open" key, which would reset the public site's remembered tab
-# to whatever this page selected.
+# controller (charts.js initTabs) is not reused here because it ships inside the
+# 160 KB landing runtime, and loading that runtime boots it - hero, city picker,
+# roster fetches - none of which this page has a use for; its per-tab hooks also
+# name the landing's own panels. It also persists the tab it selected - the
+# public site's preference, not this page's; charts.js now skips that write
+# while framed, so opening the Coverage map tab no longer moves it either.
 _SCRIPT = """
 (function () {
   var root = document.getElementById('internal-tabs');
@@ -394,7 +433,15 @@ _PAGE = """<!DOCTYPE html>
 <meta name="referrer" content="no-referrer">
 <script>{boot}</script>
 <link rel="stylesheet" href="../landing.css">
-<script defer src="../appearance.js"></script>
+<!-- appearance.js is deliberately NOT loaded. It anchors its controls to
+     .topbar, and with no top bar here BOTH of them fall back to the same fixed
+     corner: the Appearance button's box completely covers the C/F unit
+     toggle, so the toggle is hidden behind it and a mouse click is intercepted.
+     It still takes keyboard focus though, and activating it there writes
+     unit:"F" into the shared temperatury:appearance key, silently switching the
+     PUBLIC site's units for that visitor. This page shows no temperatures and
+     needs neither control; the inline bootstrap above still applies the
+     visitor's saved theme. -->
 </head>
 <body>
 <header>
@@ -433,18 +480,24 @@ _BOOT = ('(function(){try{var d=document.documentElement,p={};'
 
 def _overview_panel(d: dict) -> str:
     kpis = [
+        # The second half is targets - cities, not no_cc: they are the same 21
+        # entries today, but only this way do the two halves sum to the total by
+        # construction rather than by coincidence.
         ("Roster", _fmt(d["targets"]),
-         f'{_fmt(d["cities"])} cities + {_fmt(d["no_cc"])} ocean/region '
-         "reference points"),
+         f'{_fmt(d["cities"])} cities + {_fmt(d["targets"] - d["cities"])} '
+         "ocean/region reference points"),
         ("With a mean cache file", _fmt(d["covered"]),
          f'{_pct(d["covered"], d["targets"]):.1f}% of the roster '
          f'({_fmt(d["covered_cities"])} cities)'),
-        ("Cache on disk", _bytes(d["total_bytes"]),
-         f'{_fmt(d["n_files"])} files, of which {_bytes(d["mean_bytes"])} '
-         "is the mean series"),
+        # "data/", not "cache": the directory also holds two generated roster
+        # files (~1 MB), and mean_bytes is the COVERED mean series, not every
+        # mean file on disk - 11 belong to slugs that have left the roster.
+        ("Data directory", _bytes(d["total_bytes"]),
+         f'{_fmt(d["n_files"])} files in data/; the {_fmt(d["covered"])} covered '
+         f'mean series account for {_bytes(d["mean_bytes"])}'),
         ("Covered years",
          f'{d["years_lo"]}–{d["years_hi"]}' if d["years_lo"] else "—",
-         "first and last year present in any cached file name"),
+         "earliest and latest year of the dated ranges in the cache"),
     ]
     cards = "".join(
         f'<div class="int-kpi"><div class="k-lbl">{_esc(lbl)}</div>'
@@ -509,8 +562,8 @@ def _regions_panel(d: dict) -> str:
   <h2 class="int-h">By country</h2>
   <p class="int-note">{_fmt(len(d["countries"]))} countries and territories,
      largest roster first. Click a column heading to re-sort. The
-     {_fmt(d["no_cc"])} ocean and region reference points have no country and
-     are not listed here. A country's region is the one most of its roster
+     {_fmt(d["no_cc"])} roster entries with no country code are not listed
+     here. A country's region is the one most of its roster
      entries fall in.</p>
   <div class="int-wrap int-scroll"><table class="int-table int-sortable"><thead><tr>
     <th data-col="0" class="int-sort" aria-sort="none">Country</th>
@@ -527,9 +580,10 @@ def _progress_panel(d: dict) -> str:
     series = d["progress"]
     if not series:
         return """
-  <p class="int-note">No progress series in this build: the checkout has no
-     usable <code>git</code> history for <code>data/</code> (a shallow clone, or
-     no repository at all), and this tab has no other honest source. Nothing is
+  <p class="int-note">No progress series in this build: either nothing is
+     covered yet, or this checkout has no usable commit history for the cache
+     files it does hold - a shallow clone, no repository, or a cache that was
+     never committed. The tab has no other honest source, and nothing is
      estimated in its place.</p>
 """
     first_day, first_n = series[0]
@@ -541,14 +595,16 @@ def _progress_panel(d: dict) -> str:
         for i, (day, n) in enumerate(series))
     return f"""
   <h2 class="int-h">Locations with a committed mean cache file</h2>
-  <p class="int-note">The axis counts roster locations whose mean cache file is
-     present <em>now</em>, placed on the day that file was first committed
-     (<code>git log --diff-filter=A -- data/</code>). It measures when data
-     landed in the repository, not when the measurements were taken, and it
-     cannot see history from before the branch was last rewritten — which is
-     why the series starts at {_fmt(first_n)} on {_esc(first_day)} rather than at
-     zero. The final value is the same {_fmt(last_n)} the Overview tab reports,
-     by construction.</p>
+  <p class="int-note">The axis counts roster locations whose mean cache file
+     is present <em>now</em>, placed on the UTC day of the commit that first
+     added that file. It measures when data landed in the repository, not when
+     the measurements were taken, and it sees only a file's <em>current</em>
+     name: a cache file that was re-encoded or renamed dates from the commit
+     that produced the name it carries now, not from when its location was
+     first gathered. The first point is therefore a cumulative total, not a
+     starting line - it stands at {_fmt(first_n)} because that is what had been
+     committed by {_esc(first_day)}. The final value is the same {_fmt(last_n)}
+     the Overview tab reports, by construction.</p>
   {_progress_svg(series)}
   <div class="int-wrap"><table class="int-table"><thead><tr>
     <th>Commit date (UTC)</th><th class="int-num">Cumulative</th>
@@ -591,9 +647,10 @@ def _gaps_panel(d: dict) -> str:
 """)
     return f"""
   <h2 class="int-h">Largest gaps by country</h2>
-  <p class="int-note">The 30 countries with the most roster locations still
-     missing a mean cache file, out of {_fmt(len(d["gaps"]))} with any gap at
-     all. Click a column heading to re-sort.</p>
+  <p class="int-note">The {_fmt(len(top))} countries with the most roster
+     locations still missing a mean cache file, out of
+     {_fmt(len(d["gaps"]))} with any gap at all. Click a column heading to
+     re-sort.</p>
   <div class="int-wrap"><table class="int-table int-sortable"><thead><tr>
     <th data-col="0" class="int-sort" aria-sort="none">Country</th>
     <th data-col="1" class="int-sort" aria-sort="none">Region</th>
