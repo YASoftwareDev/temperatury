@@ -33,6 +33,15 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The internal data-status page derives its progress series from
+          # `git log --diff-filter=A -- data/` (when each cache file was first
+          # committed), which the default depth-1 clone cannot see. Blobless, so
+          # this stays cheap: the whole commit+tree graph is 697 objects, while
+          # the blobs behind them are ~1 GB of cached series. Checkout still
+          # materialises HEAD's blobs, which is all the build reads.
+          fetch-depth: 0
+          filter: blob:none
 
       - uses: actions/setup-python@v6
         with:
