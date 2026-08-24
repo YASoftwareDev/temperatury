@@ -29,6 +29,12 @@
        values only reach ~3.3:1 on the dark neutrals, so dark lifts them.
        --cool is darkened from #2c7fb8, which was 4.34:1 on white. */
     --warm:#d62728; --cool:#2b6ca3;
+    /* Dataset identity on the internal Progress tab. Deliberately NOT --accent:
+       the visitor can switch the accent, and a series that changed colour with
+       it would stop meaning one dataset. Validated for CVD separation and for
+       contrast against both surfaces before use. */
+    --ds-mean:#2f5fd0; --ds-precip:#0d9488; --ds-extremes:#d97706;
+    --ds-current:#7c4dab;
     /* default = Objective / light / cobalt */
     --bg:#ffffff; --panel:#ffffff; --panel-2:#f6f7f8; --field:#ffffff;
     --ink:#111317; --ink-2:#333842; --muted:#5b616b; --line:#e6e8ec; --line-2:#c9cdd4;
@@ -78,7 +84,9 @@
   /* The dark-mode accents are light, so text ON an accent must be dark. */
   :root[data-theme="dark"]{ --on-accent:#0f1319; }
   /* Same warm/cool encoding, lifted to clear 4.5:1 on the dark neutrals. */
-  :root[data-theme="dark"]{ --warm:#ff8f88; --cool:#7fb3ff; }
+  :root[data-theme="dark"]{ --warm:#ff8f88; --cool:#7fb3ff;
+    --ds-mean:#5a8ce8; --ds-precip:#00a894; --ds-extremes:#c4831c;
+    --ds-current:#9d70dd; }
   :root[data-theme="dark"][data-accent="cobalt"]{ --accent:#7aa2ff; }
   :root[data-theme="dark"][data-accent="red"]{ --accent:#ff8f88; }
   :root[data-theme="dark"][data-accent="teal"]{ --accent:#3fd0c0; }
@@ -807,6 +815,47 @@
   .int-chart .ic-g0 { stop-color:currentColor; stop-opacity:.28; }
   .int-chart .ic-g1 { stop-color:currentColor; stop-opacity:0; }
   .int-chart .ic-dot { fill:currentColor; }
+  /* The Progress tab, drawn against the whole roster: the band above the line is
+     the work that is left, and the dashed continuation is the projection. */
+  .int-run { color:var(--ds-mean); }
+  .int-chart .ic-gap { fill:var(--muted); opacity:.09; }
+  .int-chart .ic-proj { fill:none; stroke:currentColor; stroke-width:2;
+    stroke-dasharray:6 5; opacity:.6; stroke-linecap:round; }
+  .int-chart .ic-end { fill:currentColor; font-size:12.5px; font-weight:600;
+    font-family:var(--sans); font-variant-numeric:tabular-nums; }
+  .k-unit { font-size:.9rem; font-weight:500; color:var(--muted); }
+  .int-goal { display:flex; height:24px; border:1px solid var(--line);
+    border-radius:3px; overflow:hidden; margin:.1rem 0 .35rem; }
+  .int-goal > span { display:block; height:100%; }
+  .int-goal .g-done { background:var(--ds-mean); }
+  .int-goal .g-left { background:var(--muted); opacity:.16; }
+  .int-goalnums, .int-cadnums { display:flex; justify-content:space-between;
+    gap:1rem; font-size:.78rem; color:var(--muted);
+    font-variant-numeric:tabular-nums; }
+  .int-goalnums { margin:0 0 1.1rem; }
+  .int-cadnums { margin:0 0 .6rem; }
+  /* One cell per UTC day. Identity only - which group led - so a cell needs no
+     scale, and a day nothing was committed on stays visibly empty. */
+  .int-cad { display:grid; grid-auto-flow:column; grid-auto-columns:1fr;
+    gap:3px; margin:.2rem 0 .35rem; }
+  .int-cad > span { height:40px; border-radius:3px; background:var(--panel-2);
+    border:1px solid var(--line); }
+  .int-legend { display:flex; flex-wrap:wrap; gap:.2rem 1.1rem; margin:0 0 1rem;
+    font-size:.8rem; color:var(--ink-2); }
+  .int-legend b { display:inline-flex; align-items:center; gap:.4rem;
+    font-weight:500; }
+  .int-legend i { width:11px; height:11px; border-radius:2px; }
+  .int-led { display:inline-block; padding:.02rem .45rem; border-radius:999px;
+    font-size:.76rem; border:1px solid currentColor; }
+  .int-nil { color:var(--muted); }
+  .int-cad > .d-mean, .int-legend .d-mean, .int-led.d-mean { --d:var(--ds-mean); }
+  .int-cad > .d-precip, .int-legend .d-precip, .int-led.d-precip { --d:var(--ds-precip); }
+  .int-cad > .d-extremes, .int-legend .d-extremes, .int-led.d-extremes { --d:var(--ds-extremes); }
+  .int-cad > .d-current, .int-legend .d-current, .int-led.d-current { --d:var(--ds-current); }
+  .int-cad > span[class^="d-"]:not(.d-none) { background:var(--d);
+    border-color:var(--d); }
+  .int-legend i[class^="d-"] { background:var(--d); }
+  .int-led[class*="d-"] { color:var(--d); }
   /* A panel that opens on a heading must not draw its rule right under the tab
      strip - the strip's own bottom border is already there. */
   .tabpanel > .int-h:first-child { border-top:0; padding-top:0; margin-top:.3rem; }
