@@ -31,10 +31,17 @@
     --warm:#d62728; --cool:#2b6ca3;
     /* Dataset identity on the internal Progress tab. Deliberately NOT --accent:
        the visitor can switch the accent, and a series that changed colour with
-       it would stop meaning one dataset. Validated for CVD separation and for
-       contrast against both surfaces before use. */
+       it would stop meaning one dataset. Validated as MARKS - every pair, not
+       just neighbours, separable with normal vision and under protan/deutan
+       simulation, and each over 3:1 on the default white ground (a coloured cell
+       replaces the panel tint rather than sitting on it). On the two tinted light
+       directions --ds-extremes lands at 2.9:1, which is one more reason a
+       swatch is a block of colour and never a hairline. They are not text
+       colours:
+       --ds-precip (3.7:1) and --ds-extremes (3.2:1) sit under the 4.5:1 a label
+       needs, so the "led by" pill wears ink and carries the colour as a dot. */
     --ds-mean:#2f5fd0; --ds-precip:#0d9488; --ds-extremes:#d97706;
-    --ds-current:#7c4dab;
+    --ds-current:#9d3b6e;
     /* default = Objective / light / cobalt */
     --bg:#ffffff; --panel:#ffffff; --panel-2:#f6f7f8; --field:#ffffff;
     --ink:#111317; --ink-2:#333842; --muted:#5b616b; --line:#e6e8ec; --line-2:#c9cdd4;
@@ -84,9 +91,11 @@
   /* The dark-mode accents are light, so text ON an accent must be dark. */
   :root[data-theme="dark"]{ --on-accent:#0f1319; }
   /* Same warm/cool encoding, lifted to clear 4.5:1 on the dark neutrals. */
+  /* Dark is re-stepped, not flipped: the same all-pairs separation has to hold
+     inside the narrower lightness band the dark surface allows. */
   :root[data-theme="dark"]{ --warm:#ff8f88; --cool:#7fb3ff;
-    --ds-mean:#5a8ce8; --ds-precip:#00a894; --ds-extremes:#c4831c;
-    --ds-current:#9d70dd; }
+    --ds-mean:#5f93ea; --ds-precip:#10a892; --ds-extremes:#c4831c;
+    --ds-current:#a8508f; }
   :root[data-theme="dark"][data-accent="cobalt"]{ --accent:#7aa2ff; }
   :root[data-theme="dark"][data-accent="red"]{ --accent:#ff8f88; }
   :root[data-theme="dark"][data-accent="teal"]{ --accent:#3fd0c0; }
@@ -835,7 +844,7 @@
   .int-goalnums { margin:0 0 1.1rem; }
   .int-cadnums { margin:0 0 .6rem; }
   /* One cell per UTC day. Identity only - which group led - so a cell needs no
-     scale, and a day nothing was committed on stays visibly empty. */
+     scale, and a day no counted entry dates to stays visibly empty. */
   .int-cad { display:grid; grid-auto-flow:column; grid-auto-columns:1fr;
     gap:3px; margin:.2rem 0 .35rem; }
   .int-cad > span { height:40px; border-radius:3px; background:var(--panel-2);
@@ -845,8 +854,14 @@
   .int-legend b { display:inline-flex; align-items:center; gap:.4rem;
     font-weight:500; }
   .int-legend i { width:11px; height:11px; border-radius:2px; }
-  .int-led { display:inline-block; padding:.02rem .45rem; border-radius:999px;
-    font-size:.76rem; border:1px solid currentColor; }
+  /* Ink text, colour as a dot: two of the four dataset colours are below the
+     4.5:1 a 12px label needs, and identity that is colour alone is unreadable
+     to a red-green viewer whatever the contrast. */
+  .int-led { display:inline-flex; align-items:center; gap:.4rem;
+    padding:.02rem .5rem .02rem .4rem; border-radius:999px; font-size:.76rem;
+    color:var(--ink-2); border:1px solid var(--line); --d:var(--muted); }
+  .int-led::before { content:""; width:8px; height:8px; border-radius:2px;
+    background:var(--d); flex:none; }
   .int-nil { color:var(--muted); }
   .int-cad > .d-mean, .int-legend .d-mean, .int-led.d-mean { --d:var(--ds-mean); }
   .int-cad > .d-precip, .int-legend .d-precip, .int-led.d-precip { --d:var(--ds-precip); }
@@ -855,7 +870,6 @@
   .int-cad > span[class^="d-"]:not(.d-none) { background:var(--d);
     border-color:var(--d); }
   .int-legend i[class^="d-"] { background:var(--d); }
-  .int-led[class*="d-"] { color:var(--d); }
   /* A panel that opens on a heading must not draw its rule right under the tab
      strip - the strip's own bottom border is already there. */
   .tabpanel > .int-h:first-child { border-top:0; padding-top:0; margin-top:.3rem; }
