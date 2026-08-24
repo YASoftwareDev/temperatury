@@ -13,6 +13,7 @@ file-existence rule), so a drift between the two shows up as a test failure
 rather than as two pages quoting different totals.
 """
 import contextlib
+import datetime as dt
 import functools
 import http.server
 import json
@@ -396,7 +397,159 @@ def test_no_figure_is_invented():
     assert _kpis(html)[1] == "0"
 
 
+def test_the_daily_breakdown_is_in_the_same_unit_as_the_tile_above_it():
+    """The Progress table puts a per-day "+ mean" column next to a cumulative
+    one that the panel says ends on the Overview's covered count. That only
+    holds if the breakdown counts the same files the covered set does - roster
+    slugs, this window - so the two columns are checked against each other and
+    against the tile rather than assumed to agree."""
+    d = internal.collect(1940, 2025)
+    if not d["progress"]:
+        pytest.skip("no usable git history for data/ in this checkout")
+    assert sum(r["mean"] for r in d["daily"]) == d["covered"]
+    days = [r["day"] for r in d["daily"]]
+    assert days == sorted(days)
+    # Every day the cumulative series knows about is a day the breakdown knows
+    # about: the series is built from a subset of the same walk.
+    assert {day for day, _ in d["progress"]} <= set(days)
+
+
+def test_a_file_kind_is_read_off_its_own_name():
+    """The breakdown has nothing but the file name to go on. The current-year
+    pairs are the case that bites: ``_2026_current_extremes`` is an extremes
+    file by suffix and a current-year file by shape, and counting it under
+    extremes would inflate a dataset the coverage map reports."""
+    assert internal._dataset_of("krakow_1940-2025.tpy") == ("krakow", "mean",
+                                                            (1940, 2025))
+    assert internal._dataset_of("krakow_1940-2025_precip.tpy")[1] == "precip"
+    assert internal._dataset_of("krakow_2026_current.tpy") == ("krakow",
+                                                               "current", None)
+    assert internal._dataset_of("krakow_2026_current_extremes.tpy")[1] == "current"
+    # A slug with a dot survives - _stem exists because 24 of them have one.
+    assert internal._dataset_of("st.-petersburg_1940-2025.tpy")[0] == "st.-petersburg"
+    # Nothing the stems recognise: no slug, so the roster filter drops it.
+    assert internal._dataset_of("_global.json") == ("", "other", None)
+
+
+def test_a_cache_from_another_window_is_not_counted(monkeypatch):
+    """A cache left behind by an earlier coverage window is a real file, but it
+    is not one of the locations any tile on this page counts - and counting it
+    would push the breakdown's mean column past the covered total it is printed
+    next to."""
+    first = {"a_1940-2025.tpy": 1_754_000_000,
+             "a_1950-2020.tpy": 1_754_000_000,
+             "b_1940-2025.tpy": 1_754_000_000}
+    rows = internal._daily(first, {"a", "b"}, (1940, 2025))
+    assert [r["mean"] for r in rows] == [2]
+    # Without the window it is three files on that day, which is the bug.
+    assert internal._daily(first, {"a", "b"})[0]["mean"] == 3
+    # ... and a slug that left the roster is dropped either way.
+    assert internal._daily(first, {"a"}, (1940, 2025))[0]["mean"] == 1
+
+
+def _day_rows(spec):
+    """[(day, mean_added)] as _daily returns it, for the pace tests."""
+    return [{"day": day, "mean": n, "total": n, "led": "mean" if n else None,
+             **{k: 0 for k in internal.DS_KEYS if k != "mean"}}
+            for day, n in spec]
+
+
+def test_the_pace_counts_calendar_days_not_the_days_that_worked():
+    """The rotation gives mean coverage roughly one day in three, so a pace
+    averaged over "days that appear in the series" reports the pace of the good
+    days as the pace of the fleet - three times the truth. The window is
+    calendar days ending on the build's own day, and the days in between count
+    as the zeros they are."""
+    today = dt.date(2026, 8, 24)
+    rows = _day_rows([("2026-08-16", 900), ("2026-08-19", 900),
+                      ("2026-08-22", 900)])
+    pace = internal._pace(rows, covered=2_700, targets=12_600, today=today)
+    assert pace["window"] == 9 and pace["gained"] == 2_700
+    assert pace["per_day"] == 300                     # 2,700 / 9, not / 3
+    assert pace["remaining"] == 9_900
+    assert pace["days_left"] == 33                    # 9,900 / 300
+    assert pace["eta"] == "2026-09-26"                # 24 Aug + 33 days
+    assert pace["as_of"] == today.isoformat()
+
+
+def test_a_fleet_that_stopped_reads_as_stopped():
+    """The window ends on the build day, not on the last day with data, so a
+    gatherer that died a fortnight ago cannot keep reporting the pace it had
+    while it ran."""
+    rows = _day_rows([("2026-08-01", 5_000), ("2026-08-02", 5_000)])
+    assert internal._pace(rows, 10_000, 30_000, today=dt.date(2026, 8, 24)) is None
+
+
+def test_no_pace_is_projected_from_a_window_the_history_does_not_cover():
+    """A cache committed for the first time yesterday would otherwise average
+    its whole backlog over nine days and project an arrival date from one day of
+    evidence."""
+    rows = _day_rows([("2026-08-23", 4_000), ("2026-08-24", 100)])
+    assert internal._pace(rows, 4_100, 30_000, today=dt.date(2026, 8, 24)) is None
+    # The same rows with the history reaching back far enough do project.
+    rows = _day_rows([("2026-08-10", 0)]) + rows
+    assert internal._pace(rows, 4_100, 30_000, today=dt.date(2026, 8, 24))
+
+
+def test_a_complete_roster_projects_nothing():
+    rows = _day_rows([("2026-08-20", 10), ("2026-08-24", 10)])
+    assert internal._pace(rows, 30_000, 30_000, today=dt.date(2026, 8, 24)) is None
+
+
+def test_the_runway_axis_is_the_roster_not_the_series_own_maximum():
+    """Scaling to the series' own top makes any rate look like an arrival: the
+    line ends in the top right corner whatever it did. The top guide is the
+    roster, so 100 locations out of 30,000 draw as 100 out of 30,000."""
+    series = [("2026-08-10", 40), ("2026-08-24", 100)]
+    svg = internal._runway_svg(series, 30_000, None)
+    assert ">30,000<" in svg and ">100 (0.3%)<" in svg
+    assert "29,900 locations still to gather" in svg
+
+
+def test_the_projection_is_drawn_only_when_there_is_a_pace():
+    series = [("2026-08-10", 40), ("2026-08-24", 100)]
+    assert "ic-proj" not in internal._runway_svg(series, 30_000, None)
+    pace = internal._pace(_day_rows([("2026-08-16", 30), ("2026-08-24", 30)]),
+                          100, 30_000, today=dt.date(2026, 8, 24))
+    assert "ic-proj" in internal._runway_svg(series, 30_000, pace)
+
+
+def test_the_cadence_strip_ends_on_the_build_day_so_a_stall_is_visible():
+    """One cell per UTC day, not one cell per day that committed something: a
+    skipped day would close the gap and the strip would show an unbroken
+    rotation while the fleet was down."""
+    rows = _day_rows([("2026-08-20", 75), ("2026-08-22", 900)])
+    strip = internal._cadence_strip(rows, today=dt.date(2026, 8, 24))
+    assert strip.count('<span class="d-') == 5        # 20th through 24th
+    assert strip.count('class="d-none"') == 3         # 21st, 23rd, 24th
+    assert "2026-08-21: nothing committed" in strip
+    assert strip.endswith("<span>2026-08-24</span></div>")
+
+
+def test_the_cadence_strip_never_reaches_before_the_history():
+    """Empty cells mean "nothing was committed that day". Days before the first
+    commit are days the question does not apply to, and drawing 20 of them would
+    read as three weeks of a dead fleet."""
+    rows = _day_rows([("2026-08-23", 75)])
+    strip = internal._cadence_strip(rows, today=dt.date(2026, 8, 24))
+    assert strip.count('<span class="d-') == 2
+    assert "<span>2026-08-23</span>" in strip
+
+
+def test_the_panel_states_the_window_every_projected_figure_came_from():
+    """An arrival date with no window attached is read as a schedule. The tile
+    that carries it has to say what it was averaged over, in the same tile."""
+    d = internal.collect(1940, 2025)
+    if not d["pace"]:
+        pytest.skip("no pace in this checkout")
+    html = internal.render(d, "en")
+    assert f'mean of the last {internal.PACE_WINDOW} days' in html
+    assert "not a schedule" in html
+    assert d["pace"]["eta"] in html
+
+
 # --- browser ----------------------------------------------------------------
+
 
 @contextlib.contextmanager
 def _serve(directory):

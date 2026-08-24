@@ -28,7 +28,12 @@ Every figure is computed here from a source that exists on disk:
                          name. A shallow clone is rejected outright rather than
                          charted: its one grafted commit reports every file as an
                          addition, which would read as the whole roster landing
-                         in a single day.
+                         in a single day. That one walk feeds the whole Progress
+                         tab: the cumulative series, the per-dataset day
+                         breakdown that shows a flat coverage day was a
+                         precipitation day, and the pace its arrival date is
+                         extrapolated from - the only forward-looking figure on
+                         the page, and labelled with the window it came from.
 
 The coverage map is not re-implemented here: the tab frames the site's own map
 page (``../<lang>/index.html?embed=1&grid=1#tab=map``), which already carries the
@@ -58,6 +63,48 @@ DATASETS = [
 ]
 
 _STEM_YEARS = re.compile(r"_(\d{4})-(\d{4})(?:_[a-z]+)?$")
+
+# The same stem, kept apart because the daily breakdown needs the SUFFIX the
+# generic one throws away, and the current-year files carry a different shape.
+_STEM_DATASET = re.compile(r"_(\d{4})-(\d{4})(?:_([a-z]+))?$")
+_STEM_CURRENT = re.compile(r"_(\d{4})_current(?:_[a-z]+)?$")
+
+# Datasets the Progress tab breaks a day down into, in stacking order. "mean" is
+# the one that means "covered" everywhere else in the build; the rest enrich
+# cities that are already rendered, so they can move while coverage does not -
+# which is the whole reason the tab shows them.
+DS_KEYS = ("mean", "precip", "extremes", "apparent", "current", "other")
+DS_LABEL = {"mean": "Mean temperature", "precip": "Precipitation",
+            "extremes": "Extremes", "apparent": "Apparent temperature",
+            "current": "Current year", "other": "Other"}
+# Only the four that carry a colour token in landing.css get a coloured cell.
+DS_COLOURED = ("mean", "precip", "extremes", "current")
+
+
+def _dataset_of(name: str) -> tuple[str, str, tuple[int, int] | None]:
+    """The location slug, dataset and year range a data/ file name belongs to.
+
+    A cache kind neither stem recognises is "other" rather than dropped: a
+    bucket that silently swallowed a new kind would understate the day it landed
+    on. Every ``_<year>_current*`` file counts as current-year, the
+    ``_current_extremes`` pairs included - one file kind more than the Overview
+    tab's "Current year" row counts, because that row counts locations and this
+    counts files. A name neither stem matches (the generated roster files) has
+    no slug, so the roster filter drops it. The year range comes back with it so
+    a caller can keep the breakdown to the window the page is built for: a cache
+    left behind by an earlier window is a real file, but it is not one of the
+    locations any tile on this page counts.
+    """
+    stem = _stem(name)
+    m = _STEM_DATASET.search(stem)
+    if m:
+        got = m.group(3) or "mean"
+        return (stem[:m.start()], got if got in DS_KEYS else "other",
+                (int(m.group(1)), int(m.group(2))))
+    m = _STEM_CURRENT.search(stem)
+    if m:
+        return stem[:m.start()], "current", None
+    return "", "other", None
 
 
 def _fmt(n: int) -> str:
@@ -119,6 +166,7 @@ def collect(start_year: int, end_year: int) -> dict:
     # Cache weight and the covered span, from the files themselves.
     total_bytes = 0
     n_files = 0
+    names: set[str] = set()
     years_lo: int | None = None
     years_hi: int | None = None
     # A checkout that has not gathered anything yet has no data/ at all. That
@@ -128,6 +176,7 @@ def collect(start_year: int, end_year: int) -> dict:
         if not p.is_file():
             continue
         n_files += 1
+        names.add(p.name)
         total_bytes += p.stat().st_size
         m = _STEM_YEARS.search(_stem(p.name))
         if m:
@@ -135,6 +184,16 @@ def collect(start_year: int, end_year: int) -> dict:
             years_lo = lo if years_lo is None else min(years_lo, lo)
             years_hi = hi if years_hi is None else max(years_hi, hi)
     mean_bytes = sum(p.stat().st_size for p in covered_path.values() if p)
+
+    # One walk of the history for the whole tab. The daily breakdown and the
+    # pace ride on the cumulative series' refusal: when a covered file cannot be
+    # dated the series is not drawn, and a per-day breakdown built from the rest
+    # would quietly understate exactly the days those files landed on.
+    first = _first_added(names)
+    progress = _progress(covered_path, first)
+    daily = (_daily(first, set(config.LOCATIONS), (start_year, end_year))
+             if progress else [])
+    pace = _pace(daily, len(covered), len(locs)) if progress else None
 
     by_region: dict[str, dict] = {}
     for l in locs:
@@ -172,11 +231,67 @@ def collect(start_year: int, end_year: int) -> dict:
         "years_lo": years_lo, "years_hi": years_hi,
         "regions": regions, "countries": country_rows,
         "gaps": gaps, "empty": empty,
-        "progress": _progress(covered_path),
+        "progress": progress, "daily": daily, "pace": pace,
     }
 
 
-def _progress(covered_path: dict[str, Path | None]) -> list[tuple[str, int]]:
+def _first_added(names: set[str]) -> dict[str, int] | None:
+    """UTC commit timestamp each ``data/<name>`` first appeared on.
+
+    One walk of the history serves every figure on the Progress tab, so it is
+    taken once per build and handed to the callers below. ``None`` means the
+    history cannot answer at all - no repository, a walk that failed, or a
+    shallow clone - and every caller turns that into a refusal to draw rather
+    than into a chart it cannot source.
+
+    A shallow clone has to be REJECTED explicitly, not detected by an empty
+    result. Its single grafted commit has no parents, so every file in it reads
+    as an addition and the walk returns the whole cache dated to one day - a
+    one-point "series" asserting the entire roster landed at once. Verified on a
+    depth-1 clone of a three-commit repository: all three files reported as
+    added in the one commit, exit status 0.
+    """
+    def git(*args: str) -> str | None:
+        try:
+            r = subprocess.run(["git", "-c", "core.quotePath=false", *args],
+                               cwd=config.ROOT, capture_output=True, text=True,
+                               timeout=300)
+        except (OSError, subprocess.SubprocessError):
+            return None
+        return r.stdout if r.returncode == 0 else None
+
+    if (git("rev-parse", "--is-shallow-repository") or "true").strip() != "false":
+        return None
+    # --no-renames keeps the walk to tree comparison. Rename detection would
+    # fold a rename into one R entry, which --diff-filter=A then drops, and it
+    # has to read file CONTENTS - blobs the deploy build's blobless checkout
+    # deliberately does not fetch.
+    # NOT --first-parent, though it would make a merge's own additions visible:
+    # it also re-dates an ordinary side-branch file to the merge that landed it,
+    # which is not "the commit that first added that file" as the panel says
+    # (measured on this repo: 10 tracked files change attribution). A file only
+    # a merge carries stays undatable, and the completeness check in _progress
+    # turns that into an honest refusal rather than a misdated point.
+    log = git("log", "--diff-filter=A", "--name-only", "--no-renames",
+              "--format=C %ct", "--", "data/")
+    if log is None:
+        return None
+    first: dict[str, int] = {}
+    ts = 0
+    for line in log.splitlines():
+        if line.startswith("C "):
+            ts = int(line[2:])
+            continue
+        if not line.startswith("data/"):
+            continue
+        name = line[5:]
+        if name in names:
+            first[name] = ts   # log is newest-first: the last write is the earliest add
+    return first
+
+
+def _progress(covered_path: dict[str, Path | None],
+              first: dict[str, int] | None = None) -> list[tuple[str, int]]:
     """Cumulative covered-location count by the date each cache file was committed.
 
     Only files present NOW are counted, so the series ends exactly on the
@@ -189,58 +304,19 @@ def _progress(covered_path: dict[str, Path | None]) -> list[tuple[str, int]]:
     Every covered file must be datable or the series is refused outright: one
     built from a subset ends BELOW the covered count, while the panel tells the
     reader its last value equals the Overview tile by construction.
-
-    A shallow clone has to be REJECTED explicitly, not detected by an empty
-    result. Its single grafted commit has no parents, so every file in it reads
-    as an addition and the walk returns the whole cache dated to one day - a
-    one-point "series" asserting the entire roster landed at once. Verified on a
-    depth-1 clone of a three-commit repository: all three files reported as
-    added in the one commit, exit status 0.
     """
     want = {p.name for p in covered_path.values() if p is not None}
     if not want:
         return []
-
-    def git(*args: str) -> str | None:
-        try:
-            r = subprocess.run(["git", "-c", "core.quotePath=false", *args],
-                               cwd=config.ROOT, capture_output=True, text=True,
-                               timeout=300)
-        except (OSError, subprocess.SubprocessError):
-            return None
-        return r.stdout if r.returncode == 0 else None
-
-    if (git("rev-parse", "--is-shallow-repository") or "true").strip() != "false":
+    if first is None:
+        first = _first_added(want)
+    if first is None:
         return []
-    # --no-renames keeps the walk to tree comparison. Rename detection would
-    # fold a rename into one R entry, which --diff-filter=A then drops, and it
-    # has to read file CONTENTS - blobs the deploy build's blobless checkout
-    # deliberately does not fetch.
-    # NOT --first-parent, though it would make a merge's own additions visible:
-    # it also re-dates an ordinary side-branch file to the merge that landed it,
-    # which is not "the commit that first added that file" as the panel says
-    # (measured on this repo: 10 tracked files change attribution). A file only
-    # a merge carries stays undatable, and the completeness check below turns
-    # that into an honest refusal rather than a misdated point.
-    log = git("log", "--diff-filter=A", "--name-only", "--no-renames",
-              "--format=C %ct", "--", "data/")
-    if log is None:
-        return []
-    first: dict[str, int] = {}
-    ts = 0
-    for line in log.splitlines():
-        if line.startswith("C "):
-            ts = int(line[2:])
-            continue
-        if not line.startswith("data/"):
-            continue
-        name = line[5:]
-        if name in want:
-            first[name] = ts   # log is newest-first: the last write is the earliest add
-    if len(first) != len(want):
+    dated = {n: t for n, t in first.items() if n in want}
+    if len(dated) != len(want):
         return []
     per: Counter = Counter()
-    for t in first.values():
+    for t in dated.values():
         per[dt.datetime.fromtimestamp(t, dt.UTC).date().isoformat()] += 1
     out: list[tuple[str, int]] = []
     run = 0
@@ -248,6 +324,89 @@ def _progress(covered_path: dict[str, Path | None]) -> list[tuple[str, int]]:
         run += per[day]
         out.append((day, run))
     return out
+
+
+def _daily(first: dict[str, int] | None, slugs: set[str] | None = None,
+           window: tuple[int, int] | None = None) -> list[dict]:
+    """Cache files added per UTC day, split by dataset, oldest day first.
+
+    The same walk the cumulative series uses, kept per-dataset instead of summed:
+    it is what shows that a day the mean line is flat still landed hundreds of
+    precipitation files, which is the question the single-line tab could not
+    answer.
+
+    Restricted to files whose slug is still on the roster and whose year range is
+    the window the page is built for, so every count is in the same unit as the
+    rest of the page and the mean column sums to exactly the covered total.
+    Unfiltered it also counts cache files belonging to slugs that have LEFT the
+    roster (3 mean files, measured 2026-08-24), and the table's own columns would
+    then disagree with the tile above them.
+
+    ``led`` is the dataset that took most of that day. The fetcher gives the
+    hourly quota to whichever group runs first, so it reads the rotation rather
+    than deciding anything.
+    """
+    if not first:
+        return []
+    per: dict[str, Counter] = {}
+    for name, t in first.items():
+        slug, ds, years = _dataset_of(name)
+        if slugs is not None and slug not in slugs:
+            continue
+        if window is not None and years is not None and years != window:
+            continue
+        day = dt.datetime.fromtimestamp(t, dt.UTC).date().isoformat()
+        per.setdefault(day, Counter())[ds] += 1
+    out = []
+    for day in sorted(per):
+        c = per[day]
+        row = {"day": day, "total": sum(c.values())}
+        row.update({k: c.get(k, 0) for k in DS_KEYS})
+        pick = [k for k in DS_COLOURED if c.get(k)]
+        row["led"] = max(pick, key=lambda k: c[k]) if pick else None
+        out.append(row)
+    return out
+
+
+# Three full turns of the three-day group rotation in tools/daily-chunk.sh: the
+# hourly quota goes to whichever group leads a day, so a window that is not a
+# whole number of cycles reads the rotation as a trend.
+PACE_WINDOW = 9
+PACE_HORIZON = 30          # days of projection drawn past the last measured day
+
+
+def _pace(daily: list[dict], covered: int, targets: int,
+          today: dt.date | None = None) -> dict | None:
+    """Mean locations gained per day over the last ``PACE_WINDOW`` days, and
+    where that lands if it holds.
+
+    Measured against the calendar, not against the series: days on which nothing
+    was committed are days at zero, and dropping them would report the pace of
+    the good days as the pace of the fleet. The window ends on the build's own
+    UTC day, so a fleet that stopped a week ago reads as stopped.
+
+    ``None`` when the window gained nothing, when the roster is already complete,
+    or when the history is too short to fill one window - none of those can be
+    turned into an arrival date, and the panel prints what it knows instead.
+    """
+    if not daily or covered >= targets:
+        return None
+    today = today or dt.datetime.now(dt.UTC).date()
+    start = today - dt.timedelta(days=PACE_WINDOW - 1)
+    if dt.date.fromisoformat(daily[0]["day"]) > start:
+        return None                      # the window reaches before the history
+    gained = sum(r["mean"] for r in daily
+                 if start <= dt.date.fromisoformat(r["day"]) <= today)
+    if gained <= 0:
+        return None
+    per_day = gained / PACE_WINDOW
+    remaining = targets - covered
+    days_left = -(-remaining // per_day)          # ceil, without float surprises
+    days_left = int(days_left)
+    return {"window": PACE_WINDOW, "gained": gained, "per_day": per_day,
+            "remaining": remaining, "days_left": days_left,
+            "eta": (today + dt.timedelta(days=days_left)).isoformat(),
+            "as_of": today.isoformat(), "horizon": PACE_HORIZON}
 
 
 # --- rendering ---------------------------------------------------------------
@@ -277,61 +436,141 @@ def _cc_cell(cc: str) -> str:
             f"{_esc(cc)}</td>")
 
 
-def _progress_svg(series: list[tuple[str, int]]) -> str:
-    """The cumulative series as an inline SVG area chart.
+def _runway_svg(series: list[tuple[str, int]], targets: int,
+                pace: dict | None) -> str:
+    """The cumulative series as an inline SVG area chart, drawn against the WHOLE
+    roster rather than against its own maximum.
 
-    Inline and server-drawn: this page has one chart, and pulling Chart.js in for
-    it would cost more than the whole page. Colours come from CSS custom
-    properties, so it follows the theme like everything else.
+    Scaling to the series' own top makes any rate look like an arrival: the line
+    always ends in the top right corner. Scaling to the roster puts the work that
+    is left on the same axis as the work that is done, which is the question the
+    tab exists to answer, and it costs only that the early days sit flat near the
+    bottom - which is true.
+
+    Inline and server-drawn: pulling a chart library in for one figure would cost
+    more than the whole page. Colours come from CSS custom properties, so it
+    follows the theme like everything else.
     """
-    if len(series) < 2:
+    if len(series) < 2 or targets <= 0:
         return ""
     days = [dt.date.fromisoformat(d) for d, _ in series]
     vals = [v for _, v in series]
-    W, H = 900, 280
-    padL, padR, padT, padB = 62, 14, 16, 34
+    covered = vals[-1]
+    W, H = 920, 320
+    padL, padR, padT, padB = 68, 116, 18, 34
     iw, ih = W - padL - padR, H - padT - padB
-    x0, x1 = days[0].toordinal(), days[-1].toordinal()
-    span = (x1 - x0) or 1
-    top = max(vals) or 1
+    x0 = days[0].toordinal()
+    # The projection needs room to the right of the last measured day; without a
+    # pace the chart stops there.
+    horizon = pace["horizon"] if pace else 0
+    span = (days[-1].toordinal() + horizon - x0) or 1
 
-    def X(d):
-        return padL + (d.toordinal() - x0) * iw / span
+    def X(ordinal):
+        return padL + (ordinal - x0) * iw / span
 
     def Y(v):
-        return padT + ih - (v / top) * ih
+        return padT + ih - (min(v, targets) / targets) * ih
 
-    pts = " ".join(f"{X(d):.1f},{Y(v):.1f}" for d, v in zip(days, vals))
-    area = f"{X(days[0]):.1f},{padT + ih:.1f} {pts} {X(days[-1]):.1f},{padT + ih:.1f}"
-    # Four horizontal guides, labelled with the count they stand for.
+    pts = " ".join(f"{X(d.toordinal()):.1f},{Y(v):.1f}" for d, v in zip(days, vals))
+    area = (f"{X(x0):.1f},{padT + ih:.1f} {pts} "
+            f"{X(days[-1].toordinal()):.1f},{padT + ih:.1f}")
     guides = []
     for k in range(5):
-        v = top * k / 4
+        v = targets * k / 4
         y = Y(v)
         guides.append(f'<line class="ic-grid" x1="{padL}" y1="{y:.1f}" '
                       f'x2="{W - padR}" y2="{y:.1f}"/>')
         guides.append(f'<text class="ic-lbl" x="{padL - 8}" y="{y + 4:.1f}" '
                       f'text-anchor="end">{_fmt(round(v))}</text>')
-    # First and last date only: the series is short and dense dates collide.
-    ticks = []
-    for d, anchor in ((days[0], "start"), (days[-1], "end")):
-        ticks.append(f'<text class="ic-lbl" x="{X(d):.1f}" y="{H - 10}" '
-                     f'text-anchor="{anchor}">{d.isoformat()}</text>')
-    dots = "".join(f'<circle class="ic-dot" cx="{X(d):.1f}" cy="{Y(v):.1f}" r="3">'
-                   f"<title>{d.isoformat()}: {_fmt(v)}</title></circle>"
+    gap = (f'<rect class="ic-gap" x="{padL}" y="{padT}" width="{iw}" '
+           f'height="{max(0.0, Y(covered) - padT):.1f}"/>'
+           f'<text class="ic-lbl" x="{padL + 10}" y="{padT + 18}">'
+           f"{_fmt(targets - covered)} locations still to gather</text>")
+    proj = ""
+    if pace:
+        end_v = covered + pace["per_day"] * horizon
+        end_x = days[-1].toordinal() + horizon
+        if end_v >= targets:            # stop the line where it meets the roster
+            end_v = targets
+            end_x = days[-1].toordinal() + pace["days_left"]
+        proj = (f'<polyline class="ic-proj" points="'
+                f'{X(days[-1].toordinal()):.1f},{Y(covered):.1f} '
+                f'{X(end_x):.1f},{Y(end_v):.1f}"/>'
+                f'<text class="ic-lbl" x="{X(end_x) + 8:.1f}" '
+                f'y="{Y(end_v) + 4:.1f}">projected</text>')
+    dots = "".join(f'<circle class="ic-dot" cx="{X(d.toordinal()):.1f}" '
+                   f'cy="{Y(v):.1f}" r="2.6">'
+                   f"<title>{d.isoformat()}: {_fmt(v)} covered, "
+                   f"{_pct(v, targets):.1f}% of the roster</title></circle>"
                    for d, v in zip(days, vals))
+    here = (f'<circle class="ic-dot" cx="{X(days[-1].toordinal()):.1f}" '
+            f'cy="{Y(covered):.1f}" r="4.5"/>'
+            f'<text class="ic-end" x="{X(days[-1].toordinal()) - 10:.1f}" '
+            f'y="{Y(covered) - 14:.1f}" text-anchor="end">'
+            f"{_fmt(covered)} ({_pct(covered, targets):.1f}%)</text>")
+    ticks = [f'<text class="ic-lbl" x="{padL}" y="{H - 10}">'
+             f"{days[0].isoformat()}</text>",
+             f'<text class="ic-lbl" x="{X(days[-1].toordinal()):.1f}" y="{H - 10}" '
+             f'text-anchor="middle">{days[-1].isoformat()}</text>']
+    if pace:
+        ticks.append(f'<text class="ic-lbl" x="{W - padR}" y="{H - 10}" '
+                     f'text-anchor="end">+{horizon} d</text>')
     return (
-        f'<svg class="int-chart" viewBox="0 0 {W} {H}" role="img" '
-        f'aria-label="Cumulative locations with a committed mean cache file, '
-        f'{days[0].isoformat()} to {days[-1].isoformat()}, ending at {_fmt(vals[-1])}">'
+        f'<svg class="int-chart int-run" viewBox="0 0 {W} {H}" role="img" '
+        f'aria-label="Locations with a committed mean cache file against the '
+        f'roster of {_fmt(targets)}, {days[0].isoformat()} to '
+        f'{days[-1].isoformat()}, ending at {_fmt(covered)}">'
         '<defs><linearGradient id="icg" x1="0" y1="0" x2="0" y2="1">'
         '<stop class="ic-g0" offset="0"/><stop class="ic-g1" offset="1"/>'
         "</linearGradient></defs>"
-        + "".join(guides)
+        + "".join(guides) + gap
         + f'<polygon class="ic-fill" points="{area}"/>'
         + f'<polyline class="ic-line" points="{pts}"/>'
-        + dots + "".join(ticks) + "</svg>"
+        + proj + dots + here + "".join(ticks) + "</svg>"
     )
+
+
+CADENCE_DAYS = 30          # ten turns of the rotation, and one screen wide
+
+
+def _cadence_strip(daily: list[dict], today: dt.date | None = None) -> str:
+    """One cell per UTC day, coloured by the dataset that led it.
+
+    The point of the strip is the ROTATION, so the cell carries identity only -
+    which group took the day - and the counts live in the table under it. A cell
+    sized by volume would have to be scaled against the re-encode day, which is
+    not gathering at all, and every ordinary day would collapse to a sliver.
+
+    The strip ends on the build's own day, so days on which nothing was committed
+    are drawn empty rather than skipped: a stalled fleet has to look stalled.
+    """
+    if not daily:
+        return ""
+    today = today or dt.datetime.now(dt.UTC).date()
+    by = {r["day"]: r for r in daily}
+    start = max(dt.date.fromisoformat(daily[0]["day"]),
+                today - dt.timedelta(days=CADENCE_DAYS - 1))
+    if start > today:
+        return ""
+    cells = []
+    day = start
+    while day <= today:
+        r = by.get(day.isoformat())
+        led = r["led"] if r else None
+        parts = ", ".join(f"{DS_LABEL[k].lower()} +{_fmt(r[k])}"
+                          for k in DS_COLOURED if r and r[k])
+        title = (f"{day.isoformat()}: {_fmt(r['total'])} files, led by "
+                 f"{DS_LABEL[led]} ({parts})" if led
+                 else f"{day.isoformat()}: nothing committed")
+        cells.append(f'<span class="d-{led or "none"}" '
+                     f'title="{_esc(title)}"></span>')
+        day += dt.timedelta(days=1)
+    return (f'<div class="int-cad" role="img" aria-label="The dataset that led '
+            f'each of the {len(cells)} days ending {today.isoformat()}">'
+            + "".join(cells) + "</div>"
+            + '<div class="int-cadnums"><span>' + start.isoformat()
+            + "</span><span>one cell per UTC day, coloured by the group that "
+              "led it</span><span>" + today.isoformat() + "</span></div>")
 
 
 _TABS = [("overview", "Overview"), ("covmap", "Coverage map"),
@@ -472,7 +711,10 @@ _PAGE = """<!DOCTYPE html>
 </main>
 <footer><p>temperatury — internal data status. Every figure on this page is
   computed at build time from the roster and the committed data cache; nothing
-  here is estimated or filled in.</p></footer>
+  here is estimated or filled in. The one exception is labelled where it appears:
+  the Progress tab's pace and arrival date are arithmetic on a stated window of
+  that same history, and they describe what would happen if it held, not a
+  plan.</p></footer>
 <script>{script}</script>
 </body>
 </html>
@@ -609,28 +851,109 @@ def _progress_panel(d: dict) -> str:
      estimated in its place.</p>
 """
     first_day, first_n = series[0]
-    last_day, last_n = series[-1]
+    covered = series[-1][1]
+    targets, daily, pace = d["targets"], d["daily"], d["pace"]
+    remaining = targets - covered
+
+    if pace:
+        pace_kpis = [
+            ("Current pace", _fmt(round(pace["per_day"])), "per day",
+             f'mean of the last {pace["window"]} days, to {pace["as_of"]} '
+             f'({_fmt(pace["gained"])} locations gained)'),
+            ("Complete at that pace", pace["eta"], "",
+             f'{_fmt(pace["days_left"])} days out - arithmetic on the window '
+             "above, not a schedule"),
+        ]
+    else:
+        # No pace is a statement about the fleet, not a gap in the page: say
+        # which window came back empty rather than printing a dash.
+        pace_kpis = [
+            ("Current pace", "0", "per day",
+             f"no location gained a mean cache file in the last "
+             f"{PACE_WINDOW} days"),
+            ("Complete at that pace", "none", "",
+             "nothing to project from: the roster is complete, or the fleet is "
+             "not adding locations"),
+        ]
+    kpis = [
+        ("Roster covered", f"{_pct(covered, targets):.1f}%", "",
+         f"{_fmt(covered)} of {_fmt(targets)} locations have a mean cache file"),
+        ("Still to gather", _fmt(remaining), "",
+         "locations with no mean cache file yet"),
+        *pace_kpis,
+    ]
+    cards = "".join(
+        f'<div class="int-kpi"><div class="k-lbl">{_esc(lbl)}</div>'
+        f'<div class="k-val">{_esc(val)}'
+        + (f'<span class="k-unit"> {_esc(unit)}</span>' if unit else "")
+        + f'</div><div class="k-sub">{_esc(sub)}</div></div>'
+        for lbl, val, unit, sub in kpis)
+
+    cum, run = {}, 0
+    for r in daily:
+        run += r["mean"]
+        cum[r["day"]] = run
     rows = "".join(
-        f"<tr><td>{_esc(day)}</td>"
-        f'<td class="int-num">{_fmt(n)}</td>'
-        f'<td class="int-num">+{_fmt(n - (series[i - 1][1] if i else 0))}</td></tr>'
-        for i, (day, n) in enumerate(series))
+        f'<tr><td>{_esc(r["day"])}</td>'
+        f'<td class="int-num">{_fmt(cum[r["day"]])}</td>'
+        f'<td class="int-num">{_pct(cum[r["day"]], targets):.1f}%</td>'
+        + "".join(f'<td class="int-num">'
+                  + (f'+{_fmt(r[k])}' if r[k] else '<span class="int-nil">0</span>')
+                  + "</td>" for k in ("mean", "precip", "extremes"))
+        + "<td>" + (f'<span class="int-led d-{r["led"]}">'
+                    f'{_esc(DS_LABEL[r["led"]])}</span>' if r["led"]
+                    else '<span class="int-nil">-</span>') + "</td></tr>"
+        for r in reversed(daily))
+    legend = "".join(f'<b><i class="d-{k}"></i>{_esc(DS_LABEL[k])}</b>'
+                     for k in DS_COLOURED)
     return f"""
-  <h2 class="int-h">Locations with a committed mean cache file</h2>
-  <p class="int-note">The axis counts roster locations whose mean cache file
-     is present <em>now</em>, placed on the UTC day of the commit that first
-     added that file. It measures when data landed in the repository, not when
-     the measurements were taken, and it sees only a file's <em>current</em>
-     name: a cache file that was re-encoded or renamed dates from the commit
-     that produced the name it carries now, not from when its location was
-     first gathered. The first point is therefore a cumulative total, not a
-     starting line - it stands at {_fmt(first_n)} because that is what had been
-     committed by {_esc(first_day)}. The final value is the same {_fmt(last_n)}
-     the Overview tab reports, by construction.</p>
-  {_progress_svg(series)}
+  <h2 class="int-h">Distance to a complete roster</h2>
+  <p class="int-note">Covered means the same thing here as everywhere else in
+     this build: the location has a mean cache file. Precipitation, extremes and
+     current-year files enrich cities that are already rendered, so they can move
+     a great deal on a day coverage does not move at all - which is what the two
+     panels below are for.</p>
+  <div class="int-kpis">{cards}</div>
+  <div class="int-goal" role="img" aria-label="{_pct(covered, targets):.1f} percent of the roster covered">
+    <span class="g-done" style="width:{_pct(covered, targets):.2f}%"></span>
+    <span class="g-left" style="width:{_pct(remaining, targets):.2f}%"></span>
+  </div>
+  <div class="int-goalnums"><span>{_fmt(covered)} gathered</span>
+    <span>{_fmt(remaining)} remaining</span></div>
+
+  <h2 class="int-h">Mean coverage against the full roster</h2>
+  <p class="int-note">Each point counts roster locations whose mean cache file is
+     present <em>now</em>, placed on the UTC day of the commit that first added
+     that file. It measures when data landed in the repository, not when the
+     measurements were taken, and it sees only a file's <em>current</em> name: a
+     cache file that was re-encoded or renamed dates from the commit that
+     produced the name it carries now, not from when its location was first
+     gathered. The first point is therefore a cumulative total, not a starting
+     line - it stands at {_fmt(first_n)} because that is what had been committed
+     by {_esc(first_day)}, and the last is the same {_fmt(covered)} the Overview
+     tab reports, by construction. The axis runs to the whole roster, so the band
+     above the line is the work that is left; the dashed continuation extends the
+     last {PACE_WINDOW} days' average and holds only while the fleet, the quota
+     and the group rotation stay as they are. A re-encode dates thousands of
+     files to one commit, so for the {PACE_WINDOW} days after one the pace above
+     reads as gathering that never happened.</p>
+  {_runway_svg(series, targets, pace)}
+
+  <h2 class="int-h">Which group led each day</h2>
+  <p class="int-note">The free tier meters by the hour and one chunk of 15
+     locations across the whole window is heavy, so a run lands roughly 75
+     locations before every further call comes back over-quota: whichever group
+     runs first takes nearly all of it. <code>tools/daily-chunk.sh</code> rotates
+     that leader by UTC day, which is why mean coverage advances on about one day
+     in three and is flat - not stalled - on the other two.</p>
+  {_cadence_strip(daily)}
+  <div class="int-legend">{legend}</div>
+
   <div class="int-wrap"><table class="int-table"><thead><tr>
-    <th>Commit date (UTC)</th><th class="int-num">Cumulative</th>
-    <th class="int-num">Added</th></tr></thead>
+    <th>Commit date (UTC)</th><th class="int-num">Mean cumulative</th>
+    <th class="int-num">Share of roster</th><th class="int-num">+ mean</th>
+    <th class="int-num">+ precip</th><th class="int-num">+ extremes</th>
+    <th>Led by</th></tr></thead>
     <tbody>{rows}</tbody></table></div>
 """
 
