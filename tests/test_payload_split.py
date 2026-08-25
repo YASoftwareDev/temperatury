@@ -3,7 +3,6 @@ and be fetched from a second Pages origin (TEMPERATURY_PAYLOAD_DIR/_BASE),
 while meta files and, with the knobs unset, everything else stay exactly as
 before. CI is the only intended user of the knobs; local builds and every
 other test run unset."""
-import json
 import os
 import subprocess
 import sys

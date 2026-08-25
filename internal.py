@@ -1028,7 +1028,7 @@ def _progress_panel(d: dict, today: dt.date | None = None) -> str:
         f'<tr><td>{_esc(r["day"])}</td>'
         f'<td class="int-num">{_fmt(cum[r["day"]])}</td>'
         f'<td class="int-num">{_pct(cum[r["day"]], targets):.1f}%</td>'
-        + "".join(f'<td class="int-num">'
+        + "".join('<td class="int-num">'
                   + (f'+{_fmt(r[k])}' if r[k] else '<span class="int-nil">0</span>')
                   + "</td>" for k in DS_TABLE)
         + "<td>" + (f'<span class="int-led d-{_tint(r["led"])}">'
@@ -1206,7 +1206,7 @@ def _gaps_panel(d: dict) -> str:
 {empty_block}"""
 
 
-def render(d: dict, map_lang: str) -> str:
+def render(d: dict, map_lang: str | None) -> str:
     bodies = {"overview": _overview_panel(d), "covmap": _covmap_panel(map_lang),
               "regions": _regions_panel(d),
               "progress": _progress_panel(d, dt.date.fromisoformat(d["today"])),

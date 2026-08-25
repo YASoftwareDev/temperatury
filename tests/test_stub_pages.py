@@ -71,8 +71,10 @@ def test_stub_widgets_load_on_demand():
     """Stub pages keep the monthly-range/records widgets, but their payload
     (over half a tail city's chart JSON) rides a separate <slug>_w.json that
     is fetched only when a widget scrolls into view."""
-    import time as _time
-    import http.server, functools, threading, contextlib
+    import contextlib
+    import functools
+    import http.server
+    import threading
     from playwright.sync_api import sync_playwright
 
     tail, _ = _tail_and_rich_slugs()

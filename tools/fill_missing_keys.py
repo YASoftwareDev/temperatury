@@ -17,7 +17,6 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-import i18n  # noqa: E402
 from tools.gen_mt_langs import EN, KEYS, _protect, _restore, _translate_batch  # noqa: E402
 from deep_translator import GoogleTranslator  # noqa: E402
 
