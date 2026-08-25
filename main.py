@@ -245,7 +245,9 @@ def _render_city(task) -> tuple[str, int]:
     # stub page drops the two widget figures to match (report._CITYBODY_JS
     # prunes on the same flags this write is gated on).
     _rich_set = _WORKER.get("richslugs")
-    _stub = bool(_rich_set) and location.slug not in _rich_set
+    # _WORKER['richslugs'] is set to `richslugs or None`, so an empty set is
+    # stored as None: testing for None is the same condition, and it narrows.
+    _stub = _rich_set is not None and location.slug not in _rich_set
     shared = dict(payloads)
     if not _stub:
         shared["_range"] = range_data

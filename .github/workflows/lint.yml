@@ -127,3 +127,25 @@ jobs:
           tar xzf actionlint.tgz actionlint
       - name: Actionlint
         run: ./actionlint -color
+
+  # mypy in lenient mode: no strict flags, third-party stubs ignored. It reported
+  # 17 items over 72 files when first run, few enough to fix rather than
+  # suppress, and it caught what no other checker here could - a local list in
+  # tools/gen_cities.py rebinding the nested near() helper it shares a scope
+  # with, harmless today only because every call happens to run first.
+  #
+  # NOT strict mode. The Progress tab's day-breakdown rows are plain dicts, so
+  # strict would demand a large annotation project to say very little.
+  types:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install mypy
+        run: pip install mypy==2.3.1
+      - name: Mypy
+        run: mypy --ignore-missing-imports --explicit-package-bases --exclude '(output|\.venv|\.lint-js)' .

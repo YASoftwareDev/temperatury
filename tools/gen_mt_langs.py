@@ -124,7 +124,7 @@ def gen_one(app_code: str, g_code: str) -> dict:
         p, toks = _protect(EN[k])
         protected.append(p); tokmaps.append(toks)
     translated = _translate_batch(tr, protected)
-    out: dict[str, str] = {}
+    out: dict[str, str | bool] = {}
     kept_en = 0
     for k, tr_s, toks in zip(KEYS, translated, tokmaps):
         r = _restore(tr_s, toks)

@@ -76,7 +76,9 @@ def build_path(geom: BaseGeometry, tol: float = 0.12):
         for hole in p.interiors:
             rings.append(list(hole.coords))
 
-    xs, ys, proj = [], [], []
+    xs: list[float] = []
+    ys: list[float] = []
+    proj: list[list[tuple[float, float]]] = []
     for ring in rings:
         pr = [(x * kx, -y) for x, y in ring]  # y-flip for screen coords
         proj.append(pr)
@@ -91,7 +93,7 @@ def build_path(geom: BaseGeometry, tol: float = 0.12):
     segs = []
     for pr in proj:
         pts = [((px - minx) * scale, (py - miny) * scale) for px, py in pr]
-        out = []
+        out: list[tuple[float, float]] = []
         for x, y in pts:
             xr, yr = round(x, 1), round(y, 1)
             if out and out[-1] == (xr, yr):
