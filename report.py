@@ -1331,9 +1331,10 @@ def build_site(
     _decades = _decade_anomalies(_means, _baseline)
     hero_spark = _hero_spark_svg(_decades, tr.get("qv_chart_alt",
                                  "Decade-by-decade warming, filled area chart"))
-    _dfirst = next((d0 for d0, v in zip(range(1940, 2030, 10), _decades)
-                    if v is not None), 1940)
-    _dlast = next((d0 for d0, v in zip(range(2020, 1930, -10), reversed(_decades))
+    _dfirst = next((d0 for d0, v in zip(range(1940, 2030, 10), _decades,
+                                        strict=True) if v is not None), 1940)
+    _dlast = next((d0 for d0, v in zip(range(2020, 1930, -10),
+                                       reversed(_decades), strict=True)
                    if v is not None), 2020)
     hero_spark_block = (
         f'<div class="rh-spark-wrap">{hero_spark}'

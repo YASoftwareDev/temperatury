@@ -230,7 +230,11 @@ def load_temperatures_bulk(
             print(f"  ! skipping {label}: {error}")
             continue
         items = payload if isinstance(payload, list) else [payload]
-        for location, item in zip(chunk, items):
+        # strict=False: an upstream answer shorter than the chunk is already
+        # tolerated here - the handler above skips a failed chunk outright
+        # rather than aborting the run - and the responses come back in request
+        # order, so the pairs that do exist are the right pairs.
+        for location, item in zip(chunk, items, strict=False):
             frame = _parse_daily(item.get("daily"), location.name)
             codec.write_frame(frame, _cache_path(location, start_year, end_year))
             result[location.slug] = _clean(frame, location.name)
@@ -314,7 +318,7 @@ def load_extremes_bulk(
             print(f"  ! skipping {label}: {error}")
             continue
         items = payload if isinstance(payload, list) else [payload]
-        for location, item in zip(chunk, items):
+        for location, item in zip(chunk, items, strict=False):
             frame = _parse_extremes(item.get("daily"), location.name)
             codec.write_frame(frame, _extremes_cache_path(location, start_year, end_year))
             result[location.slug] = frame.dropna(subset=list(_EXTREME_COLS))
@@ -388,7 +392,7 @@ def load_precip_bulk(
             print(f"  ! skipping {label}: {error}")
             continue
         items = payload if isinstance(payload, list) else [payload]
-        for location, item in zip(chunk, items):
+        for location, item in zip(chunk, items, strict=False):
             frame = _parse_precip(item.get("daily"), location.name)
             codec.write_frame(frame, _precip_cache_path(location, start_year, end_year))
             result[location.slug] = frame.dropna(subset=["precipitation_sum"])
@@ -465,7 +469,7 @@ def load_apparent_bulk(
             print(f"  ! skipping {label}: {error}")
             continue
         items = payload if isinstance(payload, list) else [payload]
-        for location, item in zip(chunk, items):
+        for location, item in zip(chunk, items, strict=False):
             frame = _parse_apparent(item.get("daily"), location.name)
             codec.write_frame(frame, _apparent_cache_path(location, start_year, end_year))
             result[location.slug] = frame.dropna(subset=["apparent_temperature_max"])
@@ -575,7 +579,7 @@ def _load_current(
             print(f"  ! skipping {label}: {error}")
             continue
         items = payload if isinstance(payload, list) else [payload]
-        for location, item in zip(group, items):
+        for location, item in zip(group, items, strict=False):
             frame = parse(item.get("daily"), location.name)
             codec.write_frame(frame, _current_cache_path(location, year, suffix))
             frame = frame.dropna(subset=list(columns))

@@ -126,7 +126,7 @@ def gen_one(app_code: str, g_code: str) -> dict:
     translated = _translate_batch(tr, protected)
     out: dict[str, str | bool] = {}
     kept_en = 0
-    for k, tr_s, toks in zip(KEYS, translated, tokmaps):
+    for k, tr_s, toks in zip(KEYS, translated, tokmaps, strict=True):
         r = _restore(tr_s, toks)
         if r is None or not r:
             out[k] = EN[k]; kept_en += 1     # safety: broken/empty -> English

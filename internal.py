@@ -548,7 +548,8 @@ def _runway_svg(series: list[tuple[str, int]], targets: int,
     def Y(v):
         return padT + ih - (min(v, targets) / targets) * ih
 
-    pts = " ".join(f"{X(d.toordinal()):.1f},{Y(v):.1f}" for d, v in zip(days, vals))
+    pts = " ".join(f"{X(d.toordinal()):.1f},{Y(v):.1f}"
+                   for d, v in zip(days, vals, strict=True))
     if anchor > days[-1].toordinal():
         pts += f" {X(anchor):.1f},{Y(covered):.1f}"
     area = f"{X(x0):.1f},{padT + ih:.1f} {pts} {X(anchor):.1f},{padT + ih:.1f}"
@@ -585,7 +586,7 @@ def _runway_svg(series: list[tuple[str, int]], targets: int,
                    f'cy="{Y(v):.1f}" r="2.6">'
                    f"<title>{d.isoformat()}: {_fmt(v)} covered, "
                    f"{_pct(v, targets):.1f}% of the roster</title></circle>"
-                   for d, v in zip(days, vals))
+                   for d, v in zip(days, vals, strict=True))
     here = (f'<circle class="ic-dot" cx="{X(anchor):.1f}" '
             f'cy="{Y(covered):.1f}" r="4.5"/>'
             f'<text class="ic-end" x="{X(anchor) - 10:.1f}" '
