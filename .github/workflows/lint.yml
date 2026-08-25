@@ -87,3 +87,43 @@ jobs:
 
       - name: Oxlint
         run: npx --yes oxlint@1.42.0 assets .lint-js
+
+  # The fleet scripts drive the gatherers on machines this repo never sees, so a
+  # quoting bug surfaces as missing data days later rather than as a failure
+  # here. shellcheck ships on the runner image, so this costs nothing.
+  #
+  # --severity=warning on purpose: the two remaining notes were read and are
+  # correct as written. tools/era5_run.sh counts tool-generated .pkl names with
+  # ls (SC2012), and tools/sync-and-gather.sh's `git diff --quiet && git diff
+  # --cached --quiet || skip` (SC2015) means exactly what it says - either
+  # index dirty, skip.
+  shell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - name: Shellcheck
+        run: shellcheck --severity=warning tools/*.sh
+
+  # actionlint type-checks the workflows themselves - expressions, contexts,
+  # runner labels - and runs shellcheck over every `run:` block, which is how
+  # the unquoted clone URL in charts.yml was found.
+  #
+  # Pinned by version AND checksum: this downloads a binary, and an unpinned
+  # release would let an upstream change alter what CI enforces.
+  actions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      ACTIONLINT_VERSION: 1.7.7
+      ACTIONLINT_SHA256: 023070a287cd8cccd71515fedc843f1985bf96c436b7effaecce67290e7e0757
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install actionlint
+        run: |
+          url="https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          curl -sSLf -o actionlint.tgz "$url"
+          echo "${ACTIONLINT_SHA256}  actionlint.tgz" | sha256sum -c -
+          tar xzf actionlint.tgz actionlint
+      - name: Actionlint
+        run: ./actionlint -color

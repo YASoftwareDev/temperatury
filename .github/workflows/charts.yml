@@ -114,7 +114,7 @@ jobs:
             chmod 600 ~/.ssh/charts_key_$i
             export GIT_SSH_COMMAND="ssh -i ~/.ssh/charts_key_$i -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
             git clone -q --depth 1 --branch gh-pages \
-              git@github.com:YASoftwareDev/${REPOS[$i]}.git /tmp/charts-repo-$i
+              "git@github.com:YASoftwareDev/${REPOS[$i]}.git" /tmp/charts-repo-$i
             mkdir -p /tmp/charts-repo-$i/charts
             # rsync --delete prunes payloads of cities that left the roster
             # or moved to another shard.
