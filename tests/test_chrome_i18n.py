@@ -5,7 +5,6 @@ The whole-<main> parity test does not cover the topbar (map link, city-search
 placeholder), the footer, or the news link's href. These assert they follow an
 in-place language switch too.
 """
-import json
 from urllib.parse import quote
 
 import pytest

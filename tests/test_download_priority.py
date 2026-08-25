@@ -19,6 +19,7 @@ import random
 import sys
 from concurrent.futures import Future
 from pathlib import Path
+from typing import ClassVar
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 
@@ -81,7 +82,7 @@ def test_two_fetchers_do_not_march_the_same_order():
 class _Args:
     """The argparse namespace `run()` expects, for a single offline mean pass."""
     start, end = 1940, 2025
-    groups = ["mean"]
+    groups: ClassVar[list[str]] = ["mean"]
     rendered_only = False
     workers = 1
     max_seconds = 0

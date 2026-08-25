@@ -609,7 +609,7 @@ def _progress_panel(d: dict) -> str:
      estimated in its place.</p>
 """
     first_day, first_n = series[0]
-    last_day, last_n = series[-1]
+    last_n = series[-1][1]
     rows = "".join(
         f"<tr><td>{_esc(day)}</td>"
         f'<td class="int-num">{_fmt(n)}</td>'
@@ -689,7 +689,7 @@ def _gaps_panel(d: dict) -> str:
 {empty_block}"""
 
 
-def render(d: dict, map_lang: str) -> str:
+def render(d: dict, map_lang: str | None) -> str:
     bodies = {"overview": _overview_panel(d), "covmap": _covmap_panel(map_lang),
               "regions": _regions_panel(d), "progress": _progress_panel(d),
               "gaps": _gaps_panel(d)}
