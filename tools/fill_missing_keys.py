@@ -45,7 +45,7 @@ def main():
                 protected.append(pr); tokmaps.append(toks)
             translated = _translate_batch(tr, protected)
             added = 0
-            for k, tr_s, toks in zip(missing, translated, tokmaps):
+            for k, tr_s, toks in zip(missing, translated, tokmaps, strict=True):
                 r = _restore(tr_s, toks)
                 d[k] = r if (r) else EN[k]
                 added += 1

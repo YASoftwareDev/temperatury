@@ -141,7 +141,9 @@ def _fetch_chunk(chunk, daily, parse, path_fn, start, end):
         return 0, len(chunk)
     items = payload if isinstance(payload, list) else [payload]
     written = 0
-    for loc, item in zip(chunk, items):
+    # strict=False, as in data.py: a chunk the API answers short is skipped
+    # rather than fatal, and the answers come back in request order.
+    for loc, item in zip(chunk, items, strict=False):
         try:
             frame = parse(item.get("daily"), loc.name)
             _atomic_write(frame, path_fn(loc, start, end))

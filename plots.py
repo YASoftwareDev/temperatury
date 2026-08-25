@@ -309,7 +309,8 @@ def _doy_threshold(series: pd.Series, pct: float, window: int = 7) -> np.ndarray
     lo, hi = BASELINE
     base = series[(series.index.year >= lo) & (series.index.year <= hi)]
     by_doy: dict[int, list] = {}
-    for d, v in zip(base.index.dayofyear.to_numpy(), base.to_numpy(dtype=float)):
+    for d, v in zip(base.index.dayofyear.to_numpy(),
+                    base.to_numpy(dtype=float), strict=True):
         by_doy.setdefault(int(d), []).append(v)
     thr = np.full(367, np.nan)
     for d in range(1, 367):
