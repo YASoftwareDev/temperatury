@@ -2683,18 +2683,6 @@
   // True once any real region (remembered or geolocated) has been rendered, so the
   // geolocation callbacks keep that city's "nearest" hint instead of reverting to
   // the server-default note over a city that is still on screen.
-  // Snapshot the pristine server-default hero (.rh-inner) before the first
-  // render. NOTE: the restore half of this pair no longer exists, so nothing
-  // reads the snapshot back - see the PR that added JS linting.
-  var heroDefaultHTML = null;
-  function heroSnapshotDefault() {
-    if (heroDefaultHTML !== null) return;
-    var host = document.getElementById("region-hero");
-    var inner = host && host.querySelector(".rh-inner");
-    if (inner) {
-      heroDefaultHTML = inner.innerHTML;
-    }
-  }
   // Render a hero card for `entry` into `root` (the "Your region" hero by default,
   // or a Famous-cities carousel slide). Elements are matched by class WITHIN root,
   // and the localised template attributes are read from root, so multiple cards
@@ -2709,7 +2697,6 @@
     function el(cls) { return host.querySelector("." + cls); }
     function set(cls, txt) { var e = el(cls); if (e) e.textContent = txt; }
     var isRegion = host.id === "region-hero";
-    if (isRegion) heroSnapshotDefault();   // capture the pristine default once
     slug = slug || entry.s;
     // Current-language name first (heroCityName reads the inline __omniData, so it
     // is right even on an early cache render); the cached dn is only a fallback for
