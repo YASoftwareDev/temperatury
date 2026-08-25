@@ -84,7 +84,7 @@ def records_payload(df_ext: pd.DataFrame, extra: pd.DataFrame | None = None) -> 
 
 
 def _widget(base: str, title: str, cap: str, year_label: str,
-            payload: dict, months: list,
+            payload: dict | None, months: list,
             title_attr: str = "", cap_attr: str = "",
             year_attr: str = "") -> str:
     """Common widget shell: title, year <select>, canvas, caption.
@@ -112,10 +112,10 @@ def _widget(base: str, title: str, cap: str, year_label: str,
 
 
 def range_widget_html(slug: str, title: str, cap: str, year_label: str,
-                      payload: dict, months: list, **attrs) -> str:
+                      payload: dict | None, months: list, **attrs) -> str:
     return _widget(f"rng-{slug}", title, cap, year_label, payload, months, **attrs)
 
 
 def records_widget_html(slug: str, title: str, cap: str, year_label: str,
-                        payload: dict, months: list, **attrs) -> str:
+                        payload: dict | None, months: list, **attrs) -> str:
     return _widget(f"rec-{slug}", title, cap, year_label, payload, months, **attrs)
