@@ -266,7 +266,7 @@ def _city_extremes(stats, tr, L) -> dict:
 
 def _comparison(years, zone_series, tr, L, Lf) -> dict:
     """Every zone's warming curve on one chart (LOESS anomalies, no trend line)."""
-    series = [
+    series: list[tuple] = [
         (values, _ZONE_COLOR[key], _ZONE_NAME_KEY[key], {}, "per_decade_c", 2)
         for key, values in zone_series
     ]

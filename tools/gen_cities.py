@@ -227,13 +227,13 @@ def main() -> None:
                 continue
             la, lo = float(f[2]), float(f[3])
             k = math.cos(math.radians(la))
-            near = [i for i, r in enumerate(rows)
+            near_rows = [i for i, r in enumerate(rows)
                     if abs(float(r[2]) - la) < NEAR_DEG
                     and abs(float(r[3]) - lo) * k < NEAR_DEG]
-            if near:
+            if near_rows:
                 print(f"kept committed identity {f[1]!r} over upstream "
-                      f"rename {rows[near[0]][1]!r}")
-                rows[near[0]] = tuple(f)
+                      f"rename {rows[near_rows[0]][1]!r}")
+                rows[near_rows[0]] = tuple(f)
             else:
                 print(f"kept committed-data city {f[1]!r} dropped upstream")
                 rows.append(tuple(f))

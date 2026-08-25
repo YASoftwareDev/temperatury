@@ -43,7 +43,7 @@ DATA_DIR = config.DATA_DIR
 
 def _load_era5(ex_dir: Path, group: str):
     """Return {stat_col: date×slug DataFrame} in site units, for years on disk."""
-    out = {}
+    out: dict[str, object] = {}
     for key, _api, _stat, col, conv in ex.GROUPS[group]["stats"]:
         parts = [pd.read_pickle(p) for p in sorted(ex_dir.glob(f"{key}_*.pkl"))]
         if not parts:
