@@ -85,8 +85,8 @@
   }
   // Format a Celsius figure in the active unit. `signed` picks which of the two
   // sign conventions already in the codebase applies: 1 = Python's "+.Nf" (a zero
-  // still shows "+0.00", what the chart trend legends use), 2 = report._signed /
-  // fmtSigned (a value rounding to zero prints bare, never "+0.0" or "-0.00").
+  // still shows "+0.00", what the chart trend legends use), 2 = report._signed
+  // (a value rounding to zero prints bare, never "+0.0" or "-0.00").
   function fmtTemp(c, kind, dec, signed) {
     if (c == null) return "";
     dec = dec == null ? 1 : dec;
@@ -1332,11 +1332,6 @@
   // set still get a real answer - computed on the visitor's machine, never stale.
   // Signed number that never shows "+0.0" or "-0.00": a value rounding to zero
   // prints a bare unsigned zero, so a near-flat city reads honestly.
-  function fmtSigned(v, dp) {
-    var s = v.toFixed(dp);
-    if (parseFloat(s) === 0) return (0).toFixed(dp);
-    return (v > 0 ? "+" : "") + s;
-  }
   function luStripeColor(v) {
     if (v == null) return "#8080802e";
     var lo = -1.0, hi = 1.5, x = Math.max(lo, Math.min(hi, v)), a, b, k;
@@ -2566,10 +2561,6 @@
   // Tier-aware page URL for the CTA, so a remembered/geolocated city with no shell
   // in this language links cross-folder instead of to a pruned same-folder 404.
   function heroCityUrl(slug) { var e = heroCityEntry(slug); return e ? e[1] : slug + ".html"; }
-  function heroSet(id, txt) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = txt;
-  }
   // A city's decade anomalies -> a hard-stop warming-stripes gradient for the
   // hero backdrop (mirrors _stripe_gradient_css in report.py).
   function heroStripeBg(st) {
@@ -2692,39 +2683,10 @@
   // True once any real region (remembered or geolocated) has been rendered, so the
   // geolocation callbacks keep that city's "nearest" hint instead of reverting to
   // the server-default note over a city that is still on screen.
-  var heroShown = false;
-  // Snapshot the pristine server-default hero (the whole .rh-inner + the stripe
-  // var) before the first render, so a remembered card that fresh data later
-  // invalidates can be undone to the coherent default instead of lingering stale.
-  var heroDefaultHTML = null, heroDefaultStripes = null;
-  function heroSnapshotDefault() {
-    if (heroDefaultHTML !== null) return;
-    var host = document.getElementById("region-hero");
-    var inner = host && host.querySelector(".rh-inner");
-    if (inner) {
-      heroDefaultHTML = inner.innerHTML;
-      heroDefaultStripes = host.style.getPropertyValue("--rh-stripes");
-    }
-  }
-  function heroRestoreDefault() {
-    var host = document.getElementById("region-hero");
-    var inner = host && host.querySelector(".rh-inner");
-    if (inner && heroDefaultHTML !== null) {
-      inner.innerHTML = heroDefaultHTML;   // display-only markup, no listeners lost
-      if (heroDefaultStripes) host.style.setProperty("--rh-stripes", heroDefaultStripes);
-      else host.style.removeProperty("--rh-stripes");
-      // The country silhouette lives outside .rh-inner: drop it and revoke any
-      // still-pending outline fetch (injectHeroOutline re-checks data-outline).
-      var silho = host.querySelector(".rh-silho");
-      if (silho) silho.parentNode.removeChild(silho);
-      host.removeAttribute("data-outline");
-      heroShown = false;
-    }
-  }
   // Render a hero card for `entry` into `root` (the "Your region" hero by default,
   // or a Famous-cities carousel slide). Elements are matched by class WITHIN root,
   // and the localised template attributes are read from root, so multiple cards
-  // coexist. Only the region hero participates in the snapshot/restore + heroShown
+  // coexist. Only the region hero participates in the snapshot/restore
   // machinery - a carousel slide is a separate, throwaway render.
   function renderHeroEntry(entry, slug, hintAttr, root) {
     var host = root || document.getElementById("region-hero");
@@ -2735,7 +2697,6 @@
     function el(cls) { return host.querySelector("." + cls); }
     function set(cls, txt) { var e = el(cls); if (e) e.textContent = txt; }
     var isRegion = host.id === "region-hero";
-    if (isRegion) heroSnapshotDefault();   // capture the pristine default once
     slug = slug || entry.s;
     // Current-language name first (heroCityName reads the inline __omniData, so it
     // is right even on an early cache render); the cached dn is only a fallback for
@@ -2821,7 +2782,6 @@
         box.appendChild(em); box.appendChild(wrap);
       } else { box.classList.remove("analog"); }
     }
-    if (isRegion) heroShown = true;
     return name;
   }
   window.renderHeroEntry = renderHeroEntry;
@@ -3234,7 +3194,7 @@ function _abs(arr) {
     return v == null ? v : Math.round(window.__tconv.conv(v, 'abs') * 100) / 100;
   });
 }
-function _opts(months) {
+function _opts() {
   var mu = _cssv('--muted', '#475569');
   return {responsive: true, maintainAspectRatio: false,
     interaction: {intersect: false, mode: 'index'},
@@ -3263,7 +3223,7 @@ function buildRange(base, d, months) {
         {label: initial, data: _abs(d.years[initial]), borderColor: _warm(),
          backgroundColor: _warm(), showLine: false, pointRadius: 4,
          spanGaps: true}
-      ]}, options: _opts(months)});
+      ]}, options: _opts()});
   }
   build();
   sel.addEventListener('change', function () {
@@ -3294,7 +3254,7 @@ function buildRecords(base, d, months) {
         {label: initial + ' ▼', data: _abs(d.years[initial].low),
          borderColor: _cool(), backgroundColor: _cool(), showLine: false,
          pointRadius: 4, spanGaps: true}
-      ]}, options: _opts(months)});
+      ]}, options: _opts()});
   }
   build();
   sel.addEventListener('change', function () {
@@ -3307,3 +3267,11 @@ function buildRecords(base, d, months) {
   });
   _registerExtraChart(base, function () { try { chart.destroy(); } catch (e) {} }, build);
 }
+
+// The two widget builders are the only cross-file API this file exposes from
+// outside the IIFE, so they reached window implicitly. Stated explicitly, the
+// same way renderChart and initRegionEmbed are: report.py's per-city inline
+// script calls both through window, which no linter reading this file alone
+// can see.
+window.buildRange = buildRange;
+window.buildRecords = buildRecords;
