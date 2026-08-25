@@ -20,7 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import i18n  # noqa: E402
-from tools.gen_mt_langs import EN, _restore, _translate_batch  # noqa: E402
+from tools.gen_mt_langs import _restore, _translate_batch  # noqa: E402
 from tools.fill_missing_keys import GCODE  # noqa: E402
 from deep_translator import GoogleTranslator  # noqa: E402
 

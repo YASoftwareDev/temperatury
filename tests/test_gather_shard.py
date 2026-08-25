@@ -73,7 +73,8 @@ def test_no_bulk_request_mixes_owned_and_fallback_cities(monkeypatch):
         args.shard = shard
         chunks: list[list] = []
         monkeypatch.setattr(om_parallel, "_fetch_chunk",
-                            lambda chunk, *a: (chunks.append(chunk), (len(chunk), 0))[1])
+                            lambda chunk, *a, _c=chunks:
+                            (_c.append(chunk), (len(chunk), 0))[1])
         daily, parse, _, chunk_sz = om_parallel.GROUPS["mean"]
         monkeypatch.setitem(om_parallel.GROUPS, "mean",
                             (daily, parse, lambda l, s, e: _NeverCached(), chunk_sz))

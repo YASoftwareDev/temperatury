@@ -1,0 +1,49 @@
+name: Lint
+
+# Separate from Tests on purpose. This job needs no data checkout, no chromium
+# and no dependencies, so it answers in seconds where the suite takes minutes -
+# a linter that reports after the tests would never be read first.
+#
+# The rule set is in ruff.toml and was chosen by measurement: a rule is enabled
+# only if it reported nothing on this codebase, or if what it reported was a
+# real defect. That is what lets this job be green from its first run, which is
+# the whole point - a check that starts red is a check everyone learns to skip.
+#
+# The version is pinned. Ruff's default rule set widens between releases (0.16
+# already reports rules that were opt-in earlier), so an unpinned install turns
+# an unrelated PR red for reasons its author did not introduce.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Shallow is fine here, unlike the test job: nothing in the lint path
+      # reads the data/ commit history.
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install ruff
+        run: pip install ruff==0.16.4
+
+      # --output-format=github turns each finding into a PR annotation on the
+      # offending line rather than a line in a log nobody opens.
+      - name: Ruff
+        run: ruff check --output-format=github .

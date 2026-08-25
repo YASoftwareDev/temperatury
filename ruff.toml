@@ -1,0 +1,50 @@
+# Ruff configuration. Kept in ruff.toml rather than pyproject.toml: this repo
+# ships no package, and a pyproject would be packaging metadata nothing reads.
+#
+# The rule set is chosen from measurement, not from defaults. A rule is enabled
+# only if it reports NOTHING on this codebase today, or if what it reports is a
+# real defect that this change fixes. Anything that fires on a deliberate
+# convention is rejected here with the reason, so CI stays green from day one
+# and every future finding is a real signal rather than noise to be waved past.
+# Counts below are from ruff 0.16.4 over the repo at the time of writing.
+
+target-version = "py312"          # the version CI installs (tests.yml)
+line-length = 100                 # informational: E501 is not enabled, see below
+extend-exclude = ["output", "data"]
+
+[lint]
+select = [
+    "E4",       # imports: E401 multiple-imports-on-one-line (2, fixed here)
+    "E7",       # statement smells: bare except, == None, type() comparison
+    "E9",       # syntax and IO errors                                    (0)
+    "W",        # trailing whitespace, missing newline at EOF             (0)
+    "F",        # pyflakes: unused imports and variables, undefined names (7, fixed here)
+    "B",        # bugbear: the family that found the two real bugs below
+    "PIE",      # unnecessary pass, duplicate class fields                (0)
+    "PLE",      # pylint errors: bad string format, invalid characters    (0)
+    "LOG",      # logging misuse                                          (0)
+    "UP",       # pyupgrade                                               (1, fixed here)
+    "SIM115",   # a file handle opened outside a context manager          (2, fixed here)
+    "RUF012",   # mutable class attribute without ClassVar                (1, fixed here)
+    "RUF059",   # unpacked variable never used                            (1, fixed here)
+]
+
+ignore = [
+    # Deliberate conventions. Each was measured; each would be a mass edit of
+    # working code, and none of them marks a defect in this repo.
+    "E741",    # 66 hits, all `l` for a location - the codebase's own name for
+               # the thing, used consistently since the first commit.
+    "E702",    # 11 hits: compact `a = 1; b = 2` pairs in generated-text tables.
+    "E731",    # 2 hits: small lambdas used as local formatters.
+    "B905",    # 17 hits of zip() without strict=. Every one zips sequences
+               # built to the same length in the line above. Worth revisiting
+               # as its own change; it is not a defect and not a config matter.
+]
+
+[lint.per-file-ignores]
+# Tests build their fixtures before importing what reads them, and pytest's own
+# idiom puts imports inside test bodies.
+"tests/*" = ["E402"]
+
+[lint.flake8-bugbear]
+extend-immutable-calls = []
