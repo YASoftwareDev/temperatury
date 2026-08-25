@@ -154,8 +154,22 @@ jobs:
   # tools/gen_cities.py rebinding the nested near() helper it shares a scope
   # with, harmless today only because every call happens to run first.
   #
-  # NOT strict mode. The Progress tab's day-breakdown rows are plain dicts, so
-  # strict would demand a large annotation project to say very little.
+  # NOT strict mode, and not --check-untyped-defs either. Both were measured on
+  # this tree rather than argued about:
+  #
+  #   --strict                941 errors, 684 of them (73%) no-untyped-def and
+  #                           no-untyped-call - annotate every function and
+  #                           every call target, a whole-codebase project.
+  #   --check-untyped-defs     46 errors in 11 files, all read: 12 are
+  #                           var-annotated, and the other 34 are the
+  #                           `(a, b)[-1]` sequencing idiom in test lambdas,
+  #                           re.search(...).group() where a None match is
+  #                           already the test's failure, and dict values mypy
+  #                           narrowed from their first assignment. No defect
+  #                           among them.
+  #
+  # Enabling either would mean suppressions or annotations for zero found
+  # defects, which is what this repo's rule-selection policy exists to refuse.
   types:
     runs-on: ubuntu-latest
     timeout-minutes: 10
