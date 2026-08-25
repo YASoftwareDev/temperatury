@@ -75,12 +75,16 @@ def test_payload_shard_python_js_parity():
     slugs = sorted(config.LOCATIONS)[::997]           # ~33 spread samples
     slugs += ["newcastle-(za)", "mianzhu,-deyang,-sichuan", "al'met'yevsk"]
     slugs = [s for s in slugs if s in config.LOCATIONS]
-    js = """(slugs) => slugs.map(slug => {
-      var u = unescape(encodeURIComponent(slug)), h = 5381;
-      for (var i = 0; i < u.length; i++)
-        h = (((h << 5) + h) + u.charCodeAt(i)) >>> 0;
-      return h % 2;
-    })"""
+    # Evaluate the resolver THIS BUILD SHIPS, not a copy retyped here. Retyped,
+    # this test pinned itself: both page templates could have drifted from
+    # payload_shard and it would still have passed.
+    from report import PAYLOAD_BASE_JS
+    js = ('(slugs) => {\n'
+          '  window.__chartsBase = ["origin-0", "origin-1"];\n'
+          + PAYLOAD_BASE_JS
+          + '\n  return slugs.map(slug => ["origin-0", "origin-1"]\n'
+            '    .indexOf(window.__payloadBase(slug)));\n'
+          '}')
     with sync_playwright() as p:
         b = p.chromium.launch()
         try:
