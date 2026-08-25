@@ -779,6 +779,12 @@ def test_a_file_kind_is_read_off_its_own_name():
     # dataset would have found out from the live page.
     assert internal._dataset_of("krakow_1940-2025_humidity.tpy") == (
         "krakow", "other", (1940, 2025))
+    # A VERSIONED kind is the other half of that promise, and it goes the other
+    # way: the suffix group takes letters only, so the digit drops the whole name
+    # to no slug and the roster filter removes it. The docstring says so rather
+    # than the group being widened, because no versioned kind exists.
+    assert internal._dataset_of("krakow_1940-2025_precip_v2.tpy") == (
+        "", "other", None)
     ts = int(dt.datetime(2026, 8, 24, 12, tzinfo=dt.UTC).timestamp())
     row = internal._daily({"krakow_1940-2025_humidity.tpy": ts}, {"krakow"},
                           {(1940, 2025)})[0]
@@ -1005,6 +1011,55 @@ def test_a_one_day_series_with_a_pace_still_describes_no_dashed_line():
     assert pace, "the window has to yield a pace for this to test anything"
     html = _panel([("2026-08-24", 40)], rows, pace)
     assert "<svg" not in html and "dashed continuation" not in html
+
+
+def test_a_series_with_no_dated_day_renders_no_prose_about_a_strip():
+    """The rotation heading, its note, the legend and the day table are all
+    drawn from the day breakdown. With a series but no breakdown the section
+    rendered as a heading, a sentence telling the reader every cell in a strip
+    that was not there was empty, a legend, and a table of column headings with
+    no rows under it."""
+    html = _panel([("2026-08-24", 100)], [], None)
+    assert "Which group led each day" not in html
+    assert "the strip below is empty" not in html
+    assert "int-cad" not in html and "int-legend" not in html
+    assert "<th>Led by</th>" not in html
+    # The coverage half needs no history and still renders.
+    assert "Distance to a complete roster" in html and "100 gathered" in html
+
+
+def test_a_history_dated_past_the_build_day_is_named_as_that():
+    """_pace refuses a wholly future-dated history under its short-history test,
+    and the tile repeated that reason beside a table listing more days than the
+    window has. The state is a clock that ran ahead, not a history that is too
+    short, and the tile names it."""
+    today = dt.date(2026, 8, 24)
+    spec = [((today + dt.timedelta(days=n)).isoformat(), 50)
+            for n in range(1, internal.PACE_WINDOW + 5)]
+    rows = _day_rows(spec)
+    html = _panel([(spec[-1][0], 650)], rows, None, today=today)
+    # Through _esc, like every other tile subtitle: the apostrophe is escaped.
+    assert internal._esc(
+        "falls after this build's own day (2026-08-24)") in html
+    assert "shorter than that" not in html
+    # The table really does list more days than the window, which is what made
+    # the old wording false rather than merely imprecise.
+    assert html.count("<tr><td>") > internal.PACE_WINDOW
+
+
+def test_a_day_led_by_a_dataset_with_no_column_is_not_a_row_of_zeros():
+    """The table carries a count column for three of the six datasets a day can
+    be led by. A day of nothing but apparent-temperature files printed three
+    zeros and a "Led by Apparent temperature" pill beside them, which reads as a
+    day that committed nothing and mislabelled it."""
+    row = {"day": "2026-08-24", "total": 500, "led": "apparent",
+           **{k: 0 for k in internal.DS_KEYS}}
+    row["apparent"] = 500
+    html = _panel([("2026-08-24", 100)], [row], None, today=dt.date(2026, 8, 24))
+    assert '<th class="int-num">+ all datasets</th>' in html
+    body = html.split("<th>Led by</th>", 1)[1]
+    assert body.count('class="int-nil">0<') == 3       # mean, precip, extremes
+    assert "+500" in body and "Apparent temperature" in body
 
 
 def test_the_cadence_tooltip_accounts_for_every_file_it_counts():

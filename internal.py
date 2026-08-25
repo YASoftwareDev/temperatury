@@ -93,7 +93,12 @@ def _dataset_of(name: str) -> tuple[str, str, tuple[int, int] | None]:
     predicate: that row counts the bare ``_current`` file, so a location holding
     only the extremes half counts here and not there. A name neither stem
     matches (the generated roster files) has
-    no slug, so the roster filter drops it. The year range comes back with it so
+    no slug, so the roster filter drops it - and a versioned kind
+    (``_precip_v2``) matches neither stem, so it is dropped the same way rather
+    than marking its day; the suffix group is deliberately narrow because no
+    versioned kind exists to widen it for. The year pair comes back as written,
+    unordered: nothing this page does compares its two halves, and the windows it
+    is matched against are built from the same file names. The year range comes back with it so
     a caller can keep the breakdown to the windows the page is built for - the
     coverage span for the dated caches, the build's own year for the current-year
     ones. A cache left behind by an earlier window is a real file, but it is not
@@ -993,6 +998,12 @@ def _progress_panel(d: dict, today: dt.date | None = None) -> str:
         # A "0" per day would be worse still: a figure the page never measured.
         if covered >= targets:
             why = "the roster is complete"
+        elif daily and dt.date.fromisoformat(daily[0]["day"]) > today:
+            # _pace refuses this one under its short-history test, but "shorter
+            # than the window" is a false description of a table listing more
+            # days than the window has. The state is a clock, not a history.
+            why = ("every dated day in the history falls after this build's own "
+                   f"day ({today.isoformat()})")
         elif (not daily or dt.date.fromisoformat(daily[0]["day"])
                 > today - dt.timedelta(days=PACE_WINDOW - 1)):
             why = f"the history is shorter than that {PACE_WINDOW}-day window"
@@ -1031,6 +1042,7 @@ def _progress_panel(d: dict, today: dt.date | None = None) -> str:
         + "".join('<td class="int-num">'
                   + (f'+{_fmt(r[k])}' if r[k] else '<span class="int-nil">0</span>')
                   + "</td>" for k in DS_TABLE)
+        + f'<td class="int-num">+{_fmt(r["total"])}</td>'
         + "<td>" + (f'<span class="int-led d-{_tint(r["led"])}">'
                     f'{_esc(DS_LABEL[r["led"]])}</span>' if r["led"]
                     else '<span class="int-nil">-</span>') + "</td></tr>"
@@ -1083,6 +1095,33 @@ def _progress_panel(d: dict, today: dt.date | None = None) -> str:
     # branch renders none of them, and the sentence sent that reader looking for
     # panels that are not on the page.
     panels_note = (" - which is what the panels below are for" if series else "")
+    # The heading and the note under it both speak about a strip and a day table
+    # drawn from `daily`; with no strip there is neither, and the section
+    # rendered as a heading, a sentence about empty cells, a legend, and a table
+    # of column headings with no rows under them.
+    cadence = f"""
+  <h2 class="int-h">Which group led each day</h2>
+  <p class="int-note">The free tier meters by the hour and one chunk of 15
+     locations across the whole window is heavy, so a run lands roughly 75
+     locations before every further call comes back over-quota: whichever group
+     runs first takes nearly all of it. <code>tools/daily-chunk.sh</code> rotates
+     that leader by UTC day, which is why mean coverage advances in bursts on
+     about one day in three and barely moves on the other two{rotation_note}.
+     Three datasets have a count column of their own and six can lead a day, so
+     the last column counts them all: a day taken by one of the other three is
+     not the row of zeros its own columns would make it.</p>
+  {strip}
+  <div class="int-legend">{legend}</div>
+
+  <div class="int-wrap"><table class="int-table"><thead><tr>
+    <th>Commit date (UTC)</th><th class="int-num">Mean cumulative</th>
+    <th class="int-num">Share of roster</th>
+    {"".join(f'<th class="int-num">+ {DS_LABEL[k].split()[0].lower()}</th>'
+             for k in DS_TABLE)}
+    <th class="int-num">+ all datasets</th>
+    <th>Led by</th></tr></thead>
+    <tbody>{rows}</tbody></table></div>
+""" if strip else ""
     # Which of the two states with no series this is, rather than both at once.
     # Offered as a disjunction, the note told a reader looking at a 40%-covered
     # tile that nothing was covered yet, and a reader with an empty roster that
@@ -1110,24 +1149,7 @@ def _progress_panel(d: dict, today: dt.date | None = None) -> str:
      committed by {_esc(series[0][0])}, and the last is the same {_fmt(covered)}
      the Overview tab reports, by construction.{axis_note}{proj_note}</p>
   {chart}
-
-  <h2 class="int-h">Which group led each day</h2>
-  <p class="int-note">The free tier meters by the hour and one chunk of 15
-     locations across the whole window is heavy, so a run lands roughly 75
-     locations before every further call comes back over-quota: whichever group
-     runs first takes nearly all of it. <code>tools/daily-chunk.sh</code> rotates
-     that leader by UTC day, which is why mean coverage advances in bursts on
-     about one day in three and barely moves on the other two{rotation_note}.</p>
-  {strip}
-  <div class="int-legend">{legend}</div>
-
-  <div class="int-wrap"><table class="int-table"><thead><tr>
-    <th>Commit date (UTC)</th><th class="int-num">Mean cumulative</th>
-    <th class="int-num">Share of roster</th>
-    {"".join(f'<th class="int-num">+ {DS_LABEL[k].split()[0].lower()}</th>'
-             for k in DS_TABLE)}
-    <th>Led by</th></tr></thead>
-    <tbody>{rows}</tbody></table></div>
+{cadence}
 """ if series else f"""
   <h2 class="int-h">No series in this build</h2>
   <p class="int-note">The chart, the day breakdown and the pace all come from one
