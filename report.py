@@ -275,6 +275,27 @@ def _topbar(home_href: str, lang_nav: str,
     )
 
 
+# The browser half of the payload sharding, emitted into both page templates.
+# It was written out twice, and the parity test pinned a THIRD copy retyped in
+# the test file - so either shipped copy could have drifted from
+# report.payload_shard with the whole suite green, which is the exact failure
+# that test's docstring says it prevents. One definition now, and the test
+# evaluates THIS string in a browser.
+PAYLOAD_BASE_JS = """\
+/* Which payload origin serves a slug: djb2 mod #origins - MUST match
+   report.payload_shard exactly (parity is pinned by a test). null base =
+   relative same-origin fetch (local builds). */
+window.__payloadBase = function (slug) {
+  var B = window.__chartsBase;
+  if (!B) return '../charts/';
+  if (typeof B === 'string') return B;
+  if (B.length === 1) return B[0];
+  var u = unescape(encodeURIComponent(slug)), h = 5381;
+  for (var i = 0; i < u.length; i++) h = (((h << 5) + h) + u.charCodeAt(i)) >>> 0;
+  return B[h % B.length];
+};"""
+
+
 _PAGE = Template(
     """<!DOCTYPE html>
 <html lang="${html_lang}" dir="${html_dir}">
@@ -292,18 +313,7 @@ _PAGE = Template(
 ${seo_head}
 <script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[],P=L[0]||navigator.language||"";/* The VISITOR'S REGION decides, on every language: an American reading the Polish page gets F. Only the PRIMARY locale counts - scanning the whole list gave a Polish visitor F because a SECONDARY entry was en-US, and a region-less tag ("pl", "en") is no evidence of a country. */var m=/-([A-Za-z]{2})(?:$$|-)/.exec(P);if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);if(/[?&]embed=1/.test(location.search))d.setAttribute("data-embed","1");}catch(e){}})();</script>
 <script>window.__chartsBase = ${charts_base_js};
-/* Which payload origin serves a slug: djb2 mod #origins - MUST match
-   report.payload_shard exactly (parity is pinned by a test). null base =
-   relative same-origin fetch (local builds). */
-window.__payloadBase = function (slug) {
-  var B = window.__chartsBase;
-  if (!B) return '../charts/';
-  if (typeof B === 'string') return B;
-  if (B.length === 1) return B[0];
-  var u = unescape(encodeURIComponent(slug)), h = 5381;
-  for (var i = 0; i < u.length; i++) h = (((h << 5) + h) + u.charCodeAt(i)) >>> 0;
-  return B[h % B.length];
-};
+${payload_base_js}
 window.__tpref = ${tpref_i18n};window.__units = ${units_on};
 /* charts.js and Chart.js are deferred, so their API exists only from
    DOMContentLoaded on - deferred scripts are guaranteed to run before it. Fetches
@@ -1533,6 +1543,7 @@ def build_site(
         "isAccessibleForFree": True,
         "url": f"{SITE_BASE}/{lang}/{slug}.html"}
     html = _PAGE.substitute(
+        payload_base_js=PAYLOAD_BASE_JS,
         html_lang=tr["html_lang"],
         title=_title,
         seo_head=_seo_head(lang, languages, f"{slug}.html", _title, _desc, _jsonld),
@@ -1643,18 +1654,7 @@ ${seo_head}
 <!-- world map rendered as SVG with D3 (Equal Earth, an equal-area projection) -->
 <script>(function(){try{var d=document.documentElement,p={};try{p=JSON.parse(localStorage.getItem("temperatury:appearance"))||{}}catch(e){}var os=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.setAttribute("data-dir",p.dir||"objective");d.setAttribute("data-theme",p.theme||os);d.setAttribute("data-density",p.density||"comfortable");d.setAttribute("data-hero",p.hero||"tint");d.setAttribute("data-unit",p.unit||(function(){try{var L=navigator.languages||[],P=L[0]||navigator.language||"";/* The VISITOR'S REGION decides, on every language: an American reading the Polish page gets F. Only the PRIMARY locale counts - scanning the whole list gave a Polish visitor F because a SECONDARY entry was en-US, and a region-less tag ("pl", "en") is no evidence of a country. */var m=/-([A-Za-z]{2})(?:$$|-)/.exec(P);if(m)return["US","PR","GU","VI","AS","MP","BS","BZ","KY","PW","FM","MH"].indexOf(m[1].toUpperCase())>=0?"F":"C";}catch(e){}return"C";})());if(p.accent)d.setAttribute("data-accent",p.accent);if(p.font)d.setAttribute("data-font",p.font);/* ?embed=1: this page framed inside another one (the internal data-status page frames the Map tab). Drops the standalone chrome - top bar, header, search, tabs, footer - via CSS. */if(/[?&]embed=1/.test(location.search))d.setAttribute("data-embed","1");}catch(e){}})();</script>
 <script>window.__chartsBase = ${charts_base_js};
-/* Which payload origin serves a slug: djb2 mod #origins - MUST match
-   report.payload_shard exactly (parity is pinned by a test). null base =
-   relative same-origin fetch (local builds). */
-window.__payloadBase = function (slug) {
-  var B = window.__chartsBase;
-  if (!B) return '../charts/';
-  if (typeof B === 'string') return B;
-  if (B.length === 1) return B[0];
-  var u = unescape(encodeURIComponent(slug)), h = 5381;
-  for (var i = 0; i < u.length; i++) h = (((h << 5) + h) + u.charCodeAt(i)) >>> 0;
-  return B[h % B.length];
-};
+${payload_base_js}
 window.__tpref = ${tpref_i18n};window.__units = ${units_on};
 /* charts.js and Chart.js are deferred, so their API exists only from
    DOMContentLoaded on - deferred scripts are guaranteed to run before it. Fetches
@@ -3842,6 +3842,7 @@ def build_map_page(
     omni_i18n = _esc(json.dumps(_omni_labels, ensure_ascii=False), quote=True)
     omni_ph = tr.get("omni_ph", "Search a city, country, region or any place")
     html = _MAP_PAGE.substitute(
+        payload_base_js=PAYLOAD_BASE_JS,
         html_lang=tr["html_lang"],
         html_dir=tr["dir"],
         title=tr["site_title"],
