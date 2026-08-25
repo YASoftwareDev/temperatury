@@ -76,7 +76,7 @@ def _translate_items(g_code: str, en_items: list[tuple[str, str]]) -> dict:
         protected.append(p); tokmaps.append(toks)
     translated = _translate_batch(tr, protected)
     out: dict[str, str] = {}
-    for (k, v), tr_s, toks in zip(en_items, translated, tokmaps):
+    for (k, v), tr_s, toks in zip(en_items, translated, tokmaps, strict=True):
         r = _restore(tr_s, toks) if tr_s is not None else None
         out[k] = fix_entities(r) if r else v   # tag/placeholder-safe: broken -> English
     return out

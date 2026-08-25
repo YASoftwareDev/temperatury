@@ -92,8 +92,11 @@ def test_payload_shard_python_js_parity():
         finally:
             b.close()
     want = [payload_shard(s, 2) for s in slugs]
+    # strict=False in the message: it is built only once the two already differ,
+    # and a length mismatch raising there would replace the failure message with
+    # a ValueError.
     assert got == want, [
-        (s, w, g) for s, w, g in zip(slugs, want, got) if w != g][:5]
+        (s, w, g) for s, w, g in zip(slugs, want, got, strict=False) if w != g][:5]
     # and the shards actually split the roster, not degenerate to one side
     all_shards = [payload_shard(s, 2) for s in config.LOCATIONS]
     frac = sum(all_shards) / len(all_shards)
