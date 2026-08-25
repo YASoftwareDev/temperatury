@@ -13,7 +13,7 @@ from pathlib import Path
 import langcodes
 
 ROOT = Path(__file__).resolve().parent.parent
-import sys
+import sys  # noqa: E402
 sys.path.insert(0, str(ROOT))
 import i18n  # noqa: E402
 

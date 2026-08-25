@@ -295,7 +295,7 @@ def test_automatic_unit_uses_only_the_primary_locale_region():
             b = p.chromium.launch()
             pg = b.new_page(locale=langs[0])
             pg.add_init_script(
-                "Object.defineProperty(navigator,'languages',{get:()=>%r});" % (langs,))
+                f"Object.defineProperty(navigator,'languages',{{get:()=>{langs!r}}});")
             pg.goto(uri, wait_until="load")
             pg.wait_for_timeout(600)          # let the deferred appearance.js apply
             got = pg.evaluate("document.documentElement.getAttribute('data-unit')")

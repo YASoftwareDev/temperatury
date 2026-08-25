@@ -177,7 +177,7 @@ def main() -> None:
                     if c[0] > MIN_POP and c[6] not in _NON_CITY_FCODES),
                    key=lambda c: -c[0])
 
-    for pop, name, la, lo, cc, tz, _fc in cands:
+    for _pop, name, la, lo, cc, tz, _fc in cands:
         region = REGION.get(cc)
         if not region or near(la, lo):
             skipped += 1
@@ -299,7 +299,7 @@ def write_aliases(all_cities: list[tuple], rows: list[tuple],
     # Apply the per-primary cap, keeping the most populous aliases.
     per_primary: Counter = Counter()
     aliases: list[tuple] = []
-    for pop, pslug, name, region, la, lo in sorted(best.values(), key=lambda v: -v[0]):
+    for _pop, pslug, name, region, la, lo in sorted(best.values(), key=lambda v: -v[0]):
         if per_primary[pslug] >= MAX_ALIASES_PER_PRIMARY:
             continue
         per_primary[pslug] += 1

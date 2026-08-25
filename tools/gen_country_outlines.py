@@ -107,7 +107,8 @@ def build_path(geom: BaseGeometry, tol: float = 0.12):
 
 def main():
     src, dst = sys.argv[1], sys.argv[2]
-    data = json.load(open(src, encoding="utf-8"))
+    with open(src, encoding="utf-8") as fh:
+        data = json.load(fh)
     out, skipped = {}, []
     for feat in data["features"]:
         props = feat.get("properties", {})
@@ -125,8 +126,8 @@ def main():
             continue
         if path:
             out[cc] = path
-    json.dump(out, open(dst, "w", encoding="utf-8"),
-              ensure_ascii=True, separators=(",", ":"))
+    with open(dst, "w", encoding="utf-8") as fh:
+        json.dump(out, fh, ensure_ascii=True, separators=(",", ":"))
     print(f"wrote {len(out)} countries to {dst} "
           f"({len(json.dumps(out))/1024:.1f} KB)")
     if skipped:
