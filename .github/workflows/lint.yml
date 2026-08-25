@@ -47,3 +47,43 @@ jobs:
       # offending line rather than a line in a log nobody opens.
       - name: Ruff
         run: ruff check --output-format=github .
+
+  # Two passes over the same linter, because half this site's JavaScript never
+  # appears in assets/. The per-language runtimes (_page.js, _citybody.js) and
+  # every inline <script> are emitted from Python, so a source-only pass reads
+  # roughly three quarters of what ships - and reads it wrongly in both
+  # directions: it called buildRange unused because its only caller lives in a
+  # Python string, and it could not see a dead helper on every landing page.
+  #
+  # The build is the cheap part: one city, one language, offline, ~4s, and it
+  # emits every page shape (city, landing, widget, embed, internal). The
+  # extractor deduplicates by content, so this covers the same distinct scripts
+  # a full-roster build would.
+  js:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Offline: the committed cache is the source, and CI must never call the
+      # upstream API (its shared IP is rate-limited, which is why data/ is
+      # committed in the first place).
+      - name: Build one city
+        env:
+          TEMPERATURY_OFFLINE: "1"
+          TEMPERATURY_LANGS: en
+        run: python main.py --location krakow
+
+      - name: Collect the generated JavaScript
+        run: python tools/extract_generated_js.py output .lint-js
+
+      - name: Oxlint
+        run: npx --yes oxlint@1.42.0 assets .lint-js

@@ -23,7 +23,7 @@ import pandas as pd
 def _signed(value: float, dp: int) -> str:
     """Signed fixed-point number, but a value that rounds to zero shows as a bare
     unsigned "0.00" - never "+0.0" or "-0.00" (negative zero) for a flat city.
-    Mirrored in JS by charts.js fmtSigned / fmtTemp(signed=2)."""
+    Mirrored in JS by charts.js fmtTemp(signed=2)."""
     s = f"{value:.{dp}f}"
     if float(s) == 0:
         return f"{0.0:.{dp}f}"

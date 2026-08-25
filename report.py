@@ -2363,7 +2363,6 @@ ${topbar}
       if (text != null) n.textContent = text;
       return n;
     }
-    function qvSigned(v, dec) { return (v >= 0 ? '+' : '') + v.toFixed(dec); }
     // °C/°F: charts.js owns the conversion; these read it at call time so the
     // card re-renders correctly after a switch (the map redraws its own cards).
     function qvTemp(v, dec) { return window.__tconv.fmt(v, 'delta', dec, 2); }
