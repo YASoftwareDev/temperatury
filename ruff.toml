@@ -36,9 +36,6 @@ ignore = [
                # the thing, used consistently since the first commit.
     "E702",    # 11 hits: compact `a = 1; b = 2` pairs in generated-text tables.
     "E731",    # 2 hits: small lambdas used as local formatters.
-    "B905",    # 17 hits of zip() without strict=. Every one zips sequences
-               # built to the same length in the line above. Worth revisiting
-               # as its own change; it is not a defect and not a config matter.
 ]
 
 [lint.per-file-ignores]

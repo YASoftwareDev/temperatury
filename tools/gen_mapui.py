@@ -86,7 +86,7 @@ def _translate(g_code: str, en: dict) -> dict:
         protected.append(p); tokmaps.append(toks)
     translated = _translate_batch(tr, protected)
     out = {}
-    for (k, v), tr_s, toks in zip(items, translated, tokmaps):
+    for (k, v), tr_s, toks in zip(items, translated, tokmaps, strict=True):
         r = _restore(tr_s, toks) if tr_s is not None else None
         out[k] = r if r else v
     return out
