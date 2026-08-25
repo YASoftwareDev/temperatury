@@ -20,7 +20,6 @@ from urllib.parse import quote
 
 import captions
 import deephist
-import globaltext
 import i18n
 import interactive
 import ranktext
@@ -224,8 +223,8 @@ _ZONE_BAND_DEFS = [
     ("s-subtropical", -23.5, -35),
     ("s-temperate", -35, -90),
 ]
-from i18n import LANG_NAMES
-from plots import BASELINE, _signed, annual_means, summary_stats
+from i18n import LANG_NAMES  # noqa: E402
+from plots import BASELINE, _signed, annual_means, summary_stats  # noqa: E402
 
 # Small inline globe (the site uses images/SVG, never flag/emoji glyphs, since
 # emoji don't render on Windows) - marks the link to the world/regional page.
@@ -3746,7 +3745,7 @@ def build_map_page(
 
     def _title(key: str) -> str:  # per-city chart title minus its ", {name}" tail
         # Strip whatever separator precedes {name} (dash, colon, comma, ...).
-        return tr[key].split("{name}")[0].format(**fmt).strip().rstrip("---:,;· ").strip()
+        return tr[key].split("{name}")[0].format(**fmt).strip().rstrip("-:,;· ").strip()
 
     # The city dots and the omni/search indexes derive client-side from the
     # shared roster (charts/_base.json + <lang>/_delta.json, see
@@ -3774,8 +3773,6 @@ def build_map_page(
         if _k == "world":
             _btns.append('<span class="zonebtns-sep" aria-hidden="true"></span>')
     zone_buttons = "".join(_btns)
-    # Only real cities feed the search; reference/ocean points live on the map only.
-    city_locs = [loc for loc in locations if getattr(loc, "kind", "city") == "city"]
     # Continent filter for the ranking: "all" (the world label) + each region.
     _rnames = tr.get("regions", {})
     rank_regions = f'<option value="">{tr["region_world"]}</option>' + "".join(

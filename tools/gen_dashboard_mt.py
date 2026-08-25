@@ -29,7 +29,11 @@ os.environ["TEMPERATURY_SKIP_EXTRA_I18N"] = "1"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import i18n  # noqa: E402
-import globaltext, captions, deephist, ranktext, report  # noqa: E402
+import captions  # noqa: E402
+import deephist  # noqa: E402
+import globaltext  # noqa: E402
+import ranktext  # noqa: E402
+import report  # noqa: E402
 from tools.gen_mt_langs import _protect, _restore, _translate_batch  # noqa: E402
 from tools.fill_missing_keys import GCODE  # noqa: E402
 from deep_translator import GoogleTranslator  # noqa: E402
