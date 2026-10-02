@@ -141,6 +141,25 @@ def _parse_daily(daily: dict | None, name: str) -> pd.DataFrame:
     return frame.set_index("date").sort_index()
 
 
+# Every city spans the same ~31k days, yet each frame read from the cache
+# carries its own DatetimeIndex - half of the build's memory: 16.4 GB at 15.6k
+# cities, over the 16 GB CI runner, which OOM-killed every deploy from
+# 2026-09-26. Frames with identical dates share one (immutable) Index object,
+# swapped in as each frame is loaded so the duplicate is freed before the next.
+_INDEX_POOL: dict[tuple, pd.Index] = {}
+
+
+def _share_index(frame: pd.DataFrame) -> pd.DataFrame:
+    """Point ``frame`` at a pooled Index equal to its own; returns ``frame``."""
+    idx = frame.index
+    if len(idx):
+        key = (len(idx), idx[0], idx[-1], str(idx.dtype), idx.name)
+        shared = _INDEX_POOL.setdefault(key, idx)
+        if shared is not idx and shared.equals(idx):
+            frame.index = shared
+    return frame
+
+
 def _clean(frame: pd.DataFrame, name: str) -> pd.DataFrame:
     """Drop unfilled (NaN) days and guard against an empty series."""
     frame = frame.dropna(subset=["temperature_2m_mean"])
@@ -200,7 +219,7 @@ def load_temperatures_bulk(
         _hit = codec.cached_path(path)
         if _hit is not None and not refresh:
             frame = codec.read_frame(_hit)
-            result[location.slug] = _clean(frame, location.name)
+            result[location.slug] = _share_index(_clean(frame, location.name))
         else:
             to_fetch.append(location)
 
@@ -237,7 +256,7 @@ def load_temperatures_bulk(
         for location, item in zip(chunk, items, strict=False):
             frame = _parse_daily(item.get("daily"), location.name)
             codec.write_frame(frame, _cache_path(location, start_year, end_year))
-            result[location.slug] = _clean(frame, location.name)
+            result[location.slug] = _share_index(_clean(frame, location.name))
 
     return result
 
@@ -291,7 +310,7 @@ def load_extremes_bulk(
         _hit = codec.cached_path(path)
         if _hit is not None and not refresh:
             frame = codec.read_frame(_hit)
-            result[location.slug] = frame.dropna(subset=list(_EXTREME_COLS))
+            result[location.slug] = _share_index(frame.dropna(subset=list(_EXTREME_COLS)))
         else:
             to_fetch.append(location)
 
@@ -321,7 +340,7 @@ def load_extremes_bulk(
         for location, item in zip(chunk, items, strict=False):
             frame = _parse_extremes(item.get("daily"), location.name)
             codec.write_frame(frame, _extremes_cache_path(location, start_year, end_year))
-            result[location.slug] = frame.dropna(subset=list(_EXTREME_COLS))
+            result[location.slug] = _share_index(frame.dropna(subset=list(_EXTREME_COLS)))
 
     return result
 
@@ -365,7 +384,7 @@ def load_precip_bulk(
         _hit = codec.cached_path(path)
         if _hit is not None and not refresh:
             frame = codec.read_frame(_hit)
-            result[location.slug] = frame.dropna(subset=["precipitation_sum"])
+            result[location.slug] = _share_index(frame.dropna(subset=["precipitation_sum"]))
         else:
             to_fetch.append(location)
 
@@ -395,7 +414,7 @@ def load_precip_bulk(
         for location, item in zip(chunk, items, strict=False):
             frame = _parse_precip(item.get("daily"), location.name)
             codec.write_frame(frame, _precip_cache_path(location, start_year, end_year))
-            result[location.slug] = frame.dropna(subset=["precipitation_sum"])
+            result[location.slug] = _share_index(frame.dropna(subset=["precipitation_sum"]))
 
     return result
 
@@ -442,7 +461,7 @@ def load_apparent_bulk(
         _hit = codec.cached_path(path)
         if _hit is not None and not refresh:
             frame = codec.read_frame(_hit)
-            result[location.slug] = frame.dropna(subset=["apparent_temperature_max"])
+            result[location.slug] = _share_index(frame.dropna(subset=["apparent_temperature_max"]))
         else:
             to_fetch.append(location)
 
@@ -472,7 +491,7 @@ def load_apparent_bulk(
         for location, item in zip(chunk, items, strict=False):
             frame = _parse_apparent(item.get("daily"), location.name)
             codec.write_frame(frame, _apparent_cache_path(location, start_year, end_year))
-            result[location.slug] = frame.dropna(subset=["apparent_temperature_max"])
+            result[location.slug] = _share_index(frame.dropna(subset=["apparent_temperature_max"]))
 
     return result
 
@@ -552,7 +571,7 @@ def _load_current(
             frame = codec.read_frame(_hit)
             frame = frame.dropna(subset=list(columns))
             if not frame.empty:
-                result[location.slug] = frame
+                result[location.slug] = _share_index(frame)
         else:
             to_fetch.append(location)
 
@@ -584,7 +603,7 @@ def _load_current(
             codec.write_frame(frame, _current_cache_path(location, year, suffix))
             frame = frame.dropna(subset=list(columns))
             if not frame.empty:
-                result[location.slug] = frame
+                result[location.slug] = _share_index(frame)
 
     return result
 
