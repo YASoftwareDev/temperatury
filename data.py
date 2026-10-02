@@ -15,6 +15,7 @@ from __future__ import annotations
 import datetime as dt
 import os
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
 import requests
@@ -160,6 +161,29 @@ def _share_index(frame: pd.DataFrame) -> pd.DataFrame:
     return frame
 
 
+@dataclass(frozen=True)
+class LazyFrame:
+    """An add-on series left on disk until a render worker needs it.
+
+    The parent of an ``--all`` build only needs the means (for the world
+    aggregate); holding every city's add-ons too was 4.9 of its 8.9 GB at 15.6k
+    cities and would pass the 16 GB CI runner as the roster fills.
+    """
+
+    path: Path
+    columns: tuple[str, ...]
+    drop_empty: bool = False   # current-year: an all-NaN cache counts as absent
+
+    def load(self) -> pd.DataFrame | None:
+        frame = codec.read_frame(self.path).dropna(subset=list(self.columns))
+        return None if self.drop_empty and frame.empty else frame
+
+
+def resolve(frame: pd.DataFrame | LazyFrame | None) -> pd.DataFrame | None:
+    """The frame behind a ``LazyFrame`` (``None`` when absent); else ``frame``."""
+    return frame.load() if isinstance(frame, LazyFrame) else frame
+
+
 def _clean(frame: pd.DataFrame, name: str) -> pd.DataFrame:
     """Drop unfilled (NaN) days and guard against an empty series."""
     frame = frame.dropna(subset=["temperature_2m_mean"])
@@ -295,22 +319,24 @@ def load_extremes_bulk(
     end_year: int,
     *,
     refresh: bool = False,
-) -> dict[str, pd.DataFrame]:
+    lazy: bool = False,
+) -> dict[str, pd.DataFrame | LazyFrame]:
     """Load daily max/min for many locations (cache-aware, chunked, resilient).
 
     Returns ``{slug: DataFrame[max, min]}``; locations that can't be fetched
     are simply absent (their record chart is skipped).
     """
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    result: dict[str, pd.DataFrame] = {}
+    result: dict[str, pd.DataFrame | LazyFrame] = {}
     to_fetch: list[Location] = []
 
     for location in locations:
         path = _extremes_cache_path(location, start_year, end_year)
         _hit = codec.cached_path(path)
         if _hit is not None and not refresh:
-            frame = codec.read_frame(_hit)
-            result[location.slug] = _share_index(frame.dropna(subset=list(_EXTREME_COLS)))
+            result[location.slug] = (
+                LazyFrame(_hit, _EXTREME_COLS) if lazy else
+                _share_index(codec.read_frame(_hit).dropna(subset=list(_EXTREME_COLS))))
         else:
             to_fetch.append(location)
 
@@ -339,8 +365,11 @@ def load_extremes_bulk(
         items = payload if isinstance(payload, list) else [payload]
         for location, item in zip(chunk, items, strict=False):
             frame = _parse_extremes(item.get("daily"), location.name)
-            codec.write_frame(frame, _extremes_cache_path(location, start_year, end_year))
-            result[location.slug] = _share_index(frame.dropna(subset=list(_EXTREME_COLS)))
+            _path = _extremes_cache_path(location, start_year, end_year)
+            codec.write_frame(frame, _path)
+            result[location.slug] = (
+                LazyFrame(_path, _EXTREME_COLS) if lazy else
+                _share_index(frame.dropna(subset=list(_EXTREME_COLS))))
 
     return result
 
@@ -373,18 +402,20 @@ def load_precip_bulk(
     end_year: int,
     *,
     refresh: bool = False,
-) -> dict[str, pd.DataFrame]:
+    lazy: bool = False,
+) -> dict[str, pd.DataFrame | LazyFrame]:
     """Load daily precipitation for many locations (cache-aware, chunked)."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    result: dict[str, pd.DataFrame] = {}
+    result: dict[str, pd.DataFrame | LazyFrame] = {}
     to_fetch: list[Location] = []
 
     for location in locations:
         path = _precip_cache_path(location, start_year, end_year)
         _hit = codec.cached_path(path)
         if _hit is not None and not refresh:
-            frame = codec.read_frame(_hit)
-            result[location.slug] = _share_index(frame.dropna(subset=["precipitation_sum"]))
+            result[location.slug] = (
+                LazyFrame(_hit, ("precipitation_sum",)) if lazy else
+                _share_index(codec.read_frame(_hit).dropna(subset=["precipitation_sum"])))
         else:
             to_fetch.append(location)
 
@@ -413,8 +444,11 @@ def load_precip_bulk(
         items = payload if isinstance(payload, list) else [payload]
         for location, item in zip(chunk, items, strict=False):
             frame = _parse_precip(item.get("daily"), location.name)
-            codec.write_frame(frame, _precip_cache_path(location, start_year, end_year))
-            result[location.slug] = _share_index(frame.dropna(subset=["precipitation_sum"]))
+            _path = _precip_cache_path(location, start_year, end_year)
+            codec.write_frame(frame, _path)
+            result[location.slug] = (
+                LazyFrame(_path, ("precipitation_sum",)) if lazy else
+                _share_index(frame.dropna(subset=["precipitation_sum"])))
 
     return result
 
@@ -447,21 +481,23 @@ def load_apparent_bulk(
     end_year: int,
     *,
     refresh: bool = False,
-) -> dict[str, pd.DataFrame]:
+    lazy: bool = False,
+) -> dict[str, pd.DataFrame | LazyFrame]:
     """Load daily apparent-temperature max for many locations (humidity-aware).
 
     Powers the heat-index chart; a location without it simply skips that chart.
     """
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    result: dict[str, pd.DataFrame] = {}
+    result: dict[str, pd.DataFrame | LazyFrame] = {}
     to_fetch: list[Location] = []
 
     for location in locations:
         path = _apparent_cache_path(location, start_year, end_year)
         _hit = codec.cached_path(path)
         if _hit is not None and not refresh:
-            frame = codec.read_frame(_hit)
-            result[location.slug] = _share_index(frame.dropna(subset=["apparent_temperature_max"]))
+            result[location.slug] = (
+                LazyFrame(_hit, ("apparent_temperature_max",)) if lazy else
+                _share_index(codec.read_frame(_hit).dropna(subset=["apparent_temperature_max"])))
         else:
             to_fetch.append(location)
 
@@ -490,8 +526,11 @@ def load_apparent_bulk(
         items = payload if isinstance(payload, list) else [payload]
         for location, item in zip(chunk, items, strict=False):
             frame = _parse_apparent(item.get("daily"), location.name)
-            codec.write_frame(frame, _apparent_cache_path(location, start_year, end_year))
-            result[location.slug] = _share_index(frame.dropna(subset=["apparent_temperature_max"]))
+            _path = _apparent_cache_path(location, start_year, end_year)
+            codec.write_frame(frame, _path)
+            result[location.slug] = (
+                LazyFrame(_path, ("apparent_temperature_max",)) if lazy else
+                _share_index(frame.dropna(subset=["apparent_temperature_max"])))
 
     return result
 
@@ -553,7 +592,8 @@ def _load_current(
     *,
     chunk: int,
     refresh: bool,
-) -> dict[str, pd.DataFrame]:
+    lazy: bool = False,
+) -> dict[str, pd.DataFrame | LazyFrame]:
     """Shared loader for the current (partial) year - mean or max/min.
 
     Mirrors the bulk loaders but targets ``year-01-01 … today`` and tolerates
@@ -561,13 +601,16 @@ def _load_current(
     """
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     year, start_date, end_date = _current_span()
-    result: dict[str, pd.DataFrame] = {}
+    result: dict[str, pd.DataFrame | LazyFrame] = {}
     to_fetch: list[Location] = []
 
     for location in locations:
         path = _current_cache_path(location, year, suffix)
         _hit = codec.cached_path(path)
         if _hit is not None and not refresh:
+            if lazy:
+                result[location.slug] = LazyFrame(_hit, columns, drop_empty=True)
+                continue
             frame = codec.read_frame(_hit)
             frame = frame.dropna(subset=list(columns))
             if not frame.empty:
@@ -600,7 +643,11 @@ def _load_current(
         items = payload if isinstance(payload, list) else [payload]
         for location, item in zip(group, items, strict=False):
             frame = parse(item.get("daily"), location.name)
-            codec.write_frame(frame, _current_cache_path(location, year, suffix))
+            _path = _current_cache_path(location, year, suffix)
+            codec.write_frame(frame, _path)
+            if lazy:
+                result[location.slug] = LazyFrame(_path, columns, drop_empty=True)
+                continue
             frame = frame.dropna(subset=list(columns))
             if not frame.empty:
                 result[location.slug] = _share_index(frame)
@@ -609,20 +656,22 @@ def _load_current(
 
 
 def load_current_bulk(
-    locations: list[Location], *, refresh: bool = False
-) -> dict[str, pd.DataFrame]:
+    locations: list[Location], *, refresh: bool = False,
+    lazy: bool = False,
+) -> dict[str, pd.DataFrame | LazyFrame]:
     """Current-year daily means (partial), for the monthly-range widget."""
     return _load_current(
         locations, ("temperature_2m_mean",), "", _parse_daily,
-        chunk=_CHUNK, refresh=refresh,
+        chunk=_CHUNK, refresh=refresh, lazy=lazy,
     )
 
 
 def load_current_extremes_bulk(
-    locations: list[Location], *, refresh: bool = False
-) -> dict[str, pd.DataFrame]:
+    locations: list[Location], *, refresh: bool = False,
+    lazy: bool = False,
+) -> dict[str, pd.DataFrame | LazyFrame]:
     """Current-year daily max/min (partial), for the monthly-records widget."""
     return _load_current(
         locations, _EXTREME_COLS, "_extremes", _parse_extremes,
-        chunk=_EXTREME_CHUNK, refresh=refresh,
+        chunk=_EXTREME_CHUNK, refresh=refresh, lazy=lazy,
     )
