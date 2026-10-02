@@ -39,6 +39,7 @@ from data import (
     load_extremes_bulk,
     load_precip_bulk,
     load_temperatures_bulk,
+    resolve,
 )
 import chartdata
 import chartpack
@@ -212,7 +213,10 @@ def _render_city(task) -> tuple[str, int]:
     references them - instead of re-rendering the same image 21 times. Runs in a
     worker process.
     """
-    location, df, df_ext, df_precip, df_app, df_cur, df_cur_ext = task
+    location, df, *addons = task
+    # The add-on series arrive as data.LazyFrame refs and are read here, one
+    # city at a time, rather than all held by the parent (see data.LazyFrame).
+    df_ext, df_precip, df_app, df_cur, df_cur_ext = (resolve(a) for a in addons)
     locations = _WORKER["locations"]
     # Language tiering: popular cities render in every language, the long tail
     # in English + the languages of its country (see langtier.py).
@@ -369,19 +373,20 @@ def main() -> None:
     # Daily max/min (record highs/lows) - optional add-on dataset; a city
     # without it simply skips the record chart.
     extremes = load_extremes_bulk(locations, args.start, args.end,
-                                  refresh=args.refresh)
+                                  refresh=args.refresh, lazy=True)
     # Daily precipitation - optional add-on dataset (same backfill model).
     precip = load_precip_bulk(locations, args.start, args.end,
-                              refresh=args.refresh)
+                              refresh=args.refresh, lazy=True)
     # Apparent temperature (humidity-aware heat index) - powers the heat-index
     # health chart; same optional-add-on backfill model.
     apparent = load_apparent_bulk(locations, args.start, args.end,
-                                  refresh=args.refresh)
+                                  refresh=args.refresh, lazy=True)
     # The year in progress (partial) - fed only to the interactive widgets so
     # readers can pick it, kept out of the static trend charts. Cached under a
     # distinct key; in offline mode only committed current-year data is used.
-    current = load_current_bulk(locations, refresh=args.refresh)
-    current_ext = load_current_extremes_bulk(locations, refresh=args.refresh)
+    current = load_current_bulk(locations, refresh=args.refresh, lazy=True)
+    current_ext = load_current_extremes_bulk(locations, refresh=args.refresh,
+                                             lazy=True)
 
     # Charts are drawn in the browser now (Chart.js): ship the shared render
     # layer as a root asset, and drop stale artefacts a cached build may carry
