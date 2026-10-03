@@ -19,6 +19,9 @@ permissions:
 
 # One run at a time; a newer push supersedes an in-progress one (this repo
 # pushes often — data backfills + iteration — and only the latest matters).
+# Measured 2026-09-07..10-03 outside the OOM week: push-to-live median 25 min,
+# p90 44; every lag over an hour followed a FAILED run, never a cancellation.
+# Queueing instead would make a mid-build push wait out the current build.
 concurrency:
   group: pages
   cancel-in-progress: true
