@@ -65,7 +65,7 @@ jobs:
       # render is the slow part. A unique key per run always saves a fresh
       # cache; restore-keys pulls the most recent prior one.
       - name: Restore rendered-charts cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             output
