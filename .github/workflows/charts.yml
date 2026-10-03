@@ -82,8 +82,10 @@ jobs:
             ! -name '_*' ! -name 'outline.*' \
             -exec mv -n {} payloads/charts/ \; 2>/dev/null || true
 
+      # mem-watch reports peak RAM (and warns at 75%): the build outgrew this
+      # 16 GB runner once, and an OOM kill only reads as "lost communication".
       - name: Generate charts and pages
-        run: python main.py --all
+        run: tools/mem-watch.sh python main.py --all
         env:
           # Render from the committed cache only; CI's shared IP is
           # rate-limited by Open-Meteo. Refresh the cache locally.
