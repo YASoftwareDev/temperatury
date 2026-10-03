@@ -17,9 +17,11 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import io
 import json
 import multiprocessing as mp
 import os
+import sys
 from concurrent.futures import ProcessPoolExecutor
 
 import i18n
@@ -324,6 +326,10 @@ def _render_city(task) -> tuple[str, int]:
 
 def main() -> None:
     args = _parse_args()
+    # Whole lines, written as they finish: the CI log shows progress live, and
+    # tools/mem-watch.sh's lines no longer land in the middle of one of ours.
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout.reconfigure(line_buffering=True)
     if args.start > args.end:
         raise SystemExit(f"--start ({args.start}) must not exceed --end ({args.end}).")
 

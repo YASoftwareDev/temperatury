@@ -83,3 +83,17 @@ def test_termination_is_passed_to_the_command():
     while alive() and time.time() < deadline:
         time.sleep(0.1)
     assert not alive()
+
+
+def test_main_line_buffers_stdout_into_a_pipe():
+    # Block buffering would let mem-watch's progress lines land mid-line in the
+    # deploy log (seen in run 37103383002) and hold build output back in 8 KB
+    # bursts. --start after --end exits right after the reconfigure.
+    import sys
+    code = ("import sys; sys.argv = ['main.py', '--start', '2030', '--end', '2020']\n"
+            "import main\n"
+            "try:\n    main.main()\nexcept SystemExit:\n    pass\n"
+            "print(sys.stdout.line_buffering)")
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True,
+                         text=True, timeout=120, cwd=SCRIPT.parent.parent)
+    assert out.stdout.strip().splitlines()[-1] == "True", out.stderr[-500:]
